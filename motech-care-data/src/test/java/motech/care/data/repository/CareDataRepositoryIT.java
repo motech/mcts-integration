@@ -21,6 +21,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
     public void setUp() {
         session.createSQLQuery("DELETE FROM report.bp_form").executeUpdate();
         session.createSQLQuery("DELETE FROM report.delivery_mother_form").executeUpdate();
+        session.createSQLQuery("DELETE FROM report.child_case").executeUpdate();
         session.createSQLQuery("DELETE FROM report.mother_case").executeUpdate();
     }
 
@@ -96,8 +97,54 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
         assertTrue(beneficiariesToSync.contains(new Beneficiary("mctsId2", 9)));
     }
 
+    @Test
+    public void shouldUpdateMotherCaseWithGivenMCTSId() {
+        createMotherCase(1, null, "motherCaseId");
+        createChildCase(1, "oldMctsId", "childCaseId");
+
+        careDataRepository.updateCase("motherCaseId", "mctsId");
+
+        List motherCasesFromDb = session.createSQLQuery("SELECT case_id, mcts_id FROM report.mother_case").list();
+        assertEquals(1, motherCasesFromDb.size());
+        Object[] motherCase = (Object[]) motherCasesFromDb.get(0);
+        assertEquals("motherCaseId", motherCase[0]);
+        assertEquals("mctsId", motherCase[1]);
+
+        List childCasesFromDb = session.createSQLQuery("SELECT case_id, mcts_id FROM report.child_case").list();
+        assertEquals(1, childCasesFromDb.size());
+        Object[] childCase = (Object[]) childCasesFromDb.get(0);
+        assertEquals("childCaseId", childCase[0]);
+        assertEquals("oldMctsId", childCase[1]);
+    }
+
+    @Test
+    public void shouldUpdateChildCaseWithGivenMCTSIdIfMotherCaseDoesNotExistWithGivenCaseId() {
+        createMotherCase(1, "oldMctsId", "motherCaseId");
+        createChildCase(2, null, "childCaseId");
+
+        careDataRepository.updateCase("childCaseId", "mctsId");
+
+        List motherCasesFromDb = session.createSQLQuery("SELECT case_id, mcts_id FROM report.mother_case").list();
+        assertEquals(1, motherCasesFromDb.size());
+        Object[] motherCase = (Object[]) motherCasesFromDb.get(0);
+        assertEquals("motherCaseId", motherCase[0]);
+        assertEquals("oldMctsId", motherCase[1]);
+
+        List childCasesFromDb = session.createSQLQuery("SELECT case_id, mcts_id FROM report.child_case").list();
+        assertEquals(1, childCasesFromDb.size());
+        Object[] childCase = (Object[]) childCasesFromDb.get(0);
+        assertEquals("childCaseId", childCase[0]);
+        assertEquals("mctsId", childCase[1]);
+    }
+
     private void createMotherCase(int id, String mctsId, String caseId) {
         String queryString = String.format("INSERT INTO report.mother_case (id, mcts_id, case_id) VALUES (%d, '%s', '%s')", id, mctsId, caseId);
+
+        session.createSQLQuery(queryString).executeUpdate();
+    }
+
+    private void createChildCase(int id, String mctsId, String caseId) {
+        String queryString = String.format("INSERT INTO report.child_case (id, mcts_id, case_id) VALUES (%d, '%s', '%s')", id, mctsId, caseId);
 
         session.createSQLQuery(queryString).executeUpdate();
     }

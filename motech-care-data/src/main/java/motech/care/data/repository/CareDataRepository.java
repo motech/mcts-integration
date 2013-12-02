@@ -4,6 +4,8 @@ import motech.care.data.domain.Beneficiary;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import java.util.List;
 @Repository
 @Transactional
 public class CareDataRepository {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(CareDataRepository.class);
 
     private SessionFactory sessionFactory;
 
@@ -74,6 +78,24 @@ public class CareDataRepository {
             beneficiaries.add(new Beneficiary((String) record[0], (Integer) record[1]));
         }
         return beneficiaries;
+    }
+
+    public void updateCase(String caseId, String mctsId) {
+        String motherCaseUpdateQuery = "UPDATE report.mother_case SET mcts_id = '" + mctsId + "' WHERE case_id = '" + caseId + "'";
+        int updatedRowCount = getCurrentSession().createSQLQuery(motherCaseUpdateQuery).executeUpdate();
+        if (updatedRowCount > 0) {
+            LOGGER.info(String.format("Mother case with Case Id: %s is updated with MCTS Id: %s", caseId, mctsId));
+            return;
+        }
+
+        String childCaseUpdateQuery = "UPDATE report.child_case SET mcts_id = '" + mctsId + "' WHERE case_id = '" + caseId + "'";
+        updatedRowCount = getCurrentSession().createSQLQuery(childCaseUpdateQuery).executeUpdate();
+        if(updatedRowCount > 0) {
+            LOGGER.info(String.format("Child case with Case Id: %s is updated with MCTS Id: %s", caseId, mctsId));
+            return;
+        }
+
+        LOGGER.info(String.format("Case not updated. Mother case and Child case not found for Case Id: %s", caseId));
     }
 
     private Session getCurrentSession() {

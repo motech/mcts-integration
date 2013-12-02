@@ -41,4 +41,14 @@ public class CareDataServiceTest {
         verify(careDataRepository).getBeneficiariesToSync(startDate, endDate);
         assertEquals(expectedBeneficiaries, actualBeneficiaries);
     }
+
+    @Test
+    public void shouldUpdateMCTSIdForAGivenCaseId() {
+        String caseId = "caseId";
+        String mctsId = "mctsId";
+
+        careDataService.updateCase(caseId, mctsId);
+
+        verify(careDataRepository).updateCase(caseId, mctsId);
+    }
 }
