@@ -3,6 +3,7 @@ package mcts.integration.stub.controller;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,11 +22,11 @@ public class MCTSStubController {
 
     @RequestMapping(value = "/GetMotherDetails", method = RequestMethod.POST)
     @ResponseBody
-    public String getBeneficiaryDetails(@RequestParam("State_id") String stateId,
-                                        @RequestParam("id") String id,
-                                        @RequestParam("pwd") String password,
-                                        @RequestParam("FromDate") String fromDate,
-                                        @RequestParam("ToDate") String toDate) throws IOException {
+    public String getBeneficiaryDetails(@ModelAttribute("State_id") String stateId,
+                                        @ModelAttribute("id") String id,
+                                        @ModelAttribute("pwd") String password,
+                                        @ModelAttribute("FromDate") String fromDate,
+                                        @ModelAttribute("ToDate") String toDate) throws IOException {
 
 
         return IOUtils.toString(new ClassPathResource("response/mother_details_response.xml").getInputStream());
