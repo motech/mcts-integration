@@ -55,4 +55,16 @@
             <artifactId>powermock-module-junit4</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>mcts.integration.beneficiary.sync.launcher.BeneficiarySyncLauncher</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
