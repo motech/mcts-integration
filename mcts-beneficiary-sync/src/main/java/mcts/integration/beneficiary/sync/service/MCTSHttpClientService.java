@@ -6,13 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class MCTSHttpClientService {
-
     private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 
     private RestTemplate restTemplate;
@@ -24,10 +28,24 @@ public class MCTSHttpClientService {
         this.beneficiarySyncSettings = beneficiarySyncSettings;
     }
 
-    public void sync(BeneficiaryRequest beneficiaryRequest) {
-        ResponseEntity<String> reponse = restTemplate.postForEntity(beneficiarySyncSettings.getSyncUrl(), beneficiaryRequest, String.class);
+    public void syncTo(BeneficiaryRequest beneficiaryRequest) {
+        ResponseEntity<String> response = restTemplate.postForEntity(beneficiarySyncSettings.getUpdateRequestUrl(), beneficiaryRequest, String.class);
 
-        if (reponse != null)
-            LOGGER.info(String.format("Response [%s] : %s", reponse.getStatusCode(), reponse.getBody()));
+        if (response != null)
+            LOGGER.info(String.format("Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+    }
+
+    public String syncFrom(MultiValueMap<String, String> requestBody) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity httpEntity = new HttpEntity(requestBody, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(beneficiarySyncSettings.getBeneficiaryListRequestUrl(), HttpMethod.POST, httpEntity, String.class);
+
+        if (response == null)
+            return null;
+
+        String responseBody = response.getBody();
+        LOGGER.info(String.format("Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
+        return responseBody;
     }
 }

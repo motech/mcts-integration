@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BeneficiarySyncServiceTest {
+public class MotechBeneficiarySyncServiceTest {
     @Mock
     private CareDataService careDataService;
     @Mock
@@ -33,11 +33,11 @@ public class BeneficiarySyncServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        beneficiarySyncService = new BeneficiarySyncService(careDataService, mctsHttpClientService, beneficiarySyncSettings);
+        beneficiarySyncService = new MotechBeneficiarySyncService(careDataService, mctsHttpClientService, beneficiarySyncSettings);
     }
 
     @Test
-    public void shouldGetBeneficiaryDataAndSync() {
+    public void shouldGetMotechBeneficiaryDetailsFromDBAndSyncToMCTS() {
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
         List<Beneficiary> beneficiaries = Arrays.asList(new Beneficiary("mcts_id1", 2), new Beneficiary("mcts_id2", 4));
@@ -49,7 +49,7 @@ public class BeneficiarySyncServiceTest {
         verify(careDataService).getBeneficiariesToSync(startDate, endDate);
 
         ArgumentCaptor<BeneficiaryRequest> beneficiaryRequestCaptor = ArgumentCaptor.forClass(BeneficiaryRequest.class);
-        verify(mctsHttpClientService).sync(beneficiaryRequestCaptor.capture());
+        verify(mctsHttpClientService).syncTo(beneficiaryRequestCaptor.capture());
         BeneficiaryRequest actualRequest = beneficiaryRequestCaptor.getValue();
         List<BeneficiaryDetails> beneficiaryDetails = actualRequest.getAllBeneficiaryDetails();
         assertEquals(2, beneficiaryDetails.size());

@@ -1,4 +1,4 @@
-package mcts.integration.beneficiary.sync;
+package mcts.integration.beneficiary.sync.launcher;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class BeneficiarySyncLauncherIT {
 
     @Test
     @Ignore
-    public void shouldGetBeneficiarySyncServiceBean() {
+    public void shouldGetBeneficiarySyncServiceFactoryBean() {
         BeneficiarySyncLauncher.main(new String[]{"26-11-2013", "27-11-2013"});
     }
 }
