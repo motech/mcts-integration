@@ -1,4 +1,4 @@
-package mcts.integration.beneficiary.sync.domain;
+package motech.care.data.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

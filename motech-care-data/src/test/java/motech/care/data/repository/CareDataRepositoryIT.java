@@ -1,6 +1,6 @@
-package mcts.integration.beneficiary.sync.repository;
+package motech.care.data.repository;
 
-import mcts.integration.beneficiary.sync.domain.Beneficiary;
+import motech.care.data.domain.Beneficiary;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;

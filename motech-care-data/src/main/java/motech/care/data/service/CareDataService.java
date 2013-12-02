@@ -1,7 +1,7 @@
-package mcts.integration.beneficiary.sync.service;
+package motech.care.data.service;
 
-import mcts.integration.beneficiary.sync.domain.Beneficiary;
-import mcts.integration.beneficiary.sync.repository.CareDataRepository;
+import motech.care.data.domain.Beneficiary;
+import motech.care.data.repository.CareDataRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package mcts.integration.beneficiary.sync.repository;
+package motech.care.data.repository;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:beneficiarySyncContext.xml"})
+@ContextConfiguration(locations = {"classpath:careDataContext.xml"})
 public class BaseRepositoryIT {
 
     @Autowired

@@ -1,9 +1,10 @@
 package mcts.integration.beneficiary.sync.service;
 
-import mcts.integration.beneficiary.sync.domain.Beneficiary;
+import motech.care.data.domain.Beneficiary;
 import mcts.integration.beneficiary.sync.request.BeneficiaryDetails;
 import mcts.integration.beneficiary.sync.request.BeneficiaryRequest;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
+import motech.care.data.service.CareDataService;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
