@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -16,6 +17,8 @@ import org.springframework.util.MultiValueMap;
 import java.io.File;
 import java.io.IOException;
 
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,25 +46,32 @@ public class MCTSBeneficiarySyncServiceTest {
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
         String outputFileLocation = "fileLocation";
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("username", "myUser");
-        when(beneficiarySyncSettings.getDefaultBeneficiaryListQueryParams()).thenReturn(requestBody);
+        String timeStampIgnoringSeconds = DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm");
+        String expectedOutputFileLocation = String.format("%s_%s", outputFileLocation, timeStampIgnoringSeconds);
+        MultiValueMap<String, String> defaultQueryParams = new LinkedMultiValueMap<>();
+        defaultQueryParams.add("username", "myUser");
+        when(beneficiarySyncSettings.getDefaultBeneficiaryListQueryParams()).thenReturn(defaultQueryParams);
         when(beneficiarySyncSettings.getOutputFileLocation()).thenReturn(outputFileLocation);
-        requestBody.add("FromDate", startDate.toString());
-        requestBody.add("ToDate", endDate.toString());
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.putAll(defaultQueryParams);
+        requestBody.add("FromDate", startDate.toString("dd-MM-yyyy"));
+        requestBody.add("ToDate", endDate.toString("dd-MM-yyyy"));
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(response());
 
         beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 
         verify(mctsHttpClientService).syncFrom(requestBody);
+
         PowerMockito.verifyStatic(times(1));
-        FileUtils.writeStringToFile(new File(outputFileLocation), response(), true);
+        ArgumentCaptor<File> outputFileCaptor = ArgumentCaptor.forClass(File.class);
+        FileUtils.writeStringToFile(outputFileCaptor.capture(), eq(response()));
+        String actualOutputFileLocation = outputFileCaptor.getValue().getPath();
+        assertTrue(actualOutputFileLocation.contains(expectedOutputFileLocation));
     }
 
     private String response() {
         return "<newdataset>\n" +
                 "    <records>\n" +
-                "        <record>\n" +
                 "            <stateid>31</stateid>\n" +
                 "            <state_name>Lakshadweep</state_name>\n" +
                 "            <district_id>1</district_id>\n" +
@@ -71,7 +81,6 @@ public class MCTSBeneficiarySyncServiceTest {
                 "            <tehsil_id>0001</tehsil_id>\n" +
                 "            <tehsil_name>AMINI</tehsil_name>\n" +
                 "            <facility_id>2</facility_id>\n" +
-                "        </record>\n" +
                 "    </records>\n" +
                 "</newdataset>";
     }

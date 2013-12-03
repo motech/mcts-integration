@@ -16,6 +16,7 @@ import java.io.IOException;
 @Component
 public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
+    private static final String DATE_FORMAT = "dd-MM-yyyy";
 
     private MCTSHttpClientService mctsHttpClientService;
     private BeneficiarySyncSettings beneficiarySyncSettings;
@@ -29,14 +30,14 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
     public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.putAll(beneficiarySyncSettings.getDefaultBeneficiaryListQueryParams());
-        requestBody.add("FromDate", startDate.toString());
-        requestBody.add("ToDate", endDate.toString());
+        requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
+        requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
 
         String beneficiaryData = mctsHttpClientService.syncFrom(requestBody);
 
-        String outputFileLocation = beneficiarySyncSettings.getOutputFileLocation();
+        String outputFileLocation = String.format("%s_%s", beneficiarySyncSettings.getOutputFileLocation(), DateTime.now());
         try {
-            FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData, true);
+            FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData);
         } catch (IOException e) {
             LOGGER.error(String.format("Cannot write MCTS beneficiary details response to file: %s", outputFileLocation), e);
             return;
