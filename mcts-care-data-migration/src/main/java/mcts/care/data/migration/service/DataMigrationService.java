@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class DataMigrationService {
 
     private static final String DELIMITER = ",";
-    private static final String VALID_FILE_CONTENT_LINE_FORMAT = String.format("^[a-zA-Z0-9_]+\\s*%s\\s*[a-zA-Z0-9_]+$", DELIMITER);
+    private static final String VALID_FILE_CONTENT_LINE_FORMAT = String.format("^[a-zA-Z0-9_-]+\\s*%s\\s*[a-zA-Z0-9_-]+$", DELIMITER);
 
     private CareDataService careDataService;
 

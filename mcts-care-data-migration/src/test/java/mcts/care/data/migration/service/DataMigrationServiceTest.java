@@ -96,7 +96,7 @@ public class DataMigrationServiceTest {
     public void shouldUpdateCaseForValidContents() throws IOException {
         File migrationFile = Files.createTempFile("data_migration", "txt").toFile();
         migrationFile.deleteOnExit();
-        String content = "case_id1,mcts_id1\ncase_id2,mcts_id2";
+        String content = "case_id1,mcts_id1\ncase-id2,mcts_id2";
         FileUtils.write(migrationFile, content);
 
         dataMigrationService.migrate(migrationFile.getPath());
@@ -108,7 +108,7 @@ public class DataMigrationServiceTest {
         List<String> actualMctsIds = mctsIdCaptor.getAllValues();
         assertEquals("case_id1", actualCaseIds.get(0));
         assertEquals("mcts_id1", actualMctsIds.get(0));
-        assertEquals("case_id2", actualCaseIds.get(1));
+        assertEquals("case-id2", actualCaseIds.get(1));
         assertEquals("mcts_id2", actualMctsIds.get(1));
     }
 
