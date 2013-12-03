@@ -14,16 +14,16 @@ public class SyncTypeTest {
 
         assertFalse(SyncType.isValid(null));
 
-        assertTrue(SyncType.isValid("getBeneficiaries"));
+        assertTrue(SyncType.isValid("GetMothersList"));
 
-        assertTrue(SyncType.isValid("updateBeneficiaries"));
+        assertTrue(SyncType.isValid("ServiceUpdation"));
     }
 
     @Test
     public void shouldGetSyncTypeFromDescription() {
-        assertEquals(SyncType.GET, SyncType.from("getBeneficiaries"));
+        assertEquals(SyncType.GET, SyncType.from("GetMothersList"));
 
-        assertEquals(SyncType.UPDATE, SyncType.from("updateBeneficiaries"));
+        assertEquals(SyncType.UPDATE, SyncType.from("ServiceUpdation"));
 
         assertNull(SyncType.from(null));
 

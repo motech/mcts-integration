@@ -4,8 +4,8 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 public enum SyncType {
 
-    GET("getBeneficiaries"),
-    UPDATE("updateBeneficiaries");
+    GET("GetMothersList"),
+    UPDATE("ServiceUpdation");
 
     private String description;
 
