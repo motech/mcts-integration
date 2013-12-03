@@ -29,13 +29,15 @@ public class MCTSHttpClientService {
     }
 
     public void syncTo(BeneficiaryRequest beneficiaryRequest) {
+        LOGGER.info("Syncing beneficiary data to MCTS.");
         ResponseEntity<String> response = restTemplate.postForEntity(beneficiarySyncSettings.getUpdateRequestUrl(), beneficiaryRequest, String.class);
 
         if (response != null)
-            LOGGER.info(String.format("Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+            LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
     }
 
     public String syncFrom(MultiValueMap<String, String> requestBody) {
+        LOGGER.info("Syncing beneficiary data from MCTS.");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity httpEntity = new HttpEntity(requestBody, httpHeaders);
@@ -45,7 +47,7 @@ public class MCTSHttpClientService {
             return null;
 
         String responseBody = response.getBody();
-        LOGGER.info(String.format("Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
+        LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
         return responseBody;
     }
 }

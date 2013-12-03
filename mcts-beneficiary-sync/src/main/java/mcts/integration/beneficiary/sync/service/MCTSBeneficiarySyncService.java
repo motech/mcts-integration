@@ -39,7 +39,9 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
             FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData, true);
         } catch (IOException e) {
             LOGGER.error(String.format("Cannot write MCTS beneficiary details response to file: %s", outputFileLocation), e);
+            return;
         }
+        LOGGER.info(String.format("MCTS beneficiary details response is added to file %s", outputFileLocation));
     }
 
 }
