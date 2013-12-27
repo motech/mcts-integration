@@ -14,6 +14,11 @@
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
 
+    <logger name="motech.care.data" additivity="false">
+        <level value="DEBUG"/>
+        <appender-ref ref="mctsIntegrationConsoleAppender" />
+    </logger>
+
     <root>
         <level value="ERROR" />
         <appender-ref ref="mctsIntegrationConsoleAppender" />

@@ -7,6 +7,8 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+    <import resource="classpath*:META-INF/motech/applicationCareReportingDomain.xml"/>
+
     <context:component-scan base-package="motech.care.data" />
 
     <util:properties id="hibernateProperties" location="classpath:/hibernate.properties"/>

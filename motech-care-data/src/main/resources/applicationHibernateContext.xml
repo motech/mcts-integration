@@ -12,8 +12,19 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
+    <bean id="allDomainEntities" parent="reportingEntities" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list merge="true">
+                <value>motech.care.data.domain.MCTSPregnantMother</value>
+                <value>motech.care.data.domain.MCTSPregnantMotherServiceUpdate</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
+
+        <property name="annotatedClasses" ref="allDomainEntities"/>
 
         <property name="hibernateProperties">
             <props>

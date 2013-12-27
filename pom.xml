@@ -170,6 +170,11 @@
                 <version>1.5.1</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <artifactId>care-reporting-domain</artifactId>
+                <groupId>org.motechproject</groupId>
+                <version>0.2-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

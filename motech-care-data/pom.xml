@@ -61,6 +61,10 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
+        <dependency>
+            <artifactId>care-reporting-domain</artifactId>
+            <groupId>org.motechproject</groupId>
+        </dependency>
     </dependencies>
 
     <profiles>

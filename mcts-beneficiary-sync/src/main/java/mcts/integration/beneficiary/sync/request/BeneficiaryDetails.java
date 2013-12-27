@@ -5,11 +5,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @XmlRootElement
 public class BeneficiaryDetails {
-    public static final int MCTS_REQUEST_MODE = 4;
-    public static final int MCTS_REQUEST_DAY_OFFSET = 0;
+    private static final Integer MCTS_REQUEST_MODE = 4;
+    private static final Integer MCTS_REQUEST_DAY_OFFSET = 0;
+    private static final String DEFAULT_DATE_PATTERN = "dd-MM-yyyy";
 
     @XmlElement(name = "StateId")
     private Integer stateId;
@@ -23,16 +26,23 @@ public class BeneficiaryDetails {
     @XmlElement(name = "Day")
     private Integer dayOffset;
 
+    @XmlElement(name = "AsOn_date")
+    private String asOnDate;
+
+    @XmlElement(name = "Remarks")
+    private String remarks;
+
     @XmlElement(name = "Mode")
     private Integer mode;
 
     public BeneficiaryDetails() {
     }
 
-    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType) {
+    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType, Date asOnDate) {
         this.stateId = stateId;
         this.mctsId = mctsId;
         this.serviceType = serviceType;
+        this.asOnDate = asOnDate != null ? new SimpleDateFormat(DEFAULT_DATE_PATTERN).format(asOnDate) : null;
         this.dayOffset = MCTS_REQUEST_DAY_OFFSET;
         this.mode = MCTS_REQUEST_MODE;
     }

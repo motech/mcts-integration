@@ -34,7 +34,9 @@ public class DataMigrationService {
             validateContents(fileContents);
             for (String row : fileContents) {
                 String[] rowContents = StringUtils.split(row, DELIMITER);
-                careDataService.updateCase(rowContents[0], rowContents[1]);
+                String caseId = rowContents[0];
+                String mctsId = rowContents[1];
+                careDataService.mapMotherCaseToMCTSPregnantMother(caseId, mctsId);
             }
         } catch (IOException e) {
             throw new DataMigrationException(String.format("Error while processing file %s", filePath), e);

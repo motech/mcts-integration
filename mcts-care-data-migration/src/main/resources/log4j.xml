@@ -3,7 +3,7 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="careDataConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+    <appender name="careDataMigrationConsoleAppender" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.EnhancedPatternLayout">
             <param name="ConversionPattern" value="[%t] - %d %-5p [%c] %m%n" />
         </layout>
@@ -11,11 +11,11 @@
 
     <logger name="motech.care.data" additivity="false">
         <level value="DEBUG"/>
-        <appender-ref ref="careDataConsoleAppender" />
+        <appender-ref ref="careDataMigrationConsoleAppender" />
     </logger>
 
     <root>
         <level value="ERROR" />
-        <appender-ref ref="careDataConsoleAppender" />
+        <appender-ref ref="careDataMigrationConsoleAppender" />
     </root>
 </log4j:configuration>
