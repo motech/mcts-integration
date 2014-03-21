@@ -31,35 +31,46 @@ public class CareDataRepository {
         String queryString =
                 "WITH \n" +
                 "updatable_cases AS\n" +
-                "  (SELECT id AS mother_case_id, service_type, service_delivery_date\n" +
+                "  (SELECT id AS mother_case_id, service_type, service_delivery_date,mobile_number\n" +
                 "   FROM\n" +
-                "     (SELECT id, 2 AS service_type, anc_2_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE anc_2_date IS NOT NULL\n" +
+                "     (SELECT id, 2 AS service_type, anc_2_date AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE anc_2_date IS NOT NULL\n" +
                 "      UNION \n" +
-                "      SELECT id, 3 AS service_type, anc_3_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE anc_3_date IS NOT NULL\n" +
+                "      SELECT id, 3 AS service_type, anc_3_date AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE anc_3_date IS NOT NULL\n" +
                 "      UNION\n" +
-                "      SELECT id, 4 AS service_type, anc_4_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE anc_4_date IS NOT NULL\n" +
+                "      SELECT id, 4 AS service_type, anc_4_date AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE anc_4_date IS NOT NULL\n" +
                 "      UNION\n" +
-                "      SELECT id, 5 AS service_type, tt_1_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE tt_1_date IS NOT NULL\n" +
+                "      SELECT id, 5 AS service_type, tt_1_date AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE tt_1_date IS NOT NULL\n" +
                 "      UNION \n" +
-                "      SELECT id, 6 AS service_type, tt_2_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE tt_2_date IS NOT NULL\n" +
+                "      SELECT id, 6 AS service_type, tt_2_date AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE tt_2_date IS NOT NULL\n" +
                 "      UNION \n" +
-                "      SELECT id, 7 AS service_type, tt_booster_date AS service_delivery_date, last_modified_time FROM report.mother_case WHERE tt_booster_date IS NOT NULL\n" +
+                "      SELECT id, 7 AS service_type, tt_booster_date AS service_delivery_date, last_modified_time, mobile_number  FROM report.mother_case WHERE tt_booster_date IS NOT NULL\n" +
                 "      UNION \n" +
-                "      SELECT id, 8 AS service_type, ifa_tablets_100 AS service_delivery_date, last_modified_time FROM report.mother_case WHERE ifa_tablets_100 IS NOT NULL\n" +
+                "      SELECT id, 8 AS service_type, ifa_tablets_100 AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE ifa_tablets_100 IS NOT NULL\n" +
                 "      UNION \n" +
-                "      SELECT id, 9 AS service_type, add AS service_delivery_date, last_modified_time FROM report.mother_case WHERE add IS NOT NULL\n" +
+                "      SELECT id, 9 AS service_type, add AS service_delivery_date, last_modified_time, mobile_number FROM report.mother_case WHERE add IS NOT NULL\n" +
                 "     ) all_cases\n" +
                 "   WHERE last_modified_time BETWEEN '" + startDate.toString() + "' AND '" + endDate.toString() + "'\n" +
                 "  ),\n" +
                 "mcts_updated_services AS\n" +
                 "  (SELECT mother.id, su.service_type \n" +
                 "   FROM report.mcts_pregnant_mother mother JOIN report.mcts_pregnant_mother_service_update su ON mother.id = su.mcts_id\n" +
-                "  )\n" +
+                "  ),\n" +
+                "bp_form AS\n" +
+                "(SELECT case_id, max(anc1_hemoglobin) as anc1_hemoglobin,\n" +
+               	"max(anc2_hemoglobin) as anc2_hemoglobin,\n"+
+               	"max(anc3_hemoglobin) as anc3_hemoglobin,\n"+
+               	 "max(anc4_hemoglobin) as anc4_hemoglobin from report.bp_form group by case_id )\n"+
                 "SELECT mother.id,\n" +
                 "       mother.mcts_id,\n" +
                 "       updatable_cases.service_type AS \"Service Type\",\n" +
-                "       updatable_cases.service_delivery_date\n" +
+                "       updatable_cases.service_delivery_date,\n" +
+                "		updatable_cases.mobile_number,\n" +
+                "	    bp.anc1_hemoglobin,\n" +
+                "	    bp.anc2_hemoglobin,\n" +
+                "	    bp.anc3_hemoglobin,\n" +
+                "	    bp.anc4_hemoglobin\n" +
                 "FROM updatable_cases\n" +
+                "JOIN bp_form bp on bp.case_id=updatable_cases.mother_case_id\n" +
                 "JOIN report.mcts_pregnant_mother mother ON updatable_cases.mother_case_id = mother.case_id\n" +
                 "WHERE (mother.id, service_type) NOT IN (SELECT * FROM mcts_updated_services);\n";
 
@@ -69,7 +80,9 @@ public class CareDataRepository {
     private List<Beneficiary> mapToBeneficiaryList(List<Object[]> result) {
         List<Beneficiary> beneficiaries = new ArrayList<>();
         for (Object[] record : result) {
-            beneficiaries.add(new Beneficiary((Integer) record[0], (String) record[1], (Integer) record[2], (Date) record[3]));
+            beneficiaries.add(new Beneficiary((Integer) record[0], (String) record[1], (Integer) record[2], 
+            		(Date) record[3], (String)  record[4],
+            		(Integer)record[5],(Integer)record[6],(Integer)record[7],(Integer)record[8]));
         }
         return beneficiaries;
     }

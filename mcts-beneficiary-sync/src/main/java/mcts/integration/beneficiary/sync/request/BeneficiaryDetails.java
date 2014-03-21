@@ -34,16 +34,24 @@ public class BeneficiaryDetails {
 
     @XmlElement(name = "Mode")
     private Integer mode;
-
+    
+    @XmlElement(name="HBLevel", defaultValue="")
+    private String hbLevel;
+    
+   	@XmlElement(name="ContactNo")
+    private String contactNo;
+    
     public BeneficiaryDetails() {
     }
 
-    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType, Date asOnDate) {
+    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType, Date asOnDate, String contactNo, String hbLevel) {
         this.stateId = stateId;
         this.mctsId = mctsId;
         this.serviceType = serviceType;
         this.asOnDate = asOnDate != null ? new SimpleDateFormat(DEFAULT_DATE_PATTERN).format(asOnDate) : null;
         this.dayOffset = MCTS_REQUEST_DAY_OFFSET;
+        this.contactNo = contactNo;
+        this.hbLevel = hbLevel;
         this.mode = MCTS_REQUEST_MODE;
     }
 

@@ -45,7 +45,12 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
         BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
         Integer stateId = beneficiarySyncSettings.getStateId();
         for (Beneficiary beneficiary : beneficiariesToSync) {
-            beneficiaryRequest.addBeneficiaryDetails(new BeneficiaryDetails(stateId, beneficiary.getMctsId(), beneficiary.getServiceType(), beneficiary.getServiceDeliveryDate()));
+            beneficiaryRequest.addBeneficiaryDetails(new BeneficiaryDetails(stateId, 
+            	beneficiary.getMctsId(),
+            	beneficiary.getServiceType(),
+            	beneficiary.getServiceDeliveryDate(),
+            	beneficiary.getMobileNumber(),
+            	beneficiary.getHbLevelStr()));
         }
         return beneficiaryRequest;
     }

@@ -48,7 +48,8 @@ public class MotechBeneficiarySyncServiceTest {
         DateTime endDate = DateTime.now();
         Date serviceDeliveryDate1 = new Date();
         Date serviceDeliveryDate2 = new Date();
-        List<Beneficiary> beneficiaries = Arrays.asList(new Beneficiary(1, "mcts_id1", 2, serviceDeliveryDate1), new Beneficiary(2, "mcts_id2", 4, serviceDeliveryDate2));
+        List<Beneficiary> beneficiaries = Arrays.asList(new Beneficiary(1, "mcts_id1", 2, serviceDeliveryDate1, "9999900000", 1,5,6,7),
+        		new Beneficiary(2, "mcts_id2", 4, serviceDeliveryDate2,"9999900001", 1,4,5,6));
         when(careDataService.getBeneficiariesToSync(startDate, endDate)).thenReturn(beneficiaries);
         when(beneficiarySyncSettings.getStateId()).thenReturn(31);
 
@@ -61,9 +62,9 @@ public class MotechBeneficiarySyncServiceTest {
         BeneficiaryRequest actualRequest = beneficiaryRequestCaptor.getValue();
         List<BeneficiaryDetails> beneficiaryDetails = actualRequest.getAllBeneficiaryDetails();
         assertEquals(2, beneficiaryDetails.size());
-        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id1", 2, serviceDeliveryDate1)));
-        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id2", 4, serviceDeliveryDate2)));
-
+        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id1", 2, serviceDeliveryDate1, 
+        		"9999911111", "&gt; 11")));
+        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id2", 4, serviceDeliveryDate2, "99999119111","&gt; 11")));
         verify(careDataService).updateSyncedBeneficiaries(beneficiaries);
     }
 

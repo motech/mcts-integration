@@ -40,7 +40,9 @@ public class CareDataServiceTest {
     public void shouldGetBeneficiariesToSync() {
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
-        List<Beneficiary> expectedBeneficiaries = Arrays.asList(new Beneficiary(1, "mcts_id1", 2, new Date()), new Beneficiary(2, "mcts_id2", 4, new Date()));
+        List<Beneficiary> expectedBeneficiaries = Arrays.asList(
+        		new Beneficiary(1, "mcts_id1", 2, new Date(),"9999900000", 1, null, null,null),
+        		new Beneficiary(2, "mcts_id2", 4, new Date(), "9999911111", 1, null, null,null));
         Mockito.when(careDataRepository.getBeneficiariesToSync(startDate, endDate)).thenReturn(expectedBeneficiaries);
 
         List<Beneficiary> actualBeneficiaries = careDataService.getBeneficiariesToSync(startDate, endDate);
@@ -88,8 +90,9 @@ public class CareDataServiceTest {
 
     @Test
     public void shouldUpdateSyncedBeneficiaries() {
-        Beneficiary beneficiary1 = new Beneficiary(1, "mcts_id1", 2, new Date());
-        Beneficiary beneficiary2 = new Beneficiary(2, "mcts_id2", 4, new Date());
+
+        Beneficiary beneficiary1 = new Beneficiary(1, "mcts_id1", 2, new Date(),"9999900000", 1, null, null,null);
+        Beneficiary beneficiary2 = new Beneficiary(2, "mcts_id2", 4, new Date(),"9999911111", 1, null, null,null);
         List<Beneficiary> beneficiaries = Arrays.asList(beneficiary1, beneficiary2);
         MCTSPregnantMother mctsPregnantMother1 = new MCTSPregnantMother();
         MCTSPregnantMother mctsPregnantMother2 = new MCTSPregnantMother();

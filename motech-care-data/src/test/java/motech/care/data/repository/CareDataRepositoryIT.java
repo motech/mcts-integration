@@ -44,14 +44,14 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
         getCurrentSession().save(mctsPregnantMother3);
 
         List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 2, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 3, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 4, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 5, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(), "mctsId3", 8, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(), "mctsId3", 9, now));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 2, now, "9999911110", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 3, now, "9999911111", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 4, now, "9999911171",1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 5, now, "9999911181", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now, "9999911161", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now, "9999911151", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(), "mctsId3", 8, now, "9999911131", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(), "mctsId3", 9, now, "9999911121",1, null, null,null));
 
         List<Beneficiary> beneficiariesToSync = careDataRepository.getBeneficiariesToSync(DateTime.now().minusDays(1), DateTime.now().plusDays(1));
 
@@ -73,9 +73,9 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
         getCurrentSession().save(mctsPregnantMother2);
 
         List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 5, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 5, now, "9999911111", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now, "9999911911", 1, null, null,8));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now, "9999911191",1, null, null,6));
 
         List<Beneficiary> beneficiariesToSync = careDataRepository.getBeneficiariesToSync(startDate, endDate);
 
@@ -95,10 +95,10 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
         getCurrentSession().save(new MCTSPregnantMotherServiceUpdate(mctsPregnantMother2, 5, now, null));
 
         List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 3, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 4, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now));
-        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 3, now, "9999911111",1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(), "mctsId1", 4, now, "9999911191", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 6, now, "9999911171", 1, null, null,null));
+        expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(), "mctsId2", 7, now, "9999911161",1, null, null,null));
 
         List<Beneficiary> beneficiariesToSync = careDataRepository.getBeneficiariesToSync(DateTime.now().minusDays(1), DateTime.now().plusDays(1));
 
