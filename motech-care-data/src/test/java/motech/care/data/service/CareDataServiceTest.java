@@ -3,6 +3,7 @@ package motech.care.data.service;
 import motech.care.data.domain.Beneficiary;
 import motech.care.data.domain.MCTSPregnantMother;
 import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
+import motech.care.data.domain.MotherCase;
 import motech.care.data.repository.CareDataRepository;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -12,7 +13,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.care.reporting.domain.dimension.MotherCase;
 
 import java.util.Arrays;
 import java.util.Date;

@@ -2,7 +2,7 @@ package motech.care.data.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.motechproject.care.reporting.domain.dimension.MotherCase;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

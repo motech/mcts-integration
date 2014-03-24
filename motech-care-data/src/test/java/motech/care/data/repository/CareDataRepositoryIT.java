@@ -3,12 +3,13 @@ package motech.care.data.repository;
 import motech.care.data.domain.Beneficiary;
 import motech.care.data.domain.MCTSPregnantMother;
 import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
+import motech.care.data.domain.MotherCase;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.care.reporting.domain.dimension.MotherCase;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
         expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(), "mctsId3", 9, now, "9999911121",1, null, null,null));
 
         List<Beneficiary> beneficiariesToSync = careDataRepository.getBeneficiariesToSync(DateTime.now().minusDays(1), DateTime.now().plusDays(1));
-
         assertTrue(CollectionUtils.isEqualCollection(expectedBeneficiaries, beneficiariesToSync));
     }
     

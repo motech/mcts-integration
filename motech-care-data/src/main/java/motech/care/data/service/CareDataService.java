@@ -3,9 +3,10 @@ package motech.care.data.service;
 import motech.care.data.domain.Beneficiary;
 import motech.care.data.domain.MCTSPregnantMother;
 import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
+import motech.care.data.domain.MotherCase;
 import motech.care.data.repository.CareDataRepository;
 import org.joda.time.DateTime;
-import org.motechproject.care.reporting.domain.dimension.MotherCase;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
