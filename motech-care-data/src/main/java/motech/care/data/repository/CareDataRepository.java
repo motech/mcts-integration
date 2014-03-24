@@ -70,7 +70,7 @@ public class CareDataRepository {
                 "	    bp.anc3_hemoglobin,\n" +
                 "	    bp.anc4_hemoglobin\n" +
                 "FROM updatable_cases\n" +
-                "JOIN bp_form bp on bp.case_id=updatable_cases.mother_case_id\n" +
+                "LEFT JOIN bp_form bp on bp.case_id=updatable_cases.mother_case_id\n" +
                 "JOIN report.mcts_pregnant_mother mother ON updatable_cases.mother_case_id = mother.case_id\n" +
                 "WHERE (mother.id, service_type) NOT IN (SELECT * FROM mcts_updated_services);\n";
 
