@@ -35,7 +35,7 @@ public class BeneficiaryDetails {
     @XmlElement(name = "Mode")
     private Integer mode;
     
-    @XmlElement(name="HBLevel", defaultValue="")
+    @XmlElement(name="HBLevel",required=true)
     private String hbLevel;
     
    	@XmlElement(name="ContactNo")
@@ -44,14 +44,14 @@ public class BeneficiaryDetails {
     public BeneficiaryDetails() {
     }
 
-    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType, Date asOnDate, String contactNo, String hbLevel) {
+    public BeneficiaryDetails(Integer stateId, String mctsId, Integer serviceType, Date asOnDate, String contactNo, String hbLevelStr) {
         this.stateId = stateId;
         this.mctsId = mctsId;
         this.serviceType = serviceType;
         this.asOnDate = asOnDate != null ? new SimpleDateFormat(DEFAULT_DATE_PATTERN).format(asOnDate) : null;
         this.dayOffset = MCTS_REQUEST_DAY_OFFSET;
         this.contactNo = contactNo;
-        this.hbLevel = hbLevel;
+        this.hbLevel = hbLevelStr;
         this.mode = MCTS_REQUEST_MODE;
     }
 

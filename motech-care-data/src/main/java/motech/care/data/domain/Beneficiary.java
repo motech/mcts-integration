@@ -86,12 +86,7 @@ public class Beneficiary {
 			}
 		}
 		if (hbLevel != null) {
-			if (hbLevel < 7) {
-				hbLevelStr = "< 7";
-			} else if (hbLevel >= 7 && hbLevel < 11) {
-				hbLevelStr = "> 7 and < 11";
-			} else if (hbLevel >= 11)
-				hbLevelStr = "> 11";
+			hbLevelStr = String.valueOf(hbLevel);
 		}
 	}
 
