@@ -8,6 +8,10 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.Properties;
 
+
+
+import mcts.integration.beneficiary.sync.util.Encryption;
+
 @Component
 public class BeneficiarySyncSettings {
 
@@ -18,14 +22,17 @@ public class BeneficiarySyncSettings {
         this.properties = properties;
     }
 
-    public String getUpdateRequestUrl() {
+    public String getUpdateRequestUrl()  {
         return String.format("%s/%s?%s", properties.getProperty("mcts.base.url"), properties.getProperty("beneficiary.sync.update.request.url"), getUpdateRequestParams());
     }
 
-    private String getUpdateRequestParams() {
+    private String getUpdateRequestParams()  {
+    	String password = "beneficiary.sync.update.request.authentication.password.key";
+    	String encPassword  = Encryption.EncryptWithTimeInSeconds(password);
+    	
         return String.format("%s=%s&%s=%s&%s=%s",
                 properties.getProperty("beneficiary.sync.update.request.authentication.username.key"), properties.getProperty("mcts.authentication.username"),
-                properties.getProperty("beneficiary.sync.update.request.authentication.password.key"), properties.getProperty("mcts.authentication.password"),
+                encPassword, properties.getProperty("mcts.authentication.password"),
                 properties.getProperty("beneficiary.sync.update.request.operation.key"), properties.getProperty("beneficiary.sync.update.request.operation"));
     }
 
