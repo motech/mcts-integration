@@ -27,12 +27,12 @@ public class BeneficiarySyncSettings {
     }
 
     private String getUpdateRequestParams()  {
-    	String password = "beneficiary.sync.update.request.authentication.password.key";
+    	String password = "mcts.authentication.password";
     	String encPassword  = Encryption.EncryptWithTimeInSeconds(password);
     	
         return String.format("%s=%s&%s=%s&%s=%s",
                 properties.getProperty("beneficiary.sync.update.request.authentication.username.key"), properties.getProperty("mcts.authentication.username"),
-                encPassword, properties.getProperty("mcts.authentication.password"),
+                properties.getProperty("beneficiary.sync.update.request.authentication.password.key"), encPassword,
                 properties.getProperty("beneficiary.sync.update.request.operation.key"), properties.getProperty("beneficiary.sync.update.request.operation"));
     }
 
