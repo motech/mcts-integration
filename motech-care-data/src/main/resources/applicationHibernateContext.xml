@@ -22,6 +22,7 @@
                 <value>motech.care.data.domain.FlwGroup</value>
                 <value>motech.care.data.domain.MotherCase</value>
                 <value>motech.care.data.domain.LocationDimension</value>
+                <value>motech.care.data.domain.BpForm</value>
                 
             </list>
         </property>

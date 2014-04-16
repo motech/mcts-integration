@@ -1,17 +1,21 @@
 package mcts.integration.beneficiary.sync.service;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.List;
+
 import mcts.integration.beneficiary.sync.request.BeneficiaryDetails;
 import mcts.integration.beneficiary.sync.request.BeneficiaryRequest;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
+import mcts.integration.beneficiary.sync.util.GenerateBeneficiaryToSyncRequestFiles;
 import motech.care.data.domain.Beneficiary;
 import motech.care.data.service.CareDataService;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class MotechBeneficiarySyncService implements BeneficiarySyncService {
@@ -38,6 +42,14 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
         LOGGER.info(String.format("Found %s beneficiary records to sync to MCTS", beneficiariesToSync.size()));
         BeneficiaryRequest beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
         mctsHttpClientService.syncTo(beneficiaryRequest);
+        GenerateBeneficiaryToSyncRequestFiles generateBeneficiaryToSyncXML = new GenerateBeneficiaryToSyncRequestFiles();
+        try {
+        	File xmlFile = new File(getClass().getClassLoader().getResource("UpdateRequest.xml").toURI());
+        	File updateRequestUrl = new File(getClass().getClassLoader().getResource("UpdateRequestUrl.txt").toURI());
+			generateBeneficiaryToSyncXML.writeBeneficiaryToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
     }
 

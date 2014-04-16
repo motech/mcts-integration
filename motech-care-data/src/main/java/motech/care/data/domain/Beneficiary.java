@@ -16,7 +16,7 @@ public class Beneficiary {
 	private Integer anc2HBLevel;
 	private Integer anc3HBLevel;
 	private Integer anc4HBLevel;
-	private String hbLevelStr ="";
+	private String hbLevelStr = "";
 	
 	public Integer getAnc1HBLevel() {
 		return anc1HBLevel;
@@ -75,23 +75,23 @@ public class Beneficiary {
 		this.serviceType = serviceType;
 		this.serviceDeliveryDate = serviceDeliveryDate;
 		this.mobileNumber = mobileNumber;
-		Integer hbLevel = anc4HBLevel;
-		if (hbLevel == null) {
+		Integer hbLevel = null;
+		if (serviceType == 2)
+		{
+			hbLevel = anc2HBLevel;
+		}else if(serviceType == 3){
 			hbLevel = anc3HBLevel;
-			if(hbLevel == null) {
-				hbLevel = anc2HBLevel;
-				if(hbLevel == null) {
-					hbLevel = anc1HBLevel;
-				}
-			}
+		}else if (serviceType == 4){
+			hbLevel = anc4HBLevel;
 		}
+		
 		if (hbLevel != null) {
-			if (hbLevel < 7) {
-				hbLevelStr = "< 7";
+			if (hbLevel < 7 && hbLevel > 0) {
+				hbLevelStr = "3";
 			} else if (hbLevel >= 7 && hbLevel < 11) {
-				hbLevelStr = "> 7 and < 11";
+				hbLevelStr = "2";
 			} else if (hbLevel >= 11)
-				hbLevelStr = "> 11";
+				hbLevelStr = "1";
 		}
 	}
 

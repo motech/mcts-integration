@@ -78,4 +78,10 @@ public class MCTSPregnantMother {
                 .append(motherCase != null ? motherCase.getCaseId() : 0)
                 .hashCode();
     }
+    
+    @Override
+    public String toString()
+    {
+    	return String.format("id:%s\tmcts_id:%s\tcase_id:%s", this.id, this.mctsId, this.motherCase);
+    }
 }

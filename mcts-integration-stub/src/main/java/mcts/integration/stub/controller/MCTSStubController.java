@@ -1,5 +1,17 @@
 package mcts.integration.stub.controller;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import mcts.integration.stub.domain.ServiceUpdates;
+import mcts.integration.stub.domain.Update;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
@@ -9,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
 
 @Controller
 public class MCTSStubController {
@@ -32,14 +42,13 @@ public class MCTSStubController {
         return IOUtils.toString(new ClassPathResource("response/mother_details_response.xml").getInputStream());
     }
 
-    @RequestMapping(value = "/beneficiary/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/beneficiary/update", method = RequestMethod.POST, consumes = "text/xml")
     @ResponseBody
     public String updateBeneficiaryDetails(@RequestParam("url") String username,
                                            @RequestParam("Sec_Code") String password,
                                            @RequestParam("Op") String operation,
-                                           @RequestBody String beneficiaryDetails) {
+                                           @RequestBody String beneficiaryDetails) throws JAXBException {
 
-        return "Updated Beneficiary Details";
+    	return "Updated Beneficiary Details";
     }
-
 }
