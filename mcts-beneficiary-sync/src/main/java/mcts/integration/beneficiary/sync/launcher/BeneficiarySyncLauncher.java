@@ -1,35 +1,40 @@
 package mcts.integration.beneficiary.sync.launcher;
 
-import mcts.integration.beneficiary.sync.factory.BeneficiarySyncServiceFactory;
+import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import mcts.integration.beneficiary.sync.factory.BeneficiarySyncServiceFactory;
 import mcts.integration.beneficiary.sync.service.BeneficiarySyncService;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.regex.Pattern;
-
+import org.springframework.stereotype.Component;
+@Component
 public class BeneficiarySyncLauncher {
 
 	private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
 	private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
-	private static final String APPLICATION_CONTEXT_XML = "beneficiarySyncContext.xml";
+	private static final String APPLICATION_CONTEXT_XML = "applicationBeneficiarySyncContext.xml";
 	
-	//@Autowired
+	static BeneficiarySyncServiceFactory beneficiarySyncServiceFactory;
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(BeneficiarySyncLauncher.class);
+
+/*	@Autowired
 	public BeneficiarySyncLauncher(){}
-
-	public static void main(String[] syncArgs) {
+*/
+	public static void syncLauncher(String[] syncArgs) {
 		validateArguments(syncArgs);
-
+		LOGGER.info("Arguments are Valid");
 		SyncType syncType = SyncType.from(syncArgs[0]);
 		DateTime startDate = parseDate(syncArgs[1]);
 		DateTime endDate = parseDate(syncArgs[2]);
 
-		BeneficiarySyncServiceFactory beneficiarySyncServiceFactory = getBeneficiarySyncServiceFactory();
-		BeneficiarySyncService beneficiarySyncService = beneficiarySyncServiceFactory
-				.getBeneficiarySyncService(syncType);
+		beneficiarySyncServiceFactory = getBeneficiarySyncServiceFactory();
+		BeneficiarySyncService beneficiarySyncService = beneficiarySyncServiceFactory.getBeneficiarySyncService(syncType);
 		beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 	}
 

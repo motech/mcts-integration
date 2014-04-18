@@ -41,6 +41,8 @@ public class Update {
 	@XmlElement(name = "ContactNo")
 	private String contactNo;
 
+	private boolean isError = false;
+
 	public Update() {
 	}
 
@@ -58,10 +60,8 @@ public class Update {
 	}
 
 	public String[] verifyUpdate() {
-		String[] failure = new String[3];
+		String[] failure = new String[2];
 		failure[0] = this.mctsId;
-		failure[1] = "No Error";
-		failure[2] = this.hbLevel;
 		String error = String.format("%s%s%s%s%s%s%s%s",
 				this.verifyAsOnDate(this.asOnDate),
 				this.verifyContactNo(this.contactNo),
@@ -71,13 +71,15 @@ public class Update {
 				this.verifyServiceType(this.serviceType),
 				this.verifyStateId(this.stateId));
 		failure[1] = error;
-		return failure;
+		return isError ? failure : null;
 	}
 
 	// Verifies that StateId is 31
 	public String verifyStateId(Integer stateId) {
-		if (!stateId.equals(10))
-			return "invalid StateId";
+		if (!stateId.equals(10)) {
+			isError = true;
+			return "invalid StateId: " + stateId;
+		}
 		return null;
 	}
 
@@ -85,15 +87,18 @@ public class Update {
 	public String verifyMctsId(String mctsId) {
 		if (mctsId != null)
 			return null;
-		else
-			return "Invalid Mcts-Id";
+		else {
+			isError = true;
+			return "Invalid Mcts-Id: " + mctsId;
+		}
 	}
 
 	// Can be from 2 to 9 only
 	public String verifyServiceType(Integer serviceType) {
 		if (serviceType > 1 && serviceType < 10)
 			return null;
-		return "invalid Service Type";
+		isError = true;
+		return ("invalid Service Type: " + serviceType);
 	}
 
 	// verifies that date is a valid and in format DD-MM-YYYY
@@ -105,14 +110,17 @@ public class Update {
 			dateFormat.parse(asOnDate);
 			return null;
 		} catch (ParseException e) {
-			return "invalid date";
+			isError = true;
+			return ("invalid date: " + asOnDate);
 		}
 	}
 
 	// verifies that dayOffSet is 0
 	public String verifyDayOffSet(Integer dayOffset) {
-		if (!dayOffset.equals(0))
-			return "invalid Day OffSet";
+		if (!dayOffset.equals(0)) {
+			isError = true;
+			return ("invalid Day OffSet: " + dayOffset);
+		}
 		return null;
 	}
 
@@ -122,7 +130,7 @@ public class Update {
 	}
 
 	// Verifies it to be either 1 or 2 or 3 or null
-	private String verifyHbLevel(String hbLevel) {
+	public String verifyHbLevel(String hbLevel) {
 		if (this.serviceType == 2 || this.serviceType == 3
 				|| this.serviceType == 4) {
 			if (hbLevel.equals("1") || hbLevel.equals("2")
@@ -131,13 +139,20 @@ public class Update {
 				return null;
 		} else if (hbLevel == "" || hbLevel == null)
 			return null;
-		return "invalid hb Level";
+		isError = true;
+		return ("invalid hb Level: " + hbLevel);
 	}
 
 	// Verifies Mode ==4
 	public String verifyMode(Integer mode) {
-		if (!mode.equals(4))
-			return "invalid mode";
+		if (!mode.equals(4)) {
+			isError = true;
+			return ("invalid mode: " + mode);
+		}
 		return null;
+	}
+	
+	public void setServiceType(int serviceType){
+		this.serviceType = serviceType;
 	}
 }

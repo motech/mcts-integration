@@ -60,7 +60,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 		if (failures.size()>0)
 			{for (String[] message : failures)
 			{
-				LOGGER.error(String.format("Error for mctsId: %s in the field: %s with hbLevel: %s", message[0], message[1], message[2]));
+				LOGGER.error(String.format("Error for mctsId: %s in the field: %s", message[0], message[1]));
 			}
 			return false;
 			}

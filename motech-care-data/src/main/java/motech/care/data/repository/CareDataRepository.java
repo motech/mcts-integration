@@ -21,6 +21,7 @@ public class CareDataRepository {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(CareDataRepository.class);
 
+	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Autowired

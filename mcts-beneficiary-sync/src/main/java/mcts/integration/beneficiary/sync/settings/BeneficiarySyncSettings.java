@@ -46,7 +46,15 @@ public class BeneficiarySyncSettings {
         return queryParams;
     }
 
-    public String getOutputFileLocation() {
+    public String getSyncRequestOutputFileLocation() {
         return properties.getProperty("beneficiary.sync.get.request.output.file.absolute.location");
+    }
+    
+    public String getUpdateXmlOutputFileLocation() {
+        return properties.getProperty("beneficiary.sync.update.xml.output.file.absolute.location");
+    }
+    
+    public String getUpdateUrlOutputFileLocation() {
+        return properties.getProperty("beneficiary.sync.update.url.output.file.absolute.location");
     }
 }

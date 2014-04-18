@@ -42,10 +42,12 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
         LOGGER.info(String.format("Found %s beneficiary records to sync to MCTS", beneficiariesToSync.size()));
         BeneficiaryRequest beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
         mctsHttpClientService.syncTo(beneficiaryRequest);
+        String outputXMLFileLocation = String.format("%s_%s.xml", beneficiarySyncSettings.getUpdateXmlOutputFileLocation(), DateTime.now());
+        String outputURLFileLocation = String.format("%s_%s.txt", beneficiarySyncSettings.getUpdateUrlOutputFileLocation(), DateTime.now());
         GenerateBeneficiaryToSyncRequestFiles generateBeneficiaryToSyncXML = new GenerateBeneficiaryToSyncRequestFiles();
         try {
-        	File xmlFile = new File(getClass().getClassLoader().getResource("UpdateRequest.xml").toURI());
-        	File updateRequestUrl = new File(getClass().getClassLoader().getResource("UpdateRequestUrl.txt").toURI());
+        	File xmlFile = new File(outputXMLFileLocation);
+        	File updateRequestUrl = new File(outputURLFileLocation);
 			generateBeneficiaryToSyncXML.writeBeneficiaryToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -35,7 +35,7 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
 
         String beneficiaryData = mctsHttpClientService.syncFrom(requestBody);
 
-        String outputFileLocation = String.format("%s_%s", beneficiarySyncSettings.getOutputFileLocation(), DateTime.now());
+        String outputFileLocation = String.format("%s_%s", beneficiarySyncSettings.getSyncRequestOutputFileLocation(), DateTime.now());
         try {
             FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData);
         } catch (IOException e) {

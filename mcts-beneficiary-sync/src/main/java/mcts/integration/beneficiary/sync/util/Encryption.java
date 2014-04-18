@@ -60,7 +60,7 @@ public class Encryption {
 
 	}
 
-	public static String encryptWithTimeInSeconds(String password) {
+	protected static String encryptWithTimeInSeconds(String password) {
 		try {
 			long time = Calendar.getInstance().getTimeInMillis();
 			long timeInSeconds = time / 1000;

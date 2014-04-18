@@ -51,7 +51,7 @@ public class MCTSBeneficiarySyncServiceTest {
         MultiValueMap<String, String> defaultQueryParams = new LinkedMultiValueMap<>();
         defaultQueryParams.add("username", "myUser");
         when(beneficiarySyncSettings.getDefaultBeneficiaryListQueryParams()).thenReturn(defaultQueryParams);
-        when(beneficiarySyncSettings.getOutputFileLocation()).thenReturn(outputFileLocation);
+        when(beneficiarySyncSettings.getSyncRequestOutputFileLocation()).thenReturn(outputFileLocation);
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.putAll(defaultQueryParams);
         requestBody.add("FromDate", startDate.toString("dd-MM-yyyy"));

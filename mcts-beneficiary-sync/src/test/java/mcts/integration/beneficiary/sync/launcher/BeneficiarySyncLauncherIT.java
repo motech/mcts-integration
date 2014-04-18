@@ -10,9 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = {"classpath*:beneficiarySyncContext.xml"})
 public class BeneficiarySyncLauncherIT {
 
+	BeneficiarySyncLauncher beneficiarySyncLauncher;
     @Test
     @Ignore
     public void shouldGetBeneficiarySyncServiceFactoryBean() {
-        BeneficiarySyncLauncher.main(new String[]{"26-11-2013", "27-11-2013"});
+        beneficiarySyncLauncher.syncLauncher(new String[]{"Service Update","26-11-2013", "27-11-2013"});
     }
 }
