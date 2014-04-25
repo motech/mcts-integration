@@ -57,4 +57,8 @@ public class BeneficiarySyncSettings {
     public String getUpdateUrlOutputFileLocation() {
         return properties.getProperty("beneficiary.sync.update.url.output.file.absolute.location");
     }
+    
+    public String getSyncCsvFileLocation() {
+        return properties.getProperty("beneficiary.sync.csv.input.file.absolute.location");
+    }
 }

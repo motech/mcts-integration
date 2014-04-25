@@ -21,7 +21,7 @@
 		</dependency>
 		<dependency>
 			<groupId>mcts.integration</groupId>
-			<artifactId>mcts-integration-config</artifactId>
+			<artifactId>care-data-migration</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

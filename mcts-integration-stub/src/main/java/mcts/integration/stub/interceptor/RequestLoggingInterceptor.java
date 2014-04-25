@@ -66,10 +66,4 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 			}
 		return true;
 	}
-	
-/*	public static void main(String[] args)
-	{
-		String s ="<hjj><ujhkjhajk>";
-		System.out.println(s.indexOf('>'));
-	}*/
 }

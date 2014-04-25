@@ -7,10 +7,7 @@ public class CareDataMigrator {
 
     private static final String APPLICATION_CONTEXT_XML = "careDataMigrationContext.xml";
 
-    public static void main(String[] args) {
-        validateArguments(args);
-        String filePath = args[0];
-
+    public static void sync(String filePath) {
         DataMigrationService dataMigrationService = getDataMigrationService();
         dataMigrationService.migrate(filePath);
     }
@@ -20,10 +17,5 @@ public class CareDataMigrator {
         context.setConfigLocation(APPLICATION_CONTEXT_XML);
         context.refresh();
         return (DataMigrationService) context.getBean("dataMigrationService");
-    }
-
-    private static void validateArguments(String[] args) {
-        if (args.length != 1)
-            throw new IllegalArgumentException("Invalid arguments. Expected only one argument: absolute filepath");
     }
 }
