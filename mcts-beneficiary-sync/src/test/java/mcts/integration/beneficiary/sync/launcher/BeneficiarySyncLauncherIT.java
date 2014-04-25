@@ -13,7 +13,7 @@ public class BeneficiarySyncLauncherIT {
 	BeneficiarySyncLauncher beneficiarySyncLauncher;
     @Test
     @Ignore
-    public void shouldGetBeneficiarySyncServiceFactoryBean() {
+    public void shouldGetBeneficiarySyncServiceFactoryBean() throws Exception {
         beneficiarySyncLauncher.syncLauncher(new String[]{"Service Update","26-11-2013", "27-11-2013"});
     }
 }

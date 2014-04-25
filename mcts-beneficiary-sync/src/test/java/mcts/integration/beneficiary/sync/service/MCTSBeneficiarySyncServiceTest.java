@@ -1,6 +1,7 @@
 package mcts.integration.beneficiary.sync.service;
 
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class MCTSBeneficiarySyncServiceTest {
     }
 
     @Test
-    public void shouldSyncBeneficiaryDataOfMCTSToMotechAndWriteToFile() throws IOException {
+    public void shouldSyncBeneficiaryDataOfMCTSToMotechAndWriteToFile() throws Exception {
         PowerMockito.mockStatic(FileUtils.class);
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();

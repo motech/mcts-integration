@@ -31,7 +31,7 @@ public class BeneficiarySyncController {
 	@RequestMapping(value = "getXml", method = RequestMethod.GET)
 	public String getXml(@RequestParam("service") String service,
 			@RequestParam("startDate") String startDate,
-			@RequestParam("endDate") String endDate) {
+			@RequestParam("endDate") String endDate) throws Exception {
 		String[] stringArgs = new String[3];
 		stringArgs[0] = service; LOGGER.debug("Requested Service is:" + service);
 		stringArgs[1] = startDate; LOGGER.debug("Requested StartDate is:" + startDate);

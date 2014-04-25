@@ -12,7 +12,7 @@ public class BeneficiarySyncLauncherTest {
     BeneficiarySyncLauncher beneficiarySyncLauncher;
     
     @Test
-    public void shouldValidateTheNumberOfArguments() {
+    public void shouldValidateTheNumberOfArguments() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Invalid arguments. Expected 3 arguments(in order): SyncType, StartTime and EndTime");
 
@@ -20,7 +20,7 @@ public class BeneficiarySyncLauncherTest {
     }
 
     @Test
-    public void shouldValidateSyncType() {
+    public void shouldValidateSyncType() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage(String.format("Invalid sync type. Sync type should be %s or %s", SyncType.GET.getDescription(), SyncType.UPDATE.getDescription()));
 
@@ -28,7 +28,7 @@ public class BeneficiarySyncLauncherTest {
     }
 
     @Test
-    public void shouldValidateTheFormatOfDateArguments() {
+    public void shouldValidateTheFormatOfDateArguments() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Invalid date format. Date format should be: dd-MM-yyyy.");
 

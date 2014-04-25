@@ -5,6 +5,7 @@ import mcts.integration.beneficiary.sync.request.BeneficiaryRequest;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
 import motech.care.data.domain.Beneficiary;
 import motech.care.data.service.CareDataService;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class MotechBeneficiarySyncServiceTest {
     }
 
     @Test
-    public void shouldGetMotechBeneficiaryDetailsFromDBAndSyncToMCTSAndUpdateSyncedData() {
+    public void shouldGetMotechBeneficiaryDetailsFromDBAndSyncToMCTSAndUpdateSyncedData() throws Exception {
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
         Date serviceDeliveryDate1 = new Date();
@@ -71,7 +72,7 @@ public class MotechBeneficiarySyncServiceTest {
     }
 
     @Test
-    public void shouldNotSyncBeneficiaryDetailsIfThereAreNoRecordsToSync() {
+    public void shouldNotSyncBeneficiaryDetailsIfThereAreNoRecordsToSync() throws Exception {
         DateTime now = DateTime.now();
         when(careDataService.getBeneficiariesToSync(now, now)).thenReturn(new ArrayList<Beneficiary>());
 
