@@ -6,6 +6,7 @@ import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,15 +19,9 @@ public class BeneficiarySyncController {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeneficiarySyncController.class);
 
+	@Autowired
     private BeneficiarySyncSettings beneficiarySyncSettings;
 
-	/*private BeneficiarySyncLauncher beneficairySyncLauncher;
-
-	@Autowired
-	public BeneficiarySyncController(BeneficiarySyncLauncher beneficairySyncLauncher) {
-		this.beneficairySyncLauncher = beneficairySyncLauncher;
-	}
-*/
 	@RequestMapping(value = "getXml", method = RequestMethod.GET)
 	public String getXml(@RequestParam("service") String service,
 			@RequestParam("startDate") String startDate,
@@ -40,9 +35,7 @@ public class BeneficiarySyncController {
 	}
 	
 	@RequestMapping(value = "sync", method = RequestMethod.GET)
-	public String sync(@RequestParam("service") String service,
-			@RequestParam("startDate") String startDate,
-			@RequestParam("endDate") String endDate) {
+	public String sync() {
 		String updateCsvFileLocation = beneficiarySyncSettings.getSyncCsvFileLocation();
 		LOGGER.debug("Csv File Location is: " + updateCsvFileLocation);
 		CareDataMigrator.sync(updateCsvFileLocation);
