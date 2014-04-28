@@ -4,7 +4,6 @@ import mcts.care.data.migration.CareDataMigrator;
 import mcts.integration.beneficiary.sync.launcher.BeneficiarySyncLauncher;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

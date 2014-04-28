@@ -12,7 +12,4 @@
 
     <mvc:annotation-driven/>
 
-<!--     <mvc:interceptors>
-        <bean class="mcts.integration.stub.interceptor.RequestLoggingInterceptor"/>
-    </mvc:interceptors> -->
 </beans>

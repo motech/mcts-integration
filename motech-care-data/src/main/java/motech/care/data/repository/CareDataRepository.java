@@ -1,6 +1,11 @@
 package motech.care.data.repository;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import motech.care.data.domain.Beneficiary;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,13 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Repository
 public class CareDataRepository {
 
+	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(CareDataRepository.class);
 

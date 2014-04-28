@@ -135,16 +135,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-annotations</artifactId>
-				<version>3.5.6-Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-commons-annotations</artifactId>
-				<version>3.3.0.ga</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>4.2.7.Final</version>
 			</dependency>
@@ -174,11 +164,6 @@
 				<artifactId>powermock-module-junit4</artifactId>
 				<version>1.5.1</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<artifactId>care-reporting-domain</artifactId>
-				<groupId>org.motechproject</groupId>
-				<version>0.2-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

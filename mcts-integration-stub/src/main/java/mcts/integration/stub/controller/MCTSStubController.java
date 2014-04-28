@@ -1,16 +1,8 @@
 package mcts.integration.stub.controller;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import mcts.integration.stub.domain.ServiceUpdates;
-import mcts.integration.stub.domain.Update;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;

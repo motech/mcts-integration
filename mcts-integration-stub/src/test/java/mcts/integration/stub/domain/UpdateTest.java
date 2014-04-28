@@ -1,6 +1,5 @@
 package mcts.integration.stub.domain;
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -9,15 +8,18 @@ import org.junit.Test;
 public class UpdateTest {
 
 	private Update update = new Update();
+	@SuppressWarnings("deprecation")
 	private Date date = new Date(12, 12 , 2014);
 	SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd-MM-yyyy");
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldTestVerifyUpdate(){
 		Update update1 = new Update(10, "221213", 3, date, "12211111", "2");
 		assertEquals(null, update1.verifyUpdate());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldTestVerifyAsOnDate(){
 		String date1 = update.verifyAsOnDate("12-13-2014");
@@ -29,18 +31,21 @@ public class UpdateTest {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyStateId() {
 		assertEquals("invalid StateId: 12", update.verifyStateId(12));
 		assertEquals(null, update.verifyStateId(10));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyMctsId() {
 		assertEquals(null, update.verifyMctsId("12"));
 		assertEquals("Invalid Mcts-Id: null", update.verifyMctsId(null));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyServiceType() {
 
@@ -49,6 +54,7 @@ public class UpdateTest {
 		assertEquals("invalid Service Type: 1", update.verifyServiceType(1));
 		assertEquals("invalid Service Type: 10", update.verifyServiceType(10));
 	}
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyDayOffSet() {
 		assertEquals(null, update.verifyDayOffSet(0));
@@ -56,12 +62,14 @@ public class UpdateTest {
 		
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyContactNo() {
 		assertEquals(null, update.verifyContactNo("0"));
 		
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void verifyHbLevel() {
 		update.setServiceType(2);
@@ -78,6 +86,7 @@ public class UpdateTest {
 		assertEquals("invalid hb Level: 11", update.verifyHbLevel("11"));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyMode() {
 		assertEquals(null, update.verifyMode(4));
