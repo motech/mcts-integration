@@ -40,6 +40,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 		}
 		String inputStream = IOUtils.toString(request.getInputStream());
 		int index = inputStream.indexOf("serviceupdates");
+		if (index != -1){
 		String serviceUpdatesXML = inputStream.substring(index-1);
 		stringBuilder.append(String.format("\n Request Body: %s",
 				inputStream));
@@ -64,6 +65,8 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 			}
 			return false;
 			}
+		return true;
+		}
 		return true;
 	}
 }
