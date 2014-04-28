@@ -1,5 +1,7 @@
 package motech.care.data.domain;
 
+import motech.care.data.utils.ReflectionUtils;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
