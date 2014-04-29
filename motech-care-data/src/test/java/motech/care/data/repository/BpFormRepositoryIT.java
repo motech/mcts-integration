@@ -3,16 +3,10 @@ package motech.care.data.repository;
 import static junit.framework.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import motech.care.data.domain.Beneficiary;
 import motech.care.data.domain.BpForm;
-import motech.care.data.domain.MCTSPregnantMother;
-import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
-import motech.care.data.domain.MotherCase;
 
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +23,7 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		getCurrentSession().createSQLQuery("DELETE FROM report.bp_form")
 				.executeUpdate();
 	}
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Test
 	public void shouldGetAllBpForms() {
 		List<BpForm> bpFormsToBeAdded = getListOfBpFormsWithAncHemoglobinCombinations();
@@ -38,7 +33,7 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		assertEquals(bpFormsToBeAdded.size(), bpFormsFromDb.size());
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Test
 	public void shouldGetBpFormsWithNotNullAncHemoglobin() {
 		List<BpForm> bpFormsToBeAdded = getListOfBpFormsWithAncHemoglobinCombinations();
@@ -126,6 +121,7 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldVerifyBpFormValue() {
 		List<BpForm> bpFormsToBeAdded = getListOfBpFormsWithAncHemoglobinCombinations();
