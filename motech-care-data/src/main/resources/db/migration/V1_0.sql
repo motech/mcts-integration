@@ -491,6 +491,7 @@ CREATE TABLE report.bp_form(
 	,postponing	VARCHAR(15)
 	,institutional VARCHAR(255)
 	,delivery_offset_days INTEGER
+   ,creation_time TIMESTAMP WITH TIME ZONE
 );
 
 
