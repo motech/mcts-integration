@@ -2,7 +2,7 @@ package motech.care.data.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.motechproject.care.reporting.domain.dimension.MotherCase;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -77,5 +77,11 @@ public class MCTSPregnantMother {
                 .append(mctsId)
                 .append(motherCase != null ? motherCase.getCaseId() : 0)
                 .hashCode();
+    }
+    
+    @Override
+    public String toString()
+    {
+    	return String.format("id:%s\tmcts_id:%s\tcase_id:%s", this.id, this.mctsId, this.motherCase);
     }
 }

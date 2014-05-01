@@ -2,6 +2,7 @@ package mcts.integration.beneficiary.sync.service;
 
 import mcts.integration.beneficiary.sync.request.BeneficiaryRequest;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,10 @@ public class MCTSHttpClientService {
 
     public void syncTo(BeneficiaryRequest beneficiaryRequest) {
         LOGGER.info("Syncing beneficiary data to MCTS.");
-        ResponseEntity<String> response = restTemplate.postForEntity(beneficiarySyncSettings.getUpdateRequestUrl(), beneficiaryRequest, String.class);
-
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
+        ResponseEntity<String> response = restTemplate.postForEntity(beneficiarySyncSettings.getUpdateRequestUrl(), httpEntity, String.class);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
     }

@@ -12,11 +12,18 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
-    <bean id="allDomainEntities" parent="reportingEntities" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="allDomainEntities"  class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
-            <list merge="true">
+            <list>
                 <value>motech.care.data.domain.MCTSPregnantMother</value>
                 <value>motech.care.data.domain.MCTSPregnantMotherServiceUpdate</value>
+                 <value>motech.care.data.domain.ChildCase</value>
+                <value>motech.care.data.domain.Flw</value>
+                <value>motech.care.data.domain.FlwGroup</value>
+                <value>motech.care.data.domain.MotherCase</value>
+                <value>motech.care.data.domain.LocationDimension</value>
+                <value>motech.care.data.domain.BpForm</value>
+                
             </list>
         </property>
     </bean>

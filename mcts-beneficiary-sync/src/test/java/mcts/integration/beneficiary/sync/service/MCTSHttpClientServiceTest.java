@@ -24,42 +24,51 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MCTSHttpClientServiceTest {
 
-    @Mock
-    private BeneficiarySyncSettings beneficiarySyncSettings;
-    @Mock
-    private RestTemplate restTemplate;
+	@Mock
+	private BeneficiarySyncSettings beneficiarySyncSettings;
+	@Mock
+	private RestTemplate restTemplate;
 
-    private MCTSHttpClientService mctsHttpClientService;
+	private MCTSHttpClientService mctsHttpClientService;
 
-    @Before
-    public void setUp() throws Exception {
-        mctsHttpClientService = new MCTSHttpClientService(restTemplate, beneficiarySyncSettings);
-    }
+	@Before
+	public void setUp() throws Exception {
+		mctsHttpClientService = new MCTSHttpClientService(restTemplate,
+				beneficiarySyncSettings);
+	}
+	
+	@Test
+	public void shouldSyncBeneficiariesToMCTS() {
+		String requestUrl = "requestUrl";
+		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
+		when(beneficiarySyncSettings.getUpdateRequestUrl()).thenReturn(
+				requestUrl);
+		HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
+		mctsHttpClientService.syncTo(beneficiaryRequest);
+		verify(restTemplate).postForEntity(requestUrl, httpEntity,
+				String.class);
+	}
 
-    @Test
-    public void shouldSyncBeneficiariesToMCTS() {
-        String requestUrl = "requestUrl";
-        BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
-        when(beneficiarySyncSettings.getUpdateRequestUrl()).thenReturn(requestUrl);
+	@Test
+	public void shouldSyncBeneficiariesFromMCTS() {
+		String requestUrl = "requestUrl";
+		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity expectedRequestEntity = new HttpEntity(requestBody,
+				httpHeaders);
+		when(beneficiarySyncSettings.getBeneficiaryListRequestUrl())
+				.thenReturn(requestUrl);
+		String expectedResponse = "ResponseBody";
+		when(
+				restTemplate.exchange(requestUrl, HttpMethod.POST,
+						expectedRequestEntity, String.class)).thenReturn(
+				new ResponseEntity<>(expectedResponse, HttpStatus.OK));
 
-        mctsHttpClientService.syncTo(beneficiaryRequest);
+		String actualResponse = mctsHttpClientService.syncFrom(requestBody);
 
-        verify(restTemplate).postForEntity(requestUrl, beneficiaryRequest, String.class);
-    }
-
-    @Test
-    public void shouldSyncBeneficiariesFromMCTS() {
-        String requestUrl = "requestUrl";
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity expectedRequestEntity = new HttpEntity(requestBody, httpHeaders);
-        when(beneficiarySyncSettings.getBeneficiaryListRequestUrl()).thenReturn(requestUrl);
-        String expectedResponse = "ResponseBody";
-        when(restTemplate.exchange(requestUrl, HttpMethod.POST, expectedRequestEntity, String.class)).thenReturn(new ResponseEntity<>(expectedResponse, HttpStatus.OK));
-
-        String actualResponse = mctsHttpClientService.syncFrom(requestBody);
-
-        assertEquals(expectedResponse, actualResponse);
-    }
+		assertEquals(expectedResponse, actualResponse);
+	}
 }
