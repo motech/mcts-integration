@@ -1,6 +1,11 @@
 package mcts.integration.beneficiary.sync.service;
 
+import java.io.File;
+import java.io.IOException;
+
+import mcts.integration.beneficiary.sync.publisher.Publisher;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -10,9 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.io.File;
-import java.io.IOException;
-
 @Component
 public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
@@ -20,6 +22,9 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
 
     private MCTSHttpClientService mctsHttpClientService;
     private BeneficiarySyncSettings beneficiarySyncSettings;
+    private Publisher publisher = new Publisher();
+    private String beneficiaryData;
+    private String outputFileLocation;
 
     @Autowired
     public MCTSBeneficiarySyncService(MCTSHttpClientService mctsHttpClientService, BeneficiarySyncSettings beneficiarySyncSettings) {
@@ -34,8 +39,10 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
         requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
 
         String beneficiaryData = mctsHttpClientService.syncFrom(requestBody);
+        if (beneficiaryData == null)
+        	return;
 
-        String outputFileLocation = String.format("%s_%s", beneficiarySyncSettings.getSyncRequestOutputFileLocation(), DateTime.now());
+        outputFileLocation = String.format("%s_%s", beneficiarySyncSettings.getSyncRequestOutputFileLocation(), DateTime.now());
         try {
             FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData);
         } catch (IOException e) {
@@ -43,6 +50,13 @@ public class MCTSBeneficiarySyncService implements BeneficiarySyncService {
             return;
         }
         LOGGER.info(String.format("MCTS beneficiary details response is added to file %s", outputFileLocation));
+        LOGGER.info("Notifying Hub to Publish the Updates at url" + getHubSyncFromUrl() );
+        publisher.publish(getHubSyncFromUrl(), beneficiaryData);
+        
+    }
+    
+    public String getHubSyncFromUrl(){
+    	return beneficiarySyncSettings.getHubSyncFromUrl() + outputFileLocation;
     }
 
 }

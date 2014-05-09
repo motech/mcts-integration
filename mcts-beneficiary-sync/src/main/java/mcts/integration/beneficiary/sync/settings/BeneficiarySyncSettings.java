@@ -71,4 +71,16 @@ public class BeneficiarySyncSettings {
     public String getSyncCsvFileLocation() {
         return properties.getProperty("beneficiary.sync.csv.input.file.absolute.location");
     }
+    
+    public String getHubBaseUrl() {
+        return properties.getProperty("hub.base.url");
+    }
+    
+    public String getHubSyncToUrl() {
+        return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
+    }
+    
+    public String getHubSyncFromUrl() {
+        return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
+    }
 }

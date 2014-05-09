@@ -1,5 +1,6 @@
 package mcts.integration.beneficiary.sync.service;
 
+import mcts.integration.beneficiary.sync.publisher.Publisher;
 import mcts.integration.beneficiary.sync.request.BeneficiaryRequest;
 import mcts.integration.beneficiary.sync.settings.BeneficiarySyncSettings;
 
@@ -22,6 +23,9 @@ public class MCTSHttpClientService {
 
     private RestTemplate restTemplate;
     private BeneficiarySyncSettings beneficiarySyncSettings;
+    private Publisher publisher = new Publisher();
+    private final static String HUB_SYNC_TO_URL = "k";
+    private final static String HUB_SYNC_FROM_URL = "k";
 
     @Autowired
     public MCTSHttpClientService(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BeneficiarySyncSettings beneficiarySyncSettings) {
@@ -37,6 +41,7 @@ public class MCTSHttpClientService {
         ResponseEntity<String> response = restTemplate.postForEntity(beneficiarySyncSettings.getUpdateRequestUrl(), httpEntity, String.class);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+        
     }
 
     public String syncFrom(MultiValueMap<String, String> requestBody) {
