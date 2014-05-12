@@ -9,7 +9,7 @@
 
     <import resource="classpath*:careDataContext.xml"/>
 
-    <context:component-scan base-package="mcts.integration.beneficiary.sync"/>
+    <context:component-scan base-package="org.motechproject.mcts.integration.beneficiary.sync"/>
 
     <util:properties id="beneficiarySyncProperties" location="classpath:/beneficiary_sync.properties"/>
 
@@ -18,5 +18,19 @@
     </bean>
     <bean id="httpComponentsClientHttpRequestFactory"
           class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory"/>
+
+  <context:component-scan base-package="mcts.integration.controller"/>
+    
+    <bean id="beneficairSyncLauncher"
+          class="org.motechproject.mcts.integration.beneficiary.sync.launcher.BeneficiarySyncLauncher"/>
+
+ <context:component-scan base-package="motech.care.data" />
+
+    <util:properties id="hibernateProperties" location="classpath:/hibernate.properties"/>
+
+    <context:property-placeholder location="classpath:postgres.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder properties-ref="hibernateProperties" ignore-unresolvable="true"/>
+
+    <import resource="classpath:applicationHibernateContext.xml" />
 
 </beans>

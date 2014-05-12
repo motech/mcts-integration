@@ -9,7 +9,7 @@
         </layout>
     </appender>
 
-    <logger name="mcts.integration.beneficiary.sync" additivity="false">
+    <logger name="org.motechproject.mcts.integration.beneficiary.sync" additivity="false">
         <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>

@@ -62,7 +62,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>mcts.integration.beneficiary.sync.launcher.BeneficiarySyncLauncher</mainClass>
+                    <mainClass>org.motechproject.mcts.integration.beneficiary.sync.launcher.BeneficiarySyncLauncher</mainClass>
                 </configuration>
             </plugin>
         </plugins>
