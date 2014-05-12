@@ -4,13 +4,13 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.InjectMocks;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,12 +29,13 @@ public class CareDataServiceTest {
 	@Mock
 	private CareDataRepository careDataRepository;
 
+	@InjectMocks
 	private CareDataService careDataService;
 
-	@Before
+	/*@Before
 	public void setUp() throws Exception {
 		careDataService = new CareDataService(careDataRepository);
-	}
+	}*/
 
 	@SuppressWarnings("deprecation")
 	@Test

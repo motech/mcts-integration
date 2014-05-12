@@ -54,7 +54,7 @@ public class MotechBeneficiarySyncService {
 			//throw new Exception(e);
 		}
         LOGGER.info("Notifying Hub to Publish the Updates at url" + getHubSyncToUrl());
-        ///	publisher.publish(getHubSyncToUrl(), beneficiaryRequest.toString());
+        publisher.publish(getHubSyncToUrl(), beneficiaryRequest.toString());
         careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
     }
 

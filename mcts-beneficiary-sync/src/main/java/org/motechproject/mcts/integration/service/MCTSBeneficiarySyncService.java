@@ -49,7 +49,7 @@ public class MCTSBeneficiarySyncService {
         }
         LOGGER.info(String.format("MCTS beneficiary details response is added to file %s", outputFileLocation));
         LOGGER.info("Notifying Hub to Publish the Updates at url" + getHubSyncFromUrl() );
-       // publisher.publish(getHubSyncFromUrl(), beneficiaryData);
+       publisher.publish(getHubSyncFromUrl(), beneficiaryData);
         
     }
     

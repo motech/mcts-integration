@@ -20,17 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CareDataService {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(CareDataService.class);
-
-    private CareDataRepository careDataRepository;
-
-//    public CareDataService() {
-//    }
+    private final static Logger LOGGER = LoggerFactory.getLogger(CareDataService.class);
 
     @Autowired
-    public CareDataService(CareDataRepository careDataRepository) {
-        this.careDataRepository = careDataRepository;
-    }
+    private CareDataRepository careDataRepository;
 
     public List<Beneficiary> getBeneficiariesToSync(DateTime startDate, DateTime endDate) {
         return careDataRepository.getBeneficiariesToSync(startDate, endDate);
