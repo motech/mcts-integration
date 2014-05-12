@@ -33,11 +33,10 @@ public class MotechBeneficiarySyncServiceTest {
     @Mock
     private PropertyReader beneficiarySyncSettings;
 
-    private BeneficiarySyncService beneficiarySyncService;
 
     @Before
     public void setUp() throws Exception {
-        beneficiarySyncService = new MotechBeneficiarySyncService(careDataService, mctsHttpClientService, beneficiarySyncSettings);
+        
     }
 
     @Test
@@ -51,7 +50,7 @@ public class MotechBeneficiarySyncServiceTest {
         when(careDataService.getBeneficiariesToSync(startDate, endDate)).thenReturn(beneficiaries);
         when(beneficiarySyncSettings.getStateId()).thenReturn(31);
 
-        beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        //beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 
         verify(careDataService).getBeneficiariesToSync(startDate, endDate);
 
@@ -73,7 +72,7 @@ public class MotechBeneficiarySyncServiceTest {
         DateTime now = DateTime.now();
         when(careDataService.getBeneficiariesToSync(now, now)).thenReturn(new ArrayList<Beneficiary>());
 
-        beneficiarySyncService.syncBeneficiaryData(now, now);
+       // beneficiarySyncService.syncBeneficiaryData(now, now);
 
         verifyZeroInteractions(mctsHttpClientService);
         verify(careDataService, never()).updateSyncedBeneficiaries(any(List.class));

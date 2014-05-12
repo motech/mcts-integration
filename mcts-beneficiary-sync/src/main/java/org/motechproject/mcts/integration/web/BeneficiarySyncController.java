@@ -1,6 +1,12 @@
 package org.motechproject.mcts.integration.web;
 
-import org.motechproject.mcts.integration.service.BeneficiarySyncLauncher;
+import java.util.regex.Pattern;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,41 +18,96 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
+/**
+ * Controller class to call the services
+ * 1. Sync from Mcts to Motech
+ * 2. Sync To Mcts from Motech
+ * @author mohit
+ *
+ */
 @Controller
 @RequestMapping(value = "/beneficiary")
 public class BeneficiarySyncController {
 	
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeneficiarySyncController.class);
+	private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
+	private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
 
 	@Autowired
     private PropertyReader propertyReader;
-/*	
+	
 	@Autowired
-	private CareDataMigrator careDataMigrator;
-*/
-	@RequestMapping(value = "getXml", method = RequestMethod.GET)
+	MCTSBeneficiarySyncService mctsBeneficiarySyncService;
+	
+	@Autowired
+	MotechBeneficiarySyncService motechBeneficiarySyncService;
+
+	/**
+	 * Method to send request to mcts to send updates
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "syncFrom", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public String getXml(@RequestParam("service") String service,
-			@RequestParam("startDate") String startDate,
+	public String syncFrom(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) throws Exception {
-		String[] stringArgs = new String[3];
-		stringArgs[0] = service; LOGGER.debug("Requested Service is:" + service);
-		stringArgs[1] = startDate; LOGGER.debug("Requested StartDate is:" + startDate);
-		stringArgs[2] = endDate; LOGGER.debug("Requested endDate is:" + endDate);
-		BeneficiarySyncLauncher.syncLauncher(stringArgs);
-		return "XML Generation SUCCESSFUL";
+		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
+		validateDateFormat(startDate);
+		validateDateFormat(endDate);
+		LOGGER.info("Arguments are Valid");
+		DateTime parsedStartDate = parseDate(startDate);
+		DateTime parsedEndDate = parseDate(endDate);
+		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
+		mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
+		return "Updates Received Successfully";
 	}
-/*	
-	@RequestMapping(value = "sync", method = RequestMethod.GET)
+	
+	/**
+	 * Method to post updates to mcts
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "syncTo", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public String sync() {
-		String updateCsvFileLocation = propertyReader.getSyncCsvFileLocation();
-		LOGGER.debug("Csv File Location is: " + updateCsvFileLocation);
-		careDataMigrator.sync(updateCsvFileLocation);
-		return "Csv Upload SUCCESSFUL";
-	}*/
+	public String syncTo(@RequestParam("startDate") String startDate,
+			@RequestParam("endDate") String endDate) throws Exception {
+		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
+		validateDateFormat(startDate);
+		validateDateFormat(endDate);
+		LOGGER.info("Arguments are Valid");
+		DateTime parsedStartDate = parseDate(startDate);
+		DateTime parsedEndDate = parseDate(endDate);
+		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
+		motechBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
+		return "Updates Sent Successfully";
+	}
+	
+	/**
+	 * Method to validate the input arguments
+	 * @param date
+	 */
+	private static void validateDateFormat(String date) {
+	if (!Pattern.matches(VALID_DATE_PATTERN, date))
+				throw new IllegalArgumentException(String.format(
+						"Invalid date format. Date format should be: %s.",
+						DATE_TIME_FORMAT));
+	}
+	
+	/**
+	 * method to convert from String to dateTime format
+	 * @param dateString
+	 * @return
+	 */
+	private static DateTime parseDate(String dateString) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormat
+				.forPattern(DATE_TIME_FORMAT);
+		return dateTimeFormatter.parseDateTime(dateString);
+	}
 }

@@ -20,12 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CareDataService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CareDataService.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(CareDataService.class);
 
     private CareDataRepository careDataRepository;
 
-    public CareDataService() {
-    }
+//    public CareDataService() {
+//    }
 
     @Autowired
     public CareDataService(CareDataRepository careDataRepository) {

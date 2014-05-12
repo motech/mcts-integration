@@ -12,24 +12,24 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class MotechBeneficiarySyncService implements BeneficiarySyncService {
+@Service
+public class MotechBeneficiarySyncService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MotechBeneficiarySyncService.class);
 
     private CareDataService careDataService;
     private MCTSHttpClientService mctsHttpClientService;
-    private PropertyReader beneficiarySyncSettings;
+    private PropertyReader propertyReader;
     private BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
     private String outputXMLFileLocation;
     private Publisher publisher = new Publisher();
 
     @Autowired
-    public MotechBeneficiarySyncService(CareDataService careDataService, MCTSHttpClientService mctsHttpClientService, PropertyReader beneficiarySyncSettings) {
+    public MotechBeneficiarySyncService(CareDataService careDataService, MCTSHttpClientService mctsHttpClientService, PropertyReader propertyReader) {
         this.careDataService = careDataService;
         this.mctsHttpClientService = mctsHttpClientService;
-        this.beneficiarySyncSettings = beneficiarySyncSettings;
+        this.propertyReader = propertyReader;
     }
 
     public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
@@ -42,8 +42,8 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
         LOGGER.info(String.format("Found %s beneficiary records to sync to MCTS", beneficiariesToSync.size()));
         this.beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
         mctsHttpClientService.syncTo(beneficiaryRequest);
-        outputXMLFileLocation = String.format("%s_%s.xml", beneficiarySyncSettings.getUpdateXmlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
-        String outputURLFileLocation = String.format("%s_%s.txt", beneficiarySyncSettings.getUpdateUrlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
+        outputXMLFileLocation = String.format("%s_%s.xml", propertyReader.getUpdateXmlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
+        String outputURLFileLocation = String.format("%s_%s.txt", propertyReader.getUpdateUrlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
         ObjectToXML generateBeneficiaryToSyncXML = new ObjectToXML();
         try {
         	File xmlFile = new File(outputXMLFileLocation);
@@ -54,13 +54,13 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
 			//throw new Exception(e);
 		}
         LOGGER.info("Notifying Hub to Publish the Updates at url" + getHubSyncToUrl());
-        	publisher.publish(getHubSyncToUrl(), beneficiaryRequest.toString());
+        ///	publisher.publish(getHubSyncToUrl(), beneficiaryRequest.toString());
         careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
     }
 
     private BeneficiaryRequest mapToBeneficiaryRequest(List<Beneficiary> beneficiariesToSync) {
     	BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
-        Integer stateId = beneficiarySyncSettings.getStateId();
+        Integer stateId = propertyReader.getStateId();
         for (Beneficiary beneficiary : beneficiariesToSync) {
             beneficiaryRequest.addBeneficiaryDetails(new BeneficiaryDetails(stateId, 
             	beneficiary.getMctsId(),
@@ -73,6 +73,6 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
     }
     
     public String getHubSyncToUrl(){
-    	return beneficiarySyncSettings.getHubSyncToUrl() + outputXMLFileLocation;
+    	return propertyReader.getHubSyncToUrl() + outputXMLFileLocation;
     }
 }

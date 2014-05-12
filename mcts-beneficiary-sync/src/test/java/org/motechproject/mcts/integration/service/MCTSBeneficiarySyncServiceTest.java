@@ -32,12 +32,10 @@ public class MCTSBeneficiarySyncServiceTest {
     @Mock
     private PropertyReader beneficiarySyncSettings;
 
-    private BeneficiarySyncService beneficiarySyncService;
-
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        beneficiarySyncService = new MCTSBeneficiarySyncService(mctsHttpClientService, beneficiarySyncSettings);
+        
     }
 
     @Test
@@ -58,7 +56,7 @@ public class MCTSBeneficiarySyncServiceTest {
         requestBody.add("ToDate", endDate.toString("dd-MM-yyyy"));
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(response());
 
-        beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+       // beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 
         verify(mctsHttpClientService).syncFrom(requestBody);
 
