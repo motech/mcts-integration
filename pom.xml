@@ -13,8 +13,6 @@
 		<module>mcts-integration-stub</module>
 		<module>mcts-beneficiary-sync</module>
 		<module>mcts-care-data-migration</module>
-		<module>motech-care-data</module>
-		<module>mcts-integration-web</module>
 	</modules>
 
 	<properties>

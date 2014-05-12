@@ -1,7 +1,5 @@
 package org.motechproject.mcts.integration.web;
 
-import mcts.care.data.migration.CareDataMigrator;
-
 import org.motechproject.mcts.integration.service.BeneficiarySyncLauncher;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -23,8 +21,11 @@ public class BeneficiarySyncController {
 			.getLogger(BeneficiarySyncController.class);
 
 	@Autowired
-    private PropertyReader beneficiarySyncSettings;
-
+    private PropertyReader propertyReader;
+/*	
+	@Autowired
+	private CareDataMigrator careDataMigrator;
+*/
 	@RequestMapping(value = "getXml", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
@@ -38,14 +39,14 @@ public class BeneficiarySyncController {
 		BeneficiarySyncLauncher.syncLauncher(stringArgs);
 		return "XML Generation SUCCESSFUL";
 	}
-	
+/*	
 	@RequestMapping(value = "sync", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public String sync() {
-		String updateCsvFileLocation = beneficiarySyncSettings.getSyncCsvFileLocation();
+		String updateCsvFileLocation = propertyReader.getSyncCsvFileLocation();
 		LOGGER.debug("Csv File Location is: " + updateCsvFileLocation);
-		CareDataMigrator.sync(updateCsvFileLocation);
+		careDataMigrator.sync(updateCsvFileLocation);
 		return "Csv Upload SUCCESSFUL";
-	}
+	}*/
 }

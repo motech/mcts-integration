@@ -1,11 +1,16 @@
 package org.motechproject.mcts.integration.service;
 
-import org.motechproject.mcts.integration.model.BeneficiaryDetails;
-import org.motechproject.mcts.integration.model.BeneficiaryRequest;
-import org.motechproject.mcts.utils.PropertyReader;
+import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
-import motech.care.data.domain.Beneficiary;
-import motech.care.data.service.CareDataService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -14,19 +19,10 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import org.motechproject.mcts.integration.model.Beneficiary;
+import org.motechproject.mcts.integration.model.BeneficiaryDetails;
+import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.utils.PropertyReader;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MotechBeneficiarySyncServiceTest {

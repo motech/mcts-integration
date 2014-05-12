@@ -6,14 +6,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import motech.care.data.domain.Beneficiary;
-import motech.care.data.domain.MCTSPregnantMother;
-import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
-import motech.care.data.domain.MotherCase;
-import motech.care.data.repository.CareDataRepository;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.integration.model.Beneficiary;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CareDataRepositoryIT extends BaseRepositoryIT {

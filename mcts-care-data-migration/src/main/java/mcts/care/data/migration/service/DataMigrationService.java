@@ -7,8 +7,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import mcts.care.data.migration.exception.DataMigrationException;
-import motech.care.data.service.CareDataService;
-
+import org.motechproject.mcts.integration.service.CareDataService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

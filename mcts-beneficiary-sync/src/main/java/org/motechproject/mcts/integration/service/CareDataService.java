@@ -1,20 +1,20 @@
 package org.motechproject.mcts.integration.service;
 
-import motech.care.data.domain.Beneficiary;
-import motech.care.data.domain.MCTSPregnantMother;
-import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
-import motech.care.data.domain.MotherCase;
-import motech.care.data.repository.CareDataRepository;
-import org.joda.time.DateTime;
 
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.integration.model.Beneficiary;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Timestamp;
-import java.util.List;
 
 @Service
 @Transactional

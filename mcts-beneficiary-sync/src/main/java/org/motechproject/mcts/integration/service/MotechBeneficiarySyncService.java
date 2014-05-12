@@ -3,15 +3,12 @@ package org.motechproject.mcts.integration.service;
 import java.io.File;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
-import org.motechproject.mcts.utils.GenerateBeneficiaryToSyncRequestFiles;
+import org.motechproject.mcts.utils.ObjectToXML;
 import org.motechproject.mcts.utils.PropertyReader;
-
-import motech.care.data.domain.Beneficiary;
-import motech.care.data.service.CareDataService;
-
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +44,11 @@ public class MotechBeneficiarySyncService implements BeneficiarySyncService {
         mctsHttpClientService.syncTo(beneficiaryRequest);
         outputXMLFileLocation = String.format("%s_%s.xml", beneficiarySyncSettings.getUpdateXmlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
         String outputURLFileLocation = String.format("%s_%s.txt", beneficiarySyncSettings.getUpdateUrlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
-        GenerateBeneficiaryToSyncRequestFiles generateBeneficiaryToSyncXML = new GenerateBeneficiaryToSyncRequestFiles();
+        ObjectToXML generateBeneficiaryToSyncXML = new ObjectToXML();
         try {
         	File xmlFile = new File(outputXMLFileLocation);
         	File updateRequestUrl = new File(outputURLFileLocation);
-			generateBeneficiaryToSyncXML.writeBeneficiaryToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
+			generateBeneficiaryToSyncXML.writeToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
 		} catch (Exception e) {
 			LOGGER.error("File Not Found");
 			//throw new Exception(e);

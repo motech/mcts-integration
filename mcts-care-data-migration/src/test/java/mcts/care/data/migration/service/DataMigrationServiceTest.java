@@ -1,7 +1,18 @@
 package mcts.care.data.migration.service;
 
+import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+
 import mcts.care.data.migration.exception.DataMigrationException;
-import motech.care.data.service.CareDataService;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,21 +21,10 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.mcts.integration.service.CareDataService;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @PrepareForTest(FileUtils.class)
 @RunWith(PowerMockRunner.class)
@@ -38,7 +38,7 @@ public class DataMigrationServiceTest {
 
     private DataMigrationService dataMigrationService;
 
-    @Before
+  //  @Before
 //    public void setUp() throws Exception {
 //        initMocks(this);
 //        dataMigrationService = new DataMigrationService(careDataService);

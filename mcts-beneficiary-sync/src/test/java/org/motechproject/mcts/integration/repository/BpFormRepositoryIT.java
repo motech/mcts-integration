@@ -5,12 +5,10 @@ import static junit.framework.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import motech.care.data.domain.BpForm;
-import motech.care.data.repository.CareDataRepository;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.motechproject.mcts.integration.hibernate.model.BpForm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BpFormRepositoryIT extends BaseRepositoryIT {

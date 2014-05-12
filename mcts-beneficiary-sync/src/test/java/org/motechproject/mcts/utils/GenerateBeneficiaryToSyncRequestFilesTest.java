@@ -18,7 +18,7 @@ import org.mockito.Mock;
 public class GenerateBeneficiaryToSyncRequestFilesTest {
 
 	@Mock
-	GenerateBeneficiaryToSyncRequestFiles generateFiles;
+	ObjectToXML generateFiles;
 	
 	@Mock
 	Encryption encryption;
@@ -26,7 +26,7 @@ public class GenerateBeneficiaryToSyncRequestFilesTest {
 	private final String operation = "Insert";
 	private final String contentType = "text/xml";
 	private final String outputFile = "/home/beehyv/workspace/UpdateRequestUrlTest.txt";
-	private GenerateBeneficiaryToSyncRequestFiles generateBeneficiaryToSyncRequestFiles = new GenerateBeneficiaryToSyncRequestFiles();
+	private ObjectToXML generateBeneficiaryToSyncRequestFiles = new ObjectToXML();
 	
 	
 	@Test

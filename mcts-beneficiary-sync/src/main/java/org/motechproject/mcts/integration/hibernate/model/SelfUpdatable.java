@@ -1,11 +1,11 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import motech.care.data.utils.ReflectionUtils;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.motechproject.mcts.utils.ReflectionUtils;
 
 public abstract class SelfUpdatable<T> {
 

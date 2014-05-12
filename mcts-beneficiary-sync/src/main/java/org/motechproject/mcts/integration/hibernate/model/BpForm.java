@@ -2,7 +2,6 @@ package org.motechproject.mcts.integration.hibernate.model;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import motech.care.data.utils.FormToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

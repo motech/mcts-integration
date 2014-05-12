@@ -10,14 +10,14 @@ import java.net.URISyntaxException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-public class GenerateBeneficiaryToSyncRequestFiles {
+public class ObjectToXML {
 
 	private final String username = "mcts-MOTECH";
 	private String password;
 	private final String operation = "Insert";
 	private final String contentType = "text/xml";
 
-	public void writeBeneficiaryToXML(Object dataToWrite,
+	public void writeToXML(Object dataToWrite,
 			Class<?> classInstance, File xmlFile, File textFile) throws Exception {
 
 		if (dataToWrite.getClass() != classInstance) {

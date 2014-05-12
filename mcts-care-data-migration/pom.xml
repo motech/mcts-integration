@@ -13,11 +13,11 @@
     <artifactId>care-data-migration</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>mcts.integration</groupId>
-            <artifactId>motech-care-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+			<groupId>mcts.integration</groupId>
+			<artifactId>mcts-beneficiary-sync</artifactId>
+			<version>${project.version}</version>
+		</dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

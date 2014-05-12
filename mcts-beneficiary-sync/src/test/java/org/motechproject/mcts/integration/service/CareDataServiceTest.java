@@ -1,11 +1,13 @@
 package org.motechproject.mcts.integration.service;
 
-import motech.care.data.domain.Beneficiary;
-import motech.care.data.domain.MCTSPregnantMother;
-import motech.care.data.domain.MCTSPregnantMotherServiceUpdate;
-import motech.care.data.domain.MotherCase;
-import motech.care.data.repository.CareDataRepository;
-import motech.care.data.service.CareDataService;
+import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -15,15 +17,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.integration.model.Beneficiary;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CareDataServiceTest {
