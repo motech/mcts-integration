@@ -1,28 +1,37 @@
 package mcts.care.data.migration.service;
 
-import mcts.care.data.migration.exception.DataMigrationException;
-import motech.care.data.service.CareDataService;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
-@Component
+import mcts.care.data.migration.exception.DataMigrationException;
+import motech.care.data.service.CareDataService;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+@Service
 public class DataMigrationService {
 
-    private static final String DELIMITER = ",";
-    private static final String VALID_FILE_CONTENT_LINE_FORMAT = String.format("^[a-zA-Z0-9_-]+\\s*%s\\s*[a-zA-Z0-9_-]+$", DELIMITER);
+	private static Properties properties;
+	
+    private static String DELIMITER;
+	
+    private static String VALID_FILE_CONTENT_LINE_FORMAT;
 
     private CareDataService careDataService;
 
     @Autowired
-    public DataMigrationService(CareDataService careDataService) {
+    public DataMigrationService(@Qualifier("careDataMigrationProperties") Properties properties,CareDataService careDataService) {
+        DataMigrationService.properties=properties;
         this.careDataService = careDataService;
+        DELIMITER = properties.getProperty("csv.field.delimiter");
+        VALID_FILE_CONTENT_LINE_FORMAT = String.format(properties.getProperty("valid.file.content.line.fomat"), DELIMITER);
     }
 
     public void migrate(String filePath) {
@@ -54,7 +63,7 @@ public class DataMigrationService {
     private void validateContents(List<String> fileContents) {
         for (String fileContent : fileContents) {
             if(!Pattern.matches(VALID_FILE_CONTENT_LINE_FORMAT, fileContent))
-                throw new DataMigrationException(String.format("Invalid record in file content: %s. Sample record format: <case_id1,mcts_id1>. All such records should be seperated by new line.", fileContent));
+                throw new DataMigrationException(String.format("Invalid record in file content: %s. Sample record format: <case_id1,mcts_id1>. All such records should be seperated by new line. The String is %s", fileContent, VALID_FILE_CONTENT_LINE_FORMAT));
         }
     }
 }

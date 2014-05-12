@@ -1,21 +1,17 @@
 package mcts.care.data.migration;
 
 import mcts.care.data.migration.service.DataMigrationService;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class CareDataMigrator {
 
-    private static final String APPLICATION_CONTEXT_XML = "careDataMigrationContext.xml";
+    @Autowired
+    private DataMigrationService dataMigrationService;
 
-    public static void sync(String filePath) {
-        DataMigrationService dataMigrationService = getDataMigrationService();
+    public void sync(String filePath) {
         dataMigrationService.migrate(filePath);
-    }
-
-    private static DataMigrationService getDataMigrationService() {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
-        context.setConfigLocation(APPLICATION_CONTEXT_XML);
-        context.refresh();
-        return (DataMigrationService) context.getBean("dataMigrationService");
     }
 }

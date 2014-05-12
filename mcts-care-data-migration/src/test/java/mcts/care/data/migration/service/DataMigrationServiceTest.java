@@ -39,10 +39,10 @@ public class DataMigrationServiceTest {
     private DataMigrationService dataMigrationService;
 
     @Before
-    public void setUp() throws Exception {
-        initMocks(this);
-        dataMigrationService = new DataMigrationService(careDataService);
-    }
+//    public void setUp() throws Exception {
+//        initMocks(this);
+//        dataMigrationService = new DataMigrationService(careDataService);
+//    }
 
     @Test
     public void shouldValidateIfGivenFilePathIsADirectory() {
