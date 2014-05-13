@@ -1,22 +1,5 @@
 package org.motechproject.mcts.integration.service;
 
-import org.motechproject.mcts.utils.PropertyReader;
-import org.apache.commons.io.FileUtils;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.io.File;
-import java.io.IOException;
-
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
@@ -24,13 +7,35 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.motechproject.mcts.utils.PropertyReader;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 @PrepareForTest(FileUtils.class)
 @RunWith(PowerMockRunner.class)
 public class MCTSBeneficiarySyncServiceTest {
-    @Mock
+   
+	@Mock
     private MCTSHttpClientService mctsHttpClientService;
+	
+	@InjectMocks
+	private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
+    
     @Mock
-    private PropertyReader beneficiarySyncSettings;
+    private PropertyReader propertyReader;
 
     @Before
     public void setUp() throws Exception {
@@ -48,15 +53,15 @@ public class MCTSBeneficiarySyncServiceTest {
         String expectedOutputFileLocation = String.format("%s_%s", outputFileLocation, timeStampIgnoringSeconds);
         MultiValueMap<String, String> defaultQueryParams = new LinkedMultiValueMap<>();
         defaultQueryParams.add("username", "myUser");
-        when(beneficiarySyncSettings.getDefaultBeneficiaryListQueryParams()).thenReturn(defaultQueryParams);
-        when(beneficiarySyncSettings.getSyncRequestOutputFileLocation()).thenReturn(outputFileLocation);
+        when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(defaultQueryParams);
+        when(propertyReader.getSyncRequestOutputFileLocation()).thenReturn(outputFileLocation);
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.putAll(defaultQueryParams);
         requestBody.add("FromDate", startDate.toString("dd-MM-yyyy"));
         requestBody.add("ToDate", endDate.toString("dd-MM-yyyy"));
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(response());
 
-       // beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+       mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 
         verify(mctsHttpClientService).syncFrom(requestBody);
 

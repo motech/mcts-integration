@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.model.Beneficiary;
@@ -31,7 +32,10 @@ public class MotechBeneficiarySyncServiceTest {
     @Mock
     private MCTSHttpClientService mctsHttpClientService;
     @Mock
-    private PropertyReader beneficiarySyncSettings;
+    private PropertyReader propertyReader;
+    
+    @InjectMocks
+    private MotechBeneficiarySyncService motechBeneficiarySyncService;
 
 
     @Before
@@ -45,12 +49,14 @@ public class MotechBeneficiarySyncServiceTest {
         DateTime endDate = DateTime.now();
         Date serviceDeliveryDate1 = new Date();
         Date serviceDeliveryDate2 = new Date();
-        List<Beneficiary> beneficiaries = Arrays.asList(new Beneficiary(1, "mcts_id1", 2, serviceDeliveryDate1, "9999900000", 1,5,6,7),
-        		new Beneficiary(2, "mcts_id2", 4, serviceDeliveryDate2,"9999900001", 1,4,5,6));
+        Date serviceDeliveryDate3 = new Date();
+        List<Beneficiary> beneficiaries = Arrays.asList(new Beneficiary(1, "mcts_id1", 2, serviceDeliveryDate1, "9999900000", 1,5,11,20),
+        		new Beneficiary(2, "mcts_id2", 4, serviceDeliveryDate2,"9999900001", 1,4,11,14), 
+        		new Beneficiary(3, "mcts_id3", 6, serviceDeliveryDate3,"9999900001", 1,4,11,14));
         when(careDataService.getBeneficiariesToSync(startDate, endDate)).thenReturn(beneficiaries);
-        when(beneficiarySyncSettings.getStateId()).thenReturn(31);
+        when(propertyReader.getStateId()).thenReturn(31);
 
-        //beneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        motechBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
 
         verify(careDataService).getBeneficiariesToSync(startDate, endDate);
 
@@ -58,12 +64,12 @@ public class MotechBeneficiarySyncServiceTest {
         verify(mctsHttpClientService).syncTo(beneficiaryRequestCaptor.capture());
         BeneficiaryRequest actualRequest = beneficiaryRequestCaptor.getValue();
         List<BeneficiaryDetails> beneficiaryDetails = actualRequest.getAllBeneficiaryDetails();
-        assertEquals(2, beneficiaryDetails.size());
+        assertEquals(3, beneficiaryDetails.size());
         
         //TODO handle mobile_number and hemoglobin details in test cases
-//        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id1", 2, serviceDeliveryDate1, 
-//        		"9999911111", "&gt; 11")));
-//        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id2", 4, serviceDeliveryDate2, "99999119111","&gt; 11")));
+        assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id1", 2, serviceDeliveryDate1, 
+        		"9999911111", "&gt; 11")));
+       assertTrue(beneficiaryDetails.contains(new BeneficiaryDetails(31, "mcts_id2", 4, serviceDeliveryDate2, "99999119111","&gt; 11")));
         verify(careDataService).updateSyncedBeneficiaries(beneficiaries);
     }
 
@@ -72,7 +78,7 @@ public class MotechBeneficiarySyncServiceTest {
         DateTime now = DateTime.now();
         when(careDataService.getBeneficiariesToSync(now, now)).thenReturn(new ArrayList<Beneficiary>());
 
-       // beneficiarySyncService.syncBeneficiaryData(now, now);
+       motechBeneficiarySyncService.syncBeneficiaryData(now, now);
 
         verifyZeroInteractions(mctsHttpClientService);
         verify(careDataService, never()).updateSyncedBeneficiaries(any(List.class));

@@ -1,23 +1,26 @@
 package org.motechproject.mcts.integration.repository;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CareDataRepositoryIT extends BaseRepositoryIT {
-	@Autowired
+	
+	@InjectMocks
 	private CareDataRepository careDataRepository;
 
+	@Before
 	private void shouldClearMctsPregnantMotherTables() {
 		getCurrentSession().createSQLQuery(
 				"DELETE FROM report.mcts_pregnant_mother_service_update")

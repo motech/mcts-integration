@@ -6,15 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class Controller {
+@Controller
+@RequestMapping(value = "/beneficiary")
+public class UploadCsv {
 
 	private final static Logger LOGGER = LoggerFactory
-			.getLogger(Controller.class);
+			.getLogger(UploadCsv.class);
 
 	@Autowired
     private PropertyReader propertyReader;
@@ -22,7 +25,7 @@ public class Controller {
 	private CareDataMigrator careDataMigrator;
 	
 	
-	@RequestMapping(value = "sync", method = RequestMethod.GET)
+	@RequestMapping(value = "uploadcsv", method = RequestMethod.GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public String sync() {

@@ -44,11 +44,11 @@ public class MotechBeneficiarySyncService {
         mctsHttpClientService.syncTo(beneficiaryRequest);
         outputXMLFileLocation = String.format("%s_%s.xml", propertyReader.getUpdateXmlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
         String outputURLFileLocation = String.format("%s_%s.txt", propertyReader.getUpdateUrlOutputFileLocation(), DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm"));
-        ObjectToXML generateBeneficiaryToSyncXML = new ObjectToXML();
+        ObjectToXML objectToXML = new ObjectToXML();
         try {
         	File xmlFile = new File(outputXMLFileLocation);
         	File updateRequestUrl = new File(outputURLFileLocation);
-			generateBeneficiaryToSyncXML.writeToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
+			objectToXML.writeToXML(beneficiaryRequest, BeneficiaryRequest.class, xmlFile, updateRequestUrl);
 		} catch (Exception e) {
 			LOGGER.error("File Not Found");
 			//throw new Exception(e);

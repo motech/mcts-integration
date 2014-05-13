@@ -8,13 +8,10 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.motechproject.mcts.integration.hibernate.model.BpForm;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class BpFormRepositoryIT extends BaseRepositoryIT {
-
-	@Autowired
-	private CareDataRepository careDataRepository;
 
 	@After
 	@Before
@@ -22,6 +19,7 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		getCurrentSession().createSQLQuery("DELETE FROM report.bp_form")
 				.executeUpdate();
 	}
+	
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Test
 	public void shouldGetAllBpForms() {
