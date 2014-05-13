@@ -1,24 +1,20 @@
 package org.motechproject.mcts.integration.service;
 
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,46 +26,74 @@ public class MCTSBeneficiarySyncServiceTest {
    
 	@Mock
     private MCTSHttpClientService mctsHttpClientService;
+
+	@Mock
+	private Publisher publisher;
 	
-	@InjectMocks
-	private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
-    
     @Mock
     private PropertyReader propertyReader;
+    
+	@InjectMocks
+	public MCTSBeneficiarySyncService mctsBeneficiarySyncService;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        
     }
 
     @Test
-    public void shouldSyncBeneficiaryDataOfMCTSToMotechAndWriteToFile() throws Exception {
-        PowerMockito.mockStatic(FileUtils.class);
+    public void shouldSyncBeneficiaryDataOfMCTSToMotech() throws Exception {
         DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
-        String outputFileLocation = "fileLocation";
-        String timeStampIgnoringSeconds = DateTime.now().toString("yyyy-MM-dd") + "T" + DateTime.now().toString("HH:mm");
-        String expectedOutputFileLocation = String.format("%s_%s", outputFileLocation, timeStampIgnoringSeconds);
-        MultiValueMap<String, String> defaultQueryParams = new LinkedMultiValueMap<>();
-        defaultQueryParams.add("username", "myUser");
-        when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(defaultQueryParams);
-        when(propertyReader.getSyncRequestOutputFileLocation()).thenReturn(outputFileLocation);
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.putAll(defaultQueryParams);
-        requestBody.add("FromDate", startDate.toString("dd-MM-yyyy"));
-        requestBody.add("ToDate", endDate.toString("dd-MM-yyyy"));
+        
+        MultiValueMap<String, String> requestBody = getRequestBody();
+        when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(getDefaultQueryParams());
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(response());
 
-       mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        String response = mctsBeneficiarySyncService.syncFrom(startDate, endDate);
 
         verify(mctsHttpClientService).syncFrom(requestBody);
-
-        PowerMockito.verifyStatic(times(1));
-        ArgumentCaptor<File> outputFileCaptor = ArgumentCaptor.forClass(File.class);
-        FileUtils.writeStringToFile(outputFileCaptor.capture(), eq(response()));
-        String actualOutputFileLocation = outputFileCaptor.getValue().getPath();
-        assertTrue(actualOutputFileLocation.contains(expectedOutputFileLocation));
+        assertEquals(response(),response);
+    }
+    
+    @Test
+    public void shouldWriteDataToFile(){
+		when(propertyReader.getSyncRequestOutputFileLocation()).thenReturn("updateRequestXML");
+		
+		mctsBeneficiarySyncService.writeToFile(response());
+		verify(propertyReader).getSyncRequestOutputFileLocation();
+    }
+    
+    @Test
+    public void shouldNotProceedIfResponseIsNull(){
+    	DateTime startDate = DateTime.now().minusDays(1);
+        DateTime endDate = DateTime.now();
+    	MultiValueMap<String, String> requestBody = getRequestBody();
+        when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(getDefaultQueryParams());
+    	when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(null);
+    	
+    	mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+    	
+    	verify(publisher, times(0)).publish((String)any(), (String)any());
+    	verify(propertyReader, times(0)).getSyncRequestOutputFileLocation();
+    }
+    
+    public MultiValueMap<String, String> getRequestBody(){
+    	 DateTime startDate = DateTime.now().minusDays(1);
+         DateTime endDate = DateTime.now();
+         
+         
+         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+         requestBody.putAll(getDefaultQueryParams());
+         requestBody.add("FromDate", startDate.toString("dd-MM-yyyy"));
+         requestBody.add("ToDate", endDate.toString("dd-MM-yyyy"));
+         return requestBody;
+    }
+    
+    public MultiValueMap<String, String> getDefaultQueryParams(){
+    	MultiValueMap<String, String> defaultQueryParams = new LinkedMultiValueMap<>();
+        defaultQueryParams.add("username", "myUser");
+        return defaultQueryParams;
     }
 
     private String response() {

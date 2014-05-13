@@ -17,17 +17,15 @@ import org.springframework.util.StringUtils;
 @Service
 public class DataMigrationService {
 
-	private static Properties properties;
-	
-    private static String DELIMITER;
+	private static String DELIMITER;
 	
     private static String VALID_FILE_CONTENT_LINE_FORMAT;
 
+    @Autowired
     private CareDataService careDataService;
 
     @Autowired
     public DataMigrationService(@Qualifier("careDataMigrationProperties") Properties properties,CareDataService careDataService) {
-        DataMigrationService.properties=properties;
         this.careDataService = careDataService;
         DELIMITER = properties.getProperty("csv.field.delimiter");
         VALID_FILE_CONTENT_LINE_FORMAT = String.format(properties.getProperty("valid.file.content.line.fomat"), DELIMITER);

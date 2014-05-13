@@ -14,20 +14,15 @@ import java.util.List;
 import mcts.care.data.migration.exception.DataMigrationException;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest(FileUtils.class)
-@RunWith(PowerMockRunner.class)
 public class DataMigrationServiceTest {
 
     @Rule
@@ -36,23 +31,24 @@ public class DataMigrationServiceTest {
     @Mock
     private CareDataService careDataService;
 
+    @InjectMocks
     private DataMigrationService dataMigrationService;
 
-  //  @Before
-//    public void setUp() throws Exception {
-//        initMocks(this);
-//        dataMigrationService = new DataMigrationService(careDataService);
-//    }
+  /*  @Before
+    public void setUp() throws Exception {
+        initMocks(this);
+       // dataMigrationService = new DataMigrationService(careDataService);
+    }*/
 
     @Test
     public void shouldValidateIfGivenFilePathIsADirectory() {
         File file = FileUtils.getTempDirectory();
         String path = file.getPath();
 
+        dataMigrationService.migrate(path);
         expectedException.expect(DataMigrationException.class);
         expectedException.expectMessage(String.format("Invalid file. Given path %s is a directory.", path));
 
-        dataMigrationService.migrate(path);
     }
 
     @Test

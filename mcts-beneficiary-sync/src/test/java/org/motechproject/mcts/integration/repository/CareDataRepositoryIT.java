@@ -6,27 +6,39 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
 import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class CareDataRepositoryIT extends BaseRepositoryIT {
 	
-	@InjectMocks
+	@Autowired
 	private CareDataRepository careDataRepository;
 
+	@After
 	@Before
-	private void shouldClearMctsPregnantMotherTables() {
+	public void shouldClearMctsPregnantMotherTables() {
 		getCurrentSession().createSQLQuery(
 				"DELETE FROM report.mcts_pregnant_mother_service_update")
 				.executeUpdate();
 		getCurrentSession().createSQLQuery(
 				"DELETE FROM report.mcts_pregnant_mother").executeUpdate();
+	}
+	
+	@Test
+	public void we(){
+		System.out.println("runned");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -35,6 +47,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		List<Beneficiary> beneficiariesToSyncPresentAlreadyInDb = careDataRepository
 				.getBeneficiariesToSync(DateTime.now().minusDays(1), DateTime
 						.now().plusDays(1));
+		
 		Date now = DateTime.now().toDateMidnight().toDate();
 		MotherCase motherCase1 = setUpMotherCaseWithAncDates(now, now);
 		MotherCase motherCase2 = setUpMotherCaseWithTTDates(now, now);
@@ -48,7 +61,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		MCTSPregnantMother mctsPregnantMother3 = new MCTSPregnantMother(
 				"mctsId3", motherCase3);
 		getCurrentSession().save(mctsPregnantMother3);
-
+		
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
 		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
 				"mctsId1", 2, now, "9999911110", 1, null, null, null));
@@ -251,4 +264,5 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		getCurrentSession().save(motherCase3);
 		return motherCase3;
 	}
+
 }

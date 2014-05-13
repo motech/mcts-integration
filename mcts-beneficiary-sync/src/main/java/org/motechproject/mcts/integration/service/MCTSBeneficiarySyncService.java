@@ -15,46 +15,75 @@ import org.springframework.util.MultiValueMap;
 
 @Service
 public class MCTSBeneficiarySyncService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
-    private static final String DATE_FORMAT = "dd-MM-yyyy";
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(MCTSHttpClientService.class);
+	private static final String DATE_FORMAT = "dd-MM-yyyy";
 
-    private MCTSHttpClientService mctsHttpClientService;
-    private PropertyReader propertyReader;
-    private Publisher publisher = new Publisher();
-    private String beneficiaryData;
-    private String outputFileLocation;
+	@Autowired
+	private MCTSHttpClientService mctsHttpClientService;
+	@Autowired
+	private PropertyReader propertyReader;
+	@Autowired
+	private Publisher publisher;
 
-    @Autowired
-    public MCTSBeneficiarySyncService(MCTSHttpClientService mctsHttpClientService, PropertyReader propertyReader) {
-        this.mctsHttpClientService = mctsHttpClientService;
-        this.propertyReader = propertyReader;
-    }
+	private String outputFileLocation;
 
-    public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.putAll(propertyReader.getDefaultBeneficiaryListQueryParams());
-        requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
-        requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
+	@Autowired
+	public MCTSBeneficiarySyncService(
+			MCTSHttpClientService mctsHttpClientService,
+			PropertyReader propertyReader) {
+		this.mctsHttpClientService = mctsHttpClientService;
+		this.propertyReader = propertyReader;
+	}
 
-        String beneficiaryData = mctsHttpClientService.syncFrom(requestBody);
-        if (beneficiaryData == null)
-        	return;
+	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
+		String beneficiaryData = syncFrom(startDate, endDate);
+		LOGGER.info("Get Updates Request Sent To MCTS");
+		if (beneficiaryData == null) {
+			LOGGER.info("No New Updates Received");
+			return;
+		}
+		writeToFile(beneficiaryData);
+		notifyHub(beneficiaryData);
+		LOGGER.info("HUB Notified Successfully");
+	}
 
-        outputFileLocation = String.format("%s_%s", propertyReader.getSyncRequestOutputFileLocation(), DateTime.now());
-        try {
-            FileUtils.writeStringToFile(new File(outputFileLocation), beneficiaryData);
-        } catch (IOException e) {
-            LOGGER.error(String.format("Cannot write MCTS beneficiary details response to file: %s", outputFileLocation), e);
-            return;
-        }
-        LOGGER.info(String.format("MCTS beneficiary details response is added to file %s", outputFileLocation));
-        LOGGER.info("Notifying Hub to Publish the Updates at url" + getHubSyncFromUrl() );
-       publisher.publish(getHubSyncFromUrl(), beneficiaryData);
-        
-    }
-    
-    public String getHubSyncFromUrl(){
-    	return propertyReader.getHubSyncFromUrl() + outputFileLocation;
-    }
+	protected String syncFrom(DateTime startDate, DateTime endDate) {
+		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+		requestBody.putAll(propertyReader
+				.getDefaultBeneficiaryListQueryParams());
+		requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
+		requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
+		return mctsHttpClientService.syncFrom(requestBody);
+	}
+
+	protected void writeToFile(String beneficiaryData) {
+		this.outputFileLocation = String.format("%s_%s",
+				propertyReader.getSyncRequestOutputFileLocation(),
+				DateTime.now());
+		try {
+			FileUtils.writeStringToFile(new File(outputFileLocation),
+					beneficiaryData);
+			LOGGER.info(String.format(
+					"MCTS beneficiary details response is added to file %s",
+					outputFileLocation));
+		} catch (IOException e) {
+			LOGGER.error(
+					String.format(
+							"Cannot write MCTS beneficiary details response to file: %s",
+							outputFileLocation), e);
+			return;
+		}
+	}
+
+	protected void notifyHub(String beneficiaryData) {
+		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
+				+ getHubSyncFromUrl());
+		publisher.publish(getHubSyncFromUrl(), beneficiaryData);
+	}
+
+	public String getHubSyncFromUrl() {
+		return propertyReader.getHubSyncFromUrl() + this.outputFileLocation;
+	}
 
 }

@@ -10,6 +10,9 @@ import java.net.URISyntaxException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ObjectToXML {
 
 	private final String username = "mcts-MOTECH";
@@ -27,7 +30,7 @@ public class ObjectToXML {
 			JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.marshal(dataToWrite, xmlFile);
-			generateBeneficiarySyncRequestFile(xmlFile, textFile);
+			writeUrlToFile(xmlFile, textFile);
 		}
 	}
 
@@ -39,7 +42,7 @@ public class ObjectToXML {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public String generateBeneficiarySyncRequestFile(File xmlFile, File updateRequestUrlFile) throws IOException, URISyntaxException {
+	public String writeUrlToFile(File xmlFile, File updateRequestUrlFile) throws IOException, URISyntaxException {
 		//TODO: This method to be removed during actual implementation.
 		FileReader fileReader = new FileReader(xmlFile);
 		password = Encryption.encryptWithTimeInSeconds("mcts-MOTECH@123");

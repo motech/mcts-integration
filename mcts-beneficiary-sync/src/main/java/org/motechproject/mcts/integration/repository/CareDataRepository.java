@@ -30,6 +30,7 @@ public class CareDataRepository {
 		this.sessionFactory = sessionFactory;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
 			DateTime endDate) {
 		String queryString = "WITH \n"

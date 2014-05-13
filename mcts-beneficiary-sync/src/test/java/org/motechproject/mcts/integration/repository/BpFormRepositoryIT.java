@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.motechproject.mcts.integration.hibernate.model.BpForm;
 
 public class BpFormRepositoryIT extends BaseRepositoryIT {
@@ -19,6 +18,12 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		getCurrentSession().createSQLQuery("DELETE FROM report.bp_form")
 				.executeUpdate();
 	}
+	
+	@Test
+	public void we(){
+		System.out.println("runned");
+	}
+
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Test

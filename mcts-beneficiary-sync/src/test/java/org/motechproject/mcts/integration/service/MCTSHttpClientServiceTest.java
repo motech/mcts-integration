@@ -49,6 +49,8 @@ public class MCTSHttpClientServiceTest {
 		HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
+        ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
+        when(restTemplate.postForEntity(requestUrl, httpEntity, String.class)).thenReturn(response);
 		mctsHttpClientService.syncTo(beneficiaryRequest);
 		verify(restTemplate).postForEntity(requestUrl, httpEntity,
 				String.class);

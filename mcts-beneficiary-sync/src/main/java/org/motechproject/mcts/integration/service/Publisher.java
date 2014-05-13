@@ -3,6 +3,7 @@ package org.motechproject.mcts.integration.service;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,10 +14,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class Publisher {
 
+	@Autowired
+	private PropertyReader propertyReader;
+	@Autowired
+	private RestTemplate restTemplate;
 	private final static String MODE="publish";
 	private final static Logger LOGGER = LoggerFactory.getLogger(Publisher.class);
-	private PropertyReader beneficiarySyncSettings;
-	private RestTemplate restTemplate;
 	private static String URL;
 	private static String DATA;
 	
@@ -34,7 +37,7 @@ public class Publisher {
 	
 	private void setUrl(String url)
 	{
-		URL= String.format("%s%s%s%s%s",beneficiarySyncSettings.getHubBaseUrl(), "/hub?hub.mode=", MODE, "&hub.url=", url);
+		URL= String.format("%s%s%s%s%s",propertyReader.getHubBaseUrl(), "/hub?hub.mode=", MODE, "&hub.url=", url);
 	}
 	
 	public String getUrl(){
