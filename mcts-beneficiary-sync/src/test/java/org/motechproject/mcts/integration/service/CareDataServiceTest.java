@@ -95,7 +95,7 @@ public class CareDataServiceTest {
 						"caseId", caseId)).thenReturn(motherCase);
 		MctsPregnantMother existingMctsPregnantMother = new MctsPregnantMother();
 		existingMctsPregnantMother.setMctsId("oldMctsId");
-		existingMctsPregnantMother.setCaseId(motherCase.getId());
+		existingMctsPregnantMother.setMotherCase(motherCase);
 				
 		when(
 				careDataRepository.findEntityByField(MctsPregnantMother.class,
@@ -108,8 +108,8 @@ public class CareDataServiceTest {
 				.forClass(MctsPregnantMother.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
 		MctsPregnantMother savedMctsPregnantMother = captor.getValue();
-		assertEquals(existingMctsPregnantMother.getCaseId(),
-				savedMctsPregnantMother.getCaseId());
+		assertEquals(existingMctsPregnantMother,
+				savedMctsPregnantMother);
 		assertEquals(newMctsId, savedMctsPregnantMother.getMctsId());
 	}
 

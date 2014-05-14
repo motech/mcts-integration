@@ -50,7 +50,7 @@ public class CareDataService {
             LOGGER.info(String.format("Creating MCTS Pregnant Mother with MCTS Id: %s for Mother Case: %s.", mctsId, motherCase.getCaseId()));
             MctsPregnantMother = new MctsPregnantMother();
             MctsPregnantMother.setMctsId(mctsId);
-            MctsPregnantMother.setCaseId(motherCase.getId());
+            MctsPregnantMother.setMotherCase(motherCase);
        }
         return MctsPregnantMother;
     }
