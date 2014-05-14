@@ -5,8 +5,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -29,37 +29,44 @@ public class CareDataService {
         return careDataRepository.getBeneficiariesToSync(startDate, endDate);
     }
 
-    public void mapMotherCaseToMCTSPregnantMother(String caseId, String mctsId) {
+    public void mapMotherCaseToMctsPregnantMother(String caseId, String mctsId) {
         MotherCase motherCase = careDataRepository.findEntityByField(MotherCase.class, "caseId", caseId);
         if (motherCase == null) {
             LOGGER.info(String.format("MCTS Pregnant Mother not updated. Mother case not found for Case Id: %s", caseId));
             return;
         }
 
-        MCTSPregnantMother mctsPregnantMother = getExistingOrNewMCTSPregnantMother(mctsId, motherCase);
-        careDataRepository.saveOrUpdate(mctsPregnantMother);
+        MctsPregnantMother MctsPregnantMother = getExistingOrNewMctsPregnantMother(mctsId, motherCase);
+        careDataRepository.saveOrUpdate(MctsPregnantMother);
     }
 
-    private MCTSPregnantMother getExistingOrNewMCTSPregnantMother(String mctsId, MotherCase motherCase) {
-        MCTSPregnantMother mctsPregnantMother = careDataRepository.findEntityByField(MCTSPregnantMother.class, "motherCase", motherCase);
+    private MctsPregnantMother getExistingOrNewMctsPregnantMother(String mctsId, MotherCase motherCase) {
+        MctsPregnantMother MctsPregnantMother = careDataRepository.findEntityByField(MctsPregnantMother.class, "motherCase", motherCase);
 
-        if (mctsPregnantMother != null) {
-            LOGGER.info(String.format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.", mctsPregnantMother.getMctsId(), motherCase.getCaseId(), mctsId));
-            mctsPregnantMother.updateMctsId(mctsId);
+        if (MctsPregnantMother != null) {
+            LOGGER.info(String.format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.", MctsPregnantMother.getMctsId(), motherCase.getCaseId(), mctsId));
+            MctsPregnantMother.setMctsId(mctsId);
         } else {
             LOGGER.info(String.format("Creating MCTS Pregnant Mother with MCTS Id: %s for Mother Case: %s.", mctsId, motherCase.getCaseId()));
-            mctsPregnantMother = new MCTSPregnantMother(mctsId, motherCase);
-        }
-        return mctsPregnantMother;
+            MctsPregnantMother = new MctsPregnantMother();
+            MctsPregnantMother.setMctsId(mctsId);
+            MctsPregnantMother.setCaseId(motherCase.getId());
+       }
+        return MctsPregnantMother;
     }
 
     public void updateSyncedBeneficiaries(List<Beneficiary> syncedBeneficiaries) {
         LOGGER.info(String.format("Updating %s beneficiaries as updated to MCTS", syncedBeneficiaries.size()));
         DateTime serviceUpdateTime = DateTime.now();
         for (Beneficiary syncedBeneficiary : syncedBeneficiaries) {
-            MCTSPregnantMother mctsPregnantMother = careDataRepository.load(MCTSPregnantMother.class, syncedBeneficiary.getMctsPregnantMotherId());
-            MCTSPregnantMotherServiceUpdate mctsPregnantMotherServiceUpdate =
-                    new MCTSPregnantMotherServiceUpdate(mctsPregnantMother, syncedBeneficiary.getServiceType(), syncedBeneficiary.getServiceDeliveryDate(), new Timestamp(serviceUpdateTime.getMillis()));
+            MctsPregnantMother MctsPregnantMother = careDataRepository.load(MctsPregnantMother.class, syncedBeneficiary.getMctsPregnantMotherId());
+            MctsPregnantMotherServiceUpdate mctsPregnantMotherServiceUpdate =
+                    new MctsPregnantMotherServiceUpdate();
+            mctsPregnantMotherServiceUpdate.setMctsPregnantMother(MctsPregnantMother);
+            mctsPregnantMotherServiceUpdate.setServiceDeliveryDate(syncedBeneficiary.getServiceDeliveryDate());
+            mctsPregnantMotherServiceUpdate.setServiceType(Short.valueOf(syncedBeneficiary.getServiceType().toString()));
+            mctsPregnantMotherServiceUpdate.setServiceUpdateTime(new Timestamp(serviceUpdateTime.getMillis()));
+            
             careDataRepository.saveOrUpdate(mctsPregnantMotherServiceUpdate);
         }
     }

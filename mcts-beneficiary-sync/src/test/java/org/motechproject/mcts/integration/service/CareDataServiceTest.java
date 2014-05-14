@@ -17,8 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -57,7 +57,7 @@ public class CareDataServiceTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldMapMotherCaseToNewMCTSPregnantMotherAndSaveIt() {
+	public void shouldMapMotherCaseToNewMctsPregnantMotherAndSaveIt() {
 		String caseId = "caseId";
 		String mctsId = "mctsId";
 		MotherCase motherCase = new MotherCase();
@@ -66,22 +66,22 @@ public class CareDataServiceTest {
 				careDataRepository.findEntityByField(MotherCase.class,
 						"caseId", caseId)).thenReturn(motherCase);
 		when(
-				careDataRepository.findEntityByField(MCTSPregnantMother.class,
+				careDataRepository.findEntityByField(MctsPregnantMother.class,
 						"motherCase", motherCase)).thenReturn(null);
 
-		careDataService.mapMotherCaseToMCTSPregnantMother(caseId, mctsId);
+		careDataService.mapMotherCaseToMctsPregnantMother(caseId, mctsId);
 
-		ArgumentCaptor<MCTSPregnantMother> captor = ArgumentCaptor
-				.forClass(MCTSPregnantMother.class);
+		ArgumentCaptor<MctsPregnantMother> captor = ArgumentCaptor
+				.forClass(MctsPregnantMother.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MCTSPregnantMother savedMCTSPregnantMother = captor.getValue();
-		assertEquals(motherCase, savedMCTSPregnantMother.getMotherCase());
-		assertEquals(mctsId, savedMCTSPregnantMother.getMctsId());
+		MctsPregnantMother savedMctsPregnantMother = captor.getValue();
+		assertEquals(motherCase, savedMctsPregnantMother.getMotherCase());
+		assertEquals(mctsId, savedMctsPregnantMother.getMctsId());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldUpdateMCTSPregnantMotherWithNewMCTSIdIfItAlreadyExists() {
+	public void shouldUpdateMctsPregnantMotherWithNewMCTSIdIfItAlreadyExists() {
 		String caseId = "caseId";
 		String newMctsId = "newMctsId";
 		MotherCase motherCase = new MotherCase();
@@ -89,22 +89,22 @@ public class CareDataServiceTest {
 		when(
 				careDataRepository.findEntityByField(MotherCase.class,
 						"caseId", caseId)).thenReturn(motherCase);
-		MCTSPregnantMother existingMCTSPregnantMother = new MCTSPregnantMother(
+		MctsPregnantMother existingMctsPregnantMother = new MctsPregnantMother(
 				"oldMctsId", motherCase);
 		when(
-				careDataRepository.findEntityByField(MCTSPregnantMother.class,
+				careDataRepository.findEntityByField(MctsPregnantMother.class,
 						"motherCase", motherCase)).thenReturn(
-				existingMCTSPregnantMother);
+				existingMctsPregnantMother);
 
-		careDataService.mapMotherCaseToMCTSPregnantMother(caseId, newMctsId);
+		careDataService.mapMotherCaseToMctsPregnantMother(caseId, newMctsId);
 
-		ArgumentCaptor<MCTSPregnantMother> captor = ArgumentCaptor
-				.forClass(MCTSPregnantMother.class);
+		ArgumentCaptor<MctsPregnantMother> captor = ArgumentCaptor
+				.forClass(MctsPregnantMother.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MCTSPregnantMother savedMCTSPregnantMother = captor.getValue();
-		assertEquals(existingMCTSPregnantMother.getMotherCase(),
-				savedMCTSPregnantMother.getMotherCase());
-		assertEquals(newMctsId, savedMCTSPregnantMother.getMctsId());
+		MctsPregnantMother savedMctsPregnantMother = captor.getValue();
+		assertEquals(existingMctsPregnantMother.getMotherCase(),
+				savedMctsPregnantMother.getMotherCase());
+		assertEquals(newMctsId, savedMctsPregnantMother.getMctsId());
 	}
 
 	@Test
@@ -116,35 +116,35 @@ public class CareDataServiceTest {
 				new Date(), "9999911111", 1, null, null, null);
 		List<Beneficiary> beneficiaries = Arrays.asList(beneficiary1,
 				beneficiary2);
-		MCTSPregnantMother mctsPregnantMother1 = new MCTSPregnantMother();
-		MCTSPregnantMother mctsPregnantMother2 = new MCTSPregnantMother();
+		MctsPregnantMother MctsPregnantMother1 = new MctsPregnantMother();
+		MctsPregnantMother MctsPregnantMother2 = new MctsPregnantMother();
 		when(
-				careDataRepository.load(MCTSPregnantMother.class,
+				careDataRepository.load(MctsPregnantMother.class,
 						beneficiary1.getMctsPregnantMotherId())).thenReturn(
-				mctsPregnantMother1);
+				MctsPregnantMother1);
 		when(
-				careDataRepository.load(MCTSPregnantMother.class,
+				careDataRepository.load(MctsPregnantMother.class,
 						beneficiary2.getMctsPregnantMotherId())).thenReturn(
-				mctsPregnantMother2);
+				MctsPregnantMother2);
 
 		careDataService.updateSyncedBeneficiaries(beneficiaries);
 
-		ArgumentCaptor<MCTSPregnantMotherServiceUpdate> captor = ArgumentCaptor
-				.forClass(MCTSPregnantMotherServiceUpdate.class);
+		ArgumentCaptor<MctsPregnantMotherServiceUpdate> captor = ArgumentCaptor
+				.forClass(MctsPregnantMotherServiceUpdate.class);
 		verify(careDataRepository, times(2)).saveOrUpdate(captor.capture());
-		List<MCTSPregnantMotherServiceUpdate> updatedRecords = captor
+		List<MctsPregnantMotherServiceUpdate> updatedRecords = captor
 				.getAllValues();
-		assertMCTSPregnantMotherServiceUpdate(updatedRecords.get(0),
-				beneficiary1, mctsPregnantMother1);
-		assertMCTSPregnantMotherServiceUpdate(updatedRecords.get(1),
-				beneficiary2, mctsPregnantMother2);
+		assertMctsPregnantMotherServiceUpdate(updatedRecords.get(0),
+				beneficiary1, MctsPregnantMother1);
+		assertMctsPregnantMotherServiceUpdate(updatedRecords.get(1),
+				beneficiary2, MctsPregnantMother2);
 	}
 
 	@SuppressWarnings("deprecation")
-	private void assertMCTSPregnantMotherServiceUpdate(
-			MCTSPregnantMotherServiceUpdate updatedRecord,
-			Beneficiary beneficiary, MCTSPregnantMother mctsPregnantMother) {
-		assertEquals(mctsPregnantMother, updatedRecord.getMctsPregnantMother());
+	private void assertMctsPregnantMotherServiceUpdate(
+			MctsPregnantMotherServiceUpdate updatedRecord,
+			Beneficiary beneficiary, MctsPregnantMother MctsPregnantMother) {
+		assertEquals(MctsPregnantMother, updatedRecord.getMctsPregnantMother());
 		assertEquals(beneficiary.getServiceDeliveryDate(),
 				updatedRecord.getServiceDeliveryDate());
 		assertEquals(beneficiary.getServiceType(),

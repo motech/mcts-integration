@@ -12,8 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -52,32 +52,32 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		MotherCase motherCase1 = setUpMotherCaseWithAncDates(now, now);
 		MotherCase motherCase2 = setUpMotherCaseWithTTDates(now, now);
 		MotherCase motherCase3 = setUpMotherCaseWithIFADateAndAdd(now, now);
-		MCTSPregnantMother mctsPregnantMother1 = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother1 = new MctsPregnantMother(
 				"mctsId1", motherCase1);
-		getCurrentSession().save(mctsPregnantMother1);
-		MCTSPregnantMother mctsPregnantMother2 = new MCTSPregnantMother(
+		getCurrentSession().save(MctsPregnantMother1);
+		MctsPregnantMother MctsPregnantMother2 = new MctsPregnantMother(
 				"mctsId2", motherCase2);
-		getCurrentSession().save(mctsPregnantMother2);
-		MCTSPregnantMother mctsPregnantMother3 = new MCTSPregnantMother(
+		getCurrentSession().save(MctsPregnantMother2);
+		MctsPregnantMother MctsPregnantMother3 = new MctsPregnantMother(
 				"mctsId3", motherCase3);
-		getCurrentSession().save(mctsPregnantMother3);
+		getCurrentSession().save(MctsPregnantMother3);
 		
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
 				"mctsId1", 2, now, "9999911110", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
 				"mctsId1", 3, now, "9999911111", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
 				"mctsId1", 4, now, "9999911171", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 5, now, "9999911181", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 6, now, "9999911161", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 7, now, "9999911151", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother3.getId(),
 				"mctsId3", 8, now, "9999911131", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother3.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother3.getId(),
 				"mctsId3", 9, now, "9999911121", 1, null, null, null));
 
 		List<Beneficiary> beneficiariesToSync = careDataRepository
@@ -105,19 +105,19 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		MotherCase motherCase1 = setUpMotherCaseWithAncDates(now,
 				dateOutOfRange);
 		MotherCase motherCase2 = setUpMotherCaseWithTTDates(now, dateInRange);
-		MCTSPregnantMother mctsPregnantMother1 = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother1 = new MctsPregnantMother(
 				"mctsId1", motherCase1);
-		getCurrentSession().save(mctsPregnantMother1);
-		MCTSPregnantMother mctsPregnantMother2 = new MCTSPregnantMother(
+		getCurrentSession().save(MctsPregnantMother1);
+		MctsPregnantMother MctsPregnantMother2 = new MctsPregnantMother(
 				"mctsId2", motherCase2);
-		getCurrentSession().save(mctsPregnantMother2);
+		getCurrentSession().save(MctsPregnantMother2);
 
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 5, now, "9999911111", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 6, now, "9999911911", 1, null, null, 8));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 7, now, "9999911191", 1, null, null, 6));
 
 		List<Beneficiary> beneficiariesToSync = careDataRepository
@@ -138,27 +138,27 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		Date now = DateTime.now().toDateMidnight().toDate();
 		MotherCase motherCase1 = setUpMotherCaseWithAncDates(now, now);
 		MotherCase motherCase2 = setUpMotherCaseWithTTDates(now, now);
-		MCTSPregnantMother mctsPregnantMother1 = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother1 = new MctsPregnantMother(
 				"mctsId1", motherCase1);
-		MCTSPregnantMother mctsPregnantMother2 = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother2 = new MctsPregnantMother(
 				"mctsId2", motherCase2);
-		getCurrentSession().save(mctsPregnantMother1);
-		getCurrentSession().save(mctsPregnantMother2);
+		getCurrentSession().save(MctsPregnantMother1);
+		getCurrentSession().save(MctsPregnantMother2);
 		getCurrentSession().save(
-				new MCTSPregnantMotherServiceUpdate(mctsPregnantMother1, 2,
+				new MctsPregnantMotherServiceUpdate(MctsPregnantMother1, 2,
 						now, null));
 		getCurrentSession().save(
-				new MCTSPregnantMotherServiceUpdate(mctsPregnantMother2, 5,
+				new MctsPregnantMotherServiceUpdate(MctsPregnantMother2, 5,
 						now, null));
 
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
 				"mctsId1", 3, now, "9999911111", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother1.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
 				"mctsId1", 4, now, "9999911191", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 6, now, "9999911171", 1, null, null, null));
-		expectedBeneficiaries.add(new Beneficiary(mctsPregnantMother2.getId(),
+		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 7, now, "9999911161", 1, null, null, null));
 
 		List<Beneficiary> beneficiariesToSync = careDataRepository
@@ -177,18 +177,18 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		shouldClearMctsPregnantMotherTables();
 		String mctsId = "mctsId";
 		MotherCase motherCase = new MotherCase();
-		MCTSPregnantMother mctsPregnantMother = new MCTSPregnantMother(mctsId,
+		MctsPregnantMother MctsPregnantMother = new MctsPregnantMother(mctsId,
 				motherCase);
 		getCurrentSession().save(motherCase);
 
-		careDataRepository.saveOrUpdate(mctsPregnantMother);
+		careDataRepository.saveOrUpdate(MctsPregnantMother);
 
 		List dbRecords = getCurrentSession().createCriteria(
-				MCTSPregnantMother.class).list();
+				MctsPregnantMother.class).list();
 		assertEquals(1, dbRecords.size());
-		MCTSPregnantMother mctsPregnantMotherFromDb = (MCTSPregnantMother) dbRecords
+		MctsPregnantMother MctsPregnantMotherFromDb = (MctsPregnantMother) dbRecords
 				.get(0);
-		assertEquals(mctsPregnantMother, mctsPregnantMotherFromDb);
+		assertEquals(MctsPregnantMother, MctsPregnantMotherFromDb);
 		shouldClearMctsPregnantMotherTables();
 	}
 
@@ -198,21 +198,21 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		shouldClearMctsPregnantMotherTables();
 		String newMctsId = "newMctsId";
 		MotherCase motherCase = new MotherCase();
-		MCTSPregnantMother mctsPregnantMother = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother = new MctsPregnantMother(
 				"mctsId", motherCase);
 		getCurrentSession().save(motherCase);
-		getCurrentSession().save(mctsPregnantMother);
+		getCurrentSession().save(MctsPregnantMother);
 
-		mctsPregnantMother.updateMctsId(newMctsId);
-		careDataRepository.saveOrUpdate(mctsPregnantMother);
+		MctsPregnantMother.updateMctsId(newMctsId);
+		careDataRepository.saveOrUpdate(MctsPregnantMother);
 
 		List dbRecords = getCurrentSession().createCriteria(
-				MCTSPregnantMother.class).list();
+				MctsPregnantMother.class).list();
 		assertEquals(1, dbRecords.size());
-		MCTSPregnantMother mctsPregnantMotherFromDb = (MCTSPregnantMother) dbRecords
+		MctsPregnantMother MctsPregnantMotherFromDb = (MctsPregnantMother) dbRecords
 				.get(0);
-		assertEquals(newMctsId, mctsPregnantMotherFromDb.getMctsId());
-		assertEquals(motherCase, mctsPregnantMotherFromDb.getMotherCase());
+		assertEquals(newMctsId, MctsPregnantMotherFromDb.getMctsId());
+		assertEquals(motherCase, MctsPregnantMotherFromDb.getMotherCase());
 		shouldClearMctsPregnantMotherTables();
 	}
 
@@ -220,14 +220,14 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 	@Test
 	public void shouldFindEntityByGivenFieldValue() {
 		MotherCase motherCase = new MotherCase();
-		MCTSPregnantMother mctsPregnantMother = new MCTSPregnantMother(
+		MctsPregnantMother MctsPregnantMother = new MctsPregnantMother(
 				"mctsId", motherCase);
 		getCurrentSession().save(motherCase);
-		getCurrentSession().save(mctsPregnantMother);
-		MCTSPregnantMother actualMCTSPregnantMother = careDataRepository
-				.findEntityByField(MCTSPregnantMother.class, "motherCase",
+		getCurrentSession().save(MctsPregnantMother);
+		MctsPregnantMother actualMctsPregnantMother = careDataRepository
+				.findEntityByField(MctsPregnantMother.class, "motherCase",
 						motherCase);
-		assertEquals(mctsPregnantMother, actualMCTSPregnantMother);
+		assertEquals(MctsPregnantMother, actualMctsPregnantMother);
 	}
 
 	private MotherCase setUpMotherCaseWithAncDates(Date serviceDate,

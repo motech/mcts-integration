@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Beneficiary {
 
-	private Integer mctsPregnantMotherId;
+	private Integer MctsPregnantMotherId;
 	private String mctsId;
 	private Integer serviceType;
 	private Date serviceDeliveryDate;
@@ -66,11 +66,11 @@ public class Beneficiary {
 		this.mobileNumber = mobileNumber;
 	}
 
-	public Beneficiary(Integer mctsPregnantMotherId, String mctsId,
+	public Beneficiary(Integer MctsPregnantMotherId, String mctsId,
 			Integer serviceType, Date serviceDeliveryDate, String mobileNumber,
 			Integer anc1HBLevel, Integer anc2HBLevel, Integer anc3HBLevel,
 			Integer anc4HBLevel) {
-		this.mctsPregnantMotherId = mctsPregnantMotherId;
+		this.MctsPregnantMotherId = MctsPregnantMotherId;
 		this.mctsId = mctsId;
 		this.serviceType = serviceType;
 		this.serviceDeliveryDate = serviceDeliveryDate;
@@ -96,7 +96,7 @@ public class Beneficiary {
 	}
 
 	public Integer getMctsPregnantMotherId() {
-		return mctsPregnantMotherId;
+		return MctsPregnantMotherId;
 	}
 
 	public String getMctsId() {
