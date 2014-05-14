@@ -42,7 +42,7 @@ public class DataMigrationService {
                 String[] rowContents = StringUtils.split(row, DELIMITER);
                 String caseId = rowContents[0];
                 String mctsId = rowContents[1];
-                careDataService.mapMotherCaseToMCTSPregnantMother(caseId, mctsId);
+                careDataService.mapMotherCaseToMctsPregnantMother(caseId, mctsId);
             }
         } catch (IOException e) {
             throw new DataMigrationException(String.format("Error while processing file %s", filePath), e);

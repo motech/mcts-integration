@@ -99,7 +99,7 @@ public class DataMigrationServiceTest {
 
         ArgumentCaptor<String> caseIdCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> mctsIdCaptor = ArgumentCaptor.forClass(String.class);
-        verify(careDataService, times(2)).mapMotherCaseToMCTSPregnantMother(caseIdCaptor.capture(), mctsIdCaptor.capture());
+        verify(careDataService, times(2)).mapMotherCaseToMctsPregnantMother(caseIdCaptor.capture(), mctsIdCaptor.capture());
         List<String> actualCaseIds = caseIdCaptor.getAllValues();
         List<String> actualMctsIds = mctsIdCaptor.getAllValues();
         assertEquals("case_id1", actualCaseIds.get(0));
