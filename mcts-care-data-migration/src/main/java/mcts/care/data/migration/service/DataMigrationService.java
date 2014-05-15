@@ -24,6 +24,7 @@ public class DataMigrationService {
     @Autowired
     private CareDataService careDataService;
 
+    
     @Autowired
     public DataMigrationService(@Qualifier("careDataMigrationProperties") Properties properties,CareDataService careDataService) {
         this.careDataService = careDataService;

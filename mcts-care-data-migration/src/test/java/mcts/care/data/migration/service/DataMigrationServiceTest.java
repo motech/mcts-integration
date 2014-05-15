@@ -10,19 +10,28 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Properties;
 
 import mcts.care.data.migration.exception.DataMigrationException;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@PrepareForTest(FileUtils.class)
+@RunWith(PowerMockRunner.class) 
 public class DataMigrationServiceTest {
 
     @Rule
@@ -31,23 +40,33 @@ public class DataMigrationServiceTest {
     @Mock
     private CareDataService careDataService;
 
-    @InjectMocks
+    @Mock
+    private Properties properties;
+    
     private DataMigrationService dataMigrationService;
 
-  /*  @Before
+    //csv.field.delimiter=,
+    //valid.file.content.line.fomat=^[a-zA-Z0-9_-]+\\s*%s\\s*[a-zA-Z0-9_-]+$
+    @Before
     public void setUp() throws Exception {
-        initMocks(this);
-       // dataMigrationService = new DataMigrationService(careDataService);
-    }*/
+        MockitoAnnotations.initMocks(this);
+        when(properties.getProperty("csv.field.delimiter")).thenReturn(",");
+        when(properties.getProperty("valid.file.content.line.fomat")).thenReturn("^[a-zA-Z0-9_-]+\\s*%s\\s*[a-zA-Z0-9_-]+$");
+        dataMigrationService = new DataMigrationService(properties, careDataService);
+    }
 
     @Test
     public void shouldValidateIfGivenFilePathIsADirectory() {
-        File file = FileUtils.getTempDirectory();
-        String path = file.getPath();
+    	 File file = FileUtils.getTempDirectory();
+         String path = file.getPath();
 
-        dataMigrationService.migrate(path);
-        expectedException.expect(DataMigrationException.class);
-        expectedException.expectMessage(String.format("Invalid file. Given path %s is a directory.", path));
+         expectedException.expect(DataMigrationException.class);
+         expectedException.expectMessage(String.format("Invalid file. Given path %s is a directory.", path));
+     
+       
+         dataMigrationService.migrate(path);
+        
+        
 
     }
 
