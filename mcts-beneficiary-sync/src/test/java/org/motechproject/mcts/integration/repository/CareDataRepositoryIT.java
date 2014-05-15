@@ -2,22 +2,21 @@ package org.motechproject.mcts.integration.repository;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -62,6 +61,8 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		MctsPregnantMother MctsPregnantMother3 = createMctsPregnantMother(
 				"mctsId3", motherCase3);
 		getCurrentSession().save(MctsPregnantMother3);
+		
+		getCurrentSession().flush();
 		
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
 		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
@@ -115,6 +116,8 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 				"mctsId2", motherCase2);
 		getCurrentSession().save(MctsPregnantMother2);
 
+		getCurrentSession().flush();
+		
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
 		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother2.getId(),
 				"mctsId2", 5, now, "9999911111", 1, null, null, null));
@@ -162,6 +165,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		serviceUpdate2.setServiceUpdateTime(null);
 		getCurrentSession().save(serviceUpdate2);
 		
+		getCurrentSession().flush();
 		
 		List<Beneficiary> expectedBeneficiaries = new ArrayList<>();
 		expectedBeneficiaries.add(new Beneficiary(MctsPregnantMother1.getId(),
