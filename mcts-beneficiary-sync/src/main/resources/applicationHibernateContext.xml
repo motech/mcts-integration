@@ -35,6 +35,14 @@
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.BpForm
 				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.Locationdata</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.FlwData</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsState
+				</value>
+				<!--  <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsTaluk
+				</value>-->
 			</list>
 		</property>
 	</bean>
@@ -54,7 +62,8 @@
 			</props>
 		</property>
 	</bean>
-
+	
+	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
