@@ -3,19 +3,24 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="stubConsoleAppender" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.EnhancedPatternLayout">
-            <param name="ConversionPattern" value="[%t] - %d %-5p [%c] %m%n" />
-        </layout>
-    </appender>
+	<appender name="stubConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="ConversionPattern" value="[%t] - %d %-5p [%c] %m%n" />
+		</layout>
+	</appender>
 
-    <logger name="mcts.integration.stub" additivity="false">
-        <level value="DEBUG"/>
-        <appender-ref ref="stubConsoleAppender" />
-    </logger>
-
-    <root>
-        <level value="ERROR" />
-        <appender-ref ref="stubConsoleAppender" />
-    </root>
+	<logger name="mcts.integration.stub" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="stubConsoleAppender" />
+	</logger>
+	
+	<logger name="mcts.integration.stub.controller" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="stubConsoleAppender" />
+	</logger>
+	
+	<root>
+		<level value="ERROR" />
+		<appender-ref ref="stubConsoleAppender" />
+	</root>
 </log4j:configuration>
