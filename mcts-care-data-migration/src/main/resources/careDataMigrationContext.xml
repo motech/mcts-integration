@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-	<import resource="classpath*:careDataContext.xml" />
+	<import resource="classpath*:applicationBeneficiarySyncContext.xml" />
 
 	<util:properties id="careDataMigrationProperties"
 		location="classpath:careDataMigration.properties" />

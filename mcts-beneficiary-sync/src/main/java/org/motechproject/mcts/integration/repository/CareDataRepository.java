@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -25,6 +26,8 @@ public class CareDataRepository {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	private static final String SEQUENCE = "report.locationdata_location_id_seq";
+	
 	@Autowired
 	public CareDataRepository(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -115,4 +118,11 @@ public class CareDataRepository {
 	private Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
+	public long getNextKey() {
+		  Query query = sessionFactory.getCurrentSession().createSQLQuery(
+		    "select nextval('" + SEQUENCE + "')");
+		  Long key = Long.parseLong(query.uniqueResult().toString());
+		  return key;
+		 }
+	
 }
