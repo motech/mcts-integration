@@ -19,9 +19,9 @@
 		class="org.springframework.beans.factory.config.ListFactoryBean">
 		<property name="sourceList">
 			<list>
-				<value>org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMother
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother
 				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MCTSPregnantMotherServiceUpdate
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase
 				</value>

@@ -75,7 +75,7 @@ public class CareDataServiceTest {
 				.forClass(MctsPregnantMother.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
 		MctsPregnantMother savedMctsPregnantMother = captor.getValue();
-		assertEquals(motherCase, savedMctsPregnantMother);
+		assertEquals(motherCase, savedMctsPregnantMother.getMotherCase());
 		assertEquals(mctsId, savedMctsPregnantMother.getMctsId());
 	}
 
@@ -152,7 +152,7 @@ public class CareDataServiceTest {
 		assertEquals(MctsPregnantMother, updatedRecord.getMctsPregnantMother());
 		assertEquals(beneficiary.getServiceDeliveryDate(),
 				updatedRecord.getServiceDeliveryDate());
-		assertEquals(beneficiary.getServiceType(),
+		assertEquals(Short.valueOf(beneficiary.getServiceType().toString()),
 				updatedRecord.getServiceType());
 	}
 }
