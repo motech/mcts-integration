@@ -44,6 +44,18 @@ public class BeneficiarySyncController {
 	MotechBeneficiarySyncService motechBeneficiarySyncService;
 
 	/**
+	 * Method to validate connection
+	 * @param query
+	 * @return string
+	 */
+	@RequestMapping(value = "ping", method = RequestMethod.GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public String ping(@RequestParam("query") String query){
+		return String.format("Ping Received Succefully with query param: %s", query);
+	}
+	
+	/**
 	 * Method to send request to mcts to send updates
 	 * @param startDate
 	 * @param endDate

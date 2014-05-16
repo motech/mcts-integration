@@ -58,9 +58,10 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	protected void writeToFile(String beneficiaryData) {
-		this.outputFileLocation = String.format("%s_%s",
+		this.outputFileLocation = String.format("%s_%s.xml",
 				propertyReader.getSyncRequestOutputFileLocation(),
-				DateTime.now());
+				DateTime.now().toString("yyyy-MM-dd") + "T"
+						+ DateTime.now().toString("HH:mm"));
 		try {
 			FileUtils.writeStringToFile(new File(outputFileLocation),
 					beneficiaryData);

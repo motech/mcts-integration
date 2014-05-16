@@ -31,6 +31,19 @@ public class PublishCallBack {
 	@Autowired
 	private PropertyReader beneficiarySyncSettings;
 
+
+	/**
+	 * Method to validate connection
+	 * @param query
+	 * @return string
+	 */
+	@RequestMapping(value = "ping", method = RequestMethod.GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public String ping(@RequestParam("query") String query){
+		return String.format("Ping Received Succefully with query param: %s", query);
+	}
+	
 	@RequestMapping(value = "updatesreceived", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody

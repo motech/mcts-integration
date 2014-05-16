@@ -9,10 +9,17 @@
         </layout>
     </appender>
 
-    <logger name="org.motechproject.mcts.integration.beneficiary.sync" additivity="false">
+   
+ <logger name="org.motechproject.mcts.integration.service" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="mctsIntegrationConsoleAppender" />
+    </logger>
+    
+    <logger name="org.motechproject.mcts.integration" additivity="false">
         <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
+
 
     <logger name="motech.care.data" additivity="false">
         <level value="DEBUG"/>
