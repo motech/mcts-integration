@@ -22,7 +22,7 @@ public class BeneficiariesItemReader implements ItemReader<Beneficiary>{
 	    private DateTime startDate;
 	    private DateTime endDate;
 	    
-	   // @Autowired
+	    @Autowired
 	    CareDataRepository careDataRepository;
 	   
 	    public BeneficiariesItemReader(CareDataRepository careDataRepository){
