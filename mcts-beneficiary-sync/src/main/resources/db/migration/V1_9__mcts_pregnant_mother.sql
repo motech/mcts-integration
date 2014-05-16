@@ -3,7 +3,23 @@
 --  ,case_id INTEGER REFERENCES report.mother_case(id) UNIQUE
 --);
 
+-- Table: report.mcts_state
 
+-- DROP TABLE report.mcts_state;
+
+CREATE TABLE report.mcts_state
+(
+  id serial NOT NULL,
+  state_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  CONSTRAINT mcts_state_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE report.mcts_state
+  OWNER TO postgres;
+  
 -- Table: report.mcts_district
 
 -- DROP TABLE report.mcts_district;
@@ -26,6 +42,28 @@ ALTER TABLE report.mcts_district
   OWNER TO postgres;
 
   
+  -- Table: report.mcts_taluk
+
+-- DROP TABLE report.mcts_taluk;
+
+CREATE TABLE report.mcts_taluk
+(
+  id serial NOT NULL,
+  taluk_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  district_id integer NOT NULL,
+  CONSTRAINT mcts_taluk_pkey PRIMARY KEY (id),
+  CONSTRAINT mcts_taluk_districtid_fkey FOREIGN KEY (district_id)
+      REFERENCES report.mcts_district (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE report.mcts_taluk
+  OWNER TO postgres;
+
+  
   -- Table: report.mcts_healthblock
 
 -- DROP TABLE report.mcts_healthblock;
@@ -45,6 +83,76 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE report.mcts_healthblock
+  OWNER TO postgres;
+
+  
+  -- Table: report.mcts_phc
+
+-- DROP TABLE report.mcts_phc;
+
+CREATE TABLE report.mcts_phc
+(
+  id serial NOT NULL,
+  phc_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  healthblock_id integer NOT NULL,
+  CONSTRAINT mcts_phc_pkey PRIMARY KEY (id),
+  CONSTRAINT mcts_phc_healthblockid_fkey FOREIGN KEY (healthblock_id)
+      REFERENCES report.mcts_healthblock (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE report.mcts_phc
+  OWNER TO postgres;
+
+  
+  -- Table: report.mcts_subcenter
+
+-- DROP TABLE report.mcts_subcenter;
+
+CREATE TABLE report.mcts_subcenter
+(
+  id serial NOT NULL,
+  subcenter_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  phc_id integer NOT NULL,
+  CONSTRAINT mcts_subcenter_pkey PRIMARY KEY (id),
+  CONSTRAINT mcts_subcenter_phcid_fkey FOREIGN KEY (phc_id)
+      REFERENCES report.mcts_phc (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE report.mcts_subcenter
+  OWNER TO postgres;
+
+  
+  -- Table: report.mcts_village
+
+-- DROP TABLE report.mcts_village;
+
+CREATE TABLE report.mcts_village
+(
+  id serial NOT NULL,
+  village_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  subcenter_id integer NOT NULL,
+  taluk_id integer NOT NULL,
+  CONSTRAINT mcts_village_pkey PRIMARY KEY (id),
+  CONSTRAINT mcts_village_subcenterid_fkey FOREIGN KEY (subcenter_id)
+      REFERENCES report.mcts_subcenter (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT mcts_village_talukid_fkey FOREIGN KEY (taluk_id)
+      REFERENCES report.mcts_taluk (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE report.mcts_village
   OWNER TO postgres;
 
   
@@ -77,28 +185,6 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE report.mcts_healthworker
-  OWNER TO postgres;
-
-  
-  -- Table: report.mcts_phc
-
--- DROP TABLE report.mcts_phc;
-
-CREATE TABLE report.mcts_phc
-(
-  id serial NOT NULL,
-  phc_id integer NOT NULL,
-  name character varying(255) NOT NULL,
-  healthblock_id integer NOT NULL,
-  CONSTRAINT mcts_phc_pkey PRIMARY KEY (id),
-  CONSTRAINT mcts_phc_healthblockid_fkey FOREIGN KEY (healthblock_id)
-      REFERENCES report.mcts_healthblock (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE report.mcts_phc
   OWNER TO postgres;
 
   
@@ -141,93 +227,5 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE report.mcts_pregnant_mother
-  OWNER TO postgres;
-  
-  
-  -- Table: report.mcts_state
-
--- DROP TABLE report.mcts_state;
-
-CREATE TABLE report.mcts_state
-(
-  id serial NOT NULL,
-  state_id integer NOT NULL,
-  name character varying(255) NOT NULL,
-  CONSTRAINT mcts_state_pkey PRIMARY KEY (id)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE report.mcts_state
-  OWNER TO postgres;
-
-  
-  -- Table: report.mcts_subcenter
-
--- DROP TABLE report.mcts_subcenter;
-
-CREATE TABLE report.mcts_subcenter
-(
-  id serial NOT NULL,
-  subcenter_id integer NOT NULL,
-  name character varying(255) NOT NULL,
-  phc_id integer NOT NULL,
-  CONSTRAINT mcts_subcenter_pkey PRIMARY KEY (id),
-  CONSTRAINT mcts_subcenter_phcid_fkey FOREIGN KEY (phc_id)
-      REFERENCES report.mcts_phc (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE report.mcts_subcenter
-  OWNER TO postgres;
-
-  
-  -- Table: report.mcts_taluk
-
--- DROP TABLE report.mcts_taluk;
-
-CREATE TABLE report.mcts_taluk
-(
-  id serial NOT NULL,
-  taluk_id integer NOT NULL,
-  name character varying(255) NOT NULL,
-  district_id integer NOT NULL,
-  CONSTRAINT mcts_taluk_pkey PRIMARY KEY (id),
-  CONSTRAINT mcts_taluk_districtid_fkey FOREIGN KEY (district_id)
-      REFERENCES report.mcts_district (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE report.mcts_taluk
-  OWNER TO postgres;
-
-  
-  -- Table: report.mcts_village
-
--- DROP TABLE report.mcts_village;
-
-CREATE TABLE report.mcts_village
-(
-  id serial NOT NULL,
-  village_id integer NOT NULL,
-  name character varying(255) NOT NULL,
-  subcenter_id integer NOT NULL,
-  taluk_id integer NOT NULL,
-  CONSTRAINT mcts_village_pkey PRIMARY KEY (id),
-  CONSTRAINT mcts_village_subcenterid_fkey FOREIGN KEY (subcenter_id)
-      REFERENCES report.mcts_subcenter (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT mcts_village_talukid_fkey FOREIGN KEY (taluk_id)
-      REFERENCES report.mcts_taluk (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE report.mcts_village
   OWNER TO postgres;
 
