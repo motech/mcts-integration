@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<import resource="classpath:applicationHibernateContext.xml" />
+
+	<context:component-scan base-package="org.motechproject.mcts" />
+
+	<util:properties id="beneficiarySyncProperties"
+		location="classpath:/beneficiary_sync.properties" />
+	<util:properties id="hibernateProperties" location="classpath:/hibernate.properties" />
+	<context:property-placeholder
+		properties-ref="hibernateProperties" ignore-unresolvable="true" />
+	<context:property-placeholder location="classpath:postgres.properties"
+		ignore-unresolvable="true" />
+
+	<bean id="httpComponentsClientHttpRequestFactory"
+		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
+
+	<bean id="mctsRestTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg ref="httpComponentsClientHttpRequestFactory" />
+	</bean>
+	 <bean id="careDataRepository" class="org.motechproject.mcts.integration.repository.CareDataRepository">
+    <constructor-arg index="0" ref="sessionFactory"/>
+    </bean>
+
+	
+
+</beans>

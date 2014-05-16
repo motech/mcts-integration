@@ -95,6 +95,14 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+		
+		<!-- javax-batch-dependency -->
+		
+		<dependency>
+			<groupId>javax.batch</groupId>
+			<artifactId>javax.batch-api</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
