@@ -1,10 +1,20 @@
 package org.motechproject.mcts.integration.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.model.NewDataSet;
+import org.motechproject.mcts.integration.model.Record;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +35,8 @@ public class MCTSBeneficiarySyncService {
 	private PropertyReader propertyReader;
 	@Autowired
 	private Publisher publisher;
+	@Autowired
+	private CareDataRepository careDataRepository;
 
 	private String outputFileLocation;
 
@@ -36,16 +48,45 @@ public class MCTSBeneficiarySyncService {
 		this.propertyReader = propertyReader;
 	}
 
-	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
+	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) throws Exception {
 		String beneficiaryData = syncFrom(startDate, endDate);
+		InputStream is = new ByteArrayInputStream(beneficiaryData.getBytes());
+		JAXBContext jc;
+		try {
+			jc = JAXBContext.newInstance(NewDataSet.class);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("Invalid Content Received. The Content Received is:\n"+ beneficiaryData + e);
+			throw new Exception("Invalid Content Received. Exiting", e);
+		}
+
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		NewDataSet newDataSet = (NewDataSet) unmarshaller.unmarshal(is);
 		LOGGER.info("Get Updates Request Sent To MCTS");
 		if (beneficiaryData == null) {
 			LOGGER.info("No New Updates Received");
 			return;
 		}
+		addToDbData(newDataSet);
 		writeToFile(beneficiaryData);
 		notifyHub(beneficiaryData);
 		LOGGER.info("HUB Notified Successfully");
+	}
+
+	private void addToDbData(NewDataSet newDataSet) {
+		// TODO Auto-generated method stub
+		for (Record record: newDataSet.getRecords()){
+			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
+			mctsPregnantMother = mapRecordToMctsPregnantMother(record);
+			careDataRepository.saveOrUpdate(mctsPregnantMother);
+		}
+		
+	}
+	
+	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record){
+		MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
+		
+		return mctsPregnantMother;
 	}
 
 	protected String syncFrom(DateTime startDate, DateTime endDate) {

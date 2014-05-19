@@ -65,7 +65,7 @@ public class MCTSBeneficiarySyncServiceTest {
     }
     
     @Test
-    public void shouldNotProceedIfResponseIsNull(){
+    public void shouldNotProceedIfResponseIsNull() throws Exception{
     	DateTime startDate = DateTime.now().minusDays(1);
         DateTime endDate = DateTime.now();
     	MultiValueMap<String, String> requestBody = getRequestBody();
