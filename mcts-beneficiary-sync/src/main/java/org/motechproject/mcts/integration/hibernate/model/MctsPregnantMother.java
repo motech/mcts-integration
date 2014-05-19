@@ -1,6 +1,6 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-// Generated May 15, 2014 10:59:12 AM by Hibernate Tools 3.4.0.CR1
+// Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -45,9 +45,11 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private String pincode;
 	private Date lmpDate;
 	private String eidNumber;
-	private String anmId;
 	private String ward;
 	private String town;
+	private Integer anmId;
+	private Integer ashaId;
+	private Date creationTime;
 	private Set<MctsPregnantMotherServiceUpdate> mctsPregnantMotherServiceUpdates = new HashSet<MctsPregnantMotherServiceUpdate>(
 			0);
 
@@ -77,9 +79,11 @@ public class MctsPregnantMother implements java.io.Serializable {
 			String pincode,
 			Date lmpDate,
 			String eidNumber,
-			String anmId,
 			String ward,
 			String town,
+			Integer anmId,
+			Integer ashaId,
+			Date creationTime,
 			Set<MctsPregnantMotherServiceUpdate> mctsPregnantMotherServiceUpdates) {
 		this.motherCase = motherCase;
 		this.mctsId = mctsId;
@@ -99,9 +103,11 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.pincode = pincode;
 		this.lmpDate = lmpDate;
 		this.eidNumber = eidNumber;
-		this.anmId = anmId;
 		this.ward = ward;
 		this.town = town;
+		this.anmId = anmId;
+		this.ashaId = ashaId;
+		this.creationTime = creationTime;
 		this.mctsPregnantMotherServiceUpdates = mctsPregnantMotherServiceUpdates;
 	}
 
@@ -282,15 +288,6 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.eidNumber = eidNumber;
 	}
 
-	@Column(name = "anm_id", length = 20)
-	public String getAnmId() {
-		return this.anmId;
-	}
-
-	public void setAnmId(String anmId) {
-		this.anmId = anmId;
-	}
-
 	@Column(name = "ward")
 	public String getWard() {
 		return this.ward;
@@ -307,6 +304,34 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setTown(String town) {
 		this.town = town;
+	}
+
+	@Column(name = "anm_id")
+	public Integer getAnmId() {
+		return this.anmId;
+	}
+
+	public void setAnmId(Integer anmId) {
+		this.anmId = anmId;
+	}
+
+	@Column(name = "asha_id")
+	public Integer getAshaId() {
+		return this.ashaId;
+	}
+
+	public void setAshaId(Integer ashaId) {
+		this.ashaId = ashaId;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "creation_time", length = 29)
+	public Date getCreationTime() {
+		return this.creationTime;
+	}
+
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsPregnantMother")

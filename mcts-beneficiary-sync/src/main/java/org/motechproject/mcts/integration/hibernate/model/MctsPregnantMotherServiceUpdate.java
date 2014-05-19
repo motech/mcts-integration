@@ -1,6 +1,6 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-// Generated May 15, 2014 10:59:12 AM by Hibernate Tools 3.4.0.CR1
+// Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
