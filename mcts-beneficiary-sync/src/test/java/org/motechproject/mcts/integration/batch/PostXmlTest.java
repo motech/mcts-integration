@@ -1,28 +1,36 @@
 package org.motechproject.mcts.integration.batch;
-import java.io.File;
 
-import org.junit.Ignore;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+import java.io.File;
+import java.util.Map;
+import org.apache.http.HttpEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.springframework.web.client.RestTemplate;
-@Ignore
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationBeneficiarySyncContextTest.xml"})
+
+@RunWith(MockitoJUnitRunner.class)
 public class PostXmlTest {
-	
-	@Autowired
-	private RestTemplate mctsRestTemplate;
-	
+
+	@Mock RestTemplate restTemplate;
+	@Mock BatchServiceUrlGenerator batchServiceUrlGenerator;
+	@InjectMocks PostXml postXml = new PostXml(restTemplate, batchServiceUrlGenerator);
 	
 	@Test
-	public void postXmlTest() {
-		PostXml postXml = new PostXml(mctsRestTemplate);
-		File file = new File("C:\\Users\\Rakesh\\Desktop\\log4j_sandeep.xml");
-		postXml.sendXml(file);
+	public void sendXml_success() {
+
+		when(batchServiceUrlGenerator.getUploadXmlUrl()).thenReturn("localhost");
+		when(restTemplate.postForObject(batchServiceUrlGenerator.getUploadXmlUrl(), HttpEntity.class,String.class)).thenReturn(null);
+		postXml.sendXml(new File("randomPath"));
+		verify(restTemplate).postForEntity((String) any(), (HttpEntity) any(), eq(Map.class));
+		verify(restTemplate, times(1)).postForEntity((String) any(), (HttpEntity) any(), eq(Map.class));
 	}
 	
-
 }
