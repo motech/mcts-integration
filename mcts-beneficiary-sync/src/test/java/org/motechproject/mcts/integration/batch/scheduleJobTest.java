@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.apache.http.HttpEntity;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.springframework.web.client.RestTemplate;
 
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class scheduleJobTest {
 	

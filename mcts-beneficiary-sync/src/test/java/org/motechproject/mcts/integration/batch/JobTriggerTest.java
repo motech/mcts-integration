@@ -5,6 +5,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.springframework.web.client.RestTemplate;
 
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class JobTriggerTest {
 
