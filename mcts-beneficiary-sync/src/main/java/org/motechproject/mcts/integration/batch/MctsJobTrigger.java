@@ -8,6 +8,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Client class to trigger scheduled job with batch
+ * @author Naveen
+ *
+ */
 public class MctsJobTrigger {
 	
 	 private final static Logger LOGGER = LoggerFactory.getLogger(MctsJobTrigger.class);
@@ -19,12 +24,14 @@ public class MctsJobTrigger {
 	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
 	    }
 	   
+	 /**
+	  * Method to trigger <code>job</code> scheduled with <batch> module
+	  */
 		public void triggerJob() {
 	        LOGGER.info("Started service to trigger mcts job with batch");
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
-           	    System.out.println("path"+batchServiceUrlGenerator.getScheduleBatchUrl());
-           	    restTemplate.getForObject("http://localhost:8080/motech-platform-batch/batch/trigger/mcts-job", String.class);
+           	    restTemplate.getForObject(batchServiceUrlGenerator.getTriggerJobUrl(), String.class);
             }
             catch(Exception e) {
            	    LOGGER.info(e.getMessage());

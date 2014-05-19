@@ -15,7 +15,11 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-
+/**
+ * Client class to schedule mcts job with batch module
+ * @author Naveen
+ *
+ */
 public class MctsJobSchedule {
 	
 	 private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
@@ -26,20 +30,24 @@ public class MctsJobSchedule {
 	        this.restTemplate = restTemplate;
 	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
 	    }
-	   
-		public void scheduleJob() {
+   
+	    /**
+	     * method to schedule <code>batch job</code>
+	     * @param jobName Name of the <code>job</code> to be scheduled
+	     * @param cronExpression <code>cron expression</code> for the job to be scheduled
+	     */
+		public void scheduleJob(String jobName,String cronExpression) {
 	        LOGGER.info("Started service to schedule mcts job with batch");
 	        HttpHeaders httpHeaders = new HttpHeaders();
 	        CronJobScheduleParameters params = new CronJobScheduleParameters();
-	        params.setCronExpression("0 15 10 ? * *");
-	        params.setJobName("mcts-new2-job");
+	        params.setCronExpression(cronExpression);
+	        params.setJobName(jobName);
 	        params.setParamsMap(new HashMap<String, String>());
 			HttpEntity httpEntity = new HttpEntity(params, httpHeaders);
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
-            	System.out.println("path"+batchServiceUrlGenerator.getScheduleBatchUrl());
-            	restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity,String.class);
+            	restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
             }
             catch(Exception e) {
             	LOGGER.info(e.getMessage());

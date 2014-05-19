@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
+import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,27 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Class to post the <code>job<code> configuration xml file to <code>batch</code>  
+ * @author Naveen
+ *
+ */
 public class PostXml {
 	  private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 
 	    private RestTemplate restTemplate;
 	   // private BeneficiarySyncSettings beneficiarySyncSettings;
 	    private MultiValueMap<String, Object> formData;
+	    private BatchServiceUrlGenerator batchServiceUrlGenerator;
 	    @Autowired
-	    public PostXml(@Qualifier("mctsRestTemplate") RestTemplate restTemplate) {
+	    public PostXml(@Qualifier("mctsRestTemplate") RestTemplate restTemplate,BatchServiceUrlGenerator batchServiceUrlGenerator) {
 	        this.restTemplate = restTemplate;
 	    }
 	    
-	    
+	    /**
+	     * Method to post job configuration xml file to <code>batch</code> module
+	     * @param file
+	     */
 	    public void sendXml(File file) {
 	        LOGGER.info("Started service to post xml to batch");
 	        HttpHeaders httpHeaders = new HttpHeaders();
@@ -39,13 +49,8 @@ public class PostXml {
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 	        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	        //HttpEntity<File> httpEntity = new HttpEntity<File>(file, httpHeaders);
-	        restTemplate.postForEntity("http://localhost:8080/motech-platform-batch/batch/upload", requestEntity, Map.class);
-	       /* if (response != null) {
-	            LOGGER.info(String.format("File uploaded successfully"));
-	    
-	        }
-*/
+	        restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
+	      
 	    }
 
 }

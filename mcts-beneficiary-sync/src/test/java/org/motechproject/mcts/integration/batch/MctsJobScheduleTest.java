@@ -24,7 +24,7 @@ public class MctsJobScheduleTest {
 	public void ScheduleJobtest() {
 		System.out.println("started test");
 		MctsJobSchedule schedule = new MctsJobSchedule(mctsRestTemplate,batchServiceUrlGenerator);
-		schedule.scheduleJob();
+		schedule.scheduleJob("mcts-job","0 15 10 * * ? 2014");
 	}
 	
 	
