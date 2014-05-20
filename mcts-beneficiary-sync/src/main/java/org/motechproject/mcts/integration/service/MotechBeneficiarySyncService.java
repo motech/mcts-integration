@@ -61,8 +61,8 @@ public class MotechBeneficiarySyncService {
 		HttpStatus httpStatus = syncTo(beneficiaryRequest);
 		if (httpStatus.value() / 100 == 2) {
 			writeSyncDataToFile(beneficiaryRequest);
-			notifyHub(beneficiaryRequest);
 			updateSyncedBeneficiaries(beneficiariesToSync);
+			notifyHub(beneficiaryRequest);
 		}
 	}
 

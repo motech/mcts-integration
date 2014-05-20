@@ -19,11 +19,6 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 				.executeUpdate();
 	}
 	
-	@Test
-	public void we(){
-		System.out.println("runned");
-	}
-
 	
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Test

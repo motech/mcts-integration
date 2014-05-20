@@ -85,4 +85,13 @@ public class PropertyReader {
     public String getHubSyncFromUrl() {
         return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
     }
+    
+    public int getMaxNumberOfPublishRetryCount(){
+    	return Integer.parseInt(properties.getProperty("max.publish.retry.count"));
+    }
+    
+    public int getHubRetryInterval()
+    {
+    	return Integer.parseInt(properties.getProperty("hub.retry.interval"));
+    }
 }

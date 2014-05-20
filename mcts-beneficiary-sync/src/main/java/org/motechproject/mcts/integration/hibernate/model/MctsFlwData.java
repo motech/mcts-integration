@@ -1,6 +1,6 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-// Generated May 16, 2014 3:21:45 PM by Hibernate Tools 3.4.0.CR1
+// Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,6 +36,10 @@ public class MctsFlwData implements java.io.Serializable {
 	private String comments;
 
 	public MctsFlwData() {
+	}
+
+	public MctsFlwData(String healthworkerId) {
+		this.healthworkerId = healthworkerId;
 	}
 
 	public MctsFlwData(String districtId, String talukaId,
@@ -172,7 +176,7 @@ public class MctsFlwData implements java.io.Serializable {
 		this.gfAddress = gfAddress;
 	}
 
-	@Column(name = "healthworker_id")
+	@Column(name = "healthworker_id", nullable = false)
 	public String getHealthworkerId() {
 		return this.healthworkerId;
 	}

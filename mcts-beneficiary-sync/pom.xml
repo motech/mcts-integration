@@ -99,7 +99,23 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+		
+		<!-- javax-batch-dependency -->
+		
+		<dependency>
+			<groupId>javax.batch</groupId>
+			<artifactId>javax.batch-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<!-- Spring batch dependency -->
+	 <dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-infrastructure</artifactId>
+			<version>3.0.0.M3</version>
+		</dependency>
 	</dependencies>
+	
 
 	<profiles>
 		<profile>
