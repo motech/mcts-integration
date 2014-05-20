@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,5 +126,25 @@ public class CareDataRepository {
 		  Long key = Long.parseLong(query.uniqueResult().toString());
 		  return key;
 		 }
+	
+	public void flush() {
+		getCurrentSession().flush();
+	}
+	
+	/**
+	 * Method to get PHC object from phc_id
+	 * @param phcId
+	 * @return
+	 */
+	public MctsPhc getMctsPhc(int phcId) {
+		String queryString = "select phc from MctsPhc phc where phc.phcId='"+phcId+"'";
+		List<Object> phc = getCurrentSession().createQuery(queryString).list();
+		if(phc.size()!=0) {
+		return (MctsPhc)phc.get(0);
+		}
+		else {
+			return null;
+		}
+	}
 	
 }

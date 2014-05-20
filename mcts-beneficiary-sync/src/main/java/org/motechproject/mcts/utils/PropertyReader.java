@@ -70,6 +70,10 @@ public class PropertyReader {
         return properties.getProperty("beneficiary.sync.csv.input.file.absolute.location");
     }
     
+    public String getFLWCsvFileLocation() {
+    	return properties.getProperty("beneficiary.sync.csv2.input.file.absolute.location");
+    }
+    
     public String getHubBaseUrl() {
         return properties.getProperty("hub.base.url");
     }

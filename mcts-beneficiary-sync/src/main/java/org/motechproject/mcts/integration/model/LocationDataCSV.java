@@ -1,5 +1,10 @@
 package org.motechproject.mcts.integration.model;
 
+/**
+ * Class to read LocationData from CSV file and transfer data to hibernate generated model class
+ * @author aman
+ *
+ */
 public class LocationDataCSV 
 {
 	private String StateID;

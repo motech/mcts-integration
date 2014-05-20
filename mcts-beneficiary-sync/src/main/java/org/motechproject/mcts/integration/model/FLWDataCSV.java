@@ -1,11 +1,16 @@
 package org.motechproject.mcts.integration.model;
 
+/**
+ * Class to read FLWData from CSV file and transfer data to hibernate generated model class
+ * @author aman
+ *
+ */
 public class FLWDataCSV {
 	private String id;
 	private String District_ID;
 	private String Taluka_ID;
 	private String HealthBlock_ID;
-	public String PHC_ID;
+	public  String PHC_ID;
 	
 	private String SubCentre_ID;
 	private String Village_ID;

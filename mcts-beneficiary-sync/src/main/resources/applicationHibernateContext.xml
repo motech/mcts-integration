@@ -35,14 +35,24 @@
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.BpForm
 				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.Locationdata</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.FlwData</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsState
 				</value>
-				<!--  <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict
+				 <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsTaluk
-				</value>-->
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPhc
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsVillage
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsSubcenter
+				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsFlwData</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster</value>
 			</list>
 		</property>
 	</bean>

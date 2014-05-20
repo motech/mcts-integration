@@ -9,6 +9,8 @@
        http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         
+ 	
+ 	<import resource="classpath:applicationBeneficiarySyncContext.xml" />       
         <util:properties id="beneficiarySyncProperties"
 		location="classpath:/beneficiary_sync.properties" />
 	<util:properties id="hibernateProperties" location="classpath:/hibernate.properties" />
@@ -20,6 +22,7 @@
         
         <bean id="locationDataPopulator" class="org.motechproject.mcts.integration.service.LocationDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>
+        
         </bean>
         <bean id="flwDataPopulator" class="org.motechproject.mcts.integration.service.FLWDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>

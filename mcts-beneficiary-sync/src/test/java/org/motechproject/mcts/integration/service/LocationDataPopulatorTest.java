@@ -2,6 +2,8 @@ package org.motechproject.mcts.integration.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -18,6 +20,8 @@ public class LocationDataPopulatorTest
 	
 	@Autowired
 	private FLWDataPopulator flwDataPopulator;
+	
+	
 	//private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
 	
 	/*public LocationDataPopulator getLocationDataPopulator() {
@@ -35,6 +39,18 @@ public class LocationDataPopulatorTest
 	//	System.out.println(sessionFactory. );
 		//locationDataPopulator = new LocationDataPopulator(sessionFactory);
 		locationDataPopulator.readWithCsvBeanReader();
+	}
+	
+	@Test
+	public void saveLocationDataTest() throws Exception
+	{
+		locationDataPopulator.saveLocationData();
+	}
+	
+	@Test
+	public void flwDataPopulatorTest() throws Exception
+	{
+		flwDataPopulator.flwDataPopulator();
 	}
 	
 	@Test
