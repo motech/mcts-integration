@@ -1,10 +1,8 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-// Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
+// Generated May 20, 2014 6:07:17 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +11,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,14 +24,16 @@ import javax.persistence.TemporalType;
 public class MctsPregnantMother implements java.io.Serializable {
 
 	private Integer id;
+	private MctsSubcenter mctsSubcenter;
+	private MctsHealthworker mctsHealthworkerByAshaId;
+	private MctsHealthworker mctsHealthworkerByAnmId;
 	private MotherCase motherCase;
+	private MctsVillage mctsVillage;
 	private String mctsId;
 	private String name;
 	private String type;
 	private Date birthDate;
 	private Character gender;
-	private String villageId;
-	private String subcenterId;
 	private String fatherHusbandName;
 	private String email;
 	private String mobileNo;
@@ -47,52 +46,30 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private String eidNumber;
 	private String ward;
 	private String town;
-	private Integer anmId;
-	private Integer ashaId;
 	private Date creationTime;
-	private Set<MctsPregnantMotherServiceUpdate> mctsPregnantMotherServiceUpdates = new HashSet<MctsPregnantMotherServiceUpdate>(
-			0);
 
 	public MctsPregnantMother() {
 	}
 
-	public MctsPregnantMother(MotherCase motherCase) {
+	public MctsPregnantMother(MctsSubcenter mctsSubcenter,
+			MctsHealthworker mctsHealthworkerByAshaId,
+			MctsHealthworker mctsHealthworkerByAnmId, MotherCase motherCase,
+			MctsVillage mctsVillage, String mctsId, String name, String type,
+			Date birthDate, Character gender, String fatherHusbandName,
+			String email, String mobileNo, String economicStatus,
+			String category, String beneficiaryAddress, String uidNumber,
+			String pincode, Date lmpDate, String eidNumber, String ward,
+			String town, Date creationTime) {
+		this.mctsSubcenter = mctsSubcenter;
+		this.mctsHealthworkerByAshaId = mctsHealthworkerByAshaId;
+		this.mctsHealthworkerByAnmId = mctsHealthworkerByAnmId;
 		this.motherCase = motherCase;
-	}
-
-	public MctsPregnantMother(
-			MotherCase motherCase,
-			String mctsId,
-			String name,
-			String type,
-			Date birthDate,
-			Character gender,
-			String villageId,
-			String subcenterId,
-			String fatherHusbandName,
-			String email,
-			String mobileNo,
-			String economicStatus,
-			String category,
-			String beneficiaryAddress,
-			String uidNumber,
-			String pincode,
-			Date lmpDate,
-			String eidNumber,
-			String ward,
-			String town,
-			Integer anmId,
-			Integer ashaId,
-			Date creationTime,
-			Set<MctsPregnantMotherServiceUpdate> mctsPregnantMotherServiceUpdates) {
-		this.motherCase = motherCase;
+		this.mctsVillage = mctsVillage;
 		this.mctsId = mctsId;
 		this.name = name;
 		this.type = type;
 		this.birthDate = birthDate;
 		this.gender = gender;
-		this.villageId = villageId;
-		this.subcenterId = subcenterId;
 		this.fatherHusbandName = fatherHusbandName;
 		this.email = email;
 		this.mobileNo = mobileNo;
@@ -105,10 +82,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.eidNumber = eidNumber;
 		this.ward = ward;
 		this.town = town;
-		this.anmId = anmId;
-		this.ashaId = ashaId;
 		this.creationTime = creationTime;
-		this.mctsPregnantMotherServiceUpdates = mctsPregnantMotherServiceUpdates;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_pregnant_mother_id_seq")
@@ -124,13 +98,55 @@ public class MctsPregnantMother implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "case_id", nullable = false)
+	@JoinColumn(name = "subcenter_id")
+	public MctsSubcenter getMctsSubcenter() {
+		return this.mctsSubcenter;
+	}
+
+	public void setMctsSubcenter(MctsSubcenter mctsSubcenter) {
+		this.mctsSubcenter = mctsSubcenter;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "asha_id")
+	public MctsHealthworker getMctsHealthworkerByAshaId() {
+		return this.mctsHealthworkerByAshaId;
+	}
+
+	public void setMctsHealthworkerByAshaId(
+			MctsHealthworker mctsHealthworkerByAshaId) {
+		this.mctsHealthworkerByAshaId = mctsHealthworkerByAshaId;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "anm_id")
+	public MctsHealthworker getMctsHealthworkerByAnmId() {
+		return this.mctsHealthworkerByAnmId;
+	}
+
+	public void setMctsHealthworkerByAnmId(
+			MctsHealthworker mctsHealthworkerByAnmId) {
+		this.mctsHealthworkerByAnmId = mctsHealthworkerByAnmId;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "case_id")
 	public MotherCase getMotherCase() {
 		return this.motherCase;
 	}
 
 	public void setMotherCase(MotherCase motherCase) {
 		this.motherCase = motherCase;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "village_id")
+	public MctsVillage getMctsVillage() {
+		return this.mctsVillage;
+	}
+
+	public void setMctsVillage(MctsVillage mctsVillage) {
+		this.mctsVillage = mctsVillage;
 	}
 
 	@Column(name = "mcts_id", length = 20)
@@ -177,24 +193,6 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setGender(Character gender) {
 		this.gender = gender;
-	}
-
-	@Column(name = "village_id")
-	public String getVillageId() {
-		return this.villageId;
-	}
-
-	public void setVillageId(String villageId) {
-		this.villageId = villageId;
-	}
-
-	@Column(name = "subcenter_id")
-	public String getSubcenterId() {
-		return this.subcenterId;
-	}
-
-	public void setSubcenterId(String subcenterId) {
-		this.subcenterId = subcenterId;
 	}
 
 	@Column(name = "father_husband_name")
@@ -306,24 +304,6 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.town = town;
 	}
 
-	@Column(name = "anm_id")
-	public Integer getAnmId() {
-		return this.anmId;
-	}
-
-	public void setAnmId(Integer anmId) {
-		this.anmId = anmId;
-	}
-
-	@Column(name = "asha_id")
-	public Integer getAshaId() {
-		return this.ashaId;
-	}
-
-	public void setAshaId(Integer ashaId) {
-		this.ashaId = ashaId;
-	}
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_time", length = 29)
 	public Date getCreationTime() {
@@ -332,16 +312,6 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsPregnantMother")
-	public Set<MctsPregnantMotherServiceUpdate> getMctsPregnantMotherServiceUpdates() {
-		return this.mctsPregnantMotherServiceUpdates;
-	}
-
-	public void setMctsPregnantMotherServiceUpdates(
-			Set<MctsPregnantMotherServiceUpdate> mctsPregnantMotherServiceUpdates) {
-		this.mctsPregnantMotherServiceUpdates = mctsPregnantMotherServiceUpdates;
 	}
 
 }

@@ -4,6 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,7 +15,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -48,7 +55,8 @@ public class MCTSBeneficiarySyncService {
 		this.propertyReader = propertyReader;
 	}
 
-	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) throws Exception {
+	public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
+			throws Exception {
 		String beneficiaryData = syncFrom(startDate, endDate);
 		InputStream is = new ByteArrayInputStream(beneficiaryData.getBytes());
 		JAXBContext jc;
@@ -56,7 +64,8 @@ public class MCTSBeneficiarySyncService {
 			jc = JAXBContext.newInstance(NewDataSet.class);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error("Invalid Content Received. The Content Received is:\n"+ beneficiaryData + e);
+			LOGGER.error("Invalid Content Received. The Content Received is:\n"
+					+ beneficiaryData + e);
 			throw new Exception("Invalid Content Received. Exiting", e);
 		}
 
@@ -74,18 +83,116 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	private void addToDbData(NewDataSet newDataSet) {
-		// TODO Auto-generated method stub
-		for (Record record: newDataSet.getRecords()){
+		LOGGER.info(String.format("Started writing to db for %s records",
+				newDataSet.getRecords().size()));
+		int count = 0;
+		for (Record record : newDataSet.getRecords()) {
 			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-			mctsPregnantMother = mapRecordToMctsPregnantMother(record);
-			careDataRepository.saveOrUpdate(mctsPregnantMother);
+			try {
+				mctsPregnantMother = mapRecordToMctsPregnantMother(record);
+				careDataRepository.saveOrUpdate(mctsPregnantMother);
+				count++;
+				LOGGER.info(String.format(
+						"MctsPregnantMother [%s] added to db",
+						mctsPregnantMother.getMctsId()));
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage()
+						+ "Skipped Adding this record to Database");
+			}
 		}
-		
+		LOGGER.info(String.format("Added %s records to db of %s records.",
+				count, newDataSet.getRecords().size()));
 	}
-	
-	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record){
+
+	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record)
+			throws Exception {
+		Date date = new Date();
 		MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-		
+
+		MctsHealthworker mctsHealthworkerByAshaId = null;
+		MctsHealthworker mctsHealthworkerByAnmId = null;
+		MctsVillage mctsVillage = null;
+		MctsSubcenter mctsSubcenter = null;
+		try {
+			mctsHealthworkerByAshaId = careDataRepository.findEntityByField(
+					MctsHealthworker.class, "healthworkerId",
+					Integer.parseInt(record.getASHAID()));
+		} catch (NullPointerException e) {
+			throw new Exception(
+					String.format(
+							"HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
+							record.getASHAID(), record.getBeneficiaryID()));
+		}
+		try {
+			mctsHealthworkerByAnmId = careDataRepository.findEntityByField(
+					MctsHealthworker.class, "healthworkerId",
+					Integer.parseInt(record.getANMID()));
+		} catch (NullPointerException e) {
+			throw new Exception(
+					String.format(
+							"HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
+							record.getANMID(), record.getBeneficiaryID()));
+		}
+		try {
+			mctsVillage = careDataRepository.findEntityByField(
+					MctsVillage.class, "villageId", record.getVillageID());
+		} catch (NullPointerException e) {
+			throw new Exception(
+					String.format(
+							"Village with VillageId: %s for Mcts record: %s doesNot exist in DataBase",
+							record.getVillageID(), record.getBeneficiaryID()));
+		}
+		try {
+			mctsSubcenter = careDataRepository
+					.findEntityByField(MctsSubcenter.class, "subcenterId",
+							record.getSubCentreID());
+		} catch (NullPointerException e) {
+			throw new Exception(
+					String.format(
+							"SubCenter with SubCenter: %s for Mcts record: %s doesNot exist in DataBase",
+							record.getSubCentreID(), record.getBeneficiaryID()));
+		}
+
+		mctsPregnantMother.setMctsHealthworkerByAnmId(mctsHealthworkerByAnmId);
+		mctsPregnantMother
+				.setMctsHealthworkerByAshaId(mctsHealthworkerByAshaId);
+		mctsPregnantMother
+				.setBeneficiaryAddress(record.getBeneficiaryAddress());
+		mctsPregnantMother.setCategory(record.getCategory());
+		mctsPregnantMother.setCreationTime(date);
+		mctsPregnantMother.setEconomicStatus(record.getEconomicStatus());
+		mctsPregnantMother.setEidNumber(record.getEIDNumber());
+		mctsPregnantMother.setEmail(record.getEmail());
+		mctsPregnantMother.setFatherHusbandName(record.getFatherHusbandName());
+		mctsPregnantMother.setGender(record.getGender().charAt(0));
+		mctsPregnantMother.setMctsId(record.getBeneficiaryID());
+		mctsPregnantMother.setMobileNo(record.getMobileno());
+		mctsPregnantMother.setName(record.getBeneficiaryName());
+		mctsPregnantMother.setPincode(record.getPinCode());
+		mctsPregnantMother.setMctsSubcenter(mctsSubcenter);
+		mctsPregnantMother.setTown(record.getTown());
+		mctsPregnantMother.setType(record.getBeneficiaryType());
+		mctsPregnantMother.setUidNumber(record.getUIDNumber());
+		mctsPregnantMother.setMctsVillage(mctsVillage);
+		mctsPregnantMother.setWard(record.getWard());
+		try {
+			mctsPregnantMother.setLmpDate(new SimpleDateFormat("dd-MM-yyyy",
+					Locale.ENGLISH).parse(record.getLMPDate()));
+		} catch (ParseException e) {
+			throw new Exception(
+					String.format(
+							"Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+							record.getLMPDate(), record.getBeneficiaryID()));
+		}
+		try {
+			mctsPregnantMother.setBirthDate(new SimpleDateFormat("dd-MM-yyyy",
+					Locale.ENGLISH).parse(record.getBirthdate()));
+		} catch (ParseException e) {
+			throw new Exception(
+					String.format(
+							"Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+							record.getBirthdate(), record.getBeneficiaryID()));
+		}
 		return mctsPregnantMother;
 	}
 
@@ -99,8 +206,8 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	protected void writeToFile(String beneficiaryData) {
-		this.outputFileLocation = String.format("%s_%s.xml",
-				propertyReader.getSyncRequestOutputFileLocation(),
+		this.outputFileLocation = String.format("%s_%s.xml", propertyReader
+				.getSyncRequestOutputFileLocation(),
 				DateTime.now().toString("yyyy-MM-dd") + "T"
 						+ DateTime.now().toString("HH:mm"));
 		try {
