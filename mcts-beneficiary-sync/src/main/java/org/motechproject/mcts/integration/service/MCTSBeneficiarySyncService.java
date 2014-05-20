@@ -23,6 +23,7 @@ import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
+import org.motechproject.mcts.utils.XmlStringToObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class MCTSBeneficiarySyncService {
 	private Publisher publisher;
 	@Autowired
 	private CareDataRepository careDataRepository;
+	@Autowired
+	private XmlStringToObject xmlStringToObject;
 
 	private String outputFileLocation;
 
@@ -58,19 +61,14 @@ public class MCTSBeneficiarySyncService {
 	public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
 			throws Exception {
 		String beneficiaryData = syncFrom(startDate, endDate);
-		InputStream is = new ByteArrayInputStream(beneficiaryData.getBytes());
-		JAXBContext jc;
-		try {
-			jc = JAXBContext.newInstance(NewDataSet.class);
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			LOGGER.error("Invalid Content Received. The Content Received is:\n"
-					+ beneficiaryData + e);
-			throw new Exception("Invalid Content Received. Exiting", e);
+		NewDataSet newDataSet = null;
+		try{
+			newDataSet = xmlStringToObject.stringXmlToObject(NewDataSet.class, beneficiaryData);
+		} catch (Exception e)
+		{
+			LOGGER.error(e.getMessage());
+			throw new Exception(e);
 		}
-
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		NewDataSet newDataSet = (NewDataSet) unmarshaller.unmarshal(is);
 		LOGGER.info("Get Updates Request Sent To MCTS");
 		if (beneficiaryData == null) {
 			LOGGER.info("No New Updates Received");
@@ -79,9 +77,8 @@ public class MCTSBeneficiarySyncService {
 		addToDbData(newDataSet);
 		writeToFile(beneficiaryData);
 		notifyHub(beneficiaryData);
-		LOGGER.info("HUB Notified Successfully");
 	}
-
+	
 	private void addToDbData(NewDataSet newDataSet) {
 		LOGGER.info(String.format("Started writing to db for %s records",
 				newDataSet.getRecords().size()));
@@ -229,6 +226,7 @@ public class MCTSBeneficiarySyncService {
 		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
 				+ getHubSyncFromUrl());
 		publisher.publish(getHubSyncFromUrl(), beneficiaryData);
+		LOGGER.info("HUB Notified Successfully");
 	}
 
 	public String getHubSyncFromUrl() {

@@ -34,11 +34,6 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		getCurrentSession().createSQLQuery(
 				"DELETE FROM report.mcts_pregnant_mother").executeUpdate();
 	}
-	
-	@Test
-	public void we(){
-		System.out.println("runned");
-	}
 
 	@SuppressWarnings("deprecation")
 	@Test
