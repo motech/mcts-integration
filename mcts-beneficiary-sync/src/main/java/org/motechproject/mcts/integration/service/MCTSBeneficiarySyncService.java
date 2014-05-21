@@ -161,7 +161,6 @@ public class MCTSBeneficiarySyncService {
 		try {
 			mctsPregnantMother.setLmpDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getLMPDate()));
-			LOGGER.info("LMP Date is: "+ mctsPregnantMother.getLmpDate().toString());
 		} catch (ParseException e) {
 			LOGGER.error(
 					String.format(
@@ -172,7 +171,6 @@ public class MCTSBeneficiarySyncService {
 		try {
 			mctsPregnantMother.setBirthDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getBirthdate()));
-			LOGGER.info("Birth Date is: "+ mctsPregnantMother.getBirthDate().toString());
 		} catch (ParseException e) {
 			LOGGER.error(
 					String.format(
