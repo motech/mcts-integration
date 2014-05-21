@@ -42,6 +42,12 @@ public class BeneficiarySyncController {
 	
 	@Autowired
 	private MotechBeneficiarySyncService motechBeneficiarySyncService;
+	
+	@Autowired
+	private LocationDataPopulator locationDataPopulator;
+	
+	@Autowired
+	private FLWDataPopulator fLWDataPopulator;
 
 	/**
 	 * Method to validate connection
@@ -101,6 +107,55 @@ public class BeneficiarySyncController {
 		return "Updates Sent Successfully";
 	}
 	
+
+	
+	@RequestMapping(value = "/addLocations", method=RequestMethod.POST)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	 public String addLocationData(  
+	     @RequestParam("file") MultipartFile file) throws Exception {
+	  
+	  LOGGER.info("Request to upload xml file of job:");
+	 
+	  byte[] bytes = file.getBytes();
+	  LOGGER.info("thispath"+System.getProperty("java.io.tmpdir"));
+	  String path = System.getProperty("java.io.tmpdir");
+	  File newFile = new File(path+"/beneficiary.xml");
+	  FileOutputStream out = new FileOutputStream(newFile);
+	  out.write(bytes);
+	  LOGGER.info("size"+newFile.getTotalSpace());
+	  LOGGER.info("temp path"+newFile.getAbsolutePath());
+	  locationDataPopulator.populateLocations(newFile);
+		  
+		  return "Data Added Successfully";
+	 
+	  
+	  
+	  
+	 }
+	
+	@RequestMapping(value = "/addFLW", method=RequestMethod.POST)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	 public String addFLWData(  
+	     @RequestParam("file") MultipartFile file) throws Exception {
+	  
+	  LOGGER.info("Request to upload xml file of job:");
+	 
+	  byte[] bytes = file.getBytes();
+	  File newFile = new File("java.io.tmpdir");
+	  FileOutputStream out = new FileOutputStream(newFile);
+	  out.write(bytes);
+	  System.out.println("size"+newFile.getTotalSpace());
+	  fLWDataPopulator.populateFLWData(newFile);;
+		  
+		  return "Data Added Successfully";
+	 
+	  
+	  
+	  
+	 }
+	
 	/**
 	 * Method to validate the input arguments
 	 * @param date
@@ -122,4 +177,9 @@ public class BeneficiarySyncController {
 				.forPattern(DATE_TIME_FORMAT);
 		return dateTimeFormatter.parseDateTime(dateString);
 	}
+	
+	
+	
 }
+
+

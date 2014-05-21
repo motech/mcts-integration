@@ -1,5 +1,7 @@
 package org.motechproject.mcts.integration.service;
 
+//import org.motechproject.mcts.integration.hibernate.model.Locationdata;
+import java.io.File;
 import java.io.FileReader;
 
 import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
@@ -12,9 +14,9 @@ import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.utils.CSVFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
@@ -23,7 +25,7 @@ import org.supercsv.prefs.CsvPreference;
 @Transactional
 @Repository
 
-@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
+//@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 public class LocationDataPopulator {
 
 	public CareDataRepository getCareDataRepository() {
@@ -37,6 +39,8 @@ public class LocationDataPopulator {
 	@Autowired
 	private CareDataRepository careDataRepository;
 	
+	@Autowired
+	private CSVFileReader cSVFileReader;
 	
 
 
@@ -44,21 +48,24 @@ public class LocationDataPopulator {
 	public LocationDataPopulator() {
 
 	}
-
-	public void readWithCsvBeanReader() throws Exception {
-		ICsvBeanReader beanReader = null;
-
-		try {
-			beanReader = new CsvBeanReader(new FileReader("/home/aman/Downloads/location.csv"),
-					CsvPreference.STANDARD_PREFERENCE);
-			final String[] header = beanReader.getHeader(true);
+	/**
+	 * Method to populate locations such as state, district, taluka, block, phc, subcentre, village
+	 * @param file
+	 * @throws Exception
+	 */
+	public void populateLocations(File file) throws Exception {
+		
+			ICsvBeanReader beanReader = null;
+			//String filePath= "/home/aman/Downloads/location.csv";
+			
 			
 			LocationDataCSV locationCSV = new LocationDataCSV();
-
-			
+			try{
+			beanReader = new CsvBeanReader(new FileReader(file),
+					CsvPreference.STANDARD_PREFERENCE);
+			final String[] header = beanReader.getHeader(true);
 			int count = 0;
-			while ((locationCSV = beanReader
-					.read(LocationDataCSV.class, header)) != null) {
+			while((locationCSV = beanReader.read(LocationDataCSV.class, header))!=null) {
 
 				
 					System.out.println("count" + count++);
@@ -127,25 +134,35 @@ public class LocationDataPopulator {
 		
 			}
 		} 
-		
 		finally {
-			if (beanReader != null) {
-				beanReader.close();
+				if (beanReader != null) {
+					beanReader.close();
+					saveLocationData(file);
+				}
 			}
-		}
+		
+		
 	}
 	
-	public void saveLocationData() throws Exception {
-		ICsvBeanReader beanReader = null;
+	
+	/**
+	 * Method to populate location master table
+	 */
+	public void saveLocationData(File file) throws Exception {
 		
-		try {
-			beanReader = new CsvBeanReader(new FileReader("/home/aman/Downloads/location.csv"),
-					CsvPreference.STANDARD_PREFERENCE);
-			final String[] header = beanReader.getHeader(true);
-			
-			LocationDataCSV locationCSV = new LocationDataCSV();
-			while((locationCSV = beanReader.read(LocationDataCSV.class, header))!=null) {
+		ICsvBeanReader beanReader = null;
+		//String filePath= "/home/aman/Downloads/location.csv";
+		
+		
+		LocationDataCSV locationCSV = new LocationDataCSV();
+		try{
+		beanReader = new CsvBeanReader(new FileReader(file),
+				CsvPreference.STANDARD_PREFERENCE);
+		final String[] header = beanReader.getHeader(true);
+		int count = 0;
+		while((locationCSV = beanReader.read(LocationDataCSV.class, header))!=null) {
 				
+				System.out.println("count" + count++);
 				String stateId = locationCSV.getStateID().toString();
 				String state = locationCSV.getState();
 				String disctrictId = locationCSV.getDCode().toString();
@@ -160,7 +177,7 @@ public class LocationDataPopulator {
 				String subcentreName = locationCSV.getSUBCenter();
 				String villageId = locationCSV.getVCode().toString();
 				String villageName = locationCSV.getVillage();
-				String status = " ";
+				String status = "1";
 				String comments = " ";
 			
 				MctsLocationMaster mctsLocationMaster = new MctsLocationMaster(stateId, state, disctrictId, disctrictName, talukId, talukaName, healthblockId, healthblockName, phcId, phcName, subcenterId, subcentreName, villageId, villageName, status, comments);
@@ -174,6 +191,8 @@ public class LocationDataPopulator {
 				beanReader.close();
 			}
 		}
+	
+		
 	}
 	
 }

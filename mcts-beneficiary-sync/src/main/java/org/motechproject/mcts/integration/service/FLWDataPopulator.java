@@ -1,17 +1,19 @@
 package org.motechproject.mcts.integration.service;
 
+import java.io.File;
 import java.io.FileReader;
 
 import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
@@ -24,7 +26,7 @@ import org.supercsv.prefs.CsvPreference;
  */
 @Transactional
 @Repository
-@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
+//@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 public class FLWDataPopulator {
 
 	private final static Logger LOGGER = LoggerFactory
@@ -45,32 +47,53 @@ public class FLWDataPopulator {
 	 * Method to populate table mcts_HealthWorker 
 	 * @throws Exception
 	 */
-	public void populateFLWData() throws Exception {
+	public void populateFLWData(File file) throws Exception {
 		ICsvBeanReader beanReader = null;
 		try {
-			beanReader = new CsvBeanReader(new FileReader(
-					"/home/aman/Downloads/FLW.csv"),
+			beanReader = new CsvBeanReader(new FileReader(file),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
 			FLWDataCSV flwDataCSV = new FLWDataCSV();
 			int count = 0;
 			while ((flwDataCSV = beanReader.read(FLWDataCSV.class, header)) != null) {
 				System.out.println("count" + count++);
-				int subcentreId = flwDataCSV.getPHC_ID();
 				
-				MctsPhc mctsPhc = careDataRepository
-						.getMctsPhc(subcentreId);
+				int  phcId = flwDataCSV.getPHC_ID();
+				
+				MctsPhc mctsPhc = careDataRepository.getMctsPhc(phcId);
+				
 				if(mctsPhc != null) {
 					int healthworkerId = flwDataCSV.getId();
 					String name = flwDataCSV.getName();
 					String contact_No = flwDataCSV.getContact_No();
 					char sex = flwDataCSV.getSex().charAt(0);
 					String type = flwDataCSV.getType();
-
-					MctsHealthworker mctsHealthworker = new MctsHealthworker(
-							mctsPhc, healthworkerId, name, sex, type);
-					mctsHealthworker.setContactNo(contact_No);
-					careDataRepository.saveOrUpdate(mctsHealthworker);
+					int subcentreId = flwDataCSV.getSubCentre_ID();
+					int villageId = flwDataCSV.getVillage_ID();
+					String husbandName = flwDataCSV.getHusband_Name();
+					String aadharNo = flwDataCSV.getAadhar_No();
+					String gfAddress = flwDataCSV.getGF_Address();
+					
+					MctsSubcenter mctsSubcenre = careDataRepository.getMctsSubcentre(subcentreId);
+					MctsVillage mctsVillage = careDataRepository.getMctsVillage(villageId);
+					
+					MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", healthworkerId);
+					if(mctsHealthworker == null) {
+						 mctsHealthworker = new MctsHealthworker(
+								mctsPhc, healthworkerId, name, sex, type);
+						mctsHealthworker.setContactNo(contact_No);
+						mctsHealthworker.setHusbandName(husbandName);
+						mctsHealthworker.setAadharNo(aadharNo);
+						mctsHealthworker.setGfAddress(gfAddress);
+						if(mctsSubcenre!=null) {
+							mctsHealthworker.setMctsSubcenter(mctsSubcenre);
+						}
+						if(mctsVillage!=null) {
+							mctsHealthworker.setMctsVillage(mctsVillage);
+						}
+						careDataRepository.saveOrUpdate(mctsHealthworker);
+					}
+					
 				}
 				
 				else {
@@ -85,6 +108,7 @@ public class FLWDataPopulator {
 		finally {
 			if (beanReader != null) {
 				beanReader.close();
+				flwDataPopulator(file);
 			}
 		}
 
@@ -94,11 +118,10 @@ public class FLWDataPopulator {
 	 * Method to populate table mcts_flw_master
 	 * @throws Exception
 	 */
-	public void flwDataPopulator() throws Exception {
+	public void flwDataPopulator(File file) throws Exception {
 		ICsvBeanReader beanReader = null;
 		try {
-			beanReader = new CsvBeanReader(new FileReader(
-					"/home/aman/Downloads/FLW.csv"),
+			beanReader = new CsvBeanReader(new FileReader(file),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
 			FLWDataCSV flwDataCSV = new FLWDataCSV();
@@ -141,6 +164,7 @@ public class FLWDataPopulator {
 		finally {
 			if (beanReader != null) {
 				beanReader.close();
+				
 			}
 		}
 

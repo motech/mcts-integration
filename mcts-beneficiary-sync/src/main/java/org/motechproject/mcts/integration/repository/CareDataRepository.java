@@ -11,6 +11,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,6 +143,41 @@ public class CareDataRepository {
 		List<Object> phc = getCurrentSession().createQuery(queryString).list();
 		if(phc.size()!=0) {
 		return (MctsPhc)phc.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public List<Integer> getAwwRegisterMotherFormMctsId() {
+		String queryString = "select form.mctsId from AwwRegisterMotherForm from";
+		List<Integer> mcts_Ids = getCurrentSession().createQuery(queryString).list();
+		return mcts_Ids;
+	}
+	
+	public List<Integer> getRegistrationMotherFormMctsId() {
+		String queryString = "select form.mctsId from RegistrationMotherForm from";
+		List<Integer> mcts_Ids = getCurrentSession().createQuery(queryString).list();
+		return mcts_Ids;
+	}
+
+	public MctsSubcenter getMctsSubcentre(int subcentreId) {
+		String queryString = "select subcentre from MctsSubcenter subcentre where subcentre.subcenterId='"+subcentreId+"'";
+		List<Object> subCentre = getCurrentSession().createQuery(queryString).list();
+		if(subCentre.size()!=0) {
+			return (MctsSubcenter)subCentre.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+	
+	public MctsVillage getMctsVillage(int villageId) {
+		String queryString = "select village from MctsVillage village where village.villageId='"+villageId+"'";
+		List<Object> village = getCurrentSession().createQuery(queryString).list();
+		if(village.size()!=0) {
+			return (MctsVillage)village.get(0);
 		}
 		else {
 			return null;
