@@ -159,9 +159,9 @@ public class MCTSBeneficiarySyncService {
 		mctsPregnantMother.setMctsVillage(mctsVillage);
 		mctsPregnantMother.setWard(record.getWard());
 		try {
-			mctsPregnantMother.setLmpDate(new SimpleDateFormat("dd-MM-yyyy",
+			mctsPregnantMother.setLmpDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getLMPDate()));
-			LOGGER.info(mctsPregnantMother.getLmpDate().toString());
+			LOGGER.info("LMP Date is: "+ mctsPregnantMother.getLmpDate().toString());
 		} catch (ParseException e) {
 			LOGGER.error(
 					String.format(
@@ -170,8 +170,9 @@ public class MCTSBeneficiarySyncService {
 			return null;
 		}
 		try {
-			mctsPregnantMother.setBirthDate(new SimpleDateFormat("dd-MM-yyyy",
+			mctsPregnantMother.setBirthDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getBirthdate()));
+			LOGGER.info("Birth Date is: "+ mctsPregnantMother.getBirthDate().toString());
 		} catch (ParseException e) {
 			LOGGER.error(
 					String.format(

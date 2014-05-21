@@ -35,8 +35,12 @@ public class Publisher {
 		do {
 			LOGGER.info(String.format("Notify Hub for %s time at url %s.",
 					retryCount, URL));
-			response = notify(MediaType.APPLICATION_FORM_URLENCODED);;
-			retryCount++;
+			try {
+				response = notify(MediaType.APPLICATION_FORM_URLENCODED);
+				retryCount++;
+			} catch (Exception e) {
+				retryCount++;
+			}
 			if (response.getStatusCode().value() / 100 == 2) {
 				LOGGER.info(String
 						.format("Hub Notified Successfully after %s retries. Response [StatusCode %s] : %s",
@@ -83,6 +87,6 @@ public class Publisher {
 	}
 
 	public String getData() {
-		return this.DATA;
+		return DATA;
 	}
 }
