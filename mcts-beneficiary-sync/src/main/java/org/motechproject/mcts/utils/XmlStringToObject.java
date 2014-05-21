@@ -2,22 +2,33 @@ package org.motechproject.mcts.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@Component
 public class XmlStringToObject {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(XmlStringToObject.class);
+
 	public <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{
-		InputStream is = new ByteArrayInputStream(data.getBytes());
+		StringReader reader = new StringReader(data);
+		InputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
 		JAXBContext jc;
+		LOGGER.debug(data);
 		try {
 			jc = JAXBContext.newInstance(clazz);
 		} catch (JAXBException e) {
 			throw new Exception(String.format("Invalid Content Received. The Content Received is:\n %s. \nExiting", data), e);
 		}
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		return (clazz.cast(unmarshaller.unmarshal(is)));		
+		Object object = unmarshaller.unmarshal(reader);
+		return (clazz.cast(object));		
 	}
 }

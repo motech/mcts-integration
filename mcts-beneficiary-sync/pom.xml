@@ -10,6 +10,7 @@
 
 	<name>MCTS Beneficiary Sync</name>
 	<artifactId>mcts-beneficiary-sync</artifactId>
+	<packaging>war</packaging>
 
 	<properties>
 		<jetty.port>

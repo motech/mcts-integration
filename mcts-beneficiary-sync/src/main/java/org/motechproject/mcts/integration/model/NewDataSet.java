@@ -23,5 +23,13 @@ public class NewDataSet {
 	public void setRecords(List<Record> records) {
 		this.records = records;
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder s = new StringBuilder();
+		for (Record record : records)
+			s.append(record);
+		return s.toString();
+	}
 
 }

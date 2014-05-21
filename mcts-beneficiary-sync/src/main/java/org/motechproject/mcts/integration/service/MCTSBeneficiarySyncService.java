@@ -1,17 +1,11 @@
 package org.motechproject.mcts.integration.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
@@ -28,10 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Service
+@Transactional
 public class MCTSBeneficiarySyncService {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MCTSHttpClientService.class);
@@ -50,104 +46,94 @@ public class MCTSBeneficiarySyncService {
 
 	private String outputFileLocation;
 
-	@Autowired
-	public MCTSBeneficiarySyncService(
-			MCTSHttpClientService mctsHttpClientService,
-			PropertyReader propertyReader) {
-		this.mctsHttpClientService = mctsHttpClientService;
-		this.propertyReader = propertyReader;
-	}
-
 	public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
 			throws Exception {
 		String beneficiaryData = syncFrom(startDate, endDate);
+		if (beneficiaryData == null) {
+			LOGGER.info("No New Updates Received. Exiting");
+			return;
+		}
 		NewDataSet newDataSet = null;
-		try{
-			newDataSet = xmlStringToObject.stringXmlToObject(NewDataSet.class, beneficiaryData);
-		} catch (Exception e)
-		{
+		try {
+			newDataSet = xmlStringToObject.stringXmlToObject(NewDataSet.class,
+					beneficiaryData);
+			if (newDataSet.getRecords().size() == 0) {
+				LOGGER.info("No New Updates Received. Exiting");
+				return;
+			}
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			throw new Exception(e);
-		}
-		LOGGER.info("Get Updates Request Sent To MCTS");
-		if (beneficiaryData == null) {
-			LOGGER.info("No New Updates Received");
-			return;
 		}
 		addToDbData(newDataSet);
 		writeToFile(beneficiaryData);
 		notifyHub(beneficiaryData);
 	}
-	
-	private void addToDbData(NewDataSet newDataSet) {
+
+	private void addToDbData(NewDataSet newDataSet){
 		LOGGER.info(String.format("Started writing to db for %s records",
 				newDataSet.getRecords().size()));
 		int count = 0;
 		for (Record record : newDataSet.getRecords()) {
 			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-			try {
 				mctsPregnantMother = mapRecordToMctsPregnantMother(record);
-				careDataRepository.saveOrUpdate(mctsPregnantMother);
-				count++;
-				LOGGER.info(String.format(
-						"MctsPregnantMother [%s] added to db",
-						mctsPregnantMother.getMctsId()));
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage()
-						+ "Skipped Adding this record to Database");
-			}
+				if (mctsPregnantMother != null){
+					careDataRepository.saveOrUpdate(mctsPregnantMother);
+					count++;
+					LOGGER.info(String.format(
+							"MctsPregnantMother [%s] added to db",
+							mctsPregnantMother.getMctsId()));
+				}
+				else
+					LOGGER.error("SKIPPED Adding this record to Database");
 		}
 		LOGGER.info(String.format("Added %s records to db of %s records.",
 				count, newDataSet.getRecords().size()));
 	}
 
-	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record)
-			throws Exception {
+	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record){
 		Date date = new Date();
 		MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
 
+		LOGGER.info(record.toString());
 		MctsHealthworker mctsHealthworkerByAshaId = null;
 		MctsHealthworker mctsHealthworkerByAnmId = null;
 		MctsVillage mctsVillage = null;
 		MctsSubcenter mctsSubcenter = null;
-		try {
-			mctsHealthworkerByAshaId = careDataRepository.findEntityByField(
-					MctsHealthworker.class, "healthworkerId",
-					Integer.parseInt(record.getASHAID()));
-		} catch (NullPointerException e) {
-			throw new Exception(
-					String.format(
-							"HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
+		mctsHealthworkerByAshaId = careDataRepository.findEntityByField(
+				MctsHealthworker.class, "healthworkerId",
+				Integer.parseInt(record.getASHAID()));
+		if (mctsHealthworkerByAshaId == null) {
+			LOGGER.error(String
+					.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getASHAID(), record.getBeneficiaryID()));
+			return null;
 		}
-		try {
-			mctsHealthworkerByAnmId = careDataRepository.findEntityByField(
-					MctsHealthworker.class, "healthworkerId",
-					Integer.parseInt(record.getANMID()));
-		} catch (NullPointerException e) {
-			throw new Exception(
-					String.format(
-							"HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
+		mctsHealthworkerByAnmId = careDataRepository.findEntityByField(
+				MctsHealthworker.class, "healthworkerId",
+				Integer.parseInt(record.getANMID()));
+		if (mctsHealthworkerByAnmId == null) {
+			LOGGER.error(String
+					.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getANMID(), record.getBeneficiaryID()));
+			return null;
 		}
-		try {
-			mctsVillage = careDataRepository.findEntityByField(
-					MctsVillage.class, "villageId", record.getVillageID());
-		} catch (NullPointerException e) {
-			throw new Exception(
-					String.format(
-							"Village with VillageId: %s for Mcts record: %s doesNot exist in DataBase",
+		mctsVillage = careDataRepository.findEntityByField(MctsVillage.class,
+				"villageId", Integer.parseInt(record.getVillageID()));
+		if (mctsVillage == null) {
+			LOGGER.error(String
+					.format("Village with VillageId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getVillageID(), record.getBeneficiaryID()));
+			return null;
 		}
-		try {
-			mctsSubcenter = careDataRepository
-					.findEntityByField(MctsSubcenter.class, "subcenterId",
-							record.getSubCentreID());
-		} catch (NullPointerException e) {
-			throw new Exception(
-					String.format(
-							"SubCenter with SubCenter: %s for Mcts record: %s doesNot exist in DataBase",
+		mctsSubcenter = careDataRepository.findEntityByField(
+				MctsSubcenter.class, "subcenterId",
+				Integer.parseInt(record.getSubCentreID()));
+		if (mctsSubcenter == null) {
+			LOGGER.error(String
+					.format("SubCenter with SubCenter: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getSubCentreID(), record.getBeneficiaryID()));
+			return null;
 		}
 
 		mctsPregnantMother.setMctsHealthworkerByAnmId(mctsHealthworkerByAnmId);
@@ -175,20 +161,23 @@ public class MCTSBeneficiarySyncService {
 		try {
 			mctsPregnantMother.setLmpDate(new SimpleDateFormat("dd-MM-yyyy",
 					Locale.ENGLISH).parse(record.getLMPDate()));
+			LOGGER.info(mctsPregnantMother.getLmpDate().toString());
 		} catch (ParseException e) {
-			throw new Exception(
+			LOGGER.error(
 					String.format(
 							"Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 							record.getLMPDate(), record.getBeneficiaryID()));
+			return null;
 		}
 		try {
 			mctsPregnantMother.setBirthDate(new SimpleDateFormat("dd-MM-yyyy",
 					Locale.ENGLISH).parse(record.getBirthdate()));
 		} catch (ParseException e) {
-			throw new Exception(
+			LOGGER.error(
 					String.format(
 							"Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 							record.getBirthdate(), record.getBeneficiaryID()));
+			return null;
 		}
 		return mctsPregnantMother;
 	}
@@ -202,7 +191,7 @@ public class MCTSBeneficiarySyncService {
 		return mctsHttpClientService.syncFrom(requestBody);
 	}
 
-	protected void writeToFile(String beneficiaryData) {
+	protected void writeToFile(String beneficiaryData) throws Exception {
 		this.outputFileLocation = String.format("%s_%s.xml", propertyReader
 				.getSyncRequestOutputFileLocation(),
 				DateTime.now().toString("yyyy-MM-dd") + "T"
@@ -218,7 +207,10 @@ public class MCTSBeneficiarySyncService {
 					String.format(
 							"Cannot write MCTS beneficiary details response to file: %s",
 							outputFileLocation), e);
-			return;
+			throw new Exception(
+					String.format(
+							"Cannot write MCTS beneficiary details response to file: %s. Reason %s",
+							outputFileLocation, e.getMessage()));
 		}
 	}
 

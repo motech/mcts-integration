@@ -38,10 +38,10 @@ public class BeneficiarySyncController {
     private PropertyReader propertyReader;
 	
 	@Autowired
-	MCTSBeneficiarySyncService mctsBeneficiarySyncService;
+	private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
 	
 	@Autowired
-	MotechBeneficiarySyncService motechBeneficiarySyncService;
+	private MotechBeneficiarySyncService motechBeneficiarySyncService;
 
 	/**
 	 * Method to validate connection

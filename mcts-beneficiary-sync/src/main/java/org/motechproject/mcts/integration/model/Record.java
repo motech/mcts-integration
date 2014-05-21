@@ -444,8 +444,6 @@ public class Record {
 		this.email = email;
 		this.lMPDate = lMPDate;
 	}
-	private static int i=1;
-
 	@Override
 	public String toString() {
 	/*	return String
@@ -460,8 +458,8 @@ public class Record {
 						category, economicStatus, mobileno, email, lMPDate);*/
 		
 		return String
-				.format("INSERT INTO report.mcts_records(ID, stateID, stateName, districtID, districtName, blockID, blockName, tehsilID, tehsilName, facilityID, facilityName, subCentreID, subCentreName, town, villageID, villageName, aNMID, aSHAID, ward, beneficiaryType, beneficiaryID, beneficiaryName, uIDNumber, eIDNumber, birthdate, gender, fatherHusbandName, beneficiaryAddress, pinCode, category, economicStatus, mobileno, email, lMPDate) VALUES(%s, \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\');",
-						i++, stateID, stateName, districtID, districtName, blockID,
+				.format("stateID: %s, stateName: %s, districtID: %s, districtName: %s, blockID: %s, blockName: %s, tehsilID: %s, tehsilName: %s, facilityID: %s, facilityName: %s, subCentreID: %s, subCentreName: %s, town: %s, villageID: %s, villageName: %s, aNMID: %s, aSHAID: %s, ward: %s, beneficiaryType: %s, beneficiaryID: %s, beneficiaryName: %s, uIDNumber: %s, eIDNumber: %s, birthdate: %s, gender: %s, fatherHusbandName: %s, beneficiaryAddress: %s, pinCode: %s, category: %s, economicStatus: %s, mobileno: %s, email: %s, lMPDate: %s",
+						stateID, stateName, districtID, districtName, blockID,
 						blockName, tehsilID, tehsilName, facilityID,
 						facilityName, subCentreID, subCentreName, town,
 						villageID, villageName, aNMID, aSHAID, ward,

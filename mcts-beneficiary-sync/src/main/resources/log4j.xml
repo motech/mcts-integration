@@ -5,13 +5,18 @@
 
     <appender name="mctsIntegrationConsoleAppender" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.EnhancedPatternLayout">
-            <param name="ConversionPattern" value="[%t] - %d %-5p [%c] %m%n" />
+            <param name="ConversionPattern" value="[%t] - %d %-5p [%c] %m%n%M%L" />
         </layout>
     </appender>
 
    
  <logger name="org.motechproject.mcts.integration.service" additivity="false">
         <level value="INFO"/>
+        <appender-ref ref="mctsIntegrationConsoleAppender" />
+    </logger>
+    
+    <logger name="org.motechproject.mcts.utils" additivity="false">
+        <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
     
