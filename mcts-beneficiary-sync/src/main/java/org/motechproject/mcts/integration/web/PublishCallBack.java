@@ -56,6 +56,19 @@ public class PublishCallBack {
 		HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
 		return httpEntity;
 	}
+	
+	@RequestMapping(value = "updatessent", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	HttpEntity sendUpdatesSent(@RequestParam("filepath") String filePath)
+			throws Exception {
+		LOGGER.info("Publishing Data to Hub.");
+		String data = readFileData(filePath);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_XML);
+		HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+		return httpEntity;
+	}
 
 	public String readFileData(String filePath) throws Exception {
 		BufferedReader br = null;
