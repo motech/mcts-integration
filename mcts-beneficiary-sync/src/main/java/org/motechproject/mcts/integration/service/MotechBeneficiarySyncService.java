@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.service;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -36,6 +37,7 @@ public class MotechBeneficiarySyncService {
 	private ObjectToXML objectToXML;
 
 	private String outputXMLFileLocation;
+	private Date date = new Date();
 
 	@Autowired
 	public MotechBeneficiarySyncService(CareDataService careDataService,
@@ -62,7 +64,7 @@ public class MotechBeneficiarySyncService {
 		if (httpStatus.value() / 100 == 2) {
 			writeSyncDataToFile(beneficiaryRequest);
 			updateSyncedBeneficiaries(beneficiariesToSync);
-			notifyHub(beneficiaryRequest);
+			notifyHub();
 		}
 	}
 
@@ -97,10 +99,10 @@ public class MotechBeneficiarySyncService {
 		}
 	}
 
-	private void notifyHub(BeneficiaryRequest beneficiaryRequest) {
+	private void notifyHub() {
 		LOGGER.info("Notifying Hub to Publish the Updates at url"
 				+ getHubSyncToUrl());
-		publisher.publish(getHubSyncToUrl(), beneficiaryRequest.toString());
+		publisher.publish(getHubSyncToUrl());
 	}
 
 	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
@@ -124,6 +126,6 @@ public class MotechBeneficiarySyncService {
 	}
 
 	public String getHubSyncToUrl() {
-		return propertyReader.getHubSyncToUrl() + outputXMLFileLocation;
+		return propertyReader.getHubSyncToUrl() + this.date.getTime();
 	}
 }

@@ -45,6 +45,7 @@ public class MCTSBeneficiarySyncService {
 	private XmlStringToObject xmlStringToObject;
 
 	private String outputFileLocation;
+	private Date date = new Date();
 
 	public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
 			throws Exception {
@@ -67,7 +68,7 @@ public class MCTSBeneficiarySyncService {
 		}
 		addToDbData(newDataSet);
 		writeToFile(beneficiaryData);
-		notifyHub(beneficiaryData);
+		notifyHub();
 	}
 
 	private void addToDbData(NewDataSet newDataSet){
@@ -92,7 +93,6 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record){
-		Date date = new Date();
 		MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
 
 		LOGGER.info(record.toString());
@@ -213,15 +213,16 @@ public class MCTSBeneficiarySyncService {
 		}
 	}
 
-	protected void notifyHub(String beneficiaryData) {
+	protected void notifyHub() {
 		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
 				+ getHubSyncFromUrl());
-		publisher.publish(getHubSyncFromUrl(), beneficiaryData);
+		publisher.publish(getHubSyncFromUrl());
 		LOGGER.info("HUB Notified Successfully");
 	}
 
 	public String getHubSyncFromUrl() {
-		return propertyReader.getHubSyncFromUrl() + this.outputFileLocation;
+		
+		return propertyReader.getHubSyncFromUrl() + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS").format(this.date);
 	}
 
 }

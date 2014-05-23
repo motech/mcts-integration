@@ -22,10 +22,8 @@ public class Publisher {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(Publisher.class);
 	private static String URL;
-	private static String DATA;
 
-	public void publish(String url, String data) {
-		DATA = data;
+	public void publish(String url) {
 		setUrl(url);
 		LOGGER.info("Syncing beneficiary data to MCTS.");
 
@@ -84,9 +82,5 @@ public class Publisher {
 
 	public String getUrl() {
 		return URL;
-	}
-
-	public String getData() {
-		return DATA;
 	}
 }

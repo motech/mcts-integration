@@ -1,7 +1,5 @@
 package org.motechproject.mcts.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
@@ -17,9 +15,9 @@ public class XmlStringToObject {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(XmlStringToObject.class);
 
+	@SuppressWarnings("unchecked")
 	public <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{
 		StringReader reader = new StringReader(data);
-		InputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
 		JAXBContext jc;
 		LOGGER.debug(data);
 		try {
@@ -29,6 +27,6 @@ public class XmlStringToObject {
 		}
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		Object object = unmarshaller.unmarshal(reader);
-		return (clazz.cast(object));		
+		return (T) object;
 	}
 }

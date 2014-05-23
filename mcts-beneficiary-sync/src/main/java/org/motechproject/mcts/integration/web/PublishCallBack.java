@@ -3,7 +3,14 @@ package org.motechproject.mcts.integration.web;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.Publisher;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -24,6 +31,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping(value = "/publish")
 public class PublishCallBack {
 
+	@Autowired
+	private CareDataService careDataService;
+	
+	static final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
+	
 	private Publisher publisher = new Publisher();
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeneficiarySyncController.class);
@@ -47,23 +59,29 @@ public class PublishCallBack {
 	@RequestMapping(value = "updatesreceived", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	HttpEntity sendUpdatesReceived(@RequestParam("filepath") String filePath)
+	HttpEntity sendUpdatesReceived(@RequestParam("time") String dateTime)
 			throws Exception {
 		LOGGER.info("Publishing Data to Hub.");
-		String data = readFileData(filePath);
+		Date date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS", Locale.ENGLISH).parse(dateTime);
+		long t=date.getTime();
+		Date higherDate=new Date(t + (5 * ONE_MINUTE_IN_MILLIS));
+		Date lowerDate=new Date(t - (5 * ONE_MINUTE_IN_MILLIS));
+		LOGGER.debug("Params Passed are LowerDateTime: " + lowerDate + " & HigherDateTime: " + higherDate);
+		List<MctsPregnantMother> mctsPregnantMothers = careDataService.findEntityByFieldWithConstarint(MctsPregnantMother.class, "creationTime",lowerDate, higherDate); 
+		//String data = readFileData(time);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_XML);
-		HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+		HttpEntity httpEntity = new HttpEntity(mctsPregnantMothers, httpHeaders);
 		return httpEntity;
 	}
 	
 	@RequestMapping(value = "updatessent", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	HttpEntity sendUpdatesSent(@RequestParam("filepath") String filePath)
+	HttpEntity sendUpdatesSent(@RequestParam("time") String time)
 			throws Exception {
 		LOGGER.info("Publishing Data to Hub.");
-		String data = readFileData(filePath);
+		String data = readFileData(time);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_XML);
 		HttpEntity httpEntity = new HttpEntity(data, httpHeaders);

@@ -4,6 +4,8 @@ package org.motechproject.mcts.integration.service;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
@@ -70,4 +72,10 @@ public class CareDataService {
             careDataRepository.saveOrUpdate(mctsPregnantMotherServiceUpdate);
         }
     }
+    
+    public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass, String fieldName,
+			Object lowerFieldValue, Object higherFieldValue) {
+    	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
+		return (List<T>) careDataRepository.findEntityByFieldWithConstarint(entityClass, fieldName, lowerFieldValue, higherFieldValue);
+	}
 }

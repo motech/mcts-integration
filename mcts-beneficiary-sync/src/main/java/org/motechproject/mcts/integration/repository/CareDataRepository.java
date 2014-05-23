@@ -118,10 +118,21 @@ public class CareDataRepository {
 	public <T> T load(Class<T> entityClass, Integer id) {
 		return (T) getCurrentSession().load(entityClass, id);
 	}
+	
+	public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass, String fieldName,
+			Object lowerFieldValue, Object higherFieldValue) {
+		LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
+		Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		criteria.add(Restrictions.between(fieldName, lowerFieldValue, higherFieldValue));
+		List<T> listOfObjects = (List<T>) criteria.list();
+		LOGGER.debug(listOfObjects.toString());
+		return listOfObjects;
+	}
 
 	private Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
+	
 	public long getNextKey() {
 		  Query query = sessionFactory.getCurrentSession().createSQLQuery(
 		    "select nextval('" + SEQUENCE + "')");

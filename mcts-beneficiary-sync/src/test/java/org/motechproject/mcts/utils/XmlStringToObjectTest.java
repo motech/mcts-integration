@@ -2,7 +2,7 @@ package org.motechproject.mcts.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -21,6 +21,7 @@ public class XmlStringToObjectTest {
 		String data = getNewDataSetXmlString();
 		NewDataSet newDataSet = xmlStringToObject.stringXmlToObject(
 				NewDataSet.class, data);
+		assertEquals(newDataSet, getNewDataSetObject());
 	}
 
 	private String getNewDataSetXmlString() {

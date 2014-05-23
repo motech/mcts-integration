@@ -82,7 +82,7 @@ public class MCTSBeneficiarySyncServiceTest {
     	when(xmlStringToObject.stringXmlToObject((Class)any(), (String)any())).thenReturn(null);
     	mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
     	verify(careDataRepository, times(0)).findEntityByField((Class)any(), (String)any(), (Object)any());
-    	verify(publisher, times(0)).publish((String)any(), (String)any());
+    	verify(publisher, times(0)).publish((String)any());
     	verify(propertyReader, times(0)).getSyncRequestOutputFileLocation();
     }
     
