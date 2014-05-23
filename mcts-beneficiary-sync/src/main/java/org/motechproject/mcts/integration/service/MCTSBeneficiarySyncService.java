@@ -17,7 +17,7 @@ import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.motechproject.mcts.utils.XmlStringToObject;
+import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class MCTSBeneficiarySyncService {
 	@Autowired
 	private CareDataRepository careDataRepository;
 	@Autowired
-	private XmlStringToObject xmlStringToObject;
+	private XmlStringToObjectConverter xmlStringToObject;
 
 	private String outputFileLocation;
 	private Date date = new Date();

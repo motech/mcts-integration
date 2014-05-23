@@ -13,7 +13,7 @@ import javax.xml.bind.Marshaller;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ObjectToXML {
+public class ObjectToXMLConverter {
 
 	private final String username = "mcts-MOTECH";
 	private String password;

@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.motechproject.mcts.utils.XmlStringToObject;
+import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,7 +36,7 @@ public class MCTSBeneficiarySyncServiceTest {
     private PropertyReader propertyReader;
     
     @Mock
-    private XmlStringToObject xmlStringToObject;
+    private XmlStringToObjectConverter xmlStringToObject;
     
     @Mock
     private CareDataRepository careDataRepository;

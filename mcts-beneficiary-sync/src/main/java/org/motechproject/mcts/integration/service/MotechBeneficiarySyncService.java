@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
-import org.motechproject.mcts.utils.ObjectToXML;
+import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class MotechBeneficiarySyncService {
 	private Publisher publisher;
 	
 	@Autowired
-	private ObjectToXML objectToXML;
+	private ObjectToXMLConverter objectToXML;
 
 	private String outputXMLFileLocation;
 	private Date date = new Date();

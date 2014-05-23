@@ -7,9 +7,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+//import com.google.gson.Gson;
 
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.Publisher;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -70,12 +70,14 @@ public class PublishCallBack {
 		List<MctsPregnantMother> mctsPregnantMothers = careDataService.findEntityByFieldWithConstarint(MctsPregnantMother.class, "creationTime",lowerDate, higherDate); 
 		//String data = readFileData(time);
 		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_XML);
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		//String mctsToJson = returnJson(mctsPregnantMothers);
 		HttpEntity httpEntity = new HttpEntity(mctsPregnantMothers, httpHeaders);
+		LOGGER.debug(mctsPregnantMothers.toString());
 		return httpEntity;
 	}
 	
-	@RequestMapping(value = "updatessent", method = RequestMethod.POST)
+	/*@RequestMapping(value = "updatessent", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	HttpEntity sendUpdatesSent(@RequestParam("time") String time)
@@ -87,6 +89,16 @@ public class PublishCallBack {
 		HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
 		return httpEntity;
 	}
+	*/
+/*	public String returnJson(Object obj){
+		Gson gson = new Gson();
+		 
+		// convert java object to JSON format,
+		// and returned as JSON formatted string
+		String json = gson.toJson(obj);
+	 
+		return json;
+	}*/
 
 	public String readFileData(String filePath) throws Exception {
 		BufferedReader br = null;

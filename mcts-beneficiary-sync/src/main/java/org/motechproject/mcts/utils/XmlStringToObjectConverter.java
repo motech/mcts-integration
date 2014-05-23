@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class XmlStringToObject {
+public class XmlStringToObjectConverter {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(XmlStringToObject.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(XmlStringToObjectConverter.class);
 
 	@SuppressWarnings("unchecked")
 	public <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{

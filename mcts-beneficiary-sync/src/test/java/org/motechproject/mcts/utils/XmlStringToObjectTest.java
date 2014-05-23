@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class XmlStringToObjectTest {
 
 	@Autowired
-	private XmlStringToObject xmlStringToObject = new XmlStringToObject();
+	private XmlStringToObjectConverter xmlStringToObject = new XmlStringToObjectConverter();
 
 	@Test
 	public void testToObjectConversion() throws Exception {

@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
-import org.motechproject.mcts.utils.ObjectToXML;
+import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -45,7 +45,7 @@ public class MotechBeneficiarySyncServiceTest {
 	@Mock
 	private Publisher publisher;
 	@Mock
-	private ObjectToXML objectToXML;
+	private ObjectToXMLConverter objectToXML;
 
 	@InjectMocks
 	private MotechBeneficiarySyncService motechBeneficiarySyncService;
