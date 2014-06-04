@@ -64,7 +64,6 @@ public class MotechBeneficiarySyncService {
 		if (httpStatus.value() / 100 == 2) {
 			writeSyncDataToFile(beneficiaryRequest);
 			updateSyncedBeneficiaries(beneficiariesToSync);
-			notifyHub();
 		}
 	}
 
@@ -92,19 +91,14 @@ public class MotechBeneficiarySyncService {
 		try {
 			File xmlFile = new File(outputXMLFileLocation);
 			File updateRequestUrl = new File(outputURLFileLocation);
-			objectToXML.writeToXML(beneficiaryRequest,
-					BeneficiaryRequest.class, xmlFile, updateRequestUrl);
+			String data = objectToXML.writeToXML(beneficiaryRequest,
+					BeneficiaryRequest.class);
+			LOGGER.info("Updates Received are:\n" + data);
 		} catch (Exception e) {
 			LOGGER.error("File Not Found");
 		}
 	}
-
-	private void notifyHub() {
-		LOGGER.info("Notifying Hub to Publish the Updates at url"
-				+ getHubSyncToUrl());
-		publisher.publish(getHubSyncToUrl());
-	}
-
+	
 	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
 		LOGGER.info("Updating database with %s Synced Beneficiaries "
 				+ beneficiariesToSync.size());

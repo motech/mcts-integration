@@ -23,6 +23,10 @@ import javax.persistence.TemporalType;
 @Table(name = "mcts_pregnant_mother", schema = "report")
 public class MctsPregnantMother implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -485419345126787234L;
 	private Integer id;
 	private MctsSubcenter mctsSubcenter;
 	private MctsHealthworker mctsHealthworkerByAshaId;

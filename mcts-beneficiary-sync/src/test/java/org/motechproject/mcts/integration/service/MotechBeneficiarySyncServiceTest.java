@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,7 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
@@ -149,7 +147,7 @@ public class MotechBeneficiarySyncServiceTest {
 		
 		motechBeneficiarySyncService.writeSyncDataToFile(beneficiaryRequest);
 		verify(objectToXML).writeToXML((BeneficiaryRequest)anyObject(),
-					(Class)any(), (File)anyObject(), (File)anyObject());
+					(Class)any());
 		verify(propertyReader).getUpdateXmlOutputFileLocation();
 		verify(propertyReader).getUpdateUrlOutputFileLocation();
 	}

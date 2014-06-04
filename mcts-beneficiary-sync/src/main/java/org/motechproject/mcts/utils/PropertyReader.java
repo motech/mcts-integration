@@ -94,4 +94,9 @@ public class PropertyReader {
     {
     	return Integer.parseInt(properties.getProperty("hub.retry.interval"));
     }
+    
+    public int getIntervalToFetchUpdatesFromDbInMin()
+    {
+    	return Integer.parseInt(properties.getProperty("interval.to.fetch.updates.from.db.in.min"));
+    }
 }

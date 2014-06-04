@@ -1,11 +1,8 @@
 package org.motechproject.mcts.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -20,8 +17,8 @@ public class ObjectToXMLConverter {
 	private final String operation = "Insert";
 	private final String contentType = "text/xml";
 
-	public void writeToXML(Object dataToWrite,
-			Class<?> classInstance, File xmlFile, File textFile) throws Exception {
+	public String writeToXML(Object dataToWrite,
+			Class<?> classInstance) throws Exception {
 
 		if (dataToWrite.getClass() != classInstance) {
 			throw new Exception(
@@ -29,8 +26,11 @@ public class ObjectToXMLConverter {
 		} else {
 			JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.marshal(dataToWrite, xmlFile);
-			writeUrlToFile(xmlFile, textFile);
+			Writer stringWriter = new StringWriter();
+			jaxbMarshaller.marshal(dataToWrite, stringWriter);
+			return stringWriter.toString();
+			/*
+			writeUrlToFile(xmlFile, textFile);*/
 		}
 	}
 
@@ -41,7 +41,7 @@ public class ObjectToXMLConverter {
 	 * @return
 	 * @throws IOException
 	 * @throws URISyntaxException
-	 */
+	 *//*
 	public String writeUrlToFile(File xmlFile, File updateRequestUrlFile) throws IOException, URISyntaxException {
 		//TODO: This method to be removed during actual implementation.
 		FileReader fileReader = new FileReader(xmlFile);
@@ -69,7 +69,7 @@ public class ObjectToXMLConverter {
 return requestURL.toString();
 	}
 	
-	
+	*/
 	
 	
 }

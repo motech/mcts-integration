@@ -78,4 +78,11 @@ public class CareDataService {
     	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
 		return (List<T>) careDataRepository.findEntityByFieldWithConstarint(entityClass, fieldName, lowerFieldValue, higherFieldValue);
 	}
+    
+    public <T> List<T> findEntityByField(Class<T> entityClass, String fieldName,
+			Object fieldValue) {
+    	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
+		return (List<T>) careDataRepository.findEntityByField(entityClass, fieldName,
+			fieldValue);
+	}
 }

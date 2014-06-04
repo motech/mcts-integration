@@ -22,8 +22,8 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 		<dependency>
-   		 	<groupId>net.sf.supercsv</groupId>
-   		 	<artifactId>super-csv</artifactId>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -111,21 +111,21 @@
 </dependency>     
             
 		<!-- javax-batch-dependency -->
-		
+
 		<dependency>
 			<groupId>javax.batch</groupId>
 			<artifactId>javax.batch-api</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
 		<!-- Spring batch dependency -->
-	 <dependency>
+		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-infrastructure</artifactId>
 			<version>3.0.0.M3</version>
 		</dependency>
 	</dependencies>
-	
+
 
 	<profiles>
 		<profile>
@@ -174,22 +174,6 @@
 
 	<build>
 		<plugins>
-		
-		<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
-				<configuration>
-					<webXml>${project.basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
-					<webappDirectory>/home/aman/Desktop/apache-tomcat-7.0.47/webapps/sync</webappDirectory>
-					<!-- <webResources> 
-            			<resource> 
-              				<directory>${project.basedir}/src/main/config</directory> 
-              				<targetPath>WEB-INF/lib</targetPath>
-            			</resource> 
-         			</webResources> -->
-				</configuration>
-			</plugin>
 			<!-- Dependencies -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
