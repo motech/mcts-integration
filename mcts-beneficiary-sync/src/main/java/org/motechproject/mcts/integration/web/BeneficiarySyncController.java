@@ -1,3 +1,10 @@
+/**
+ * Controller class to call the services
+ * 1. Sync from Mcts to Motech
+ * 2. Sync To Mcts from Motech
+ * @author mohit
+ *
+ */
 package org.motechproject.mcts.integration.web;
 
 import java.io.File;
@@ -22,14 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-/**
- * Controller class to call the services
- * 1. Sync from Mcts to Motech
- * 2. Sync To Mcts from Motech
- * @author mohit
- *
- */
+
 @Controller
 @RequestMapping(value = "/beneficiary")
 public class BeneficiarySyncController {
@@ -67,7 +67,7 @@ public class BeneficiarySyncController {
 	}
 	
 	/**
-	 * Method to send request to mcts to send updates
+	 * Method to send request to MCTS to send updates
 	 * @param startDate
 	 * @param endDate
 	 * @return
@@ -90,7 +90,7 @@ public class BeneficiarySyncController {
 	}
 	
 	/**
-	 * Method to post updates to mcts
+	 * Method to post updates to MCTS
 	 * @param startDate
 	 * @param endDate
 	 * @return
@@ -162,7 +162,7 @@ public class BeneficiarySyncController {
 	 }
 	
 	/**
-	 * Method to validate the input arguments
+	 * Method to validate the input date arguments
 	 * @param date
 	 */
 	private static void validateDateFormat(String date) {

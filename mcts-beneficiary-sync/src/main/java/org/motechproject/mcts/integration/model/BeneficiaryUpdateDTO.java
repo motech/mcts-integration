@@ -1,3 +1,5 @@
+/*Object to post data updates received from MCTS to Subscribers*/
+
 package org.motechproject.mcts.integration.model;
 
 import java.util.Date;

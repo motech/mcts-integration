@@ -73,16 +73,39 @@ public class CareDataService {
         }
     }
     
+    /**
+     * Method to get entities from db with constraints of upper and lower value on a particular field 
+     * @param entityClass: class whose data is to be fetched
+     * @param fieldName: name of the field on which constraint is to be apllied
+     * @param lowerFieldValue: lower value of the constraint
+     * @param higherFieldValue: higher value of the constraint
+     * @return list of the values of passes entity class with the constraints
+     */
     public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass, String fieldName,
 			Object lowerFieldValue, Object higherFieldValue) {
     	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
 		return (List<T>) careDataRepository.findEntityByFieldWithConstarint(entityClass, fieldName, lowerFieldValue, higherFieldValue);
 	}
     
-    public <T> List<T> findEntityByField(Class<T> entityClass, String fieldName,
+    /**
+     * Method to get all the element of the <code>entityClass</code> having a specific value for a field
+     * @param entityClass: class whose data is to fetched from db
+     * @param fieldName: field name whose value is to be matched
+     * @param fieldValue: value to be matched
+     * @return list of entities with matching field values
+     */
+    public <T> T findEntityByField(Class<T> entityClass, String fieldName,
 			Object fieldValue) {
     	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
-		return (List<T>) careDataRepository.findEntityByField(entityClass, fieldName,
+		return careDataRepository.findEntityByField(entityClass, fieldName,
 			fieldValue);
+	}
+
+    /**
+     * Method to Save of Update the entity in Db
+     * @param entity
+     */
+    public <T> void saveOrUpdate(T entity) {
+		careDataRepository.saveOrUpdate(entity);
 	}
 }

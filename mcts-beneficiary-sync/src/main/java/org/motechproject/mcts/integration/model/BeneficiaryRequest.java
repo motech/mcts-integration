@@ -1,3 +1,6 @@
+/**
+ * XML mapping object to be sent to Mcts
+ */
 package org.motechproject.mcts.integration.model;
 
 import javax.xml.bind.annotation.XmlElement;

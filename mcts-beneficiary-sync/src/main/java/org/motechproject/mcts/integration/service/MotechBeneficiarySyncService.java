@@ -1,6 +1,11 @@
+/**
+ * Class to Fetch updates from Motech Db and Send them to Mcts
+ */
 package org.motechproject.mcts.integration.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +39,7 @@ public class MotechBeneficiarySyncService {
 	private Publisher publisher;
 	
 	@Autowired
-	private ObjectToXMLConverter objectToXML;
+	private ObjectToXMLConverter objectToXMLConverter;
 
 	private String outputXMLFileLocation;
 	private Date date = new Date();
@@ -48,9 +53,16 @@ public class MotechBeneficiarySyncService {
 		this.propertyReader = propertyReader;
 	}
 
-	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
+	/**
+	 * Fetches Updates from <code>Motech</code> db, post the updates to Mcts
+	 * Updates the <code>mcts_pregnant_mother_service_updates</code> table with the updates sent to Mcts 
+	 * @param startDate
+	 * @param endDate
+	 * @throws FileNotFoundException 
+	 */
+	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) throws FileNotFoundException {
 		List<Beneficiary> beneficiariesToSync = getBeneficiariesToSync(
-				startDate, endDate);
+				startDate, endDate);//gets the updates from the Motech Database
 		LOGGER.info(String.format(
 				"Found %s beneficiary records to sync to MCTS",
 				beneficiariesToSync.size()));
@@ -60,51 +72,30 @@ public class MotechBeneficiarySyncService {
 		}
 		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
 		beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
-		HttpStatus httpStatus = syncTo(beneficiaryRequest);
+		HttpStatus httpStatus = syncTo(beneficiaryRequest);//sends Updates to Mcts
+		//if httpStatus returned from Mcts is 2** then update the mcts_pregnant_mother_service_updates table
 		if (httpStatus.value() / 100 == 2) {
-			writeSyncDataToFile(beneficiaryRequest);
+			writeSyncDataToFile(beneficiaryRequest); //Writes the updates sent to Mcts to a file
 			updateSyncedBeneficiaries(beneficiariesToSync);
 		}
 	}
 
+	/**
+	 * Calls the Method from <code>CareDataService</code> class to get the <code>Beneficiaries</code> Updates to be sent to Mcts
+	 * @param startDate
+	 * @param endDate
+	 * @return <code>List of Beneficiaries</code> to be sent to Mcts
+	 */
 	protected List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
 			DateTime endDate) {
 		return careDataService.getBeneficiariesToSync(startDate, endDate);
 	}
 
-	protected HttpStatus syncTo(BeneficiaryRequest beneficiaryRequest) {
-		return mctsHttpClientService.syncTo(beneficiaryRequest);
-	}
-
-	protected void writeSyncDataToFile(BeneficiaryRequest beneficiaryRequest) {
-		outputXMLFileLocation = String.format("%s_%s.xml", propertyReader
-				.getUpdateXmlOutputFileLocation(),
-				DateTime.now().toString("yyyy-MM-dd") + "T"
-						+ DateTime.now().toString("HH:mm"));
-		String outputURLFileLocation = String.format("%s_%s.txt",
-				propertyReader.getUpdateUrlOutputFileLocation(), DateTime.now()
-						.toString("yyyy-MM-dd")
-						+ "T"
-						+ DateTime.now().toString("HH:mm"));
-		LOGGER.info("Write Sync Data to File: " + outputXMLFileLocation
-				+ " & Urls and Headers to file: " + outputURLFileLocation);
-		try {
-			File xmlFile = new File(outputXMLFileLocation);
-			File updateRequestUrl = new File(outputURLFileLocation);
-			String data = objectToXML.writeToXML(beneficiaryRequest,
-					BeneficiaryRequest.class);
-			LOGGER.info("Updates Received are:\n" + data);
-		} catch (Exception e) {
-			LOGGER.error("File Not Found");
-		}
-	}
-	
-	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
-		LOGGER.info("Updating database with %s Synced Beneficiaries "
-				+ beneficiariesToSync.size());
-		careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
-	}
-
+	/**
+	 * Maps the List of Beneficiaries received from Database to <code>BeneficiaryRequest</code> to be sent to Mcts
+	 * @param beneficiariesToSync
+	 * @return
+	 */
 	protected BeneficiaryRequest mapToBeneficiaryRequest(
 			List<Beneficiary> beneficiariesToSync) {
 		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
@@ -117,6 +108,61 @@ public class MotechBeneficiarySyncService {
 							.getMobileNumber(), beneficiary.getHbLevelStr()));
 		}
 		return beneficiaryRequest;
+	}
+
+	/**
+	 * Calls the Method from <code>MCTSHttpClientService</code> class to send the updates to Mcts
+	 * @param beneficiaryRequest
+	 * @return
+	 */
+	protected HttpStatus syncTo(BeneficiaryRequest beneficiaryRequest) {
+		return mctsHttpClientService.syncTo(beneficiaryRequest);
+	}
+	
+	/**
+	 * Write the updates to be sent to Mcts in a xml file
+	 * @param beneficiaryRequest
+	 * @throws FileNotFoundException 
+	 */
+	@SuppressWarnings("deprecation")
+	protected void writeSyncDataToFile(BeneficiaryRequest beneficiaryRequest) throws FileNotFoundException {
+		//TODO: To be removed in future and post updates directly to Mcts
+		outputXMLFileLocation = String.format("%s_%s.xml", propertyReader
+				.getUpdateXmlOutputFileLocation(),
+				DateTime.now().toString("yyyy-MM-dd") + "T"
+						+ DateTime.now().toString("HH:mm"));
+		String outputURLFileLocation = String.format("%s_%s.txt",
+				propertyReader.getUpdateUrlOutputFileLocation(), DateTime.now()
+						.toString("yyyy-MM-dd")
+						+ "T"
+						+ DateTime.now().toString("HH:mm"));
+		LOGGER.info("Write Sync Data to File: " + outputXMLFileLocation
+				+ " & Urls and Headers to file: " + outputURLFileLocation);
+		File xmlFile = new File(outputXMLFileLocation);
+		File updateRequestUrl = new File(outputURLFileLocation);
+		PrintWriter printWriter = new PrintWriter(xmlFile);
+		try {
+			String data = objectToXMLConverter.converObjectToXml(beneficiaryRequest,
+					BeneficiaryRequest.class);
+			LOGGER.info("Updates Received are:\n" + data);
+			printWriter.println(data);
+			objectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrl);
+		} catch (Exception e) {
+			LOGGER.error("File Not Found");
+		}finally {
+			printWriter.close();
+		}
+	}
+	
+	/**
+	 * Calls <code>updateSyncedBeneficiaries</code> from <code>CareDataService</code> class to 
+	 * update the <code>mcts_pregnant_mother_service_updates</code> table with the updates sent to Mcts 
+	 * @param beneficiariesToSync List of beneficiaries sent to Mcts
+	 */
+	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
+		LOGGER.info("Updating database with %s Synced Beneficiaries "
+				+ beneficiariesToSync.size());
+		careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
 	}
 
 	public String getHubSyncToUrl() {

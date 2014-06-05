@@ -1,3 +1,6 @@
+/**
+ * Class to send <code>Get</code> Updates request to MCTS, <code>Add</code> the received updates to database and <code>Notify</code> Hub
+ */
 package org.motechproject.mcts.integration.service;
 
 import java.io.File;
@@ -40,13 +43,20 @@ public class MCTSBeneficiarySyncService {
 	@Autowired
 	private Publisher publisher;
 	@Autowired
-	private CareDataRepository careDataRepository;
+	private CareDataService careDataService;
 	@Autowired
 	private XmlStringToObjectConverter xmlStringToObject;
 
 	private String outputFileLocation;
-	private Date date = new Date();
+	private Date startDate;
+	private Date endDate;
 
+	/**
+	 * Main Method to send <code>Get</code> Updates request to MCTS, <code>Add</code> the received updates to database and <code>Notify</code> Hub
+	 * @param startDate
+	 * @param endDate
+	 * @throws Exception
+	 */
 	public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
 			throws Exception {
 		String beneficiaryData = syncFrom(startDate, endDate);
@@ -66,83 +76,110 @@ public class MCTSBeneficiarySyncService {
 			LOGGER.error(e.getMessage());
 			throw new Exception(e);
 		}
-		addToDbData(newDataSet);
-		writeToFile(beneficiaryData);
-		notifyHub();
+		addToDbData(newDataSet); //adds updates received to db
+		//writeToFile(beneficiaryData); //Writes the Updates received to a file
+		notifyHub(); //Notify the hub about the Updates received
 	}
 
-	private void addToDbData(NewDataSet newDataSet){
+	/**
+	 * Send the sync request to <code>MCTS</code>
+	 * @param startDate
+	 * @param endDate
+	 * @return String of XML of the updates received from MCTS
+	 */
+	protected String syncFrom(DateTime startDate, DateTime endDate) {
+		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+		requestBody.putAll(propertyReader
+				.getDefaultBeneficiaryListQueryParams());
+		requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
+		requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
+		return mctsHttpClientService.syncFrom(requestBody);
+	}
+
+	/**
+	 * Add the updates received from MCTS to database table <code>mctsPregnantMother</code>
+	 * @param newDataSet: 
+	 */
+	private void addToDbData(NewDataSet newDataSet) {
 		LOGGER.info(String.format("Started writing to db for %s records",
 				newDataSet.getRecords().size()));
 		int count = 0;
+		startDate = new Date(); //Sets the startDate when data started to add to db to be send to Hub to query db
 		for (Record record : newDataSet.getRecords()) {
 			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-				mctsPregnantMother = mapRecordToMctsPregnantMother(record);
-				if (mctsPregnantMother != null){
-					careDataRepository.saveOrUpdate(mctsPregnantMother);
-					count++;
-					LOGGER.info(String.format(
-							"MctsPregnantMother [%s] added to db",
-							mctsPregnantMother.getMctsId()));
-				}
-				else
-					LOGGER.error("SKIPPED Adding this record to Database");
+			mctsPregnantMother = mapRecordToMctsPregnantMother(record);
+			if (mctsPregnantMother != null) {
+				careDataService.saveOrUpdate(mctsPregnantMother);
+				count++;
+				LOGGER.info(String.format(
+						"MctsPregnantMother [%s] added to db",
+						mctsPregnantMother.getMctsId()));
+			} else
+				LOGGER.error("SKIPPED Adding this record to Database");
 		}
+		endDate = new Date(); //Sets the endDate when data ended to be added to db to be send to Hub to query db
 		LOGGER.info(String.format("Added %s records to db of %s records.",
 				count, newDataSet.getRecords().size()));
 	}
 
-	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record){
+	/**
+	 * Map the <code>Record</code> object received from MCTS to <code>MctsPregnatMother</code> object to be added to db 
+	 * @param record
+	 * @return MctsPregnantMother
+	 */
+	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record) {
 		MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-
 		LOGGER.info(record.toString());
 		MctsHealthworker mctsHealthworkerByAshaId = null;
 		MctsHealthworker mctsHealthworkerByAnmId = null;
 		MctsVillage mctsVillage = null;
 		MctsSubcenter mctsSubcenter = null;
-		mctsHealthworkerByAshaId = careDataRepository.findEntityByField(
+		mctsHealthworkerByAshaId = careDataService.findEntityByField(
 				MctsHealthworker.class, "healthworkerId",
 				Integer.parseInt(record.getASHAID()));
+		//Checks if HealthWorker exist in db...if not then skip adding the particular record to db and throws an error message
 		if (mctsHealthworkerByAshaId == null) {
 			LOGGER.error(String
 					.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getASHAID(), record.getBeneficiaryID()));
 			return null;
 		}
-		mctsHealthworkerByAnmId = careDataRepository.findEntityByField(
+		mctsHealthworkerByAnmId = careDataService.findEntityByField(
 				MctsHealthworker.class, "healthworkerId",
 				Integer.parseInt(record.getANMID()));
+		//Checks if HealthWorker exist in db...if not then skip adding the particular record to db and throws an error message
 		if (mctsHealthworkerByAnmId == null) {
 			LOGGER.error(String
 					.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getANMID(), record.getBeneficiaryID()));
 			return null;
 		}
-		mctsVillage = careDataRepository.findEntityByField(MctsVillage.class,
+		mctsVillage = careDataService.findEntityByField(MctsVillage.class,
 				"villageId", Integer.parseInt(record.getVillageID()));
+		//Checks if Village exist in db...if not then skip adding the particular record to db and throws an error message
 		if (mctsVillage == null) {
 			LOGGER.error(String
 					.format("Village with VillageId: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getVillageID(), record.getBeneficiaryID()));
 			return null;
 		}
-		mctsSubcenter = careDataRepository.findEntityByField(
+		mctsSubcenter = careDataService.findEntityByField(
 				MctsSubcenter.class, "subcenterId",
 				Integer.parseInt(record.getSubCentreID()));
+		//Checks if SubCenter exist in db...if not then skip adding the particular record to db and throws an error message
 		if (mctsSubcenter == null) {
 			LOGGER.error(String
 					.format("SubCenter with SubCenter: %s for Mcts record: %s doesNot exist in DataBase",
 							record.getSubCentreID(), record.getBeneficiaryID()));
 			return null;
 		}
-
 		mctsPregnantMother.setMctsHealthworkerByAnmId(mctsHealthworkerByAnmId);
 		mctsPregnantMother
 				.setMctsHealthworkerByAshaId(mctsHealthworkerByAshaId);
 		mctsPregnantMother
 				.setBeneficiaryAddress(record.getBeneficiaryAddress());
 		mctsPregnantMother.setCategory(record.getCategory());
-		mctsPregnantMother.setCreationTime(date);
+		mctsPregnantMother.setCreationTime(startDate);
 		mctsPregnantMother.setEconomicStatus(record.getEconomicStatus());
 		mctsPregnantMother.setEidNumber(record.getEIDNumber());
 		mctsPregnantMother.setEmail(record.getEmail());
@@ -158,38 +195,39 @@ public class MCTSBeneficiarySyncService {
 		mctsPregnantMother.setUidNumber(record.getUIDNumber());
 		mctsPregnantMother.setMctsVillage(mctsVillage);
 		mctsPregnantMother.setWard(record.getWard());
+		//Parse the LmpDate to dd-mm-YYYY format and throws an error if not in correct format
 		try {
 			mctsPregnantMother.setLmpDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getLMPDate()));
+			LOGGER.debug("LMP Date is: "
+					+ mctsPregnantMother.getLmpDate().toString());
 		} catch (ParseException e) {
-			LOGGER.error(
-					String.format(
-							"Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+			LOGGER.error(String
+					.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 							record.getLMPDate(), record.getBeneficiaryID()));
 			return null;
 		}
+		//Parse the BirthDate to dd-mm-YYYY format and throws an error if not in correct format
 		try {
 			mctsPregnantMother.setBirthDate(new SimpleDateFormat("yyyy-MM-dd",
 					Locale.ENGLISH).parse(record.getBirthdate()));
+			LOGGER.debug("Birth Date is: "
+					+ mctsPregnantMother.getBirthDate().toString());
 		} catch (ParseException e) {
-			LOGGER.error(
-					String.format(
-							"Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+			LOGGER.error(String
+					.format("Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 							record.getBirthdate(), record.getBeneficiaryID()));
 			return null;
 		}
 		return mctsPregnantMother;
 	}
 
-	protected String syncFrom(DateTime startDate, DateTime endDate) {
-		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-		requestBody.putAll(propertyReader
-				.getDefaultBeneficiaryListQueryParams());
-		requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
-		requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
-		return mctsHttpClientService.syncFrom(requestBody);
-	}
-
+	/**
+	 * Write the Beneficiary Data to a new XML file with timeStamp
+	 * @param beneficiaryData
+	 * @throws Exception
+	 */
+	@Deprecated
 	protected void writeToFile(String beneficiaryData) throws Exception {
 		this.outputFileLocation = String.format("%s_%s.xml", propertyReader
 				.getSyncRequestOutputFileLocation(),
@@ -213,16 +251,17 @@ public class MCTSBeneficiarySyncService {
 		}
 	}
 
+	/**
+	 * Notifies the Hub about the Updates received from Mcts along with Url to call Back
+	 */
 	protected void notifyHub() {
+		String updateUrl = propertyReader.getHubSyncFromUrl(new SimpleDateFormat(
+				"dd/MM/yyyy HH:mm:ss.SS").format(this.startDate),
+				new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS")
+						.format(this.endDate));
 		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
-				+ getHubSyncFromUrl());
-		publisher.publish(getHubSyncFromUrl());
+				+ updateUrl);
+		publisher.publish(updateUrl);
 		LOGGER.info("HUB Notified Successfully");
 	}
-
-	public String getHubSyncFromUrl() {
-		
-		return propertyReader.getHubSyncFromUrl() + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS").format(this.date);
-	}
-
 }

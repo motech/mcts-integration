@@ -1,3 +1,4 @@
+/*Object to contain list of Beneficiary Updates Received from MCTS to be posted to Subcribers*/
 package org.motechproject.mcts.integration.model;
 
 import java.util.ArrayList;

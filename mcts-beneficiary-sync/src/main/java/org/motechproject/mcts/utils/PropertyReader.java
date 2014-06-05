@@ -1,3 +1,6 @@
+/**
+ * Reads properties from the properties file <code>beneficiary_sync.properties</code> and return them
+ */
 package org.motechproject.mcts.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +85,8 @@ public class PropertyReader {
         return String.format("%s%s?time=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
     }
     
-    public String getHubSyncFromUrl() {
-        return String.format("%s%s?time=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
+    public String getHubSyncFromUrl(String startTime, String endTime) {
+        return String.format("%s%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
     }
     
     public int getMaxNumberOfPublishRetryCount(){
@@ -93,10 +96,5 @@ public class PropertyReader {
     public int getHubRetryInterval()
     {
     	return Integer.parseInt(properties.getProperty("hub.retry.interval"));
-    }
-    
-    public int getIntervalToFetchUpdatesFromDbInMin()
-    {
-    	return Integer.parseInt(properties.getProperty("interval.to.fetch.updates.from.db.in.min"));
     }
 }

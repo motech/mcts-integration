@@ -146,7 +146,7 @@ public class MotechBeneficiarySyncServiceTest {
 		when(propertyReader.getUpdateUrlOutputFileLocation()).thenReturn("testURL");
 		
 		motechBeneficiarySyncService.writeSyncDataToFile(beneficiaryRequest);
-		verify(objectToXML).writeToXML((BeneficiaryRequest)anyObject(),
+		verify(objectToXML).converObjectToXml((BeneficiaryRequest)anyObject(),
 					(Class)any());
 		verify(propertyReader).getUpdateXmlOutputFileLocation();
 		verify(propertyReader).getUpdateUrlOutputFileLocation();
