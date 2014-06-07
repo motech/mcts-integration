@@ -3,6 +3,11 @@
  */
 package org.motechproject.mcts.integration.service;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,14 +91,15 @@ public class Publisher {
 	 * @return
 	 */
 	private ResponseEntity<String> notify(MediaType contentType) {
+		//TODO edit the headers
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(contentType);
-		HttpEntity httpEntity = new HttpEntity(httpHeaders);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
 		ResponseEntity<String> response = restTemplate.postForEntity(getUrl(),
 				httpEntity, String.class);
 		return response;
 	}
-
+	
 	/**
 	 * Returns the url at which hub is to be notified
 	 * @return

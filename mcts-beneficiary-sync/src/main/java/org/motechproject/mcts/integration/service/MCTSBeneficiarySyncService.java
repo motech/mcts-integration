@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
@@ -78,6 +80,7 @@ public class MCTSBeneficiarySyncService {
 		}
 		addToDbData(newDataSet); //adds updates received to db
 		//writeToFile(beneficiaryData); //Writes the Updates received to a file
+		setHubTransactionDates();
 		notifyHub(); //Notify the hub about the Updates received
 	}
 
@@ -121,6 +124,19 @@ public class MCTSBeneficiarySyncService {
 		LOGGER.info(String.format("Added %s records to db of %s records.",
 				count, newDataSet.getRecords().size()));
 	}
+	
+	/**
+	 * Method to change <code>isLatest</code> field of <code>MctsPregnatMother</code> for the mothers whose
+	 * updates were already published
+	 *//*
+	@Deprecated
+	private void changeIsLatestToFalse(){
+		List<MctsPregnantMother> mctsPregnantMothers = careDataService.findListOfEntitiesByField(MctsPregnantMother.class, "isLatest", true);
+		for (MctsPregnantMother mctsPregnantMother: mctsPregnantMothers){
+			mctsPregnantMother.setIsLatest(false);
+			careDataService.saveOrUpdate(mctsPregnantMother);
+		}
+	}*/
 
 	/**
 	 * Map the <code>Record</code> object received from MCTS to <code>MctsPregnatMother</code> object to be added to db 
@@ -252,16 +268,23 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	/**
-	 * Notifies the Hub about the Updates received from Mcts along with Url to call Back
+	 * Sets startDate and endDate to be sent to hub
+	 */
+	protected void setHubTransactionDates(){
+		HubTransaction hubTransaction = new HubTransaction();
+		hubTransaction.setStartDate(startDate);
+		hubTransaction.setEndDate(endDate);
+		hubTransaction.setIsNotified(false);
+		careDataService.saveOrUpdate(hubTransaction);
+	}
+	
+	/**
+	 * Notifies the Hub when the Updates received from Mcts with Url to call Back
 	 */
 	protected void notifyHub() {
-		String updateUrl = propertyReader.getHubSyncFromUrl(new SimpleDateFormat(
-				"dd/MM/yyyy HH:mm:ss.SS").format(this.startDate),
-				new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS")
-						.format(this.endDate));
+		String updateUrl = propertyReader.getBenificiaryUpdateTopicUrlForHub();
 		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
 				+ updateUrl);
 		publisher.publish(updateUrl);
-		LOGGER.info("HUB Notified Successfully");
 	}
 }

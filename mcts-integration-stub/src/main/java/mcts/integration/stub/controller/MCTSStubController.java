@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import mcts.integration.stub.interceptor.RequestLoggingInterceptor;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
+@RequestMapping("/mcts")
 public class MCTSStubController {
 
 	private final static Logger LOGGER = LoggerFactory
@@ -56,7 +55,7 @@ public class MCTSStubController {
     }
     
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/hub", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded")
+    @RequestMapping(value = "/hub", method = RequestMethod.POST, headers = "application/x-www-form-urlencoded")
     @ResponseBody
     public String publish(@RequestParam("hub.mode") String mode, 
     					@RequestParam("hub.url")String url) throws Exception{

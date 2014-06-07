@@ -115,6 +115,20 @@ public class CareDataRepository {
 		return (T) criteria.uniqueResult();
 	}
 
+	/**
+	 * 
+	 * @param entityClass
+	 * @param fieldName
+	 * @param fieldValue
+	 * @return
+	 */
+	public <T> List<T> findListOfEntitiesByField(Class<T> entityClass, String fieldName,
+			Object fieldValue) {
+		Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		criteria.add(Restrictions.eq(fieldName, fieldValue));
+		return (List<T>) criteria.list();
+	}
+
 	public <T> T load(Class<T> entityClass, Integer id) {
 		return (T) getCurrentSession().load(entityClass, id);
 	}

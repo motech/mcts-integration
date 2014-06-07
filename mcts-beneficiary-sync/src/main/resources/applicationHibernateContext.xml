@@ -53,6 +53,7 @@
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsFlwData</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
 			</list>
 		</property>
 	</bean>

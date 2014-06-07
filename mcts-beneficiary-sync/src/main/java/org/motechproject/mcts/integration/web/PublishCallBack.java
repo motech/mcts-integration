@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.model.BeneficiarySubscriberUpdateUrlDTO;
 import org.motechproject.mcts.integration.model.BeneficiaryUpdateDTO;
 import org.motechproject.mcts.integration.model.ListOfBeneficiariesUpdatesDTO;
 import org.motechproject.mcts.integration.service.CareDataService;
@@ -17,10 +19,7 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +59,41 @@ public class PublishCallBack {
 	}
 
 	/**
+	 * Call Back Method to send Updates Url to <code>Hub</code> to be sent to <code>Subscriber</code> 
+	 * by fetching <code>startDate</code> and <code>endDate</code> from <code>hub_transaction</code> table by calling
+	 * <code>findListOfEntitiesByField</code> from <code>CareDatService</code> class
+	 * and Sends the Mapped <code>BeneficiaryUpdateDTO</code> to Subscribers
+	 * @return String in xml format containing all the update Urls that have not been sent to Hub
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "beneficiaries", method = RequestMethod.POST, produces = "text/xml")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	String sendBeneficiaryResourceUrlForSubscriber()
+			throws Exception {
+		LOGGER.info("Sending Resource Url to Hub.");
+		List<HubTransaction> hubTransactions = careDataService.findListOfEntitiesByField(HubTransaction.class, "isNotified", false);
+		BeneficiarySubscriberUpdateUrlDTO beneficiarySubscriberUpdateUrlDTO = new BeneficiarySubscriberUpdateUrlDTO();
+		for(HubTransaction hubTransaction : hubTransactions){
+			String updateUrl = propertyReader.getHubSyncFromUrl(new SimpleDateFormat(
+			"dd/MM/yyyy HH:mm:ss.SS").format(hubTransaction.getStartDate()),
+			new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS")
+					.format(hubTransaction.getEndDate()));
+			hubTransaction.setIsNotified(true);
+			careDataService.saveOrUpdate(hubTransaction);
+			beneficiarySubscriberUpdateUrlDTO.addBeneficiaryDetails(updateUrl);
+		}
+		String updateString = objectToXMLConverter.converObjectToXml(
+				beneficiarySubscriberUpdateUrlDTO,
+				BeneficiarySubscriberUpdateUrlDTO.class);
+		//HttpHeaders httpHeaders = new HttpHeaders();
+		//httpHeaders.setContentType(MediaType.APPLICATION_XML);
+		LOGGER.info("Updates Sent are:\n" + updateString);
+		//HttpEntity httpEntity = new HttpEntity(updateString, httpHeaders);
+		return updateString;
+	}
+	
+/**
 	 * Call Back Method to send Updates to Subscriber by fetching updates from Db based on parameters in call back url by calling
 	 * <code>findEntityByFieldWithConstarint</code> from <code>CareDatService</code> class
 	 * and Sends the Mapped <code>BeneficiaryUpdateDTO</code> to Subscribers
@@ -68,20 +102,16 @@ public class PublishCallBack {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "updatesreceived", method = RequestMethod.POST)
+	@RequestMapping(value = "updatesreceived", method = RequestMethod.POST, produces = "text/xml")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	HttpEntity sendUpdatesReceived(@RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime)
+	String sendUpdatesReceived(@RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime)
 			throws Exception {
-		LOGGER.info("Publishing Data to Hub.");
+		LOGGER.info("Publishing Data to Subscribers.");
 		Date startdate = new Date(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS",
 				Locale.ENGLISH).parse(startTime).getTime());
 		Date enddate = new Date(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SS",
 				Locale.ENGLISH).parse(endTime).getTime());
-	/*	long t = date.getTime();
-		int interval = propertyReader.getIntervalToFetchUpdatesFromDbInMin();
-		Date higherDate = new Date(t + (interval / 2 * ONE_MINUTE_IN_MILLIS));
-		Date lowerDate = new Date(t - (interval / 2 * ONE_MINUTE_IN_MILLIS));*/
 		LOGGER.debug("Params Passed are LowerDateTime: " + startdate
 				+ " & HigherDateTime: " + enddate);
 		List<MctsPregnantMother> mctsPregnantMothers = careDataService
@@ -99,13 +129,14 @@ public class PublishCallBack {
 		String updateString = objectToXMLConverter.converObjectToXml(
 				listOfBeneficiariesUpdatesDTO,
 				ListOfBeneficiariesUpdatesDTO.class);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_XML);
+		//HttpHeaders httpHeaders = new HttpHeaders();
+		//httpHeaders.setContentType(MediaType.APPLICATION_XML);
 		LOGGER.info("Updates Sent are:\n" + updateString);
-		HttpEntity httpEntity = new HttpEntity(updateString, httpHeaders);
+		//HttpEntity httpEntity = new HttpEntity(updateString, httpHeaders);
 		LOGGER.debug(mctsPregnantMothers.toString());
-		return httpEntity;
+		return updateString;
 	}
+	
 /**
  * maps the <code>mctsPregnantMother</code> to <code>BeneficiaryUpdateDTO</code>
  * @param mctsPregnantMother

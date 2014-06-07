@@ -88,7 +88,7 @@ public class CareDataService {
 	}
     
     /**
-     * Method to get all the element of the <code>entityClass</code> having a specific value for a field
+     * Method to get the unique element of the <code>entityClass</code> having a specific value for a field
      * @param entityClass: class whose data is to fetched from db
      * @param fieldName: field name whose value is to be matched
      * @param fieldValue: value to be matched
@@ -96,8 +96,22 @@ public class CareDataService {
      */
     public <T> T findEntityByField(Class<T> entityClass, String fieldName,
 			Object fieldValue) {
-    	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
+    	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
 		return careDataRepository.findEntityByField(entityClass, fieldName,
+			fieldValue);
+	}
+
+    /**
+     * Method to get all the element of the <code>entityClass</code> having a specific value for a field
+     * @param entityClass: class whose data is to fetched from db
+     * @param fieldName: field name whose value is to be matched
+     * @param fieldValue: value to be matched
+     * @return list of entities with matching field values
+     */
+    public <T> List<T> findListOfEntitiesByField(Class<T> entityClass, String fieldName,
+			Object fieldValue) {
+    	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
+		return careDataRepository.findListOfEntitiesByField(entityClass, fieldName,
 			fieldValue);
 	}
 

@@ -82,11 +82,11 @@ public class PropertyReader {
     }
     
     public String getHubSyncToUrl() {
-        return String.format("%s%s?time=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
+        return String.format("%s/%s?time=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
     }
     
     public String getHubSyncFromUrl(String startTime, String endTime) {
-        return String.format("%s%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
+        return String.format("%s/%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
     }
     
     public int getMaxNumberOfPublishRetryCount(){
@@ -96,5 +96,10 @@ public class PropertyReader {
     public int getHubRetryInterval()
     {
     	return Integer.parseInt(properties.getProperty("hub.retry.interval"));
+    }
+    
+    public String getBenificiaryUpdateTopicUrlForHub()
+    {
+    	return String.format("%s/%s", properties.getProperty("motech.base.url"), properties.getProperty("benificiary.update.topic.url.for.hub"));
     }
 }
