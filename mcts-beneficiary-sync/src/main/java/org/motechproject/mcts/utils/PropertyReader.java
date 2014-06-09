@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Properties;
 
 @Component
@@ -85,8 +87,8 @@ public class PropertyReader {
         return String.format("%s/%s?time=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
     }
     
-    public String getHubSyncFromUrl(String startTime, String endTime) {
-        return String.format("%s/%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
+    public String getHubSyncFromUrl(String startTime, String endTime) throws UnsupportedEncodingException {
+        return String.format("%s/%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), URLEncoder.encode(startTime, "UTF-8"), URLEncoder.encode(endTime, "UTF-8"));
     }
     
     public int getMaxNumberOfPublishRetryCount(){

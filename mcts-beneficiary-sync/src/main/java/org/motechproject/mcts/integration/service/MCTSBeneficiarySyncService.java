@@ -280,10 +280,11 @@ public class MCTSBeneficiarySyncService {
 	
 	/**
 	 * Notifies the Hub when the Updates received from Mcts with Url to call Back
+	 * @throws Exception 
 	 */
-	protected void notifyHub() {
+	protected void notifyHub() throws Exception {
 		String updateUrl = propertyReader.getBenificiaryUpdateTopicUrlForHub();
-		LOGGER.info("Sending Notification to Hub to Publish the Updates at url"
+		LOGGER.info("Sending Notification to Hub about Updates at Topic url"
 				+ updateUrl);
 		publisher.publish(updateUrl);
 	}
