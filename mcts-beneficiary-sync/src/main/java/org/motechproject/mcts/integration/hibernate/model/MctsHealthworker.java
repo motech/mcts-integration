@@ -1,7 +1,9 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-// Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
+// Generated May 30, 2014 4:28:04 PM by Hibernate Tools 3.4.0.CR1
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -35,6 +38,11 @@ public class MctsHealthworker implements java.io.Serializable {
 	private String husbandName;
 	private String aadharNo;
 	private String gfAddress;
+	private String careGroupid;
+	private Set<MctsPregnantMother> mctsPregnantMothersForAshaId = new HashSet<MctsPregnantMother>(
+			0);
+	private Set<MctsPregnantMother> mctsPregnantMothersForAnmId = new HashSet<MctsPregnantMother>(
+			0);
 
 	public MctsHealthworker() {
 	}
@@ -51,7 +59,9 @@ public class MctsHealthworker implements java.io.Serializable {
 	public MctsHealthworker(MctsPhc mctsPhc, MctsSubcenter mctsSubcenter,
 			MctsVillage mctsVillage, int healthworkerId, String name,
 			String contactNo, char sex, String type, String husbandName,
-			String aadharNo, String gfAddress) {
+			String aadharNo, String gfAddress, String careGroupid,
+			Set<MctsPregnantMother> mctsPregnantMothersForAshaId,
+			Set<MctsPregnantMother> mctsPregnantMothersForAnmId) {
 		this.mctsPhc = mctsPhc;
 		this.mctsSubcenter = mctsSubcenter;
 		this.mctsVillage = mctsVillage;
@@ -63,6 +73,9 @@ public class MctsHealthworker implements java.io.Serializable {
 		this.husbandName = husbandName;
 		this.aadharNo = aadharNo;
 		this.gfAddress = gfAddress;
+		this.careGroupid = careGroupid;
+		this.mctsPregnantMothersForAshaId = mctsPregnantMothersForAshaId;
+		this.mctsPregnantMothersForAnmId = mctsPregnantMothersForAnmId;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_healthworker_id_seq")
@@ -177,6 +190,35 @@ public class MctsHealthworker implements java.io.Serializable {
 
 	public void setGfAddress(String gfAddress) {
 		this.gfAddress = gfAddress;
+	}
+
+	@Column(name = "care_groupid")
+	public String getCareGroupid() {
+		return this.careGroupid;
+	}
+
+	public void setCareGroupid(String careGroupid) {
+		this.careGroupid = careGroupid;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsHealthworkerByAshaId")
+	public Set<MctsPregnantMother> getMctsPregnantMothersForAshaId() {
+		return this.mctsPregnantMothersForAshaId;
+	}
+
+	public void setMctsPregnantMothersForAshaId(
+			Set<MctsPregnantMother> mctsPregnantMothersForAshaId) {
+		this.mctsPregnantMothersForAshaId = mctsPregnantMothersForAshaId;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsHealthworkerByAnmId")
+	public Set<MctsPregnantMother> getMctsPregnantMothersForAnmId() {
+		return this.mctsPregnantMothersForAnmId;
+	}
+
+	public void setMctsPregnantMothersForAnmId(
+			Set<MctsPregnantMother> mctsPregnantMothersForAnmId) {
+		this.mctsPregnantMothersForAnmId = mctsPregnantMothersForAnmId;
 	}
 
 }
