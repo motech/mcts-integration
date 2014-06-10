@@ -86,10 +86,7 @@ public class PublishCallBack {
 		String updateString = objectToXMLConverter.converObjectToXml(
 				beneficiarySubscriberUpdateUrlDTO,
 				BeneficiarySubscriberUpdateUrlDTO.class);
-		//HttpHeaders httpHeaders = new HttpHeaders();
-		//httpHeaders.setContentType(MediaType.APPLICATION_XML);
-		LOGGER.info("Updates Sent are:\n" + updateString);
-		//HttpEntity httpEntity = new HttpEntity(updateString, httpHeaders);
+		LOGGER.debug("Content Sent is:\n" + updateString + "\n");
 		return updateString;
 	}
 	

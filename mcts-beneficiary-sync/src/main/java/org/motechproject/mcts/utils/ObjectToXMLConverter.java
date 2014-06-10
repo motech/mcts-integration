@@ -9,13 +9,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.springframework.stereotype.Component;
+
+import com.sun.xml.bind.marshaller.DataWriter;
 
 @Component
 public class ObjectToXMLConverter {
@@ -40,8 +41,17 @@ public class ObjectToXMLConverter {
 		} else {
 			JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			Writer stringWriter = new StringWriter();
-			jaxbMarshaller.marshal(dataToWrite, stringWriter);
+
+            // Set UTF-8 Encoding
+			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            
+			  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
+            
+			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
+			jaxbMarshaller.marshal(dataToWrite, dataWriter);
 			return stringWriter.toString();
 		}
 	}

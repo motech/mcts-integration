@@ -22,6 +22,7 @@ import org.motechproject.mcts.utils.PropertyReader;
 
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class FLWDataPopulatorTest 
 {
 	@InjectMocks

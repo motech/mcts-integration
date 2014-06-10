@@ -38,25 +38,25 @@ public class LocationDataPopulatorTest
 		System.out.println("started");
 	//	System.out.println(sessionFactory. );
 		//locationDataPopulator = new LocationDataPopulator(sessionFactory);
-		locationDataPopulator.readWithCsvBeanReader();
+		//locationDataPopulator.readWithCsvBeanReader();
 	}
 	
 	@Test
 	public void saveLocationDataTest() throws Exception
 	{
-		locationDataPopulator.saveLocationData();
+		//locationDataPopulator.saveLocationData();
 	}
 	
 	@Test
 	public void flwDataPopulatorTest() throws Exception
 	{
-		flwDataPopulator.flwDataPopulator();
+		//flwDataPopulator.flwDataPopulator();
 	}
 	
 	@Test
 	public void populateFLWDataTest() throws Exception
 	{
-		flwDataPopulator.populateFLWData();
+		//flwDataPopulator.populateFLWData();
 	}
 
 }

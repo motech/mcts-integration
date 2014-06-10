@@ -24,4 +24,14 @@ public class BeneficiarySubscriberUpdateUrlDTO {
 	    public List<String> getAllBeneficiaryDetails() {
 	        return allUrls;
 	    }
+	    
+	    @Override
+	    public String toString(){
+	    	StringBuilder s = new StringBuilder();
+	    	for (String updateUrl : allUrls)
+	    	{
+	    		s.append(updateUrl + "\n");
+	    	}
+	    	return s.toString();
+	    }
 }

@@ -164,8 +164,4 @@ public class MotechBeneficiarySyncService {
 				+ beneficiariesToSync.size());
 		careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
 	}
-
-	public String getHubSyncToUrl() {
-		return propertyReader.getHubSyncToUrl() + this.date.getTime();
-	}
 }

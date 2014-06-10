@@ -10,8 +10,8 @@
     </appender>
 
    
-<!--  <logger name="org.motechproject.mcts.integration.service" additivity="false">
-        <level value="INFO"/>
+<!--  <logger name="org.motechproject.mcts.integration.service" additivity="true">
+        <level value="ERROR"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger> -->
     
@@ -31,8 +31,8 @@
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
 
-    <root>
+<!--     <root>
         <level value="ERROR" />
         <appender-ref ref="mctsIntegrationConsoleAppender" />
-    </root>
+    </root> -->
 </log4j:configuration>

@@ -53,7 +53,7 @@ public class MCTSStubController {
 
     	return "Updated Beneficiary Details";
     }
-    
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/hub", method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded")
     @ResponseBody

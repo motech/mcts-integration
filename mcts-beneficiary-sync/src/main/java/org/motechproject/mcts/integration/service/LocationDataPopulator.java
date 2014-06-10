@@ -14,7 +14,6 @@ import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.utils.CSVFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +38,8 @@ public class LocationDataPopulator {
 	@Autowired
 	private CareDataRepository careDataRepository;
 	
-	@Autowired
-	private CSVFileReader cSVFileReader;
+//	@Autowired
+//	private CSVFileReader cSVFileReader;
 	
 
 
