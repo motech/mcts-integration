@@ -12,7 +12,7 @@ public class BatchServiceUrlGenerator {
 	        this.properties = properties;
 	    }
 	    
-	    public BatchServiceUrlGenerator() {
+	    public BatchServiceUrlGenerator() { 
 	        
 	    }
 	  

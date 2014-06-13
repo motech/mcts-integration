@@ -13,6 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
@@ -185,7 +186,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void shouldSaveNewEntity() {
+	public void shouldSaveNewEntity() throws BeneficiaryException {
 		shouldClearMctsPregnantMotherTables();
 		String mctsId = "mctsId";
 		MotherCase motherCase = new MotherCase();
@@ -207,7 +208,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void shouldUpdateGivenEntity() {
+	public void shouldUpdateGivenEntity() throws BeneficiaryException {
 		shouldClearMctsPregnantMotherTables();
 		String newMctsId = "newMctsId";
 		MotherCase motherCase = new MotherCase();

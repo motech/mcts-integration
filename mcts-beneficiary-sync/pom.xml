@@ -134,6 +134,19 @@
 			<artifactId>spring-batch-infrastructure</artifactId>
 			<version>3.0.0.M3</version>
 		</dependency>
+		
+		<!-- jackson dependencies -->
+		<dependency>
+	<groupId>org.codehaus.jackson</groupId>
+	<artifactId>jackson-mapper-asl</artifactId>
+	<version>1.9.10</version>
+</dependency>
+		<dependency>
+	<groupId>org.codehaus.jackson</groupId>
+	<artifactId>jackson-core-asl</artifactId>
+	<version>1.9.10</version>
+</dependency>
+		
 	</dependencies>
 
 

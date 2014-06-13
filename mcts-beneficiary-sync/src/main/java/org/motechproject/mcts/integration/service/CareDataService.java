@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
@@ -31,7 +32,7 @@ public class CareDataService {
         return careDataRepository.getBeneficiariesToSync(startDate, endDate);
     }
 
-    public void mapMotherCaseToMctsPregnantMother(String caseId, String mctsId) {
+    public void mapMotherCaseToMctsPregnantMother(String caseId, String mctsId) throws BeneficiaryException {
         MotherCase motherCase = careDataRepository.findEntityByField(MotherCase.class, "caseId", caseId);
         if (motherCase == null) {
             LOGGER.info(String.format("MCTS Pregnant Mother not updated. Mother case not found for Case Id: %s", caseId));
@@ -57,7 +58,7 @@ public class CareDataService {
         return MctsPregnantMother;
     }
 
-    public void updateSyncedBeneficiaries(List<Beneficiary> syncedBeneficiaries) {
+    public void updateSyncedBeneficiaries(List<Beneficiary> syncedBeneficiaries) throws BeneficiaryException {
         LOGGER.info(String.format("Updating %s beneficiaries as updated to MCTS", syncedBeneficiaries.size()));
         DateTime serviceUpdateTime = DateTime.now();
         for (Beneficiary syncedBeneficiary : syncedBeneficiaries) {

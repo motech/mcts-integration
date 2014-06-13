@@ -44,10 +44,12 @@ public class MCTSHttpClientService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
+      
         ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();
+       
         
     }
 

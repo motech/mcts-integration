@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import org.mockito.InjectMocks;
 
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
@@ -57,7 +59,7 @@ public class CareDataServiceTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldMapMotherCaseToNewMctsPregnantMotherAndSaveIt() {
+	public void shouldMapMotherCaseToNewMctsPregnantMotherAndSaveIt() throws BeneficiaryException {
 		String caseId = "caseId";
 		String mctsId = "mctsId";
 		MotherCase motherCase = new MotherCase();
@@ -80,11 +82,12 @@ public class CareDataServiceTest {
 	}
 
 	/**
+	 * @throws BeneficiaryException 
 	 * 
 	 */
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldUpdateMctsPregnantMotherWithNewMCTSIdIfItAlreadyExists() {
+	public void shouldUpdateMctsPregnantMotherWithNewMCTSIdIfItAlreadyExists() throws BeneficiaryException {
 		String caseId = "caseId";
 		String newMctsId = "newMctsId";
 		MotherCase motherCase = new MotherCase();
@@ -113,7 +116,7 @@ public class CareDataServiceTest {
 	}
 
 	@Test
-	public void shouldUpdateSyncedBeneficiaries() {
+	public void shouldUpdateSyncedBeneficiaries() throws BeneficiaryException {
 
 		Beneficiary beneficiary1 = new Beneficiary(1, "mcts_id1", 2,
 				new Date(), "9999900000", 1, null, null, null);

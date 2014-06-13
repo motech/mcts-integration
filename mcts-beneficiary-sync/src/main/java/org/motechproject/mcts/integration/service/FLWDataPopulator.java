@@ -1,8 +1,13 @@
 package org.motechproject.mcts.integration.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
@@ -10,11 +15,14 @@ import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.utils.CSVFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.supercsv.exception.SuperCsvReflectionException;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
@@ -31,7 +39,7 @@ public class FLWDataPopulator {
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MCTSHttpClientService.class);
-	
+
 	public CareDataRepository getCareDataRepository() {
 		return careDataRepository;
 	}
@@ -43,17 +51,27 @@ public class FLWDataPopulator {
 	@Autowired
 	private CareDataRepository careDataRepository;
 	
+	@Autowired
+	private CSVFileReader cSVFileReader;
+	
 	/**
 	 * Method to populate table mcts_HealthWorker 
 	 * @throws Exception
 	 */
-	public void populateFLWData(File file) throws Exception {
+	public void populateFLWData(MultipartFile file) throws BeneficiaryException {
 		ICsvBeanReader beanReader = null;
+		FLWDataCSV flwDataCSV = new FLWDataCSV();
+		File newFile = null;
 		try {
-			beanReader = new CsvBeanReader(new FileReader(file),
+			byte[] bytes = file.getBytes();
+			newFile = new File("java.io.tmpdir");
+			FileOutputStream out = new FileOutputStream(newFile);
+			out.write(bytes);
+			System.out.println("size" + newFile.getTotalSpace());
+			beanReader = new CsvBeanReader(new FileReader(newFile),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
-			FLWDataCSV flwDataCSV = new FLWDataCSV();
+			
 			int count = 0;
 			while ((flwDataCSV = beanReader.read(FLWDataCSV.class, header)) != null) {
 				System.out.println("count" + count++);
@@ -104,12 +122,28 @@ public class FLWDataPopulator {
 			}
 
 		}
+		catch (FileNotFoundException e) {
+			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e.getMessage());
+		}
+		catch(IOException e) {
+			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e.getMessage());
+		}
+		catch (SuperCsvReflectionException e) {
+			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
+		}
+		catch (IllegalArgumentException e) {
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+		}
 
 		finally {
 			if (beanReader != null) {
-				beanReader.close();
-				flwDataPopulator(file);
+				try {
+					beanReader.close();
+				} catch (IOException e) {
+					throw new BeneficiaryException(ApplicationErrors.FILE_CLOSING_FAILED,e.getMessage());
+				}
 			}
+			flwDataPopulator(newFile);
 		}
 
 	}
@@ -118,13 +152,14 @@ public class FLWDataPopulator {
 	 * Method to populate table mcts_flw_master
 	 * @throws Exception
 	 */
-	public void flwDataPopulator(File file) throws Exception {
+	public void flwDataPopulator(File file) throws BeneficiaryException {
 		ICsvBeanReader beanReader = null;
+		FLWDataCSV flwDataCSV = new FLWDataCSV();
 		try {
 			beanReader = new CsvBeanReader(new FileReader(file),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
-			FLWDataCSV flwDataCSV = new FLWDataCSV();
+			
 			while ((flwDataCSV = beanReader.read(FLWDataCSV.class, header)) != null) {
 
 				String districtId = flwDataCSV.getDistrict_ID().toString();
@@ -160,11 +195,26 @@ public class FLWDataPopulator {
 			}
 
 		}
+		catch (FileNotFoundException e) {
+			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e.getMessage());
+		}
+		catch(IOException e) {
+			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e.getMessage());
+		}
+		catch (SuperCsvReflectionException e) {
+			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
+		}
+		catch (IllegalArgumentException e) {
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+		}
 
 		finally {
 			if (beanReader != null) {
-				beanReader.close();
-				
+				try {
+					beanReader.close();
+				} catch (IOException e) {
+					throw new BeneficiaryException(ApplicationErrors.FILE_CLOSING_FAILED,e.getMessage());
+				}
 			}
 		}
 

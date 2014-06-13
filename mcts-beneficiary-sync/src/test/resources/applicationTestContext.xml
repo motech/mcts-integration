@@ -22,12 +22,17 @@
         
         <bean id="locationDataPopulator" class="org.motechproject.mcts.integration.service.LocationDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>
-        
         </bean>
-        <bean id="flwDataPopulator" class="org.motechproject.mcts.integration.service.FLWDataPopulator">
+     <!--    <bean id="flwDataPopulator" class="org.motechproject.mcts.integration.service.FLWDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>
         </bean>
-        <bean id="careDataRepository" class="org.motechproject.mcts.integration.repository.CareDataRepository">
+ -->        <bean id="careDataRepository" class="org.motechproject.mcts.integration.repository.CareDataRepository">
         <constructor-arg index="0" ref="sessionFactory"/>
+        </bean>
+        <bean id="mCTSFormUpdateService" class="org.motechproject.mcts.integration.service.MCTSFormUpdateService">
+        <property name="careDataRepository" ref="careDataRepository"/>
+        </bean>
+        <bean id="fixtureDataService" class="org.motechproject.mcts.integration.service.FixtureDataService">
+         <property name="careDataRepository" ref="careDataRepository"/>
         </bean>
  </beans>       

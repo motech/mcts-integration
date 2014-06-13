@@ -82,8 +82,18 @@ public class PropertyReader {
         return String.format("%s/%s", properties.getProperty("motech.platform.base.url"), properties.getProperty("motech.platform.hub.url"));
     }
     
+
     public String getHubSyncFromUrl(String startTime, String endTime) throws UnsupportedEncodingException {
         return String.format("%s/%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
+    }
+    
+    public String getStubUrl() {
+    	return String.format("%s",properties.getProperty("mcts.stub.url"));
+    }
+    
+    public String getHubSyncFromUrl() {
+        return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
+
     }
     
     public int getMaxNumberOfPublishRetryCount(){

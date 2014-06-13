@@ -15,12 +15,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 
-
+@Ignore
 @RunWith(MockitoJUnitRunner.class)
 @Ignore
 public class FLWDataPopulatorTest 
@@ -59,6 +60,27 @@ public class FLWDataPopulatorTest
 		assertEquals("ASHA",mctsHealthworker.getType());
 		assertEquals(175, mctsHealthworker.getMctsPhc().getPhcId());
 		assertEquals((Integer)10, mctsHealthworker.getMctsPhc().getId());
+		verify(careDataRepository).saveOrUpdate((MctsHealthworker)any());
+		verify(careDataRepository, times(1)).saveOrUpdate((MctsHealthworker)any());
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Test
+	public void shouldSyncCsvDataToflw() throws Exception {
+		MctsPhc mctsPhc = new MctsPhc();
+		mctsPhc.setId(10);
+		mctsPhc.setName("SaurBazar");
+		mctsPhc.setPhcId(175);
+		when(careDataRepository.getMctsPhc(175)).thenReturn(mctsPhc);
+		File file = new File("/home/aman/Downloads/FLW2.csv");
+		fLWDataPopulator.flwDataPopulator(file);
+		ArgumentCaptor<MctsFlwData> captor = ArgumentCaptor
+				.forClass(MctsFlwData.class);
+		verify(careDataRepository).saveOrUpdate(captor.capture());
+		MctsFlwData mctsFlwData = captor.getValue();
+		assertEquals("Anita Kumari",mctsFlwData.getName());
+		assertEquals("ASHA",mctsFlwData.getType());
 		verify(careDataRepository).saveOrUpdate((MctsHealthworker)any());
 		verify(careDataRepository, times(1)).saveOrUpdate((MctsHealthworker)any());
 		
