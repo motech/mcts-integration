@@ -50,7 +50,7 @@ public class LocationPopulatorTest {
 	public void shouldSyncCsvDataToLocation() throws Exception {
 		when(careDataRepository.findEntityByField(Object.class, eq((String)any()), (Object)any())).thenReturn(null);
 		File file = new File("/home/aman/Downloads/location2.csv");
-		locationDataPopulator.populateLocations(file);
+		//TODO Aman locationDataPopulator.populateLocations(file);
 		ArgumentCaptor<Object> captor = ArgumentCaptor
 				.forClass(Object.class);
 		verify(careDataRepository, times(7)).saveOrUpdate(captor.capture());

@@ -21,7 +21,6 @@ import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 @Ignore
 public class FLWDataPopulatorTest 
@@ -51,7 +50,7 @@ public class FLWDataPopulatorTest
 		when(careDataRepository.getMctsPhc(175)).thenReturn(mctsPhc);
 		when(careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", 69735)).thenReturn(null);
 		File file = new File("/home/aman/Downloads/FLW2.csv");
-		fLWDataPopulator.populateFLWData(file);
+		//TODO @Aman fLWDataPopulator.populateFLWData(file);
 		ArgumentCaptor<MctsHealthworker> captor = ArgumentCaptor
 				.forClass(MctsHealthworker.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
