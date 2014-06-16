@@ -7,14 +7,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
+//import org.springframework.batch.item.ItemReader;
+//import org.springframework.batch.item.ParseException;
+//import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class BeneficiariesItemReader implements ItemReader<Beneficiary>{
+public class BeneficiariesItemReader{// implements ItemReader<Beneficiary>{
 
 		private static final String CURRENT_INDEX = "current.index";
 	 	List<Beneficiary> beneficiariesList;
@@ -62,15 +62,15 @@ public class BeneficiariesItemReader implements ItemReader<Beneficiary>{
 		}
 
 	
-	    @Override
-	    public Beneficiary read() throws Exception, UnexpectedInputException, ParseException {
-	        
-	    	if (currentIndex < beneficiariesList.size()) { 
-	            return (Beneficiary)beneficiariesList.get(currentIndex++);
-	    	}
-	        return null;
-	    }
-	    
+//	    @Override
+//	    public Beneficiary read() throws Exception, UnexpectedInputException, ParseException {
+//	        
+//	    	if (currentIndex < beneficiariesList.size()) { 
+//	            return (Beneficiary)beneficiariesList.get(currentIndex++);
+//	    	}
+//	        return null;
+//	    }
+//	    
 	    private static DateTime parseDate(String dateString) {
 			DateTimeFormatter dateTimeFormatter = DateTimeFormat
 					.forPattern("dd-MM-yyyy");

@@ -18,8 +18,9 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Client class to schedule mcts job with batch module
  * @author Naveen
- *
+ *x
  */
+
 public class MctsJobSchedule {
 	
 	 private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
