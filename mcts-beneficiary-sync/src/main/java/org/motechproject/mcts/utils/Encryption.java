@@ -38,7 +38,7 @@ public class Encryption {
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, UnsupportedEncodingException,
 			InvalidKeySpecException {
-		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding", new SunJCE());
+		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");//TODO check whether this affects, new SunJCE());
 		byte[] ivector = "1e3f5e2f4e61e798".getBytes("UTF-8"); // as provided
 		ci.init(mode, generateKey(), new IvParameterSpec(ivector));
 		return ci;
