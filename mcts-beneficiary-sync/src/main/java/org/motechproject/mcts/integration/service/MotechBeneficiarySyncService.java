@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
@@ -59,8 +60,9 @@ public class MotechBeneficiarySyncService {
 	 * @param startDate
 	 * @param endDate
 	 * @throws FileNotFoundException 
+	 * @throws BeneficiaryException 
 	 */
-	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) throws FileNotFoundException {
+	public void syncBeneficiaryData(DateTime startDate, DateTime endDate) throws FileNotFoundException, BeneficiaryException {
 		List<Beneficiary> beneficiariesToSync = getBeneficiariesToSync(
 				startDate, endDate);//gets the updates from the Motech Database
 		LOGGER.info(String.format(
@@ -158,8 +160,9 @@ public class MotechBeneficiarySyncService {
 	 * Calls <code>updateSyncedBeneficiaries</code> from <code>CareDataService</code> class to 
 	 * update the <code>mcts_pregnant_mother_service_updates</code> table with the updates sent to Mcts 
 	 * @param beneficiariesToSync List of beneficiaries sent to Mcts
+	 * @throws BeneficiaryException 
 	 */
-	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
+	private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) throws BeneficiaryException {
 		LOGGER.info("Updating database with %s Synced Beneficiaries "
 				+ beneficiariesToSync.size());
 		careDataService.updateSyncedBeneficiaries(beneficiariesToSync);

@@ -321,6 +321,16 @@ public class CareDataRepository {
 		}
 		
 	}
+	
+	public String getCaeGroupIdfromAshaId(String healthworkerId) {
+		int workerId = Integer.parseInt(healthworkerId);
+		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+workerId+"'";
+		LOGGER.debug("query : "+queryString);
+		List<String> caseGroupId = getCurrentSession().createQuery(queryString).list();
+		
+		return caseGroupId.get(0);
+	}
+
 
 	
 }

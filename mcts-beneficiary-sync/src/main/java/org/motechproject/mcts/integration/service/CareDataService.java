@@ -119,8 +119,9 @@ public class CareDataService {
     /**
      * Method to Save of Update the entity in Db
      * @param entity
+     * @throws BeneficiaryException 
      */
-    public <T> void saveOrUpdate(T entity) {
+    public <T> void saveOrUpdate(T entity) throws BeneficiaryException {
 		careDataRepository.saveOrUpdate(entity);
 	}
 }

@@ -49,26 +49,39 @@ public class FixtureDataService {
 		DataList listData = stubDataService.getFixtureData();
 		for (int i = 0; i < listData.getDataList().size(); i++) {
 			String id = listData.getDataList().get(i).getFields().getId();
-			MctsHealthworker mctsHealthworker = careDataRepository
-					.getHealthWorkerfromId(id);
-			if (mctsHealthworker != null) {
-				mctsHealthworker.setCareGroupid(listData.getDataList().get(i)
-						.getFields().getGroupId());
-				;
-				careDataRepository.saveOrUpdate(mctsHealthworker);
-			}
+			
+			
+				MctsHealthworker mctsHealthworker = careDataRepository
+						.getHealthWorkerfromId(id);
+				if (mctsHealthworker != null) {
+					mctsHealthworker.setCareGroupid(listData.getDataList().get(i)
+							.getFields().getGroupId());
+					;
+					careDataRepository.saveOrUpdate(mctsHealthworker);
+				}
+				else {
+					
+				}
+			
+			
 
 		}
 	}
 	
-	public String getCaseGroupIdfromAshaId(int healthworkerId) {
-		String caseGroupId = careDataRepository.getCaeGroupIdfromAshaId(healthworkerId);
-		if (caseGroupId == null) {
-			return "caseGroupId not present";
+	public String getCaseGroupIdfromAshaId(String healthworkerId) {
+		if (healthworkerId=="") {
+			return "6ed07f7dca6e2fb170a17446c2499ba7";
 		}
 		else {
-			return caseGroupId;
+			String caseGroupId = careDataRepository.getCaeGroupIdfromAshaId(healthworkerId);
+			if (caseGroupId == null) {
+				return "6ed07f7dca6e2fb170a17446c2499ba7";
+			}
+			else {
+				return caseGroupId;
+			}
 		}
+		
 		
 	}
 
