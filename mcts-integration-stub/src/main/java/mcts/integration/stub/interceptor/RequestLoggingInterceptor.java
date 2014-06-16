@@ -26,7 +26,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		StringBuilder stringBuilder = new StringBuilder();
+		/*StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(String.format("Request Url: %s?%s",
 				request.getRequestURI(), request.getQueryString()));
 
@@ -67,6 +67,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 			}
 		return true;
 		}
+		return true;*/
 		return true;
 	}
 }

@@ -2,24 +2,26 @@ package org.motechproject.mcts.integration.repository;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+@Ignore
+@RunWith(MockitoJUnitRunner.class)
 public class CareDataRepositoryIT extends BaseRepositoryIT {
 	
 	@Autowired
@@ -33,11 +35,6 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 				.executeUpdate();
 		getCurrentSession().createSQLQuery(
 				"DELETE FROM report.mcts_pregnant_mother").executeUpdate();
-	}
-	
-	@Test
-	public void we(){
-		System.out.println("runned");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -187,9 +184,9 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		// beneficiariesToSync));
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("rawtypes")
 	@Test
-	public void shouldSaveNewEntity() {
+	public void shouldSaveNewEntity() throws BeneficiaryException {
 		shouldClearMctsPregnantMotherTables();
 		String mctsId = "mctsId";
 		MotherCase motherCase = new MotherCase();
@@ -209,9 +206,9 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		shouldClearMctsPregnantMotherTables();
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("rawtypes")
 	@Test
-	public void shouldUpdateGivenEntity() {
+	public void shouldUpdateGivenEntity() throws BeneficiaryException {
 		shouldClearMctsPregnantMotherTables();
 		String newMctsId = "newMctsId";
 		MotherCase motherCase = new MotherCase();
@@ -240,7 +237,6 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		mctsPregMother.setMctsId(mctsId);
 		return mctsPregMother;
 	}
-	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldFindEntityByGivenFieldValue() {
 		MotherCase motherCase = new MotherCase();

@@ -1,14 +1,27 @@
 package org.motechproject.mcts.integration.repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
+import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.integration.hibernate.model.MctsState;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +38,8 @@ public class CareDataRepository {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	private static final String SEQUENCE = "report.locationdata_location_id_seq";
+	
 	@Autowired
 	public CareDataRepository(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -98,8 +113,13 @@ public class CareDataRepository {
 		return beneficiaries;
 	}
 
-	public <T> void saveOrUpdate(T entity) {
-		getCurrentSession().saveOrUpdate(entity);
+	public <T> void saveOrUpdate(T entity) throws BeneficiaryException {
+		try {
+			getCurrentSession().saveOrUpdate(entity);
+		}
+		catch (HibernateException e) {
+			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e.getMessage());
+		}
 	}
 
 	public <T> T findEntityByField(Class<T> entityClass, String fieldName,
@@ -109,11 +129,198 @@ public class CareDataRepository {
 		return (T) criteria.uniqueResult();
 	}
 
+	/**
+	 * 
+	 * @param entityClass
+	 * @param fieldName
+	 * @param fieldValue
+	 * @return
+	 */
+	public <T> List<T> findListOfEntitiesByField(Class<T> entityClass, String fieldName,
+			Object fieldValue) {
+		Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		criteria.add(Restrictions.eq(fieldName, fieldValue));
+		return (List<T>) criteria.list();
+	}
+
 	public <T> T load(Class<T> entityClass, Integer id) {
 		return (T) getCurrentSession().load(entityClass, id);
+	}
+	
+	public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass, String fieldName,
+			Object lowerFieldValue, Object higherFieldValue) {
+		LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
+		Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		criteria.add(Restrictions.between(fieldName, lowerFieldValue, higherFieldValue));
+		List<T> listOfObjects = (List<T>) criteria.list();
+		LOGGER.debug(listOfObjects.toString());
+		return listOfObjects;
 	}
 
 	private Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
+	
+	public long getNextKey() {
+		  Query query = sessionFactory.getCurrentSession().createSQLQuery(
+		    "select nextval('" + SEQUENCE + "')");
+		  Long key = Long.parseLong(query.uniqueResult().toString());
+		  return key;
+		 }
+	
+	public void flush() {
+		getCurrentSession().flush();
+	}
+	
+	/**
+	 * Method to get PHC object from phc_id
+	 * @param phcId
+	 * @return
+	 */
+	public MctsPhc getMctsPhc(int phcId) {
+		String queryString = "select phc from MctsPhc phc where phc.phcId='"+phcId+"'";
+		List<Object> phc = getCurrentSession().createQuery(queryString).list();
+		if(phc.size()!=0) {
+		return (MctsPhc)phc.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	
+	
+	
+
+	public MctsSubcenter getMctsSubcentre(int subcentreId) {
+		String queryString = "select subcentre from MctsSubcenter subcentre where subcentre.subcenterId='"+subcentreId+"'";
+		List<Object> subCentre = getCurrentSession().createQuery(queryString).list();
+		if(subCentre.size()!=0) {
+			return (MctsSubcenter)subCentre.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+	
+	public MctsVillage getMctsVillage(int villageId) {
+		String queryString = "select village from MctsVillage village where village.villageId='"+villageId+"'";
+		List<Object> village = getCurrentSession().createQuery(queryString).list();
+		if(village.size()!=0) {
+			return (MctsVillage)village.get(0);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public List<Object[]> getmctsIdcaseId() {
+		String queryString = "select m.motherCase.id, n.mctsId from AwwRegisterMotherForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
+		List<Object[]> mctsIds = getCurrentSession().createQuery(queryString).list();
+		return mctsIds;
+	}
+	
+	public void updateQuery(String queryString) {
+		int result = getCurrentSession().createQuery(queryString).executeUpdate();
+		
+		
+	}
+
+	public List<Object[]> getmctsIdcaseIdfromEditForm() {
+		String queryString = "select m.motherCase.id, n.mctsId from MotherEditForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
+		List<Object[]> mctsIds = getCurrentSession().createQuery(queryString).list();
+		return mctsIds;
+	}
+
+	public MctsHealthworker getHealthWorkerfromId(String id) {
+		int healthWorkerId = Integer.parseInt(id);
+		String type = "ASHA";
+		String queryString = "from MctsHealthworker worker where worker.healthworkerId='"+healthWorkerId+"' and worker.type='ASHA'";
+		LOGGER.debug("queryString"+queryString);
+		List<Object> worker = getCurrentSession().createQuery(queryString).list();
+	
+		if(worker.size()!=0) {
+			return (MctsHealthworker)worker.get(0);
+		}
+		else {
+			return null;
+		}
+		
+		
+	}
+
+	public MctsDistrict findUniqueDistrict(int disctrictId, Integer id) {
+		String queryString = "from MctsDistrict district where district.disctrictId='"+disctrictId+"' and district.mctsState.id='"+id+"'";
+		List<Object> mctsDistrict = getCurrentSession().createQuery(queryString).list();
+		if (mctsDistrict.size()!=0) {
+			return (MctsDistrict)mctsDistrict.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	public MctsTaluk findUniqueTaluk(int talukId, Integer id) {
+		String queryString = "from MctsTaluk taluk where taluk.talukId='"+talukId+"' and taluk.mctsDistrict.id='"+id+"'";
+		List<Object> mctsTaluk = getCurrentSession().createQuery(queryString).list();
+		if (mctsTaluk.size()!=0) {
+			return (MctsTaluk)mctsTaluk.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	public MctsHealthblock findUniqueHealthBlock(int healthblockId, Integer id) {
+		String queryString = "from MctsHealthblock block where block.healthblockId='"+healthblockId+"' and block.mctsTaluk.id='"+id+"'";
+		List<Object> mctsHealthBlock = getCurrentSession().createQuery(queryString).list();
+		if(mctsHealthBlock.size()!=0) {
+			return (MctsHealthblock)mctsHealthBlock.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	public MctsPhc findUniquePhc(int phcId, Integer id) {
+		String queryString = "from MctsPhc phc where phc.phcId='"+phcId+"' and phc.mctsHealthblock.id='"+id+"'";
+		List<Object> mctsPhc = getCurrentSession().createQuery(queryString).list();
+		if(mctsPhc.size()!=0) {
+			return (MctsPhc)mctsPhc.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	public MctsSubcenter findUniqueSubcentre(int subcenterId, Integer id) {
+		String queryString = "from MctsSubcenter subcentre where subcentre.subcenterId='"+subcenterId+"' and subcentre.mctsPhc.id='"+id+"'";
+		List<Object> mctsSubcentre = getCurrentSession().createQuery(queryString).list();
+		if(mctsSubcentre.size()!=0) {
+			return (MctsSubcenter)mctsSubcentre.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	public MctsVillage findUniqueVillage(int villageId, Integer id, Integer id2) {
+		String queryString = "from MctsVillage village where village.villageId='"+villageId+"' and village.mctsSubcenter.id='"+id+"' and village.mctsTaluk.id='"+id2+"'";
+		List<MctsVillage> village = getCurrentSession().createQuery(queryString).list();
+		if(village.size()!=0) {
+			return (MctsVillage)village.get(0);
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	
 }

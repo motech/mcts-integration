@@ -19,22 +19,27 @@
 		class="org.springframework.beans.factory.config.ListFactoryBean">
 		<property name="sourceList">
 			<list>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.Flw
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.FlwGroup
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCase
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.LocationDimension
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.BpForm
-				</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.BpForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.ExternalPrimaryKey</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.Flw</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.FlwGroup</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.Form</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.LocationDimension</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsFlwData</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster</value>
+
+				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
+
+				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatus</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
+
 			</list>
 		</property>
 	</bean>
@@ -54,7 +59,8 @@
 			</props>
 		</property>
 	</bean>
-
+	
+	
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />

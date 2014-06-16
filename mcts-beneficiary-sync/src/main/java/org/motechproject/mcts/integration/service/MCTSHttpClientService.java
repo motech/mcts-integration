@@ -1,3 +1,6 @@
+/**
+ * Class to post Updates to MCTS and also to post Http request to Mcts to send updates
+ */
 package org.motechproject.mcts.integration.service;
 
 import org.springframework.http.HttpStatus;
@@ -31,18 +34,30 @@ public class MCTSHttpClientService {
         this.propertyReader = propertyReader;
     }
 
+    /**
+     * Method to post the updates to MCTS
+     * @param beneficiaryRequest
+     * @return
+     */
     public HttpStatus syncTo(BeneficiaryRequest beneficiaryRequest) {
         LOGGER.info("Syncing beneficiary data to MCTS.");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
+      
         ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();
+       
         
     }
 
+    /**
+     * Method to post http request to Mcts to send the updates
+     * @param requestBody
+     * @return
+     */
     public String syncFrom(MultiValueMap<String, String> requestBody) {
         LOGGER.info("Syncing beneficiary data from MCTS.");
         HttpHeaders httpHeaders = new HttpHeaders();

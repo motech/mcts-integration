@@ -1,12 +1,16 @@
+/**
+ * Reads properties from the properties file <code>beneficiary_sync.properties</code> and return them
+ */
 package org.motechproject.mcts.utils;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.Properties;
 
 @Component
 public class PropertyReader {
@@ -70,16 +74,26 @@ public class PropertyReader {
         return properties.getProperty("beneficiary.sync.csv.input.file.absolute.location");
     }
     
-    public String getHubBaseUrl() {
-        return properties.getProperty("hub.base.url");
+    public String getFLWCsvFileLocation() {
+    	return properties.getProperty("beneficiary.sync.csv2.input.file.absolute.location");
     }
     
-    public String getHubSyncToUrl() {
-        return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.to.url"));
+    public String getHubBaseUrl() {
+        return String.format("%s/%s", properties.getProperty("motech.platform.base.url"), properties.getProperty("motech.platform.hub.url"));
+    }
+    
+
+    public String getHubSyncFromUrl(String startTime, String endTime) throws UnsupportedEncodingException {
+        return String.format("%s/%s?startTime=%s&endTime=%s", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"), startTime, endTime);
+    }
+    
+    public String getStubUrl() {
+    	return String.format("%s",properties.getProperty("mcts.stub.url"));
     }
     
     public String getHubSyncFromUrl() {
         return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
+
     }
     
     public int getMaxNumberOfPublishRetryCount(){
@@ -90,4 +104,24 @@ public class PropertyReader {
     {
     	return Integer.parseInt(properties.getProperty("hub.retry.interval"));
     }
+    
+    public String getBenificiaryUpdateTopicUrlForHub()
+    {
+    	return String.format("%s/%s", properties.getProperty("motech.base.url"), properties.getProperty("benificiary.update.topic.url.for.hub"));
+    }
+
+	public String getMotechLoginRedirectUrl() {
+		return String.format("%s/%s", properties.getProperty("motech.platform.base.url"), properties.getProperty("motech.platform.login.redirect.url"));
+	}
+
+	public String getMotechPlatformLoginUrl() {
+		return String.format("%s/%s", properties.getProperty("motech.platform.base.url"), properties.getProperty("motech.platform.login.url"));
+		}
+
+	public MultiValueMap<String, String> getMotechPlatformLoginForm() {
+		  MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+	        form.add("j_username", properties.getProperty("motech.platform.username"));
+	        form.add("j_password", properties.getProperty("motech.platform.password"));
+		return form;
+	}
 }

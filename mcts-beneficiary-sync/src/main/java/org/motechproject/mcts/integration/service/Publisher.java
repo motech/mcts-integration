@@ -1,4 +1,10 @@
+/**
+ * Class to send Notificaion to Hub about the Updates
+ */
 package org.motechproject.mcts.integration.service;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -6,9 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -22,20 +31,25 @@ public class Publisher {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(Publisher.class);
 	private static String URL;
-	private static String DATA;
 
-	public void publish(String url, String data) {
-		DATA = data;
+	/**
+	 * Method to <code>Publish</code> updates to hub along with
+	 * <code>callBack URL</code> and to <code>retry</code> sending notifications
+	 * if failed.
+	 * 
+	 * @param url
+	 * @throws Exception
+	 */
+	public void publish(String url) throws Exception {
 		setUrl(url);
-		LOGGER.info("Syncing beneficiary data to MCTS.");
-
-		ResponseEntity<String> response = null;
+		ResponseEntity<String> response = new ResponseEntity<String>(
+				HttpStatus.BAD_REQUEST);
 		int maxRetryCount = propertyReader.getMaxNumberOfPublishRetryCount();
 		int retryCount = -1;
 		do {
-			LOGGER.info(String.format("Notify Hub for %s time at url %s.",
-					retryCount, URL));
-			response = notify(MediaType.APPLICATION_FORM_URLENCODED);;
+			LOGGER.info(String.format("Notifying Hub for %s time at url: %s",
+					retryCount + 2, URL));
+			response = notifyHub();
 			retryCount++;
 			if (response.getStatusCode().value() / 100 == 2) {
 				LOGGER.info(String
@@ -44,45 +58,110 @@ public class Publisher {
 								response.getBody()));
 				return;
 			}
-			try {
-				Thread.sleep(propertyReader.getHubRetryInterval());
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} while (retryCount == maxRetryCount
-				|| response.getStatusCode().value() / 100 == 2);
+			// try {
+			// Thread.sleep(propertyReader.getHubRetryInterval());
+			// } catch (InterruptedException e) {
+			// LOGGER.debug(e.getMessage());
+			// }
+		} while (retryCount < maxRetryCount
+				&& response.getStatusCode().value() / 100 != 2);
 
 		if (response.getStatusCode().value() / 100 == 2)
 			LOGGER.info(String
-					.format("Hub Notified Successfully after %s retries. Response [StatusCode %s] : %s",
+					.format("Hub Notified Successfully with %s retries. Response [StatusCode %s] : %s",
 							retryCount, response.getStatusCode(),
 							response.getBody()));
-		else
+		else {
 			LOGGER.error(String
 					.format("Notification to Hub failed. Response [StatusCode %s] : %s",
 							response.getStatusCode(), response.getBody()));
+			throw new Exception(
+					String.format(
+							"Notification to Hub failed. Response [StatusCode %s] : %s",
+							response.getStatusCode(), response.getBody()));
+		}
 	}
 
-	private ResponseEntity<String> notify(MediaType contentType) {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(contentType);
-		HttpEntity httpEntity = new HttpEntity(httpHeaders);
-		ResponseEntity<String> response = restTemplate.postForEntity(getUrl(),
-				httpEntity, String.class);
-		return response;
-	}
-
-	private void setUrl(String url) {
+	/**
+	 * Method to set the url at which Hub is to be Notified
+	 * 
+	 * @param url
+	 * @throws UnsupportedEncodingException
+	 */
+	private void setUrl(String url) throws UnsupportedEncodingException {
 		URL = String.format("%s%s%s%s%s", propertyReader.getHubBaseUrl(),
 				"?hub.mode=", MODE, "&hub.url=", url);
 	}
 
-	public String getUrl() {
-		return URL;
+	/**
+	 * <code>Posts</code> the Http entity to Hub with <code>callBack Url</code>
+	 * and <code>ContentType</code> as passed in argument
+	 * 
+	 * @param contentType
+	 * @return
+	 * @throws Exception
+	 */
+	private ResponseEntity<String> notifyHub() {
+		// TODO Get Authentication on motech platform
+		// getAuthentication();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
+		ResponseEntity<String> loginResponse = new ResponseEntity<String>(
+				HttpStatus.BAD_REQUEST);
+		ResponseEntity<String> response = new ResponseEntity<String>(
+				HttpStatus.BAD_REQUEST);
+		loginResponse = getLogin();
+		LOGGER.debug("Matching Urls: " + propertyReader.getMotechLoginRedirectUrl() + " & " + loginResponse.getHeaders().getLocation().toString());
+		if (propertyReader.getMotechLoginRedirectUrl().equals(
+				loginResponse.getHeaders().getLocation().toString())) {
+			LOGGER.info("Succefully logged in to Motech-Platform");
+			LOGGER.debug("Notify hub at the url: " + getUrl());
+			LOGGER.info("Sending HUb the Notification");
+			try {
+				response = restTemplate.postForEntity(getUrl(), httpEntity,
+						String.class);
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage());
+			}
+		} else {
+			LOGGER.error(String
+					.format("Login to Motech Platform failed. Response [StatusCode %s] : [RedirectUrl %s]",
+							loginResponse.getStatusCode(),
+							loginResponse.getHeaders().getLocation()));
+		}
+		return response;
 	}
 
-	public String getData() {
-		return this.DATA;
+	/**
+	 * Logs in to Motech Platform
+	 */
+	private ResponseEntity<String> getLogin() {
+		LOGGER.info("Trying to login to Motech Platform");
+		ResponseEntity<String> response = new ResponseEntity<String>(
+				HttpStatus.BAD_REQUEST);
+		LOGGER.debug("Login Url is: " + propertyReader.getMotechPlatformLoginUrl());
+		LOGGER.debug("Login Params are: " + propertyReader.getMotechPlatformLoginForm());
+		try {
+			response = restTemplate.postForEntity(
+					propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), String.class);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		LOGGER.debug("Login Response [StatusCode: " + response.getStatusCode()
+				+ "]");
+		LOGGER.debug("Login Response [RedirectUrl: "
+				+ response.getHeaders().getLocation() + "]");
+		return response;
+	}
+
+	// "http://localhost:8080/motech-platform-server/module/server/login/motech-platform-server/j_spring_security_check"
+	/**
+	 * Returns the url at which hub is to be notified
+	 * 
+	 * @return
+	 */
+	public String getUrl() {
+		return URL;
 	}
 }
