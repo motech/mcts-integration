@@ -9,11 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Naveen
  *
  */
+@Component
 public class PostXml {
 	  private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 
@@ -45,11 +51,16 @@ public class PostXml {
 	        httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 	        formData = new LinkedMultiValueMap<String, Object>();
 	        formData.add("jobName", "mcts-new-job");
-	        formData.add("file", file);
+	        formData.add("file", new FileSystemResource("C:\\Users\\Rakesh\\Desktop\\log4j_sandeep.xml"));
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
+            restTemplate.getMessageConverters().add(new SourceHttpMessageConverter<>());
+            restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+            //restTemplate.getMessageConverters().add(new );
 	        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	        restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
+	        //restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
+	        restTemplate.postForEntity("http://localhost:8080/motech-platform-batch/batch/upload", requestEntity, Map.class);
 	      
 	    }
 

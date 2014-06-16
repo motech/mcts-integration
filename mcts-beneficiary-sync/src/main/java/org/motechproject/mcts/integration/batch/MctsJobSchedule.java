@@ -47,7 +47,7 @@ public class MctsJobSchedule {
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
-            	restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
+            	restTemplate.postForObject("http://localhost:8080/motech-platform-batch/batch/schedulecronjob", httpEntity, String.class);
             }
             catch(Exception e) {
             	LOGGER.info(e.getMessage());
