@@ -15,7 +15,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.utils.CSVFileReader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,7 @@ public class FLWDataPopulator {
 	@Autowired
 	private CareDataRepository careDataRepository;
 	
-	@Autowired
-	private CSVFileReader cSVFileReader;
+	
 	
 	/**
 	 * Method to populate table mcts_HealthWorker 

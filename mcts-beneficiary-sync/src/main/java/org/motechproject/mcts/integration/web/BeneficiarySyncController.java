@@ -263,7 +263,7 @@ public class BeneficiarySyncController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public String getCaseGroupId(@PathVariable("workerId") int Id) {
-		String caseGroupId = fixtureDataService.getCaseGroupIdfromAshaId(Id);
+		String caseGroupId = "";//fixtureDataService.getCaseGroupIdfromAshaId(Id);
 		return caseGroupId;
 		
 	}
