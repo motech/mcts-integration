@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
@@ -102,8 +103,9 @@ public class MCTSBeneficiarySyncService {
 	/**
 	 * Add the updates received from MCTS to database table <code>mctsPregnantMother</code>
 	 * @param newDataSet: 
+	 * @throws BeneficiaryException 
 	 */
-	private void addToDbData(NewDataSet newDataSet) {
+	private void addToDbData(NewDataSet newDataSet) throws BeneficiaryException {
 		LOGGER.info(String.format("Started writing to db for %s records",
 				newDataSet.getRecords().size()));
 		int count = 0;
@@ -269,8 +271,9 @@ public class MCTSBeneficiarySyncService {
 
 	/**
 	 * Sets startDate and endDate to be sent to hub
+	 * @throws BeneficiaryException 
 	 */
-	protected void setHubTransactionDates(){
+	protected void setHubTransactionDates() throws BeneficiaryException{
 		HubTransaction hubTransaction = new HubTransaction();
 		hubTransaction.setStartDate(startDate);
 		hubTransaction.setEndDate(endDate);

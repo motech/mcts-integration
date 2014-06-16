@@ -93,7 +93,6 @@ public class BeneficiarySyncController {
 	@ResponseStatus(HttpStatus.OK)
 	public String ping(@RequestParam("query") String query){
 		return String.format("Ping Received Succefully with query param: %s", query);
-				query);
 	}
 
 	/**
@@ -109,16 +108,14 @@ public class BeneficiarySyncController {
 	public String syncFrom(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) throws Exception {
 		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
-				+ endDate);
+
 		validateDateFormat(startDate);
 		validateDateFormat(endDate);
 		LOGGER.info("Arguments are Valid");
 		DateTime parsedStartDate = parseDate(startDate);
 		DateTime parsedEndDate = parseDate(endDate);
-		LOGGER.debug("Parsed startDate is: " + parsedStartDate
 		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
 		mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-				parsedEndDate);
 		return "Updates Received Successfully";
 	}
 	
@@ -135,16 +132,15 @@ public class BeneficiarySyncController {
 	public String syncTo(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) throws Exception {
 		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
-				+ endDate);
 		validateDateFormat(startDate);
 		validateDateFormat(endDate);
 		LOGGER.info("Arguments are Valid");
 		DateTime parsedStartDate = parseDate(startDate);
 		DateTime parsedEndDate = parseDate(endDate);
-		LOGGER.debug("Parsed startDate is: " + parsedStartDate
+		
 		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
 		motechBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-				parsedEndDate);
+			
 		return "Updates Sent Successfully";
 	}
 
@@ -261,6 +257,15 @@ public class BeneficiarySyncController {
 	public String getFixData(@PathVariable("type") String type) throws BeneficiaryException {
 		fixtureDataService.updateGroupId();
 		return "successful";
+	}
+	
+	@RequestMapping(value = "/getCaseGroupId/{workerId}", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public String getCaseGroupId(@PathVariable("workerId") int Id) {
+		String caseGroupId = fixtureDataService.getCaseGroupIdfromAshaId(Id);
+		return caseGroupId;
+		
 	}
 
 	@ExceptionHandler(value = { RestException.class })
