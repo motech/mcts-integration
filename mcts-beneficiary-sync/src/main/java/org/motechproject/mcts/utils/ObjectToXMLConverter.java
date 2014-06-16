@@ -16,7 +16,7 @@ import javax.xml.bind.Marshaller;
 
 import org.springframework.stereotype.Component;
 
-import com.sun.xml.bind.marshaller.DataWriter;
+//import com.sun.xml.bind.marshaller.DataWriter;
 
 @Component
 public class ObjectToXMLConverter {
@@ -48,10 +48,12 @@ public class ObjectToXMLConverter {
 			  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
-            DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
+			
+			//TODO naveen - commented 3 lines below
+            //DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
             
-			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
-			jaxbMarshaller.marshal(dataToWrite, dataWriter);
+			//jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
+			//jaxbMarshaller.marshal(dataToWrite, dataWriter);
 			return stringWriter.toString();
 		}
 	}
