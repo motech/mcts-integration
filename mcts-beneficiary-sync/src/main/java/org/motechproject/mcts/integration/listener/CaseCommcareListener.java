@@ -13,7 +13,7 @@ public class CaseCommcareListener {
 	
 	 private static final Logger logger = LoggerFactory.getLogger(CaseCommcareListener.class);
 	
-	    @Autowired
+	    //@Autowired
 	    public CaseCommcareListener() {
 	    }
 	    
