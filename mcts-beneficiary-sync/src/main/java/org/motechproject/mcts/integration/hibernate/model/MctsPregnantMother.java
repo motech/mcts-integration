@@ -37,10 +37,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus;
 	private String mctsId;
 	private String name;
+	private String hindiName;
 	private String type;
 	private Date birthDate;
 	private Character gender;
 	private String fatherHusbandName;
+	private String hindiFatherHusbandName;
 	private String email;
 	private String mobileNo;
 	private String economicStatus;
@@ -63,8 +65,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 			MctsHealthworker mctsHealthworkerByAnmId, MotherCase motherCase,
 			MctsVillage mctsVillage,
 			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus,
-			String mctsId, String name, String type, Date birthDate,
-			Character gender, String fatherHusbandName, String email,
+			String mctsId, String name, String hindiName, String type, Date birthDate,
+			Character gender, String fatherHusbandName, String hindiFatherHusbandName, String email,
 			String mobileNo, String economicStatus, String category,
 			String beneficiaryAddress, String uidNumber, String pincode,
 			Date lmpDate, String eidNumber, String ward, String town,
@@ -78,10 +80,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.motherCaseMctsAuthorizedStatus = motherCaseMctsAuthorizedStatus;
 		this.mctsId = mctsId;
 		this.name = name;
+		this.hindiName = hindiName;
 		this.type = type;
 		this.birthDate = birthDate;
 		this.gender = gender;
 		this.fatherHusbandName = fatherHusbandName;
+		this.hindiFatherHusbandName = hindiFatherHusbandName;
 		this.email = email;
 		this.mobileNo = mobileNo;
 		this.economicStatus = economicStatus;
@@ -200,6 +204,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.name = name;
 	}
 
+	@Column(name = "hindi_name")
+	public String getHindiName() {
+		return this.hindiName;
+	}
+
+	public void setHindiName(String hindiName) {
+		this.hindiName = hindiName;
+	}
+
 	@Column(name = "type", length = 10)
 	public String getType() {
 		return this.type;
@@ -235,6 +248,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setFatherHusbandName(String fatherHusbandName) {
 		this.fatherHusbandName = fatherHusbandName;
+	}
+
+	@Column(name = "hindi_father_husband_name")
+	public String getHindiFatherHusbandName() {
+		return this.hindiFatherHusbandName;
+	}
+
+	public void setHindiFatherHusbandName(String hindiFatherHusbandName) {
+		this.hindiFatherHusbandName = hindiFatherHusbandName;
 	}
 
 	@Column(name = "email")

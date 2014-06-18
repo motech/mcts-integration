@@ -4,8 +4,6 @@ package org.motechproject.mcts.integration.service;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;

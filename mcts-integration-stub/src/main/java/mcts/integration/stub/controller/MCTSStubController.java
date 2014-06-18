@@ -39,8 +39,7 @@ public class MCTSStubController {
                                         @ModelAttribute("pwd") String password,
                                         @ModelAttribute("FromDate") String fromDate,
                                         @ModelAttribute("ToDate") String toDate) throws IOException {
-
-
+    	LOGGER.info("Sending the Updates");
         return IOUtils.toString(new ClassPathResource("response/mother_details_response.xml").getInputStream());
     }
 

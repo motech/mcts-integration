@@ -7,18 +7,14 @@
  */
 package org.motechproject.mcts.integration.web;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.regex.Pattern;
 
+import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletResponse;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
@@ -32,7 +28,6 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -107,6 +102,8 @@ public class BeneficiarySyncController {
 	@ResponseStatus(HttpStatus.OK)
 	public String syncFrom(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) throws Exception {
+//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+//		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
 
 		validateDateFormat(startDate);
@@ -116,6 +113,7 @@ public class BeneficiarySyncController {
 		DateTime parsedEndDate = parseDate(endDate);
 		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
 		mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
+//		Thread.currentThread().setContextClassLoader(loader);
 		return "Updates Received Successfully";
 	}
 	

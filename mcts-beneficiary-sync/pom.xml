@@ -44,7 +44,12 @@
             <artifactId>motech-commcare-api</artifactId>
             <version>${motech.version}</version>
         </dependency>
-	
+        <!-- tranliteration service -->
+        <dependency>
+        <groupId>org.motechproject</groupId>
+    <artifactId>motech-transliteration</artifactId>
+    <version>0.1-SNAPSHOT</version>
+	</dependency>
 
 
 
@@ -72,7 +77,12 @@
                 <version>1.4.9</version>
                 <scope>test</scope>
             </dependency>
-        <dependency>
+    <!--     <dependency>
+        <groupId>org.motechproject.org.hibernate</groupId>
+			<artifactId>com.springsource.org.hibernate</artifactId>
+			<version>3.6.0.Final-r027</version>
+		</dependency> -->
+		<dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>org.hibernate.ejb-library</artifactId>
             <type>libd</type>
@@ -111,11 +121,11 @@
             <version>3.3</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+      <!--    <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>commcare-provider-sync</artifactId>
             <version>0.2</version>
-        </dependency>
+        </dependency>-->
 		<dependency>
 	<groupId>net.sf.supercsv</groupId>
 	<artifactId>super-csv</artifactId>
@@ -194,14 +204,13 @@
                             net.sf.cglib.reflect,
                             org.aopalliance.aop,
                             org.hibernate,
-                            org.hibernate.jdbc,
+                        	org.hibernate.jdbc,
                             org.hibernate.proxy,
                             javassist.util.proxy,
                             org.apache.commons.dbcp,
                             org.postgresql,
 							org.motechproject.scheduler,
-							org.motechproject.commcare.provider.sync.diagnostics.scheduler,
-							org.motechproject.commcare.events.constants,
+							org.motechproject.transliteration.service,
                             *
                         </Import-Package>
                     </instructions>
