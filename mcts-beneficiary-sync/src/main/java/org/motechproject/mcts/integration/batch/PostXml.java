@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * @author Naveen
  *
  */
+@Service
 public class PostXml {
 	  private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 
