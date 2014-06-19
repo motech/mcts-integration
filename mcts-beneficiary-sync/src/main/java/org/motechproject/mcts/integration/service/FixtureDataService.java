@@ -68,20 +68,23 @@ public class FixtureDataService {
 		}
 	}
 	
-	public String getCaseGroupIdfromAshaId(String healthworkerId) {
-		if (healthworkerId=="") {
+	public String getCaseGroupIdfromAshaId(int id) throws BeneficiaryException {
+		/*if (healthworkerId=="") {
 			return "6ed07f7dca6e2fb170a17446c2499ba7";
-		}
-		else {
-			String caseGroupId = careDataRepository.getCaeGroupIdfromAshaId(healthworkerId);
+		}*/
+		
+			String caseGroupId = careDataRepository.getCaeGroupIdfromAshaId(id);
 			if (caseGroupId == null) {
+				updateGroupId();
+				String caseId = careDataRepository.getCaeGroupIdfromAshaId(id);
+				if (caseId == null) {
+					return caseId;
+				}
 				return "6ed07f7dca6e2fb170a17446c2499ba7";
 			}
 			else {
 				return caseGroupId;
 			}
-		}
-		
 		
 	}
 

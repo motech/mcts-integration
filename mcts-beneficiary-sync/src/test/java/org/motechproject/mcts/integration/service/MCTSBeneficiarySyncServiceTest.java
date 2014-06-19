@@ -15,6 +15,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.MCTSHttpClientService;
+import org.motechproject.mcts.integration.service.Publisher;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -34,9 +37,6 @@ public class MCTSBeneficiarySyncServiceTest {
 	
     @Mock
     private PropertyReader propertyReader;
-    
-    @Mock
-    private XmlStringToObjectConverter xmlStringToObject;
     
     @Mock
     private CareDataRepository careDataRepository;
@@ -79,7 +79,6 @@ public class MCTSBeneficiarySyncServiceTest {
     	MultiValueMap<String, String> requestBody = getRequestBody();
         when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(getDefaultQueryParams());
     	when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(null);
-    	when(xmlStringToObject.stringXmlToObject((Class)any(), (String)any())).thenReturn(null);
     	mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
     	verify(careDataRepository, times(0)).findEntityByField((Class)any(), (String)any(), (Object)any());
     	verify(publisher, times(0)).publish((String)any());

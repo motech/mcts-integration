@@ -6,7 +6,6 @@ package org.motechproject.mcts.integration.service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -38,12 +37,8 @@ public class MotechBeneficiarySyncService {
 
 	@Autowired
 	private Publisher publisher;
-	
-	@Autowired
-	private ObjectToXMLConverter objectToXMLConverter;
 
 	private String outputXMLFileLocation;
-	private Date date = new Date();
 
 	@Autowired
 	public MotechBeneficiarySyncService(CareDataService careDataService,
@@ -144,11 +139,11 @@ public class MotechBeneficiarySyncService {
 		File updateRequestUrl = new File(outputURLFileLocation);
 		PrintWriter printWriter = new PrintWriter(xmlFile);
 		try {
-			String data = objectToXMLConverter.converObjectToXml(beneficiaryRequest,
+			String data = ObjectToXMLConverter.converObjectToXml(beneficiaryRequest,
 					BeneficiaryRequest.class);
 			LOGGER.info("Updates Received are:\n" + data);
 			printWriter.println(data);
-			objectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrl);
+			ObjectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrl);
 		} catch (Exception e) {
 			LOGGER.error("File Not Found");
 		}finally {

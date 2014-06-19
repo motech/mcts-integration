@@ -16,7 +16,7 @@ public class XmlStringToObjectConverter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(XmlStringToObjectConverter.class);
 
 	@SuppressWarnings("unchecked")
-	public <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{
+	public static <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{
 		StringReader reader = new StringReader(data);
 		JAXBContext jc;
 		LOGGER.debug(data);

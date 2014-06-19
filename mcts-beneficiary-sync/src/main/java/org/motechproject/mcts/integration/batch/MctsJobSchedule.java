@@ -18,9 +18,8 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Client class to schedule mcts job with batch module
  * @author Naveen
- *x
+ *
  */
-
 public class MctsJobSchedule {
 	
 	 private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
@@ -48,7 +47,7 @@ public class MctsJobSchedule {
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
-            	restTemplate.postForObject("http://localhost:8080/motech-platform-batch/batch/schedulecronjob", httpEntity, String.class);
+            	restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
             }
             catch(Exception e) {
             	LOGGER.info(e.getMessage());

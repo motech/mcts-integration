@@ -21,10 +21,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ObjectToXMLConverter {
 
-	private final String username = "mcts-MOTECH";
-	private String password;
-	private final String operation = "Insert";
-	private final String contentType = "text/xml";
+	private final static String username = "mcts-MOTECH";
+	private static String password;
+	private final static String operation = "Insert";
+	private final static String contentType = "text/xml";
 
 	/**
 	 * Converts the received object to XML and return as String
@@ -33,7 +33,7 @@ public class ObjectToXMLConverter {
 	 * @return
 	 * @throws Exception
 	 */
-	public String converObjectToXml(Object dataToWrite, Class<?> classInstance)
+	public static String converObjectToXml(Object dataToWrite, Class<?> classInstance)
 			throws Exception {
 		if (dataToWrite.getClass() != classInstance) {
 			throw new Exception(

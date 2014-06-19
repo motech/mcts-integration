@@ -18,6 +18,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
@@ -31,7 +32,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CareDataRepository {
 
-	@SuppressWarnings("unused")
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(CareDataRepository.class);
 
@@ -122,11 +122,18 @@ public class CareDataRepository {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T findEntityByField(Class<T> entityClass, String fieldName,
-			Object fieldValue) {
-		Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		criteria.add(Restrictions.eq(fieldName, fieldValue));
-		return (T) criteria.uniqueResult();
+			Object fieldValue) throws BeneficiaryException {
+		try {
+			Criteria criteria = getCurrentSession().createCriteria(entityClass);
+			criteria.add(Restrictions.eq(fieldName, fieldValue));
+			return (T) criteria.uniqueResult();
+		}
+		catch (HibernateException e) {
+			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e);
+		}
+		
 	}
 
 	/**
@@ -136,6 +143,7 @@ public class CareDataRepository {
 	 * @param fieldValue
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> List<T> findListOfEntitiesByField(Class<T> entityClass, String fieldName,
 			Object fieldValue) {
 		Criteria criteria = getCurrentSession().createCriteria(entityClass);
@@ -143,10 +151,12 @@ public class CareDataRepository {
 		return (List<T>) criteria.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T load(Class<T> entityClass, Integer id) {
 		return (T) getCurrentSession().load(entityClass, id);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass, String fieldName,
 			Object lowerFieldValue, Object higherFieldValue) {
 		LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]", entityClass.getSimpleName(), fieldName, lowerFieldValue, higherFieldValue));
@@ -322,13 +332,20 @@ public class CareDataRepository {
 		
 	}
 	
-	public String getCaeGroupIdfromAshaId(String healthworkerId) {
-		int workerId = Integer.parseInt(healthworkerId);
-		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+workerId+"'";
+	public String getCaeGroupIdfromAshaId(int id) {
+	//	int workerId = Integer.parseInt(id);
+		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+id+"'";
 		LOGGER.debug("query : "+queryString);
 		List<String> caseGroupId = getCurrentSession().createQuery(queryString).list();
 		
 		return caseGroupId.get(0);
+	}
+
+	public List<MctsPregnantMother> getMctsPregnantMother() {
+		String queryString = "from MctsPregnantMother mother";
+		List<MctsPregnantMother> mother = getCurrentSession().createQuery(queryString).list();
+		
+		return mother;
 	}
 
 

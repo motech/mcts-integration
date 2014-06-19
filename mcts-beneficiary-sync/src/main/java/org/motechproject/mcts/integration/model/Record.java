@@ -1,8 +1,8 @@
 package org.motechproject.mcts.integration.model;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -342,14 +342,13 @@ public class Record {
 		this.eIDNumber = eIDNumber;
 	}
 
-	public void setBirthdate(String birthdate) {
+	public void setBirthdate(String birthdate){
 		Date date;
 		try {
 			date = new SimpleDateFormat("dd-MM-yyyy").parse(birthdate);
 			this.birthdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//TODO
 		}
 
 	}
@@ -386,14 +385,13 @@ public class Record {
 		this.email = email;
 	}
 
-	public void setLMPDate(String lMPDate) {
+	public void setLMPDate(String lMPDate){
 		Date date;
 		try {
 			date = new SimpleDateFormat("dd-MM-yyyy").parse(lMPDate);
 			this.lMPDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//TODO
 		}
 
 	}

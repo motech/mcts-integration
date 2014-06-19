@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.hibernate.HibernateException;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
@@ -15,7 +16,6 @@ import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,8 @@ public class FLWDataPopulator {
 		File newFile = null;
 		try {
 			byte[] bytes = file.getBytes();
-			newFile = new File("java.io.tmpdir");
+			String path = System.getProperty("java.io.tmpdir");
+			newFile = new File(path +"/flw.xml");
 			FileOutputStream out = new FileOutputStream(newFile);
 			out.write(bytes);
 			System.out.println("size" + newFile.getTotalSpace());
@@ -122,18 +123,20 @@ public class FLWDataPopulator {
 
 		}
 		catch (FileNotFoundException e) {
-			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e);
 		}
 		catch(IOException e) {
-			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e);
 		}
 		catch (SuperCsvReflectionException e) {
-			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e);
 		}
 		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e);
 		}
-
+		catch (HibernateException e) {
+			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e);
+		}
 		finally {
 			if (beanReader != null) {
 				try {
@@ -205,6 +208,9 @@ public class FLWDataPopulator {
 		}
 		catch (IllegalArgumentException e) {
 			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+		}
+		catch (HibernateException e) {
+			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e.getMessage());
 		}
 
 		finally {

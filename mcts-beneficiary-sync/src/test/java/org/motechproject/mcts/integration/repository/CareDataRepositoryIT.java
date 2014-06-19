@@ -238,7 +238,7 @@ public class CareDataRepositoryIT extends BaseRepositoryIT {
 		return mctsPregMother;
 	}
 	@Test
-	public void shouldFindEntityByGivenFieldValue() {
+	public void shouldFindEntityByGivenFieldValue() throws BeneficiaryException {
 		MotherCase motherCase = new MotherCase();
 		
 		MctsPregnantMother MctsPregnantMother = createMctsPregnantMother(

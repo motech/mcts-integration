@@ -3,7 +3,7 @@ package org.motechproject.mcts.integration.service;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.anyObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,14 +46,10 @@ public class MCTSHttpClientServiceTest {
 		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
 		when(propertyReader.getUpdateRequestUrl()).thenReturn(
 				requestUrl);
-		HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.TEXT_XML);
-        HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
-        ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
-        when(restTemplate.postForEntity(requestUrl, httpEntity, String.class)).thenReturn(response);
+		ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.OK);
+        when(restTemplate.postForEntity((String)anyObject(), (HttpEntity)anyObject(), (Class)anyObject())).thenReturn(response);
 		mctsHttpClientService.syncTo(beneficiaryRequest);
-		verify(restTemplate).postForEntity(requestUrl, httpEntity,
-				String.class);
+		verify(restTemplate).postForEntity((String)anyObject(), (HttpEntity)anyObject(), (Class)anyObject());
 	}
 
 	@Test
@@ -68,8 +64,8 @@ public class MCTSHttpClientServiceTest {
 				.thenReturn(requestUrl);
 		String expectedResponse = "ResponseBody";
 		when(
-				restTemplate.exchange(requestUrl, HttpMethod.POST,
-						expectedRequestEntity, String.class)).thenReturn(
+				restTemplate.exchange((String)anyObject(), (HttpMethod)anyObject(),
+						(HttpEntity)anyObject(), (Class)anyObject())).thenReturn(
 				new ResponseEntity<>(expectedResponse, HttpStatus.OK));
 
 		String actualResponse = mctsHttpClientService.syncFrom(requestBody);

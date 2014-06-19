@@ -4,6 +4,8 @@ package org.motechproject.mcts.integration.service;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
@@ -41,7 +43,7 @@ public class CareDataService {
         careDataRepository.saveOrUpdate(MctsPregnantMother);
     }
 
-    private MctsPregnantMother getExistingOrNewMctsPregnantMother(String mctsId, MotherCase motherCase) {
+    private MctsPregnantMother getExistingOrNewMctsPregnantMother(String mctsId, MotherCase motherCase) throws BeneficiaryException {
         MctsPregnantMother MctsPregnantMother = careDataRepository.findEntityByField(MctsPregnantMother.class, "motherCase", motherCase);
 
         if (MctsPregnantMother != null) {
@@ -92,9 +94,10 @@ public class CareDataService {
      * @param fieldName: field name whose value is to be matched
      * @param fieldValue: value to be matched
      * @return list of entities with matching field values
+     * @throws BeneficiaryException 
      */
     public <T> T findEntityByField(Class<T> entityClass, String fieldName,
-			Object fieldValue) {
+			Object fieldValue) throws BeneficiaryException {
     	LOGGER.debug(String.format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]", entityClass.getSimpleName(), fieldName, fieldValue));
 		return careDataRepository.findEntityByField(entityClass, fieldName,
 			fieldValue);

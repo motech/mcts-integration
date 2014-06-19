@@ -25,6 +25,10 @@ import org.mockito.Mock;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.integration.service.CareDataService;
+import org.motechproject.mcts.integration.service.MCTSHttpClientService;
+import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.Publisher;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -42,8 +46,6 @@ public class MotechBeneficiarySyncServiceTest {
 	private PropertyReader propertyReader;
 	@Mock
 	private Publisher publisher;
-	@Mock
-	private ObjectToXMLConverter objectToXML;
 
 	@InjectMocks
 	private MotechBeneficiarySyncService motechBeneficiarySyncService;
@@ -146,8 +148,6 @@ public class MotechBeneficiarySyncServiceTest {
 		when(propertyReader.getUpdateUrlOutputFileLocation()).thenReturn("testURL");
 		
 		motechBeneficiarySyncService.writeSyncDataToFile(beneficiaryRequest);
-		verify(objectToXML).converObjectToXml((BeneficiaryRequest)anyObject(),
-					(Class)any());
 		verify(propertyReader).getUpdateXmlOutputFileLocation();
 		verify(propertyReader).getUpdateUrlOutputFileLocation();
 	}

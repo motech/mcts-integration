@@ -21,27 +21,17 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-import org.mockito.Mock;
-
-import sun.misc.BASE64Decoder;
-
-import com.sun.crypto.provider.SunJCE;
 
 public class EncryptionTest {
-
-	@Mock
-	Encryption encryption;
-	
-	
 	
 	public static String DecryptString(String encryptedString)
 			throws InvalidKeyException, InvalidAlgorithmParameterException,
 			NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeySpecException, IllegalBlockSizeException,
 			BadPaddingException, IOException {
-		BASE64Decoder decoder = new BASE64Decoder();
-		byte[] decoded = decoder.decodeBuffer(encryptedString);
+		byte[] decoded = Base64.decodeBase64(encryptedString.getBytes());
 		Cipher ci = shouldGetCipher(Cipher.DECRYPT_MODE);
 		byte[] eVal = ci.doFinal(decoded);
 		String s = new String(eVal, "US-ASCII");
@@ -52,7 +42,7 @@ public class EncryptionTest {
 	public void shouldTestDecryprtion() throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, IOException
 	{
 		String password = "motech@motech";
-		String encrypted = encryption.encryptWithTimeInSeconds(password);
+		String encrypted = Encryption.encryptWithTimeInSeconds(password);
 		System.out.println("Encrypted Password: " + encrypted);
 		String decrypted = DecryptString(encrypted);
 		System.out.println("Decrypted password along with timestamp: " + decrypted);
@@ -64,7 +54,7 @@ public class EncryptionTest {
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, UnsupportedEncodingException,
 			InvalidKeySpecException {
-		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding", new SunJCE());
+		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		byte[] ivector = "1e3f5e2f4e61e798".getBytes("UTF-8"); // as provided
 		ci.init(mode, shouldGenerateKey(), new IvParameterSpec(ivector));
 		return ci;

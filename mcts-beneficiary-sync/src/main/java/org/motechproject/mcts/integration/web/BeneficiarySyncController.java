@@ -7,6 +7,10 @@
  */
 package org.motechproject.mcts.integration.web;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import javax.interceptor.Interceptors;
@@ -15,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
@@ -24,10 +30,12 @@ import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.TransliterationServiceImpl;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,24 +58,28 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping(value = "/beneficiary")
 public class BeneficiarySyncController {
-
+	
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(BeneficiarySyncController.class);
 	private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
 	private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
 
 	@Autowired
-	private PropertyReader propertyReader;
-
+    private PropertyReader propertyReader;
+	
 	@Autowired
 	private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
-
+	
+	@Autowired 
+	private CreateCaseXmlService createCaseXmlService;
+	
 	@Autowired
 	private MotechBeneficiarySyncService motechBeneficiarySyncService;
-
+	
 	@Autowired
 	private LocationDataPopulator locationDataPopulator;
-
+	@Autowired
+	private TransliterationServiceImpl transliterationServiceImpl;
 	@Autowired
 	private FLWDataPopulator fLWDataPopulator;
 
@@ -89,7 +101,20 @@ public class BeneficiarySyncController {
 	public String ping(@RequestParam("query") String query){
 		return String.format("Ping Received Succefully with query param: %s", query);
 	}
-
+	
+	/**
+	 * Method to validate connection
+	 * 
+	 * @param query
+	 * @return string
+	 */
+	@RequestMapping(value = "transliterate/{word}", method = RequestMethod.GET, produces = "text/xml;charset=UTF-8")
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public String tranliterate(@PathVariable String word){
+		return transliterationServiceImpl.englishToHindi(word);
+	}
+	
 	/**
 	 * Method to send request to MCTS to send updates
 	 * @param startDate
@@ -102,8 +127,6 @@ public class BeneficiarySyncController {
 	@ResponseStatus(HttpStatus.OK)
 	public String syncFrom(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) throws Exception {
-//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//		Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
 
 		validateDateFormat(startDate);
@@ -113,7 +136,6 @@ public class BeneficiarySyncController {
 		DateTime parsedEndDate = parseDate(endDate);
 		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
 		mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-//		Thread.currentThread().setContextClassLoader(loader);
 		return "Updates Received Successfully";
 	}
 	
@@ -197,9 +219,9 @@ public class BeneficiarySyncController {
 		}
 		
 		catch (BeneficiaryException e) {
-			LOGGER.error("Adding FLW Data to the database failed");
+			LOGGER.error("Adding FLW Data to the database failed", e);
 			throw new RestException(e, e.getMessage());
-		}
+		} 
 
 		
 	}
@@ -257,19 +279,29 @@ public class BeneficiarySyncController {
 		return "successful";
 	}
 	
-	@RequestMapping(value = "/getCaseGroupId/{workerId}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/getCaseGroupId/{workerId}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public String getCaseGroupId(@PathVariable("workerId") int Id) {
-		String caseGroupId = "";//fixtureDataService.getCaseGroupIdfromAshaId(Id);
+	public String getCaseGroupId(@PathVariable("workerId") String Id) throws BeneficiaryException {
+		String caseGroupId = fixtureDataService.getCaseGroupIdfromAshaId(Id);
 		return caseGroupId;
 		
+	}*/
+	
+	@RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public String getCaseXml() throws BeneficiaryException {
+		createCaseXmlService.createCaseXml();
+		return "success";
 	}
+	
 
 	@ExceptionHandler(value = { RestException.class })
 	@ResponseBody
 	public BeneficiaryError restExceptionHandler(RestException ex,
 			HttpServletResponse response) {
+		LOGGER.error(ex.getMessage(),ex);
 		BeneficiaryError error = new BeneficiaryError();
 
 		try {

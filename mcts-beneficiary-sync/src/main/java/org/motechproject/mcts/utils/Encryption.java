@@ -18,9 +18,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Encoder;
-
-import com.sun.crypto.provider.SunJCE;
+import org.apache.commons.codec.binary.Base64;
 
 public class Encryption {
 
@@ -31,14 +29,15 @@ public class Encryption {
 			BadPaddingException {
 		Cipher ci = getCipher(Cipher.ENCRYPT_MODE);
 		byte[] eVal = ci.doFinal(D.getBytes("UTF-8"));
-		return new BASE64Encoder().encode(eVal);
+		byte[] encodedBytes = Base64.encodeBase64(eVal);
+		return new String(encodedBytes, "UTF-8");
 	}
 
 	private static Cipher getCipher(int mode) throws InvalidKeyException,
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
 			NoSuchPaddingException, UnsupportedEncodingException,
 			InvalidKeySpecException {
-		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");//TODO check whether this affects, new SunJCE());
+		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		byte[] ivector = "1e3f5e2f4e61e798".getBytes("UTF-8"); // as provided
 		ci.init(mode, generateKey(), new IvParameterSpec(ivector));
 		return ci;

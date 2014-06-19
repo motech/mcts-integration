@@ -4,7 +4,6 @@
 package org.motechproject.mcts.integration.service;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -16,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -102,8 +99,6 @@ public class Publisher {
 	 * @throws Exception
 	 */
 	private ResponseEntity<String> notifyHub() {
-		// TODO Get Authentication on motech platform
-		// getAuthentication();
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		HttpEntity<String> httpEntity = new HttpEntity<String>(httpHeaders);
@@ -134,7 +129,7 @@ public class Publisher {
 	}
 
 	/**
-	 * Logs in to Motech Platform
+	 * Login to Motech Platform Server
 	 */
 	private ResponseEntity<String> getLogin() {
 		LOGGER.info("Trying to login to Motech Platform");
@@ -155,7 +150,6 @@ public class Publisher {
 		return response;
 	}
 
-	// "http://localhost:8080/motech-platform-server/module/server/login/motech-platform-server/j_spring_security_check"
 	/**
 	 * Returns the url at which hub is to be notified
 	 * 

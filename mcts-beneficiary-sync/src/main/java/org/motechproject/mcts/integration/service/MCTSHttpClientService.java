@@ -59,7 +59,7 @@ public class MCTSHttpClientService {
      * @return
      */
     public String syncFrom(MultiValueMap<String, String> requestBody) {
-        LOGGER.info("Syncing beneficiary data from MCTS.");
+        LOGGER.info("Syncing beneficiary data from MCTS at [Url: " + propertyReader.getBeneficiaryListRequestUrl() +"]");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity httpEntity = new HttpEntity(requestBody, httpHeaders);
