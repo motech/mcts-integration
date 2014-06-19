@@ -12,11 +12,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
@@ -24,6 +26,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServ
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.service.CareDataService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CareDataServiceTest {
@@ -32,12 +35,12 @@ public class CareDataServiceTest {
 	private CareDataRepository careDataRepository;
 
 	@InjectMocks
-	private CareDataService careDataService;
+	private CareDataService careDataService = new CareDataService();
 
-	/*@Before
+	@Before
 	public void setUp() throws Exception {
-		careDataService = new CareDataService(careDataRepository);
-	}*/
+		 MockitoAnnotations.initMocks(this);
+	}
 
 	@SuppressWarnings("deprecation")
 	@Test

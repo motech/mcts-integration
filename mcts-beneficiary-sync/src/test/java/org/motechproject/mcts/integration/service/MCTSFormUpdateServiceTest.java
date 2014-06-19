@@ -10,11 +10,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -22,10 +24,15 @@ import org.motechproject.mcts.integration.repository.CareDataRepository;
 @RunWith(MockitoJUnitRunner.class)
 public class MCTSFormUpdateServiceTest {
 	@InjectMocks
-	private MCTSFormUpdateService mCTSFormUpdateService;
+	private MCTSFormUpdateService mCTSFormUpdateService = new MCTSFormUpdateService();
 	
 	@Mock
 	CareDataRepository careDataRepository;
+	
+	@Before
+	public void setUp() throws Exception {
+		 MockitoAnnotations.initMocks(this);
+	}
 	
 	@SuppressWarnings("deprecation")
 	@Test

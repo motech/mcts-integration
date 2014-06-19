@@ -40,7 +40,7 @@ public class UpdateCommcareHQ {
 		 restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
 		 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 		 HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	     restTemplate.postForEntity(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,void.class);
+	    // restTemplate.postForEntity(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,void.class);
 		 
 		 
 	 }

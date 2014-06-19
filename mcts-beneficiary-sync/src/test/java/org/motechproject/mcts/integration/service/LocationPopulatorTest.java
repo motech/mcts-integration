@@ -10,30 +10,43 @@ import static org.mockito.Mockito.eq;
 import java.io.File;
 import java.lang.Object;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.utils.PropertyReader;
 
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class LocationPopulatorTest {
 	@InjectMocks 
-	private LocationDataPopulator locationDataPopulator;
+	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
 	
 	@Mock
 	CareDataRepository careDataRepository;
 	
+	@Mock
+	private PropertyReader propertyReader;
+	
+	@Before
+	public void setUp() throws Exception {
+		 MockitoAnnotations.initMocks(this);
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	@Test
+	@Ignore
 	public void shouldSyncCsvDataToLocationMaster() throws Exception {
-		File file = new File("/home/aman/Downloads/location2.csv");
+		File file = new File(propertyReader.getFLWCsvFileLocation()); //TODO Aman get from test res
 		locationDataPopulator.saveLocationData(file);
 		ArgumentCaptor<MctsLocationMaster> captor = ArgumentCaptor
 				.forClass(MctsLocationMaster.class);
@@ -47,10 +60,11 @@ public class LocationPopulatorTest {
 	
 	@SuppressWarnings("deprecation")
 	@Test
+	@Ignore
 	public void shouldSyncCsvDataToLocation() throws Exception {
 		when(careDataRepository.findEntityByField(Object.class, eq((String)any()), (Object)any())).thenReturn(null);
-		File file = new File("/home/aman/Downloads/location2.csv");
-		//TODO Aman locationDataPopulator.populateLocations(file);
+		File file = new File(propertyReader.getFLWCsvFileLocation());//TODO Aman - change proeprty
+		//locationDataPopulator.populateLocations(file);
 		ArgumentCaptor<Object> captor = ArgumentCaptor
 				.forClass(Object.class);
 		verify(careDataRepository, times(7)).saveOrUpdate(captor.capture());

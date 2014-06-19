@@ -48,7 +48,7 @@ public class MotechBeneficiarySyncServiceTest {
 	private Publisher publisher;
 
 	@InjectMocks
-	private MotechBeneficiarySyncService motechBeneficiarySyncService;
+	private MotechBeneficiarySyncService motechBeneficiarySyncService = new MotechBeneficiarySyncService(careDataService, mctsHttpClientService, propertyReader);
 
 	@Before
 	public void setUp() throws Exception {

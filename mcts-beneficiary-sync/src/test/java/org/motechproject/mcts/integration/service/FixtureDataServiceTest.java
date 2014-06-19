@@ -7,10 +7,12 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
@@ -26,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 public class FixtureDataServiceTest {
 
 	@InjectMocks
-	private FixtureDataService fixtureDataService;
+	private FixtureDataService fixtureDataService = new FixtureDataService() ;
 
 	@Mock
 	CareDataRepository careDataRepository;
@@ -40,6 +42,12 @@ public class FixtureDataServiceTest {
 	@Mock
 	StubDataService stubDataService;
 
+	@Before
+	public void setUp() throws Exception {
+		 MockitoAnnotations.initMocks(this);
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldsyncupdateGroupId() throws Exception {

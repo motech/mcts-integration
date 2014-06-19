@@ -30,7 +30,7 @@ import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
-import org.motechproject.mcts.integration.service.TransliterationServiceImpl;
+
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +78,7 @@ public class BeneficiarySyncController {
 	
 	@Autowired
 	private LocationDataPopulator locationDataPopulator;
-	@Autowired
-	private TransliterationServiceImpl transliterationServiceImpl;
+
 	@Autowired
 	private FLWDataPopulator fLWDataPopulator;
 
@@ -102,19 +101,7 @@ public class BeneficiarySyncController {
 		return String.format("Ping Received Succefully with query param: %s", query);
 	}
 	
-	/**
-	 * Method to validate connection
-	 * 
-	 * @param query
-	 * @return string
-	 */
-	@RequestMapping(value = "transliterate/{word}", method = RequestMethod.GET, produces = "text/xml;charset=UTF-8")
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String tranliterate(@PathVariable String word){
-		return transliterationServiceImpl.englishToHindi(word);
-	}
-	
+
 	/**
 	 * Method to send request to MCTS to send updates
 	 * @param startDate

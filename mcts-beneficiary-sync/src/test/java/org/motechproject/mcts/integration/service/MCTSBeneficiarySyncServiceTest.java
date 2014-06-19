@@ -42,7 +42,7 @@ public class MCTSBeneficiarySyncServiceTest {
     private CareDataRepository careDataRepository;
     
 	@InjectMocks
-	public MCTSBeneficiarySyncService mctsBeneficiarySyncService;
+	public MCTSBeneficiarySyncService mctsBeneficiarySyncService = new MCTSBeneficiarySyncService();
 
     @Before
     public void setUp() throws Exception {

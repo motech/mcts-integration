@@ -69,7 +69,7 @@ public class ObjectToXMLConverter {
 	 * @throws URISyntaxException
 	 */
 	@Deprecated
-	public String writeUrlToFile(File xmlFile, File updateRequestUrlFile)
+	public static String writeUrlToFile(File xmlFile, File updateRequestUrlFile)
 			throws IOException, URISyntaxException {
 		// TODO: This method to be removed during actual implementation.
 		FileReader fileReader = new FileReader(xmlFile);

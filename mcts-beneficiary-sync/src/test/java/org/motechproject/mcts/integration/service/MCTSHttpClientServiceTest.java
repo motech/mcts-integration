@@ -4,11 +4,13 @@ import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyObject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -32,12 +34,11 @@ public class MCTSHttpClientServiceTest {
 	private RestTemplate restTemplate;
 
 	@InjectMocks
-	private MCTSHttpClientService mctsHttpClientService;
+	private MCTSHttpClientService mctsHttpClientService = new MCTSHttpClientService(restTemplate, propertyReader);
 
 	@Before
 	public void setUp() throws Exception {
-		mctsHttpClientService = new MCTSHttpClientService(restTemplate,
-				propertyReader);
+		 MockitoAnnotations.initMocks(this);
 	}
 	
 	@Test
