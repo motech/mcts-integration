@@ -55,6 +55,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private String ward;
 	private String town;
 	private Date creationTime;
+	private String hhNumber;
+	private String familyNumber;
 
 	public MctsPregnantMother() {
 	}
@@ -70,7 +72,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 			String mobileNo, String economicStatus, String category,
 			String beneficiaryAddress, String uidNumber, String pincode,
 			Date lmpDate, String eidNumber, String ward, String town,
-			Date creationTime) {
+			Date creationTime, String familyNumber, String hhNumber) {
 		this.mctsSubcenter = mctsSubcenter;
 		this.mctsHealthworkerByAshaId = mctsHealthworkerByAshaId;
 		this.mctsPregnantMotherMatchStatus = mctsPregnantMotherMatchStatus;
@@ -98,6 +100,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.ward = ward;
 		this.town = town;
 		this.creationTime = creationTime;
+		this.familyNumber = familyNumber;
+		this.hhNumber = hhNumber;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_pregnant_mother_id_seq")
@@ -367,6 +371,24 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
+	}
+
+	@Column(name = "hh_number")
+	public String getHhNumber() {
+		return this.hhNumber;
+	}
+
+	public void setHhNumber(String hhNumber) {
+		this.hhNumber = hhNumber;
+	}
+
+	@Column(name = "family_number")
+	public String getFamilyNumber() {
+		return this.familyNumber;
+	}
+
+	public void setFamilyNumber(String familyNumber) {
+		this.familyNumber = familyNumber;
 	}
 
 }
