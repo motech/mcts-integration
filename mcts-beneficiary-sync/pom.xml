@@ -4,7 +4,6 @@
     <artifactId>mcts</artifactId>
     <groupId>org.motechproject</groupId>
     <version>0.2</version>
-    <packaging>bundle</packaging>
 
     <properties>
         <motech.version>0.24-SNAPSHOT</motech.version>
@@ -374,4 +373,5 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <packaging>bundle</packaging>
 </project>
