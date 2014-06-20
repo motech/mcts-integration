@@ -8,15 +8,15 @@ import org.motechproject.commcare.domain.CaseTask;
 import org.motechproject.commcare.domain.IndexTask;
 import org.motechproject.commcare.events.constants.EventDataKeys;
 import org.motechproject.commcare.events.constants.EventSubjects;
-import org.motechproject.commcare.exception.MalformedCaseXmlException;
+//import org.motechproject.commcare.exception.MalformedCaseXmlException;
 import org.motechproject.commcare.request.CaseRequest;
 import org.motechproject.commcare.request.CloseElement;
 import org.motechproject.commcare.request.CreateElement;
 import org.motechproject.commcare.request.IndexSubElement;
-import org.motechproject.commcare.request.converter.CloseElementConverter;
-import org.motechproject.commcare.request.converter.CreateElementConverter;
-import org.motechproject.commcare.request.converter.IndexElementConverter;
-import org.motechproject.commcare.request.converter.UpdateElementConverter;
+//import org.motechproject.commcare.request.converter.CloseElementConverter;
+//import org.motechproject.commcare.request.converter.CreateElementConverter;
+//import org.motechproject.commcare.request.converter.IndexElementConverter;
+//import org.motechproject.commcare.request.converter.UpdateElementConverter;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,51 +90,7 @@ public class CommcareCaseConvertor {
 
 	 
 	 private String convertToXml(CaseRequest request) {
-	        try {
-
-	            XStream xstream = mapEnvelope();
-
-	            if (request.getCreateElement() != null) {
-	                xstream.registerConverter(new CreateElementConverter());
-	                xstream.aliasField("create", CaseRequest.class, "createElement");
-	            } else {
-	                xstream.omitField(CaseRequest.class, "createElement");
-	            }
-
-	            if (request.getUpdateElement() != null) {
-	                xstream.registerConverter(new UpdateElementConverter());
-	                xstream.aliasField("update", CaseRequest.class, "updateElement");
-	            } else {
-	                xstream.omitField(CaseRequest.class, "updateElement");
-	            }
-
-	            IndexTask indexElement =request.getIndexElement();
-
-	            if (indexElement != null && indexElement.getIndices().size() > 0) {
-	                xstream.registerConverter(new IndexElementConverter());
-	                xstream.aliasField("index", CaseRequest.class, "indexElement");
-	            } else {
-	                xstream.omitField(CaseRequest.class, "indexElement");
-	            }
-
-	            if (request.getCloseElement() != null) {
-	                xstream.registerConverter(new CloseElementConverter());
-	                xstream.aliasField("close", CaseRequest.class, "closeElement");
-	            } else {
-	                xstream.omitField(CaseRequest.class, "closeElement");
-	            }
-
-	            xstream.omitField(CaseRequest.class, "dataXmlns");
-
-	            return xstream.toXML(request);
-	        } catch (MalformedCaseXmlException e) {
-	            MotechEvent motechEvent = new MotechEvent(
-	                    EventSubjects.MALFORMED_CASE_EXCEPTION);
-	            motechEvent.getParameters().put(EventDataKeys.MESSAGE,
-	                    e.getMessage());
-	            eventRelay.sendEventMessage(motechEvent);
-	        }
-
+	        //TODO local testing
 	        return null;
 	    }
 	 
