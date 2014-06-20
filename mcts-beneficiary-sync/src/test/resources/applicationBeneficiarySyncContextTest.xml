@@ -20,7 +20,7 @@
         <bean class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor"/>
     </mvc:interceptors>
     
-	<context:component-scan base-package="org.motechproject.mcts" />
+	 <context:component-scan base-package="org.motechproject.mcts" /> 
 
 	<util:properties id="beneficiarySyncProperties"
 		location="classpath:/beneficiary_sync.properties" />
@@ -117,6 +117,5 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-
-
+	
 </beans>

@@ -30,7 +30,6 @@ import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
-
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,7 +277,7 @@ public class BeneficiarySyncController {
 	@RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public String getCaseXml() throws BeneficiaryException {
+	public String getCaseXml() throws Exception {
 		createCaseXmlService.createCaseXml();
 		return "success";
 	}

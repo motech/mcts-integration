@@ -337,7 +337,9 @@ public class CareDataRepository {
 		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+id+"'";
 		LOGGER.debug("query : "+queryString);
 		List<String> caseGroupId = getCurrentSession().createQuery(queryString).list();
-		
+		if (caseGroupId.size() == 0) {
+			return null;
+		}
 		return caseGroupId.get(0);
 	}
 
