@@ -28,6 +28,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 2473057427181282155L;
 	private Integer id;
+	private String mctsPersonaCaseUId;
 	private MctsSubcenter mctsSubcenter;
 	private MctsHealthworker mctsHealthworkerByAshaId;
 	private MctsPregnantMotherMatchStatus mctsPregnantMotherMatchStatus;
@@ -57,6 +58,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private Date creationTime;
 	private String hhNumber;
 	private String familyNumber;
+	
 
 	public MctsPregnantMother() {
 	}
@@ -115,6 +117,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
+	@Column(name = "mcts_persona_case_uid", unique = true)
+	public String getMctsPersonaCaseUId() {
+		return mctsPersonaCaseUId;
+	}
+
+	public void setMctsPersonaCaseUId(String mctsPersonaCaseUId) {
+		this.mctsPersonaCaseUId = mctsPersonaCaseUId;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subcenter_id")
@@ -160,7 +171,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "case_id")
+	@JoinColumn(name = "mother_case_id")
 	public MotherCase getMotherCase() {
 		return this.motherCase;
 	}
