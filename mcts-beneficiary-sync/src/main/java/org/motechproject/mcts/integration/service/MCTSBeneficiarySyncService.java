@@ -148,6 +148,8 @@ public class MCTSBeneficiarySyncService {
 	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record, Date startDate) throws BeneficiaryException {
 		MctsPregnantMother mctsPregnantMother = null;
 		LOGGER.info(record.toString());
+		Date birthDate = null;
+		Date lmpDate = null;
 		if (record.getBeneficiaryID() != null && record.getBeneficiaryID().length()>0){
 		if ((mctsPregnantMother = careDataService.findEntityByField(
 				MctsPregnantMother.class, "mctsId", record.getBeneficiaryID())) == null) {
