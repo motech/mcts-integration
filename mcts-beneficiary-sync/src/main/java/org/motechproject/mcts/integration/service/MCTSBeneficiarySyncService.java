@@ -150,9 +150,9 @@ public class MCTSBeneficiarySyncService {
 		LOGGER.info(record.toString());
 		Date birthDate = null;
 		Date lmpDate = null;
-		if (record.getBeneficiaryID() != null && record.getBeneficiaryID().length()>0){
+		if (record.getBeneficiaryID() != null && record.getBeneficiaryID().length()==18){//checks that Beneficiary Id should be 18 char long
 		if ((mctsPregnantMother = careDataService.findEntityByField(
-				MctsPregnantMother.class, "mctsId", record.getBeneficiaryID())) == null) {
+				MctsPregnantMother.class, "mctsId", record.getBeneficiaryID())) == null) {//checks if beneficiary already present in db with same mctsId
 			mctsPregnantMother = new MctsPregnantMother();
 			MctsHealthworker mctsHealthworkerByAshaId = null;
 			MctsHealthworker mctsHealthworkerByAnmId = null;
@@ -240,8 +240,13 @@ public class MCTSBeneficiarySyncService {
 			if(record.getGender()!= null && record.getGender().length()>0){mctsPregnantMother.setGender(record.getGender().charAt(0));}
 			mctsPregnantMother.setMctsId(record.getBeneficiaryID());
 			mctsPregnantMother.setMobileNo(record.getMobileno());
+			if (record.getBeneficiaryName().length()>0){//checks that beneficiary name cannot be null
 			mctsPregnantMother.setName(record.getBeneficiaryName());
-			mctsPregnantMother.setHindiName(transliterate(record.getBeneficiaryName()));
+			mctsPregnantMother.setHindiName(transliterate(record.getBeneficiaryName()));}
+			else {
+				LOGGER.error(String.format("Beneficiary Name Cannot be null for MctsId[%s]", record.getBeneficiaryID()));
+				return null;
+			}
 			mctsPregnantMother.setPincode(record.getPinCode());
 			mctsPregnantMother.setTown(record.getTown());
 			mctsPregnantMother.setType(record.getBeneficiaryType());
