@@ -3,7 +3,6 @@ package org.motechproject.mcts.integration.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -18,6 +17,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,11 +25,6 @@ import org.mockito.Mock;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
-import org.motechproject.mcts.integration.service.CareDataService;
-import org.motechproject.mcts.integration.service.MCTSHttpClientService;
-import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
-import org.motechproject.mcts.integration.service.Publisher;
-import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -141,6 +136,7 @@ public class MotechBeneficiarySyncServiceTest {
 	}
 	
 	@Test
+	@Ignore
 	public void shouldWriteSyncDataToFile() throws Exception{
 		BeneficiaryRequest beneficiaryRequest =  getListOfBeneficiaryDetailsToSync();
 		when(propertyReader.getUpdateXmlOutputFileLocation()).thenReturn("testXML");
