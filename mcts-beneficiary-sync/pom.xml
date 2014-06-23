@@ -7,6 +7,7 @@
 
     <properties>
 
+
         <motech.version>0.24-SNAPSHOT</motech.version>
 
         <pmd.skip>true</pmd.skip>
@@ -29,7 +30,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>com.springsource.slf4j.api</artifactId>
                 </exclusion>
-               
             </exclusions>
         </dependency>
         <!-- to send/receive motech events -->
@@ -43,27 +43,7 @@
             <groupId>org.motechproject</groupId>
             <artifactId>motech-scheduler</artifactId>
             <version>${motech.version}</version>
-            
         </dependency>
-         <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>com.springsource.org.apache.commons.httpclient</artifactId>
-                <version>3.1.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>com.springsource.org.apache.commons.codec</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-         <!-- antlr -->
-      
-      	<dependency>
-			<groupId>antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<version>2.7.7</version>
-		</dependency>
-      	
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-commcare-api</artifactId>
@@ -75,6 +55,7 @@
     <artifactId>motech-transliteration</artifactId>
     <version>0.1-SNAPSHOT</version>
 	</dependency>
+
 
 
  <dependency>
@@ -91,15 +72,14 @@
 	<scope>system</scope>
      <systemPath>${basedir}/lib/motech-http-agent-bundle-0.21.1.jar</systemPath>
 	</dependency>
-
-
-<dependency>
+	<dependency>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-http-agent</artifactId>
 	<version>0.21.1</version>
 	<scope>system</scope>
      <systemPath>${basedir}/lib/motech-http-agent-0.21.1.jar</systemPath>
 	</dependency>
+
 
         <dependency>
             <groupId>org.junit</groupId>
@@ -113,7 +93,7 @@
             <scope>test</scope>
             <version>1.8.5</version>
         </dependency>
-		<dependency>
+<dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
                 <version>1.4.9</version>
@@ -182,21 +162,7 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>com.springsource.org.apache.commons.lang</artifactId>
                 <version>2.6.0</version>
-            </dependency>    
-            
-           <!--  <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-annotations</artifactId>
-	<version>2.1.0</version>
-</dependency>-->
- <dependency>
-        <groupId>commons-fileupload</groupId>
-        <artifactId>commons-fileupload</artifactId>
-        <version>1.2.2</version>
-    </dependency>
-             
-            
-            </dependencies>
+            </dependency>    </dependencies>
 
     <build>
 
@@ -228,60 +194,6 @@
                     </execution>
                 </executions>
             </plugin>
-            
-            <!-- pmd -->
-			 <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.7.1</version>
-				<configuration>
-				    <rulesets>
-				        <ruleset>pmd.xml</ruleset>
-				    </rulesets>
-				    <includeTests>false</includeTests>
-				    <targetJdk>${jdk.version}</targetJdk>
-				    <skip>${pmd.skip}</skip>
-				</configuration>
-				<dependencies>
-				    <dependency>
-				        <groupId>org.motechproject</groupId>
-				        <artifactId>pmd-rules</artifactId>
-				        <version>0.2</version>
-				    </dependency>
-				</dependencies>
-				<executions>
-				    <execution>
-				        <phase>compile</phase>
-				        <goals>
-				            <goal>check</goal>
-				            <goal>cpd-check</goal>
-				        </goals>
-				    </execution>
-				</executions>
-		        </plugin>
-		        
-		     <!-- checkstyle -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.10</version>
-				<configuration>
-				    <configLocation>checkstyle.xml</configLocation>
-				    <includeTestSourceDirectory>false</includeTestSourceDirectory>
-				    <enableFilesSummary>true</enableFilesSummary>
-				    <failsOnError>true</failsOnError>
-				    <consoleOutput>true</consoleOutput>
-				    <skip>${checkstyle.skip}</skip>
-				</configuration>
-				<executions>
-				    <execution>
-				        <phase>compile</phase>
-				        <goals>
-				            <goal>check</goal>
-				        </goals>
-				    </execution>
-				</executions>
-		        </plugin> 
             <!-- build a OSGI bundle  -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -338,13 +250,18 @@
                             org.hibernate.jdbc,
                             org.hibernate.proxy,
 
+
                            <!-- javassist.util.proxy;version=3.9.0,-->
 
                             org.hibernate.hql.ast,
                            org.apache.commons.dbcp,
+
+                           <!-- javassist.util.proxy;version=3.9.0,-->
+                            org.apache.commons.dbcp,
                             org.postgresql,
 							<!--org.motechproject.scheduler;version=${motech.version},-->
 							org.motechproject.transliteration.service,
+
 
 
 
@@ -354,7 +271,7 @@
 							org.motechproject.batch.model;version=${motech.version},
 							org.motechproject.event.listener,
 							*
-                        </Import-Package>
+							</Import-Package>
 
                     </instructions>
                 </configuration>
