@@ -28,6 +28,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 2473057427181282155L;
 	private Integer id;
+	private String mctsPersonaCaseUId;
 	private MctsSubcenter mctsSubcenter;
 	private MctsHealthworker mctsHealthworkerByAshaId;
 	private MctsPregnantMotherMatchStatus mctsPregnantMotherMatchStatus;
@@ -37,10 +38,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus;
 	private String mctsId;
 	private String name;
+	private String hindiName;
 	private String type;
 	private Date birthDate;
 	private Character gender;
 	private String fatherHusbandName;
+	private String hindiFatherHusbandName;
 	private String email;
 	private String mobileNo;
 	private String economicStatus;
@@ -53,6 +56,9 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private String ward;
 	private String town;
 	private Date creationTime;
+	private String hhNumber;
+	private String familyNumber;
+	
 
 	public MctsPregnantMother() {
 	}
@@ -63,12 +69,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 			MctsHealthworker mctsHealthworkerByAnmId, MotherCase motherCase,
 			MctsVillage mctsVillage,
 			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus,
-			String mctsId, String name, String type, Date birthDate,
-			Character gender, String fatherHusbandName, String email,
+			String mctsId, String name, String hindiName, String type, Date birthDate,
+			Character gender, String fatherHusbandName, String hindiFatherHusbandName, String email,
 			String mobileNo, String economicStatus, String category,
 			String beneficiaryAddress, String uidNumber, String pincode,
 			Date lmpDate, String eidNumber, String ward, String town,
-			Date creationTime) {
+			Date creationTime, String familyNumber, String hhNumber) {
 		this.mctsSubcenter = mctsSubcenter;
 		this.mctsHealthworkerByAshaId = mctsHealthworkerByAshaId;
 		this.mctsPregnantMotherMatchStatus = mctsPregnantMotherMatchStatus;
@@ -78,10 +84,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.motherCaseMctsAuthorizedStatus = motherCaseMctsAuthorizedStatus;
 		this.mctsId = mctsId;
 		this.name = name;
+		this.hindiName = hindiName;
 		this.type = type;
 		this.birthDate = birthDate;
 		this.gender = gender;
 		this.fatherHusbandName = fatherHusbandName;
+		this.hindiFatherHusbandName = hindiFatherHusbandName;
 		this.email = email;
 		this.mobileNo = mobileNo;
 		this.economicStatus = economicStatus;
@@ -94,6 +102,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.ward = ward;
 		this.town = town;
 		this.creationTime = creationTime;
+		this.familyNumber = familyNumber;
+		this.hhNumber = hhNumber;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_pregnant_mother_id_seq")
@@ -106,6 +116,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@Column(name = "mcts_persona_case_uid", unique = true)
+	public String getMctsPersonaCaseUId() {
+		return mctsPersonaCaseUId;
+	}
+
+	public void setMctsPersonaCaseUId(String mctsPersonaCaseUId) {
+		this.mctsPersonaCaseUId = mctsPersonaCaseUId;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -152,7 +171,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "case_id")
+	@JoinColumn(name = "mother_case_id")
 	public MotherCase getMotherCase() {
 		return this.motherCase;
 	}
@@ -200,6 +219,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.name = name;
 	}
 
+	@Column(name = "hindi_name")
+	public String getHindiName() {
+		return this.hindiName;
+	}
+
+	public void setHindiName(String hindiName) {
+		this.hindiName = hindiName;
+	}
+
 	@Column(name = "type", length = 10)
 	public String getType() {
 		return this.type;
@@ -235,6 +263,15 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setFatherHusbandName(String fatherHusbandName) {
 		this.fatherHusbandName = fatherHusbandName;
+	}
+
+	@Column(name = "hindi_father_husband_name")
+	public String getHindiFatherHusbandName() {
+		return this.hindiFatherHusbandName;
+	}
+
+	public void setHindiFatherHusbandName(String hindiFatherHusbandName) {
+		this.hindiFatherHusbandName = hindiFatherHusbandName;
 	}
 
 	@Column(name = "email")
@@ -345,6 +382,24 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
+	}
+
+	@Column(name = "hh_number")
+	public String getHhNumber() {
+		return this.hhNumber;
+	}
+
+	public void setHhNumber(String hhNumber) {
+		this.hhNumber = hhNumber;
+	}
+
+	@Column(name = "family_number")
+	public String getFamilyNumber() {
+		return this.familyNumber;
+	}
+
+	public void setFamilyNumber(String familyNumber) {
+		this.familyNumber = familyNumber;
 	}
 
 }

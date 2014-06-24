@@ -11,7 +11,9 @@ import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
+import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.integration.service.StubDataService;
+import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpStatus;
 
 /**
  * 
@@ -38,22 +42,15 @@ public class CreateCaseXmlService {
 	
 	@Autowired PropertyReader propertyReader;
 
+	@Autowired
+	private RestTemplate restTemplate;
 	
-	/*private CommcareCaseConvertor caseToXmlConvertor;
-
-
-	public CommcareCaseConvertor getCaseToXmlConvertor() {
-		return caseToXmlConvertor;
-	}
-
-	public void setCaseToXmlConvertor(CommcareCaseConvertor caseToXmlConvertor) {
-		this.caseToXmlConvertor = caseToXmlConvertor;
-	}*/
 
 	@Autowired
 	CareDataRepository careDataRepository;
 	
-	
+	@Autowired
+	MCTSHttpClientService mCTSHttpClientService;
 
 	public CareDataRepository getCareDataRepository() {
 		return careDataRepository;
@@ -68,6 +65,7 @@ public class CreateCaseXmlService {
 
 
 	public void createCaseXml() throws Exception {
+		
 
 		List<MctsPregnantMother> mctsPregnantMother = careDataRepository
 				.getMctsPregnantMother();
@@ -82,6 +80,8 @@ public class CreateCaseXmlService {
 
 	public void createXmlForBeneficiary(MctsPregnantMother mctsPregnantMother)
 			throws Exception {
+		Data data = new Data();
+		
 		int workerId;
 		LOGGER.debug("size :" + mctsPregnantMother.getMctsId());
 		if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
@@ -92,29 +92,52 @@ public class CreateCaseXmlService {
 		}
 			
 			String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
-			String xmlns = "http://commcarehq.org/case/transaction/v2";
 			String caseId = UUID.randomUUID().toString();
+			
 			String userId = propertyReader.getUserIdforCommcare();
 			Case caseTask = new Case();
 			DateTime date = new DateTime();
+			
 			String dateModified = date.toString();
-
+			
+			Meta meta = createMetaandReturn(userId);
 			CreateTask task = createTaskandReturn(mctsPregnantMother, workerId, ownerId);
 			UpdateTask updatedTask = updateTaskandReturn(mctsPregnantMother, workerId, ownerId);
 			caseTask.setCreateTask(task);
 			caseTask.setUpdateTask(updatedTask);
-			caseTask.setXmlns(xmlns);
+			caseTask.setXmlns(CommcareConstants.xmlns);
 			caseTask.setDateModified(dateModified);
 			caseTask.setCaseId(caseId);
 			caseTask.setUserId(userId);
-
+			
+			
+			data.setXmlns(" ");
+			meta.setTimeEnd(new DateTime().toString());
+			data.setMeta(meta);
+			data.setCaseTask(caseTask);
 			String returnvalue = ObjectToXMLConverter.converObjectToXml(
-					caseTask,
-					Case.class);
+					data,
+					Data.class);
 			LOGGER.debug("returned : " + returnvalue);
+			HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+			if (status.value() == 200) {
+				mctsPregnantMother.setMctsPersonaCaseUId(caseId);
+				careDataRepository.saveOrUpdate(mctsPregnantMother);
+			}
+			
 		
 	}
 
+	
+	private Meta createMetaandReturn(String userId) {
+		Meta meta = new Meta();
+		meta.setXmlns(CommcareConstants.metaxmlns);
+		meta.setInstanceID(UUID.randomUUID().toString());
+		meta.setTimeStart(new DateTime().toString());
+		meta.setUserID(userId);
+		
+		return meta;
+	}
 	/**
 	 * Method to create Object updateTask and return it
 	 * 
@@ -126,8 +149,10 @@ public class CreateCaseXmlService {
 			throws BeneficiaryException {
 		UpdateTask updateTask = new UpdateTask();
 		
-		
-		String husbandName = mctsPregnantMother.getFatherHusbandName();
+		String mctsName = mctsPregnantMother.getHindiName();
+		String mctsName_en = mctsPregnantMother.getName();;
+		String husbandName = mctsPregnantMother.getHindiFatherHusbandName();
+		String husbandName_en = mctsPregnantMother.getFatherHusbandName();
 		String mctsId = mctsPregnantMother.getMctsId();
 		String phone = mctsPregnantMother.getMobileNo();
 		Date birth = mctsPregnantMother.getBirthDate();
@@ -136,6 +161,12 @@ public class CreateCaseXmlService {
 		String age;
 		String dob;
 		
+		if (mctsName == null) {
+			mctsName = " ";
+		}
+		if (mctsName_en == null) {
+			mctsName_en = " ";
+		}
 		if (birth != null) {
 			dob = birthDate.toString();
 			age = Integer.toString(Days.daysBetween(date.withTimeAtStartOfDay(),
@@ -145,7 +176,10 @@ public class CreateCaseXmlService {
 			dob = " ";
 		}
 		if (husbandName == null) {
-			husbandName = " ";
+			husbandName = " ";mctsPregnantMother.getName();
+		}
+		if (husbandName_en == null) {
+			husbandName_en = " ";
 		}
 		if (mctsId == null) {
 			mctsId = " ";
@@ -155,11 +189,12 @@ public class CreateCaseXmlService {
 		}
 		
 		updateTask.setCaseName(mctsPregnantMother.getName());
-		updateTask.setCaseType("mcts_persona");
+		updateTask.setCaseType(CommcareConstants.caseType);
 		updateTask.setDateOpened(new DateTime().toString());
 		updateTask.setOwnerId(ownerId);
-		updateTask.setMctsHusbandName(husbandName);
-		updateTask.setMctsFullname(mctsPregnantMother.getName());
+		updateTask.setMctsHusbandName(husbandName_en);
+		updateTask.setMctsFullname(mctsName);
+		updateTask.setMctsFullname_en(mctsName_en);
 		updateTask.setMctsAge(age);
 		updateTask.setMctsDob(dob);
 		updateTask.setMctsEdd(date.toString());
@@ -182,7 +217,7 @@ public class CreateCaseXmlService {
 			throws BeneficiaryException {
 		CreateTask createTask = new CreateTask();
 
-		createTask.setCaseType("mcts_persona");
+		createTask.setCaseType(CommcareConstants.caseType);
 		createTask.setCaseName(mctsPregnantMother.getName());
 		
 		
