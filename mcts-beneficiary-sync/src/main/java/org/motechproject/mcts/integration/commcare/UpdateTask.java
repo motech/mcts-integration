@@ -15,10 +15,15 @@ public class UpdateTask {
     private String ownerId;
 	
     private String mctsFullname;
+    
+    private String mctsFullname_en;
 	
     private String mctsHusbandName;
+    
+    private String mctsHusbandName_en;
 	
-    private String mctsAge;
+    
+	private String mctsAge;
 	
     private String mctsDob;
 	
@@ -112,6 +117,21 @@ public class UpdateTask {
 	@XmlElement (name = "asha_id")
 	public void setAshaId(String ashaId) {
 		this.ashaId = ashaId;
+	}
+	
+	public String getMctsFullname_en() {
+		return mctsFullname_en;
+	}
+	@XmlElement (name = "mcts_full_name_en")
+	public void setMctsFullname_en(String mctsFullname_en) {
+		this.mctsFullname_en = mctsFullname_en;
+	}
+	public String getMctsHusbandName_en() {
+		return mctsHusbandName_en;
+	}
+	@XmlElement (name = "mcts_husband_name_en")
+	public void setMctsHusbandName_en(String mctsHusbandName_en) {
+		this.mctsHusbandName_en = mctsHusbandName_en;
 	}
     
 }
