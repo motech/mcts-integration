@@ -2,6 +2,8 @@ package org.motechproject.mcts.integration.service;
 
 import java.util.List;
 
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatus;
@@ -94,5 +96,31 @@ public class MCTSFormUpdateService {
 
 		}
 
+	}
+	
+	
+	
+	public void updateMctsPregnantMotherForm(int primaryId) throws BeneficiaryException {
+		MctsPregnantMother mother = careDataRepository.getMotherFromPrimaryId(primaryId);
+		if (mother != null) {
+			String hhNumber = mother.getHhNumber();
+			String familyNumber = mother.getFamilyNumber();
+			if ((hhNumber!=null)&& (familyNumber!=null) ) {
+				Integer hhNum = Integer.parseInt(hhNumber);
+				int familyNum = Integer.parseInt(familyNumber);
+				MotherCase motherCase = careDataRepository.matchMctsPersonawithMotherCase(hhNum, familyNum);
+				if (motherCase != null) {
+					mother.setMotherCase(motherCase);
+					careDataRepository.saveOrUpdate(mother);
+				}
+			}
+			
+			else {
+				LOGGER.info("empty fields : either hhNumber or familyNumber is empty");
+			}
+			
+			
+			
+		}
 	}
 }

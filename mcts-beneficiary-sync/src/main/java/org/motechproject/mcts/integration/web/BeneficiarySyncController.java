@@ -270,7 +270,7 @@ public class BeneficiarySyncController {
 	@RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public String getCaseXml() throws BeneficiaryException {
+	public String getCaseXml() throws Exception {
 		createCaseXmlService.createCaseXml();
 		return "success";
 	}

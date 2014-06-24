@@ -47,13 +47,13 @@ public class ObjectToXMLConverter {
             
 			  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
             StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
+        //   PrintWriter printWriter = new PrintWriter(stringWriter);
 			
 			//TODO naveen - commented 3 lines below
             //DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
             
 			//jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
-			//jaxbMarshaller.marshal(dataToWrite, dataWriter);
+			jaxbMarshaller.marshal(dataToWrite, stringWriter);
 			return stringWriter.toString();
 		}
 	}
