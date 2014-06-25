@@ -5,6 +5,7 @@ package org.motechproject.mcts.integration.service;
 
 import org.springframework.http.HttpStatus;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class MCTSHttpClientService {
      * @param requestBody
      * @return
      */
-    public String syncFrom(MultiValueMap<String, String> requestBody) {
+    public NewDataSet syncFrom(MultiValueMap<String, String> requestBody) {
         LOGGER.info("Syncing beneficiary data from MCTS at [Url: " + propertyReader.getBeneficiaryListRequestUrl() +"]");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -80,12 +81,12 @@ public class MCTSHttpClientService {
         //TODO get the object instead of XML String. Also we are not checking if the response
         //is in XML/JSON or any other format. We are deserializing to object assuming it is an XML 
         
-        ResponseEntity<String> response = restTemplate.exchange(propertyReader.getBeneficiaryListRequestUrl(), HttpMethod.POST, httpEntity, String.class);
+        ResponseEntity<NewDataSet> response = restTemplate.exchange(propertyReader.getBeneficiaryListRequestUrl(), HttpMethod.POST, httpEntity, NewDataSet.class);
 
         if (response == null)
             return null;
 
-        String responseBody = response.getBody();
+        NewDataSet responseBody = response.getBody();
         LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
         return responseBody;
     }
