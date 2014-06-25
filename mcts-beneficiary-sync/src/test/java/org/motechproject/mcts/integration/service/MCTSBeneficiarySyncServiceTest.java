@@ -7,6 +7,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -15,6 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.motechproject.mcts.integration.model.NewDataSet;
+import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -55,7 +60,7 @@ public class MCTSBeneficiarySyncServiceTest {
         when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(getDefaultQueryParams());
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(response());
 
-        String response = mctsBeneficiarySyncService.syncFrom(startDate, endDate);
+        NewDataSet response = mctsBeneficiarySyncService.syncFrom(startDate, endDate);
 
         verify(mctsHttpClientService).syncFrom(requestBody);
         assertEquals(response(),response);
@@ -66,7 +71,7 @@ public class MCTSBeneficiarySyncServiceTest {
     public void shouldWriteDataToFile() throws Exception{
 		when(propertyReader.getSyncRequestOutputFileLocation()).thenReturn("updateRequestXML");
 		
-		mctsBeneficiarySyncService.writeToFile(response());
+		mctsBeneficiarySyncService.writeToFile(response().toString());
 		verify(propertyReader).getSyncRequestOutputFileLocation();
     }
     
@@ -101,8 +106,18 @@ public class MCTSBeneficiarySyncServiceTest {
         return defaultQueryParams;
     }
 
-    private String response() {
-        return "<newdataset>\n" +
+    private NewDataSet response() {
+    	NewDataSet newDataSet = new NewDataSet();
+    	List<Record> records = new ArrayList<Record>();
+    	Record record = new Record();
+    	record.setStateID("31");
+    	record.setStateName("Lakshadweep");
+    	record.setDistrictID("1");
+    	record.setDistrictName("Lakshadweep");
+    	records.add(record);
+    	newDataSet.setRecords(records);
+        return newDataSet;
+        /*"<newdataset>\n" +
                 "    <records>\n" +
                 "            <stateid>31</stateid>\n" +
                 "            <state_name>Lakshadweep</state_name>\n" +
@@ -114,7 +129,7 @@ public class MCTSBeneficiarySyncServiceTest {
                 "            <tehsil_name>AMINI</tehsil_name>\n" +
                 "            <facility_id>2</facility_id>\n" +
                 "    </records>\n" +
-                "</newdataset>";
+                "</newdataset>";*/
     }
 
 }
