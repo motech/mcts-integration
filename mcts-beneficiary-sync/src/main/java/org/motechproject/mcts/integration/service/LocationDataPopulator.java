@@ -119,7 +119,7 @@ public class LocationDataPopulator {
 			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage());
 		}
 
 		finally {
@@ -269,7 +269,7 @@ public class LocationDataPopulator {
 			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage());
 		}
 
 		finally {

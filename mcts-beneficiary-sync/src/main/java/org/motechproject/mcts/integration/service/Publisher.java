@@ -5,6 +5,9 @@ package org.motechproject.mcts.integration.service;
 
 import java.io.UnsupportedEncodingException;
 
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +38,9 @@ public class Publisher {
 	 * if failed.
 	 * 
 	 * @param url
-	 * @throws Exception
+	 * @throws BeneficiaryException
 	 */
-	public void publish(String url) throws Exception {
+	public void publish(String url) throws BeneficiaryException{
 		setUrl(url);
 		ResponseEntity<String> response = new ResponseEntity<String>(
 				HttpStatus.BAD_REQUEST);
@@ -69,13 +72,11 @@ public class Publisher {
 							retryCount, response.getStatusCode(),
 							response.getBody()));
 		else {
-			LOGGER.error(String
+			String error = String
 					.format("Notification to Hub failed. Response [StatusCode %s] : %s",
-							response.getStatusCode(), response.getBody()));
-			throw new Exception(
-					String.format(
-							"Notification to Hub failed. Response [StatusCode %s] : %s",
-							response.getStatusCode(), response.getBody()));
+							response.getStatusCode(), response.getBody());
+			LOGGER.error(error);
+			throw new BeneficiaryException(ApplicationErrors.CONNECTION_ERROR, error);
 		}
 	}
 
@@ -85,7 +86,7 @@ public class Publisher {
 	 * @param url
 	 * @throws UnsupportedEncodingException
 	 */
-	private void setUrl(String url) throws UnsupportedEncodingException {
+	private void setUrl(String url){
 		URL = String.format("%s%s%s%s%s", propertyReader.getHubBaseUrl(),
 				"?hub.mode=", MODE, "&hub.url=", url);
 	}

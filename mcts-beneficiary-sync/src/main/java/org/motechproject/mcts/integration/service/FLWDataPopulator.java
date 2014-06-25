@@ -132,7 +132,7 @@ public class FLWDataPopulator {
 			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e);
 		}
 		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e);
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e);
 		}
 		catch (HibernateException e) {
 			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e);
@@ -207,7 +207,7 @@ public class FLWDataPopulator {
 			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
 		}
 		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OFARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage());
 		}
 		catch (HibernateException e) {
 			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e.getMessage());
