@@ -5,6 +5,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.integration.model.NewDataSet;
+import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -63,14 +68,27 @@ public class MCTSHttpClientServiceTest {
 				httpHeaders);
 		when(propertyReader.getBeneficiaryListRequestUrl())
 				.thenReturn(requestUrl);
-		String expectedResponse = "ResponseBody";
+		NewDataSet expectedResponse = response();
 		when(
 				restTemplate.exchange((String)anyObject(), (HttpMethod)anyObject(),
 						(HttpEntity)anyObject(), (Class)anyObject())).thenReturn(
 				new ResponseEntity<>(expectedResponse, HttpStatus.OK));
 
-		String actualResponse = mctsHttpClientService.syncFrom(requestBody);
+		NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
 
-		assertEquals(expectedResponse, actualResponse);
+		assertEquals(response(), actualResponse);
+	}
+	
+	private NewDataSet response() {
+    	NewDataSet newDataSet = new NewDataSet();
+    	List<Record> records = new ArrayList<Record>();
+    	Record record = new Record();
+    	record.setStateID("31");
+    	record.setStateName("Lakshadweep");
+    	record.setDistrictID("1");
+    	record.setDistrictName("Lakshadweep");
+    	records.add(record);
+    	newDataSet.setRecords(records);
+        return newDataSet;
 	}
 }
