@@ -8,16 +8,25 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
+import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
+import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMaster;
+import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
+import org.motechproject.mcts.integration.model.Location;
+import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -48,9 +57,14 @@ public class MCTSBeneficiarySyncService {
 	private CareDataService careDataService;
 	@Autowired
 	private TransliterationService transliterationService;
+	@Autowired
+	private LocationDataPopulator locationDataPopulator;
 
 	/**
-	 * Main Method to send <code>Get</code> Updates request to MCTS, <code>Add</code> the received updates to database and <code>Notify</code> Hub
+	 * Main Method to send <code>Get</code> Updates request to MCTS,
+	 * <code>Add</code> the received updates to database and <code>Notify</code>
+	 * Hub
+	 * 
 	 * @param startDate
 	 * @param endDate
 	 * @throws Exception
@@ -64,26 +78,29 @@ public class MCTSBeneficiarySyncService {
 		}
 		NewDataSet newDataSet = null;
 		try {
-			//TODO get the deserialized object from the MCTS service instead of XML string
-			newDataSet = XmlStringToObjectConverter.stringXmlToObject(NewDataSet.class,
-					beneficiaryData);
+			// TODO get the deserialized object from the MCTS service instead of
+			// XML string
+			newDataSet = XmlStringToObjectConverter.stringXmlToObject(
+					NewDataSet.class, beneficiaryData);
 			if (newDataSet.getRecords().size() == 0) {
 				LOGGER.info("No New Updates Received. Exiting");
-				//TODO instead of returning from this method we need to send this message to client
+				// TODO instead of returning from this method we need to send
+				// this message to client
 				return;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			throw new Exception(e);
 		}
-		addToDbData(newDataSet); //adds updates received to db
-		//writeToFile(beneficiaryData); //Writes the Updates received to a file
-		//TODO to be added hubNotification for 0.24
-		//notifyHub(); //Notify the hub about the Updates received
+		addToDbData(newDataSet); // adds updates received to db
+		// writeToFile(beneficiaryData); //Writes the Updates received to a file
+		// TODO to be added hubNotification for 0.24
+		// notifyHub(); //Notify the hub about the Updates received
 	}
 
 	/**
 	 * Send the sync request to <code>MCTS</code>
+	 * 
 	 * @param startDate
 	 * @param endDate
 	 * @return String of XML of the updates received from MCTS
@@ -99,18 +116,24 @@ public class MCTSBeneficiarySyncService {
 	}
 
 	/**
-	 * Add the updates received from MCTS to database table <code>mctsPregnantMother</code>
-	 * @param newDataSet: 
-	 * @throws BeneficiaryException 
+	 * Add the updates received from MCTS to database table
+	 * <code>mctsPregnantMother</code>
+	 * 
+	 * @param newDataSet
+	 *            :
+	 * @throws Exception
 	 */
-	private void addToDbData(NewDataSet newDataSet) throws BeneficiaryException {
+	private void addToDbData(NewDataSet newDataSet) throws Exception {
 		LOGGER.info(String.format("Started writing to db for %s records",
 				newDataSet.getRecords().size()));
 		int count = 0;
-		Date startDate = new Date(); //Sets the startDate when data started to add to db to be send to Hub to query db
+		Date startDate = new Date(); // Sets the startDate when data started to
+										// add to db to be send to Hub to query
+										// db
 		for (Record record : newDataSet.getRecords()) {
 			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
-			mctsPregnantMother = mapRecordToMctsPregnantMother(record, startDate);
+			mctsPregnantMother = mapRecordToMctsPregnantMother(record,
+					startDate);
 			if (mctsPregnantMother != null) {
 				careDataService.saveOrUpdate(mctsPregnantMother);
 				count++;
@@ -118,26 +141,15 @@ public class MCTSBeneficiarySyncService {
 						"MctsPregnantMother [%s] added to db",
 						mctsPregnantMother.getMctsId()));
 			} else
-				LOGGER.error("SKIPPED Adding this record to Database");
+				addToMctsPregnantMotherMaster(record, startDate);
+			LOGGER.error("SKIPPED Adding this record to Database");
 		}
-		Date endDate = new Date(); //Sets the endDate when data ended to be added to db to be send to Hub to query db
+		Date endDate = new Date(); // Sets the endDate when data ended to be
+									// added to db to be send to Hub to query db
 		setHubTransactionDates(startDate, endDate);
 		LOGGER.info(String.format("Added %s records to db of %s records.",
 				count, newDataSet.getRecords().size()));
 	}
-
-	/**
-	 * Method to change <code>isLatest</code> field of <code>MctsPregnatMother</code> for the mothers whose
-	 * updates were already published
-	 *//*
-	@Deprecated
-	private void changeIsLatestToFalse(){
-		List<MctsPregnantMother> mctsPregnantMothers = careDataService.findListOfEntitiesByField(MctsPregnantMother.class, "isLatest", true);
-		for (MctsPregnantMother mctsPregnantMother: mctsPregnantMothers){
-			mctsPregnantMother.setIsLatest(false);
-			careDataService.saveOrUpdate(mctsPregnantMother);
-		}
-	}*/
 
 	/**
 	 * Map the <code>Record</code> object received from MCTS to
@@ -145,181 +157,301 @@ public class MCTSBeneficiarySyncService {
 	 * 
 	 * @param record
 	 * @return MctsPregnantMother
-	 * @throws BeneficiaryException 
+	 * @throws Exception
 	 */
-	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record, Date startDate) throws BeneficiaryException {
+	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record,
+			Date startDate) throws Exception {
 		MctsPregnantMother mctsPregnantMother = null;
 		LOGGER.info(record.toString());
-		Date birthDate = null;
-		Date lmpDate = null;
-		if (record.getBeneficiaryID() != null && record.getBeneficiaryID().length()==18){//checks that Beneficiary Id should be 18 char long
-			//TODO split the expression in if check. First get the entity and check for null
-		if ((mctsPregnantMother = careDataService.findEntityByField(
-				MctsPregnantMother.class, "mctsId", record.getBeneficiaryID())) == null) {//checks if beneficiary already present in db with same mctsId
-			mctsPregnantMother = new MctsPregnantMother();
-			MctsHealthworker mctsHealthworkerByAshaId = null;
-			MctsHealthworker mctsHealthworkerByAnmId = null;
-			MctsVillage mctsVillage = null;
-			MctsSubcenter mctsSubcenter = null;
-			try {
-				mctsHealthworkerByAshaId = careDataService.findEntityByField(
-						MctsHealthworker.class, "healthworkerId",
-						Integer.parseInt(record.getASHAID()));
-			} catch (NumberFormatException e) {
-				LOGGER.error(String.format("Invalid ASHAID received [%s]",
-						record.getASHAID()));
-			}
-			// Checks if HealthWorker exist in db...if not then logs an error
-			// message
-			if (mctsHealthworkerByAshaId == null) {
-				LOGGER.error(String
-						.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
-								record.getASHAID(), record.getBeneficiaryID()));
-			} else {
+		if (record.getBeneficiaryID() != null
+				&& record.getBeneficiaryID().length() == 18) {// checks that Beneficiary Id should be 18 char long
+			// TODO split the expression in if check. First get the entity and
+			// check for null
+			if ((mctsPregnantMother = careDataService.findEntityByField(
+					MctsPregnantMother.class, "mctsId",
+					record.getBeneficiaryID())) == null) {// checks if beneficiary already present
+															// in db with same mctsId
+				mctsPregnantMother = new MctsPregnantMother();
+				String gender = null;
+				String beneficiaryName = null;
+				addLocationToDbIfNotPresent(record);
+				Location location = getUniqueLocationMap(record);
+				mctsPregnantMother.setMctsVillage(location.getMctsVillage());
 				mctsPregnantMother
-						.setMctsHealthworkerByAshaId(mctsHealthworkerByAshaId);
-			}
-			try {
-				mctsHealthworkerByAnmId = careDataService.findEntityByField(
-						MctsHealthworker.class, "healthworkerId",
-						Integer.parseInt(record.getANMID()));
-				//TODO don't catch the runtime exceptions (NumberFormatException). Use regex to check if field is parseable to int
-				//Do this wherever applicable
-			} catch (NumberFormatException e) {
-				LOGGER.error(String.format("Invalid ANMID received [%s]",
-						record.getANMID()));
-			}
-			// Checks if HealthWorker exist in db...if not then logs an error
-			// message
-			if (mctsHealthworkerByAnmId == null) {
-				LOGGER.error(String
-						.format("HealthWorker with HealthworkerId: %s for Mcts record: %s doesNot exist in DataBase",
-								record.getANMID(), record.getBeneficiaryID()));
-			} else {
+						.setMctsSubcenter(location.getMctsSubcenter());
 				mctsPregnantMother
-						.setMctsHealthworkerByAnmId(mctsHealthworkerByAnmId);
-			}
-			try {
-				mctsVillage = careDataService.findEntityByField(
-						MctsVillage.class, "villageId",
-						Integer.parseInt(record.getVillageID()));
-			} catch (NumberFormatException e) {
-				LOGGER.error(String.format("Invalid VillageId received [%s]",
-						record.getVillageID()));
-			}
-			// Checks if Village exist in db...if not then logs an error message
-			if (mctsVillage == null) {
-				LOGGER.error(String
-						.format("Village with VillageId: %s for Mcts record: %s doesNot exist in DataBase",
-								record.getVillageID(),
-								record.getBeneficiaryID()));
+						.setMctsHealthworkerByAshaId(getHealthWorkerId(
+								record.getASHAID(), location, "ASHA"));
+				mctsPregnantMother
+						.setMctsHealthworkerByAnmId(getHealthWorkerId(
+								record.getANMID(), location, "ANM"));
+				mctsPregnantMother.setBeneficiaryAddress(record
+						.getBeneficiaryAddress());
+				mctsPregnantMother.setCategory(record.getCategory());
+				mctsPregnantMother.setCreationTime(startDate);
+				mctsPregnantMother
+						.setEconomicStatus(record.getEconomicStatus());
+				mctsPregnantMother.setEidNumber(record.getEIDNumber());
+				mctsPregnantMother.setEmail(record.getEmail());
+				mctsPregnantMother.setFatherHusbandName(record
+						.getFatherHusbandName());
+				mctsPregnantMother
+						.setHindiFatherHusbandName(transliterate(record
+								.getFatherHusbandName()));
+				if ((gender = record.getGender()) != null
+						&& gender.length() > 0) {
+					mctsPregnantMother.setGender(gender.charAt(0));
+				}
+				mctsPregnantMother.setMctsId(record.getBeneficiaryID());
+				mctsPregnantMother.setMobileNo(record.getMobileno());
+				if ((beneficiaryName = record.getBeneficiaryName()) != null
+						&& beneficiaryName.length() > 0) {// checks that
+															// beneficiary name
+															// cannot be null
+					mctsPregnantMother.setName(beneficiaryName);
+					mctsPregnantMother
+							.setHindiName(transliterate(beneficiaryName));
+				} else {
+					LOGGER.error(String.format(
+							"Beneficiary Name Cannot be null for MctsId[%s]",
+							record.getBeneficiaryID()));
+					return null;
+				}
+				mctsPregnantMother.setPincode(record.getPinCode());
+				mctsPregnantMother.setTown(record.getTown());
+				mctsPregnantMother.setType(record.getBeneficiaryType());
+				mctsPregnantMother.setUidNumber(record.getUIDNumber());
+				mctsPregnantMother.setWard(record.getWard());
+				// Parse the LmpDate to dd-mm-YYYY format and logs an error if
+				// not
+				// in correct format
+				try {
+					mctsPregnantMother.setLmpDate(new SimpleDateFormat(
+							"yyyy-MM-dd", Locale.ENGLISH).parse(record
+							.getLMPDate()));
+					LOGGER.debug("LMP Date is: "
+							+ mctsPregnantMother.getLmpDate().toString());
+				} catch (ParseException e) {
+					LOGGER.error(String
+							.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+									record.getLMPDate(),
+									record.getBeneficiaryID()));
+				} catch (NullPointerException e) {
+					LOGGER.error(String
+							.format("Null value received in LMP Date Field"));
+				}
+				// Parse the BirthDate to dd-mm-YYYY format and logs an error if
+				// not
+				// in correct format
+				try {
+					mctsPregnantMother.setBirthDate(new SimpleDateFormat(
+							"yyyy-MM-dd", Locale.ENGLISH).parse(record
+							.getBirthdate()));
+					LOGGER.debug("Birth Date is: "
+							+ mctsPregnantMother.getBirthDate().toString());
+				} catch (ParseException e) {
+					LOGGER.error(String
+							.format("Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+									record.getBirthdate(),
+									record.getBeneficiaryID()));
+				} catch (NullPointerException e) {
+					LOGGER.error(String
+							.format("Null value received in BirthDate Date Field"));
+				}
+				return mctsPregnantMother;
 			} else {
-				mctsPregnantMother.setMctsVillage(mctsVillage);
-			}
-			try {
-				mctsSubcenter = careDataService.findEntityByField(
-						MctsSubcenter.class, "subcenterId",
-						Integer.parseInt(record.getSubCentreID()));
-			} catch (NumberFormatException e) {
-				LOGGER.error(String.format("Invalid SubCenterId received [%s]",
-						record.getSubCentreID()));
-			}
-			// Checks if SubCenter exist in db...if not then logs error message
-			if (mctsSubcenter == null) {
 				LOGGER.error(String
-						.format("SubCenter with SubCenter: %s for Mcts record: %s doesNot exist in DataBase",
-								record.getSubCentreID(),
+						.format("Beneficiary with [MctsId:%s] already present in Database. Hence skipping adding this record.",
 								record.getBeneficiaryID()));
-			} else {
-				mctsPregnantMother.setMctsSubcenter(mctsSubcenter);
-			}
-			mctsPregnantMother.setBeneficiaryAddress(record
-					.getBeneficiaryAddress());
-			mctsPregnantMother.setCategory(record.getCategory());
-			mctsPregnantMother.setCreationTime(startDate);
-			mctsPregnantMother.setEconomicStatus(record.getEconomicStatus());
-			mctsPregnantMother.setEidNumber(record.getEIDNumber());
-			mctsPregnantMother.setEmail(record.getEmail());
-			mctsPregnantMother.setFatherHusbandName(record.getFatherHusbandName());
-			mctsPregnantMother.setHindiFatherHusbandName(transliterate(record.getFatherHusbandName()));
-			if(record.getGender()!= null && record.getGender().length()>0){mctsPregnantMother.setGender(record.getGender().charAt(0));}
-			mctsPregnantMother.setMctsId(record.getBeneficiaryID());
-			mctsPregnantMother.setMobileNo(record.getMobileno());
-			if (record.getBeneficiaryName().length()>0){//checks that beneficiary name cannot be null
-			mctsPregnantMother.setName(record.getBeneficiaryName());
-			mctsPregnantMother.setHindiName(transliterate(record.getBeneficiaryName()));}
-			else {
-				LOGGER.error(String.format("Beneficiary Name Cannot be null for MctsId[%s]", record.getBeneficiaryID()));
 				return null;
 			}
-			mctsPregnantMother.setPincode(record.getPinCode());
-			mctsPregnantMother.setTown(record.getTown());
-			mctsPregnantMother.setType(record.getBeneficiaryType());
-			mctsPregnantMother.setUidNumber(record.getUIDNumber());
-
-			mctsPregnantMother.setWard(record.getWard());
-			// Parse the LmpDate to dd-mm-YYYY format and logs an error if not
-			// in correct format
-			try {
-				mctsPregnantMother
-						.setLmpDate(new SimpleDateFormat("yyyy-MM-dd",
-								Locale.ENGLISH).parse(record.getLMPDate()));
-				LOGGER.debug("LMP Date is: "
-						+ mctsPregnantMother.getLmpDate().toString());
-			} catch (ParseException e) {
-				LOGGER.error(String
-						.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
-								record.getLMPDate(), record.getBeneficiaryID()));
-			} catch (NullPointerException e) {
-				//TODO Never catch null pointer exception (runtime exception). Put a null check.
-				LOGGER.error(String
-						.format("Null value received in LMP Date Field"));
-			}
-			// Parse the BirthDate to dd-mm-YYYY format and logs an error if not
-			// in correct format
-			try {
-				mctsPregnantMother.setBirthDate(new SimpleDateFormat(
-						"yyyy-MM-dd", Locale.ENGLISH).parse(record
-						.getBirthdate()));
-				LOGGER.debug("Birth Date is: "
-						+ mctsPregnantMother.getBirthDate().toString());
-			} catch (ParseException e) {
-				LOGGER.error(String
-						.format("Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
-								record.getBirthdate(),
-								record.getBeneficiaryID()));
-			} catch (NullPointerException e) {
-				LOGGER.error(String
-						.format("Null value received in BirthDate Date Field"));
-			}
-			return mctsPregnantMother;
 		} else {
-			LOGGER.error(String
-					.format("Beneficiary with [MctsId:%s] already present in Database. Hence skipping adding this record.",
-							record.getBeneficiaryID()));
-			return null;
-		}}else{
 			LOGGER.error("Beneficiary Id cannot be Null. Data not added to Db");
 			return null;
 		}
-		
 	}
-	
+
+	private void addToMctsPregnantMotherMaster(Record record, Date startDate)
+			throws BeneficiaryException {
+		MctsPregnantMotherMaster mctsPregnantMotherMaster = new MctsPregnantMotherMaster();
+		mctsPregnantMotherMaster.setaNMID(record.getANMID());
+		mctsPregnantMotherMaster.setaSHAID(record.getASHAID());
+		mctsPregnantMotherMaster.setBeneficiaryAddress(record
+				.getBeneficiaryAddress());
+		mctsPregnantMotherMaster.setBeneficiaryID(record.getBeneficiaryID());
+		mctsPregnantMotherMaster
+				.setBeneficiaryName(record.getBeneficiaryName());
+		mctsPregnantMotherMaster
+				.setBeneficiaryType(record.getBeneficiaryType());
+		mctsPregnantMotherMaster.setBirthdate(record.getBirthdate());
+		mctsPregnantMotherMaster.setBlockID(record.getBlockID());
+		mctsPregnantMotherMaster.setBlockName(record.getBlockName());
+		mctsPregnantMotherMaster.setCategory(record.getCategory());
+		mctsPregnantMotherMaster.setDistrictID(record.getDistrictID());
+		mctsPregnantMotherMaster.setDistrictName(record.getDistrictName());
+		mctsPregnantMotherMaster.setEconomicStatus(record.getEconomicStatus());
+		mctsPregnantMotherMaster.seteIDNumber(record.getEIDNumber());
+		mctsPregnantMotherMaster.setEmail(record.getEmail());
+		mctsPregnantMotherMaster.setFacilityID(record.getFacilityID());
+		mctsPregnantMotherMaster.setFacilityName(record.getFacilityName());
+		mctsPregnantMotherMaster.setFatherHusbandName(record
+				.getFatherHusbandName());
+		mctsPregnantMotherMaster.setGender(record.getGender());
+		mctsPregnantMotherMaster.setlMPDate(record.getLMPDate());
+		mctsPregnantMotherMaster.setlMPDate(record.getMobileno());
+		mctsPregnantMotherMaster.setPinCode(record.getPinCode());
+		mctsPregnantMotherMaster.setStateID(record.getStateID());
+		mctsPregnantMotherMaster.setStateName(record.getStateName());
+		mctsPregnantMotherMaster.setSubCentreID(record.getSubCentreID());
+		mctsPregnantMotherMaster.setSubCentreName(record.getSubCentreName());
+		mctsPregnantMotherMaster.setTehsilID(record.getTehsilID());
+		mctsPregnantMotherMaster.setTehsilName(record.getTehsilName());
+		mctsPregnantMotherMaster.setTown(record.getTown());
+		mctsPregnantMotherMaster.setuIDNumber(record.getUIDNumber());
+		mctsPregnantMotherMaster.setVillageID(record.getVillageID());
+		mctsPregnantMotherMaster.setVillageName(record.getVillageName());
+		mctsPregnantMotherMaster.setWard(record.getWard());
+		mctsPregnantMotherMaster.setCreationTime(startDate);
+		careDataService.saveOrUpdate(mctsPregnantMotherMaster);
+	}
+
+	private void addLocationToDbIfNotPresent(Record record)
+			throws BeneficiaryException {
+		LocationDataCSV locationDataCSV = new LocationDataCSV();
+		locationDataCSV.setSID(record.getStateID());
+		locationDataCSV.setState(record.getStateName());
+		locationDataCSV.setDCode(record.getDistrictID());
+		locationDataCSV.setDistrict(record.getDistrictName());
+		locationDataCSV.setVCode(record.getVillageID());
+		locationDataCSV.setVillage(record.getVillageName());
+		locationDataCSV.setSUBCenter(record.getSubCentreName());
+		locationDataCSV.setSID(record.getSubCentreID());
+		locationDataCSV.setBID(record.getBlockID());
+		locationDataCSV.setBlock(record.getBlockName());
+		locationDataCSV.setTCode(record.getTehsilID());
+		locationDataCSV.setTaluka_Name(record.getTehsilName());
+		locationDataCSV.setPHC(record.getFacilityName());
+		locationDataCSV.setPID(record.getFacilityID());
+		locationDataPopulator.addLocationToDb(locationDataCSV);
+	}
+
+	/**
+	 * Maps MctsHealthworkerId to MotechHealthworkerId Creates new HealthWorker
+	 * if the healthworker by Id passed doesnot exist and return its Id
+	 * 
+	 * @param mctsHealthWorkerId
+	 * @return
+	 * @throws Exception
+	 */
+	private MctsHealthworker getHealthWorkerId(String mctsHealthWorkerId,
+			Location location, String type) throws Exception {
+		try {
+			MctsHealthworker mctsHealthworker = careDataService
+					.findEntityByField(MctsHealthworker.class,
+							"healthworkerId",
+							Integer.parseInt(mctsHealthWorkerId));
+			// Checks if HealthWorker exist in db...if not then logs an error
+			// message
+			if (mctsHealthworker == null) {
+				LOGGER.error(String
+						.format("HealthWorker with HealthworkerId: %s doesNot exist in DataBase. Adding new record in HealthWorker Table",
+								mctsHealthWorkerId));
+				mctsHealthworker = new MctsHealthworker();
+				mctsHealthworker.setGfAddress(mctsHealthWorkerId);
+				mctsHealthworker.setMctsPhc(location.getMctsPhc());
+				mctsHealthworker.setMctsSubcenter(location.getMctsSubcenter());
+				mctsHealthworker.setMctsVillage(location.getMctsVillage());
+				mctsHealthworker.setType(type);
+				careDataService.saveOrUpdate(mctsHealthworker);
+				return careDataService.findEntityByField(
+						MctsHealthworker.class, "healthworkerId",
+						Integer.parseInt(mctsHealthWorkerId));
+			} else {
+				return mctsHealthworker;
+			}
+		} catch (NumberFormatException e) {
+			LOGGER.error(String.format("Invalid HealthWorkerId received [%s]",
+					mctsHealthWorkerId));
+		} catch (BeneficiaryException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return null;
+	}
+
+	private Location getUniqueLocationMap(Record record)
+			throws BeneficiaryException {
+		Location location = new Location();
+		location.setMctsState(careDataService.findEntityByField(
+				MctsState.class, "stateId", record.getStateID()));
+		try {
+			// sets District
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			params.put("mctsState", location.getMctsState().getId());
+			params.put("disctrictId", Integer.parseInt(record.getDistrictID()));
+			location.setMctsDistrict(careDataService
+					.findListOfEntitiesByMultipleField(MctsDistrict.class,
+							params).get(0));
+			// sets Taluka
+			params = new HashMap<String, Object>();
+			params.put("mctsDistrict", location.getMctsDistrict());
+			params.put("talukId", Integer.parseInt(record.getTehsilID()));
+			location.setMctsTaluk(careDataService
+					.findListOfEntitiesByMultipleField(MctsTaluk.class, params)
+					.get(0));
+			// sets Village
+			params = new HashMap<String, Object>();
+			params.put("mctsTaluk", location.getMctsTaluk());
+			params.put("villageId", Integer.parseInt(record.getVillageID()));
+			location.setMctsVillage(careDataService
+					.findListOfEntitiesByMultipleField(MctsVillage.class,
+							params).get(0));
+			// sets HealthBlock
+			params = new HashMap<String, Object>();
+			params.put("mctsTaluk", location.getMctsTaluk());
+			params.put("healthblockId", Integer.parseInt(record.getBlockID()));
+			location.setMctsHealthblock(careDataService
+					.findListOfEntitiesByMultipleField(MctsHealthblock.class,
+							params).get(0));
+			// sets Phc
+			params = new HashMap<String, Object>();
+			params.put("mctsHealthblock", location.getMctsHealthblock());
+			params.put("phcId", Integer.parseInt(record.getFacilityID()));
+			location.setMctsPhc(careDataService
+					.findListOfEntitiesByMultipleField(MctsPhc.class, params)
+					.get(0));
+			// sets SubCenter
+			params = new HashMap<String, Object>();
+			params.put("mctsPhc", location.getMctsPhc());
+			params.put("subcenterId", Integer.parseInt(record.getSubCentreID()));
+			location.setMctsSubcenter(careDataService
+					.findListOfEntitiesByMultipleField(MctsSubcenter.class,
+							params).get(0));
+		} catch (NumberFormatException e) {
+			LOGGER.error(String.format("Invalid Location Code Received"), e);
+			// TODO throw proper Exception
+		}
+		return location;
+	}
+
 	/**
 	 * 
 	 * @param mctsPregnantMother
-	 * @return 
-	 * @throws BeneficiaryException 
+	 * @return
+	 * @throws BeneficiaryException
 	 */
 	public String transliterate(String word) throws BeneficiaryException {
-			LOGGER.info("Creating new transliteration");
-			String hindi = transliterationService.transliterate(word);
-			LOGGER.debug(String.format("Tranlation for [%s] received is [%s]", word, hindi));
-			return hindi;
+		LOGGER.info("Creating new transliteration");
+		String hindi = transliterationService.transliterate(word);
+		LOGGER.debug(String.format("Tranlation for [%s] received is [%s]",
+				word, hindi));
+		return hindi;
 	}
 
 	/**
 	 * Write the Beneficiary Data to a new XML file with timeStamp
+	 * 
 	 * @param beneficiaryData
 	 * @throws Exception
 	 */
@@ -349,19 +481,23 @@ public class MCTSBeneficiarySyncService {
 
 	/**
 	 * Sets startDate and endDate to be sent to hub
-	 * @throws BeneficiaryException 
+	 * 
+	 * @throws BeneficiaryException
 	 */
-	protected void setHubTransactionDates(Date startDate, Date endDate) throws BeneficiaryException{
+	protected void setHubTransactionDates(Date startDate, Date endDate)
+			throws BeneficiaryException {
 		HubTransaction hubTransaction = new HubTransaction();
 		hubTransaction.setStartDate(startDate);
 		hubTransaction.setEndDate(endDate);
 		hubTransaction.setIsNotified(false);
 		careDataService.saveOrUpdate(hubTransaction);
 	}
-	
+
 	/**
-	 * Notifies the Hub when the Updates received from Mcts with Url to call Back
-	 * @throws Exception 
+	 * Notifies the Hub when the Updates received from Mcts with Url to call
+	 * Back
+	 * 
+	 * @throws Exception
 	 */
 	protected void notifyHub() throws Exception {
 		String updateUrl = propertyReader.getBenificiaryUpdateTopicUrlForHub();

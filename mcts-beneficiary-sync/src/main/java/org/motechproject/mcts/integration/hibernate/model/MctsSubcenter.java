@@ -25,6 +25,10 @@ import javax.persistence.UniqueConstraint;
 		"subcenter_id", "phc_id" }))
 public class MctsSubcenter implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6268048461611026059L;
 	private Integer id;
 	private MctsPhc mctsPhc;
 	private int subcenterId;

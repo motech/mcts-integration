@@ -2,6 +2,7 @@ package org.motechproject.mcts.integration.service;
 
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -116,6 +117,10 @@ public class CareDataService {
 		return careDataRepository.findListOfEntitiesByField(entityClass, fieldName,
 			fieldValue);
 	}
+    
+    public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass, HashMap<String, Object> fieldParams) {
+    	return careDataRepository.findListOfEntitiesByMultipleField(entityClass, fieldParams);
+    }
 
     /**
      * Method to Save of Update the entity in Db

@@ -11,69 +11,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Record {
 
 	private String stateID;
-
 	private String stateName;
-
 	private String districtID;
-
 	private String districtName;
-
 	private String blockID;
-
 	private String blockName;
-
 	private String tehsilID;
-
 	private String tehsilName;
-
 	private String facilityID;
-
 	private String facilityName;
-
 	private String subCentreID;
-
 	private String subCentreName;
-
 	private String town;
-
 	private String villageID;
-
 	private String villageName;
-
 	private String aNMID;
-
 	private String aSHAID;
-
 	private String ward;
-
 	private String beneficiaryType;
-
 	private String beneficiaryID;
-
 	private String beneficiaryName;
-
 	private String uIDNumber;
-
 	private String eIDNumber;
-
 	private String birthdate;
-
 	private String gender;
-
 	private String fatherHusbandName;
-
 	private String beneficiaryAddress;
-
 	private String pinCode;
-
 	private String category;
-
 	private String economicStatus;
-
 	private String mobileno;
-
 	private String email;
-
 	private String lMPDate;
 
 	public Record() {
