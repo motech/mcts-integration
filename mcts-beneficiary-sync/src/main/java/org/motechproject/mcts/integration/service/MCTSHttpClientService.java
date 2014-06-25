@@ -77,6 +77,9 @@ public class MCTSHttpClientService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity httpEntity = new HttpEntity(requestBody, httpHeaders);
+        //TODO get the object instead of XML String. Also we are not checking if the response
+        //is in XML/JSON or any other format. We are deserializing to object assuming it is an XML 
+        
         ResponseEntity<String> response = restTemplate.exchange(propertyReader.getBeneficiaryListRequestUrl(), HttpMethod.POST, httpEntity, String.class);
 
         if (response == null)
