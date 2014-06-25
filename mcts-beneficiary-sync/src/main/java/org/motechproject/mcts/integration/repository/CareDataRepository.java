@@ -1,8 +1,8 @@
 package org.motechproject.mcts.integration.repository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -19,7 +19,6 @@ import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
@@ -149,6 +148,22 @@ public class CareDataRepository {
 			Object fieldValue) {
 		Criteria criteria = getCurrentSession().createCriteria(entityClass);
 		criteria.add(Restrictions.eq(fieldName, fieldValue));
+		return (List<T>) criteria.list();
+	}
+	
+	/**
+	 * 
+	 * @param entityClass
+	 * @param fieldName
+	 * @param fieldValue
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass, HashMap<String, Object> fieldParams) {
+		Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		for (String key : fieldParams.keySet()){
+			criteria.add(Restrictions.eq(key, fieldParams.get(key)));
+		}
 		return (List<T>) criteria.list();
 	}
 
