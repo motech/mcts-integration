@@ -64,6 +64,7 @@ public class MotechBeneficiarySyncService {
 				"Found %s beneficiary records to sync to MCTS",
 				beneficiariesToSync.size()));
 		if (beneficiariesToSync.isEmpty()) {
+			//TODO send this message to the client
 			LOGGER.info("No records found to sync. Not sending service update request to MCTS");
 			return;
 		}

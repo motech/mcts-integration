@@ -96,7 +96,7 @@ public class CareDataRepository {
 				+ "LEFT JOIN bp_form bp on bp.case_id=updatable_cases.mother_case_id\n"
 				+ "JOIN report.mcts_pregnant_mother mother ON updatable_cases.mother_case_id = mother.case_id\n"
 				+ "WHERE (mother.id, service_type) NOT IN (SELECT * FROM mcts_updated_services);\n";
-
+		//TODO split this statement. 
 		return mapToBeneficiaryList(getCurrentSession().createSQLQuery(
 				queryString).list());
 	}

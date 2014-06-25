@@ -64,10 +64,12 @@ public class MCTSBeneficiarySyncService {
 		}
 		NewDataSet newDataSet = null;
 		try {
+			//TODO get the deserialized object from the MCTS service instead of XML string
 			newDataSet = XmlStringToObjectConverter.stringXmlToObject(NewDataSet.class,
 					beneficiaryData);
 			if (newDataSet.getRecords().size() == 0) {
 				LOGGER.info("No New Updates Received. Exiting");
+				//TODO instead of returning from this method we need to send this message to client
 				return;
 			}
 		} catch (Exception e) {
@@ -151,6 +153,7 @@ public class MCTSBeneficiarySyncService {
 		Date birthDate = null;
 		Date lmpDate = null;
 		if (record.getBeneficiaryID() != null && record.getBeneficiaryID().length()==18){//checks that Beneficiary Id should be 18 char long
+			//TODO split the expression in if check. First get the entity and check for null
 		if ((mctsPregnantMother = careDataService.findEntityByField(
 				MctsPregnantMother.class, "mctsId", record.getBeneficiaryID())) == null) {//checks if beneficiary already present in db with same mctsId
 			mctsPregnantMother = new MctsPregnantMother();
@@ -180,6 +183,8 @@ public class MCTSBeneficiarySyncService {
 				mctsHealthworkerByAnmId = careDataService.findEntityByField(
 						MctsHealthworker.class, "healthworkerId",
 						Integer.parseInt(record.getANMID()));
+				//TODO don't catch the runtime exceptions (NumberFormatException). Use regex to check if field is parseable to int
+				//Do this wherever applicable
 			} catch (NumberFormatException e) {
 				LOGGER.error(String.format("Invalid ANMID received [%s]",
 						record.getANMID()));
@@ -266,6 +271,7 @@ public class MCTSBeneficiarySyncService {
 						.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 								record.getLMPDate(), record.getBeneficiaryID()));
 			} catch (NullPointerException e) {
+				//TODO Never catch null pointer exception (runtime exception). Put a null check.
 				LOGGER.error(String
 						.format("Null value received in LMP Date Field"));
 			}
