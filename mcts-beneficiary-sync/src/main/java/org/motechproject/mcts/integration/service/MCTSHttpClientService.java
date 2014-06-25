@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.motechproject.mcts.integration.commcare.Data;
 
 @Service
 public class MCTSHttpClientService {
@@ -50,6 +51,19 @@ public class MCTSHttpClientService {
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();
        
+        
+    }
+    
+    public HttpStatus syncToCommcare(Data data) {
+    	HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+        
+        ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
+        if (response != null)
+            LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+        return response.getStatusCode();
+
         
     }
 

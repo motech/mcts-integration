@@ -23,6 +23,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
+import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -337,7 +338,9 @@ public class CareDataRepository {
 		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+id+"'";
 		LOGGER.debug("query : "+queryString);
 		List<String> caseGroupId = getCurrentSession().createQuery(queryString).list();
-		
+		if (caseGroupId.size() == 0) {
+			return null;
+		}
 		return caseGroupId.get(0);
 	}
 
@@ -348,6 +351,32 @@ public class CareDataRepository {
 		return mother;
 	}
 
+	public MctsPregnantMother getMotherFromPrimaryId(int primaryId) {
+		String queryString = "from MctsPregnantMother mother where mother.id='"+primaryId+"'";
+		List<MctsPregnantMother> mother = getCurrentSession().createQuery(queryString).list();
+		if (mother.size() == 0) {
+			return null;
+		}
+		return mother.get(0);
+		
+	}
 
-	
+	public MotherCase matchMctsPersonawithMotherCase(int hhNum,
+			int familyNum) {
+		String queryString = "from MotherCase mcase where mcase.hhNumber='"+hhNum+"' and mcase.familyNumber='"+familyNum+"'";
+		List<MotherCase> motherCase = getCurrentSession().createQuery(queryString).list();
+		if (motherCase.size() == 0) {
+			return null;
+		}
+		else if (motherCase.size()>1) 
+		{
+			LOGGER.info("error : multiple match found");
+			return null;
+		}
+		else 
+		{
+			return motherCase.get(0);
+	}
+
+}
 }
