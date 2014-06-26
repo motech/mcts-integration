@@ -13,7 +13,7 @@ public enum ApplicationErrors implements BeneficiaryErrors {
 	NUMBER_OFARGUMENTS_DOES_NOT_MATCH(3005,"Error while matching number of arguments of csv with the DTO",HttpStatus.INTERNAL_SERVER_ERROR),
 	CLASS_AND_OBJECT_DOES_NOT_MATCH(4001, "Passed Object and Class don't match. Can't write to XML",HttpStatus.INTERNAL_SERVER_ERROR),
 	JAXB_ERROR(5001,"JAX_B error",HttpStatus.INTERNAL_SERVER_ERROR),
-	PROPERTY_ERROR(6001,"Property Error",HttpStatus.INTERNAL_SERVER_ERROR);
+	PROPERTY_ERROR(7001,"Property Error",HttpStatus.INTERNAL_SERVER_ERROR);
 	private final int code;
 	private String message;
 	private HttpStatus httpStatus;

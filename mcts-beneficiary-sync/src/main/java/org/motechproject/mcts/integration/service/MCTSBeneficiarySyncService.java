@@ -94,6 +94,7 @@ public class MCTSBeneficiarySyncService {
 		requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
 		requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
 		return mctsHttpClientService.syncFrom(requestBody);
+		
 	}
 
 	/**
