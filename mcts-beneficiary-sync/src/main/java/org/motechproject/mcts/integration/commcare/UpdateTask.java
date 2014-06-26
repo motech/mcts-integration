@@ -10,8 +10,6 @@ public class UpdateTask {
 	
     private String caseName;
 	
-    private String dateOpened;
-	
     private String ownerId;
 	
     private String mctsFullname;
@@ -47,13 +45,6 @@ public class UpdateTask {
 	@XmlElement(name = "case_name")
 	public void setCaseName(String caseName) {
 		this.caseName = caseName;
-	}
-	public String getDateOpened() {
-		return dateOpened;
-	}
-	@XmlElement(name = "date_opened")
-	public void setDateOpened(String dateOpened) {
-		this.dateOpened = dateOpened;
 	}
 	public String getOwnerId() {
 		return ownerId;

@@ -14,7 +14,7 @@
     <osgi:reference id="eventListenerRegistry"
                     interface="org.motechproject.event.listener.EventListenerRegistryService"/>
             
-    <osgi:reference id="TransliterationService"
+    <osgi:reference id="transliterationService"
         			interface="org.motechproject.transliteration.service.TransliterationService" />
 
     <osgi:reference id="platformSettingsService"

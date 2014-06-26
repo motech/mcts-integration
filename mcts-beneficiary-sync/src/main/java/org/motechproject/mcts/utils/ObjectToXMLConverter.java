@@ -12,8 +12,12 @@ import java.io.StringWriter;
 import java.net.URISyntaxException;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.springframework.stereotype.Component;
 
 //import com.sun.xml.bind.marshaller.DataWriter;
@@ -34,27 +38,35 @@ public class ObjectToXMLConverter {
 	 * @throws Exception
 	 */
 	public static String converObjectToXml(Object dataToWrite, Class<?> classInstance)
-			throws Exception {
+			throws BeneficiaryException {
 		if (dataToWrite.getClass() != classInstance) {
-			throw new Exception(
-					"Passed Object and Class don't match. Can't write to XML.");
+			throw new BeneficiaryException(ApplicationErrors.CLASS_AND_OBJECT_DOES_NOT_MATCH);
 		} else {
-			JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			try {
+				JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
+				Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-            // Set UTF-8 Encoding
-			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            
-			  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
-            StringWriter stringWriter = new StringWriter();
-        //   PrintWriter printWriter = new PrintWriter(stringWriter);
+	            // Set UTF-8 Encoding
+				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+	            
+				  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
+	            StringWriter stringWriter = new StringWriter();
+	        //   PrintWriter printWriter = new PrintWriter(stringWriter);
+				
+				//TODO naveen - commented 3 lines below
+	            //DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
+	            
+				//jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
+				jaxbMarshaller.marshal(dataToWrite, stringWriter);
+				return stringWriter.toString();
+			}
+			catch (PropertyException e) {
+				throw new BeneficiaryException(ApplicationErrors.PROPERTY_ERROR, e);
+			}
+			catch (JAXBException e) {
+				throw new BeneficiaryException(ApplicationErrors.JAXB_ERROR, e);
+			}
 			
-			//TODO naveen - commented 3 lines below
-            //DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
-            
-			//jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
-			jaxbMarshaller.marshal(dataToWrite, stringWriter);
-			return stringWriter.toString();
 		}
 	}
 

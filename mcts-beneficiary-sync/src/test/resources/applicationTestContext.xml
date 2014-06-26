@@ -19,7 +19,7 @@
 	<context:property-placeholder location="classpath:postgres.properties"
 		ignore-unresolvable="true" />
         <import resource="classpath:applicationHibernateContext.xml" />
-        
+       
         <bean id="locationDataPopulator" class="org.motechproject.mcts.integration.service.LocationDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>
         </bean>

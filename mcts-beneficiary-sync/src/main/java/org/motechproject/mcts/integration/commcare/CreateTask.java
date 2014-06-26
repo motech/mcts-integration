@@ -19,14 +19,14 @@ public class CreateTask {
 	public String getOwnerId() {
 		return ownerId;
 	}
-	@XmlElement(name = "owner_id")
+	@XmlElement(name = "owner_id",nillable=true, required=true)
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
 	public String getCaseName() {
 		return caseName;
 	}
-	 @XmlElement(name = "case_name")
+	 @XmlElement(name = "case_name",nillable=true, required=true)
 	public void setCaseName(String caseName) {
 		this.caseName = caseName;
 	}

@@ -18,8 +18,8 @@
     <mvc:interceptors>
         <bean class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor"/>
     </mvc:interceptors>
-    <!-- 
-	<context:component-scan base-package="org.motechproject.mcts" /> -->
+    
+	<context:component-scan base-package="org.motechproject.mcts" />
 
 	<util:properties id="beneficiarySyncProperties"
 		location="classpath:/beneficiary_sync.properties" />
@@ -28,7 +28,7 @@
 		properties-ref="hibernateProperties" ignore-unresolvable="true" />
 	<context:property-placeholder location="classpath:postgres.properties"
 		ignore-unresolvable="true" />
-
+	<bean id="transliterationService" class="org.motechproject.transliteration.service.TransliterationServiceImpl"></bean>
 	<bean id="httpComponentsClientHttpRequestFactory"
 		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
 
