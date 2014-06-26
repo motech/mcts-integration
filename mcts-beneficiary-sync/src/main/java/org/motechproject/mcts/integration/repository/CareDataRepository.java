@@ -360,7 +360,9 @@ public class CareDataRepository {
 	}
 
 	public List<MctsPregnantMother> getMctsPregnantMother() {
-		String queryString = "from MctsPregnantMother mother";
+		String caseId = null;
+		String queryString = "from MctsPregnantMother mother where mother.mctsPersonaCaseUId="+caseId+"";
+		LOGGER.debug("query : "+queryString);
 		List<MctsPregnantMother> mother = getCurrentSession().createQuery(queryString).list();
 		
 		return mother;

@@ -1,30 +1,21 @@
 package org.motechproject.mcts.integration.commcare;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.map.annotate.JacksonInject;
-
 @XmlRootElement(name = "data")
-public class Data {
+public class UpdateData {
 	private String xmlns;
-	
-	List<Case> cases;
-	
-	
-	public List<Case> getCases() {
-		return cases;
-	}
-	
-    @XmlElement(name="case")
-	public void setCases(List<Case> cases) {
-		this.cases = cases;
-	}
-
 	private Meta meta;
+	private Case caseTask;
+	public Case getCaseTask() {
+		return caseTask;
+	}
+	@XmlElement(name ="case")
+	public void setCaseTask(Case caseTask) {
+		this.caseTask = caseTask;
+	}
 	public String getXmlns() {
 		return xmlns;
 	}
@@ -32,7 +23,6 @@ public class Data {
 	public void setXmlns(String xmlns) {
 		this.xmlns = xmlns;
 	}
-
 	public Meta getMeta() {
 		return meta;
 	}
@@ -40,6 +30,5 @@ public class Data {
 	public void setMeta(Meta meta) {
 		this.meta = meta;
 	}
-	
 	
 }
