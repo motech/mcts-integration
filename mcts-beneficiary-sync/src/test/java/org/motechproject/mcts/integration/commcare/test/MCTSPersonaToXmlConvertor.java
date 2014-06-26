@@ -1,11 +1,9 @@
 package org.motechproject.mcts.integration.commcare.test;
 
-import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
 import org.motechproject.mcts.integration.commcare.UpdateCaseXmlService;
-import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
@@ -14,7 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:applicationBeneficiarySyncContextTest.xml"})
 public class MCTSPersonaToXmlConvertor {
@@ -52,8 +51,9 @@ public class MCTSPersonaToXmlConvertor {
 	}*/
 	@Test
 	public void convertUpdatetoXml() throws Exception {
-		MctsPregnantMother m = careDataRepository.getMotherFromPrimaryId(21);
-		
+		MctsPregnantMother m = new MctsPregnantMother();
+		m.setId(1);
+		m.setName("mother");
 		t.updateXml(m);
 		
 	}
