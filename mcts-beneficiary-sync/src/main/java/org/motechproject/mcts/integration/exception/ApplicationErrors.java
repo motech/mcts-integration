@@ -10,8 +10,12 @@ public enum ApplicationErrors implements BeneficiaryErrors {
 	FILE_CLOSING_FAILED(3004,"Error in closing the file",HttpStatus.INTERNAL_SERVER_ERROR),
 	FILE_READING_WRTING_FAILED(3002,"Error while reading from or writing to file",HttpStatus.INTERNAL_SERVER_ERROR),
 	CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS(3004,"Error while matching csv file header with the DTO",HttpStatus.INTERNAL_SERVER_ERROR),
-	NUMBER_OFARGUMENTS_DOES_NOT_MATCH(3005,"Error while matching number of arguments of csv with the DTO",HttpStatus.INTERNAL_SERVER_ERROR),
-	CLASS_AND_OBJECT_DOES_NOT_MATCH(4001, "Passed Object and Class don't match. Can't write to XML",HttpStatus.INTERNAL_SERVER_ERROR),
+	NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH(3005,"Error while matching number of arguments of csv with the DTO",HttpStatus.INTERNAL_SERVER_ERROR),
+	KEY_FIELD_DOESNOT_EXIST(3006,"Some field(s) is/are missing ",HttpStatus.INTERNAL_SERVER_ERROR),
+	FIELD_MISMATCH(3007,"received field and existing field doesn't match",HttpStatus.INTERNAL_SERVER_ERROR),
+	INVALID_ARGUMENT(3008,"Argument Value received does not satisfy the constraints", HttpStatus.INTERNAL_SERVER_ERROR),
+	CONNECTION_ERROR(3009,"Cannot create connection with third party",HttpStatus.INTERNAL_SERVER_ERROR),
+	CLASS_AND_OBJECT_DOES_NOT_MATCH(3010,"Class and Object are not of same type",HttpStatus.INTERNAL_SERVER_ERROR),
 	JAXB_ERROR(5001,"JAX_B error",HttpStatus.INTERNAL_SERVER_ERROR),
 	PROPERTY_ERROR(7001,"Property Error",HttpStatus.INTERNAL_SERVER_ERROR);
 	private final int code;
