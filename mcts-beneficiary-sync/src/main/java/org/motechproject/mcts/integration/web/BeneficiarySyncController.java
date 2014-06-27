@@ -114,8 +114,7 @@ public class BeneficiarySyncController {
 		DateTime parsedStartDate = parseDate(startDate);
 		DateTime parsedEndDate = parseDate(endDate);
 		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
-		mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-		return "Updates Received Successfully";
+		return mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
 	}
 	
 	/**

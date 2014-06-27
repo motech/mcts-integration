@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -15,15 +16,16 @@ import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.integration.service.StubDataService;
 import org.motechproject.mcts.utils.CommcareConstants;
+import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpStatus;
 
 /**… abhi niche ayega kya??
 [3:10:25 PM] k karthik: @mohit??
@@ -64,9 +66,8 @@ public class CreateCaseXmlService {
 	@Autowired
 	FixtureDataService fixtureDataService;
 
+	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
 	public void createCaseXml() throws BeneficiaryException   {
-
-		
 		List<MctsPregnantMother> mctsPregnantMother = careDataRepository
 				.getMctsPregnantMother();
 		LOGGER.debug("size :" + mctsPregnantMother.size());

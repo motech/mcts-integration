@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.utils.CommcareConstants;
+import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -30,12 +33,17 @@ public class UpdateCaseXmlService {
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(MCTSFormUpdateService.class);
 
-
 	@Autowired
 	PropertyReader propertyReader;
 	
 	@Autowired
 	FixtureDataService fixtureDataService;
+	
+	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
+	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+		MctsPregnantMother mctsPregnantMother = (MctsPregnantMother)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
+		updateXml(mctsPregnantMother);
+	}
 
 	public void updateXml(MctsPregnantMother mctsPregnantMother) throws BeneficiaryException
 			 {
