@@ -5,9 +5,11 @@ package org.motechproject.mcts.integration.service;
 
 import java.io.UnsupportedEncodingException;
 
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
-import org.motechproject.mcts.integration.exception.BeneficiaryErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,11 @@ public class Publisher {
 			.getLogger(Publisher.class);
 	private static String URL;
 
+	@MotechListener(subjects=MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
+	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+		String url = (String)motechEvent.getParameters().get(MCTSEventConstants.PARAM_PUBLISHER_URL);
+		publish(url);
+	}
 	/**
 	 * Method to <code>Publish</code> updates to hub along with
 	 * <code>callBack URL</code> and to <code>retry</code> sending notifications

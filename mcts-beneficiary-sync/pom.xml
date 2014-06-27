@@ -118,6 +118,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motech-platform-event</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.unitils</groupId>
             <artifactId>unitils-core</artifactId>
             <version>3.3</version>
@@ -222,6 +227,7 @@
                             org.postgresql,
 							org.motechproject.scheduler,
 							org.motechproject.transliteration.service,
+							org.motechproject.event.listener,
                             *
                         </Import-Package>
                     </instructions>
