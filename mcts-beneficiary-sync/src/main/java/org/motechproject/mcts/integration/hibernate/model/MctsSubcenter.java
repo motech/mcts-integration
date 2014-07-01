@@ -33,6 +33,7 @@ public class MctsSubcenter implements java.io.Serializable {
 	private MctsPhc mctsPhc;
 	private int subcenterId;
 	private String name;
+	private boolean status;
 	private Set<MctsVillage> mctsVillages = new HashSet<MctsVillage>(0);
 	private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
 			0);
@@ -48,12 +49,13 @@ public class MctsSubcenter implements java.io.Serializable {
 
 	public MctsSubcenter(MctsPhc mctsPhc, int subcenterId, String name,
 			Set<MctsVillage> mctsVillages,
-			Set<MctsHealthworker> mctsHealthworkers) {
+			Set<MctsHealthworker> mctsHealthworkers, boolean status) {
 		this.mctsPhc = mctsPhc;
 		this.subcenterId = subcenterId;
 		this.name = name;
 		this.mctsVillages = mctsVillages;
 		this.mctsHealthworkers = mctsHealthworkers;
+		this.status = status;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_subcenter_id_seq")
@@ -94,6 +96,15 @@ public class MctsSubcenter implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Column(name = "status")
+	public boolean getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsSubcenter")

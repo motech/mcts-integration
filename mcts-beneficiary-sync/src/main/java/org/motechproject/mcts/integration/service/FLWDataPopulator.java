@@ -96,7 +96,7 @@ public class FLWDataPopulator {
 					MctsVillage mctsVillage = careDataRepository.getMctsVillage(villageId);
 					
 					MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", healthworkerId);
-					if(mctsHealthworker == null) {
+					if(mctsHealthworker == null || (mctsHealthworker!=null && !mctsHealthworker.getStatus())) {
 						 mctsHealthworker = new MctsHealthworker(
 								mctsPhc, healthworkerId, name, sex, type);
 						
@@ -104,6 +104,7 @@ public class FLWDataPopulator {
 						mctsHealthworker.setHusbandName(husbandName);
 						mctsHealthworker.setAadharNo(aadharNo);
 						mctsHealthworker.setGfAddress(gfAddress);
+						mctsHealthworker.setStatus(true);
 						if(mctsSubcenre!=null) {
 							mctsHealthworker.setMctsSubcenter(mctsSubcenre);
 						}

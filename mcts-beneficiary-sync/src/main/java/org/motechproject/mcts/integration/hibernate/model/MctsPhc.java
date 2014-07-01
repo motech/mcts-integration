@@ -29,6 +29,7 @@ public class MctsPhc implements java.io.Serializable {
 	private MctsHealthblock mctsHealthblock;
 	private int phcId;
 	private String name;
+	private boolean status;
 	private Set<MctsSubcenter> mctsSubcenters = new HashSet<MctsSubcenter>(0);
 	private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
 			0);
@@ -44,12 +45,13 @@ public class MctsPhc implements java.io.Serializable {
 
 	public MctsPhc(MctsHealthblock mctsHealthblock, int phcId, String name,
 			Set<MctsSubcenter> mctsSubcenters,
-			Set<MctsHealthworker> mctsHealthworkers) {
+			Set<MctsHealthworker> mctsHealthworkers, boolean status) {
 		this.mctsHealthblock = mctsHealthblock;
 		this.phcId = phcId;
 		this.name = name;
 		this.mctsSubcenters = mctsSubcenters;
 		this.mctsHealthworkers = mctsHealthworkers;
+		this.status = status;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_phc_id_seq")
@@ -90,6 +92,15 @@ public class MctsPhc implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Column(name = "status")
+	public boolean getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsPhc")

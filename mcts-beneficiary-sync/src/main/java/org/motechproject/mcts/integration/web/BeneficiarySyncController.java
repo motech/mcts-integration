@@ -99,13 +99,13 @@ public class BeneficiarySyncController {
 	 * @param startDate
 	 * @param endDate
 	 * @return
-	 * @throws Exception
+	 * @throws BeneficiaryException
 	 */
 	@RequestMapping(value = "syncFrom", method = RequestMethod.GET)
-	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
 	public String syncFrom(@RequestParam("startDate") String startDate,
-			@RequestParam("endDate") String endDate) throws Exception {
+			@RequestParam("endDate") String endDate) throws BeneficiaryException{
 		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
 
 		validateDateFormat(startDate);

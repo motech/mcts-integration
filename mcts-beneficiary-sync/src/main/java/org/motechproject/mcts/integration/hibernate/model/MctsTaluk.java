@@ -29,6 +29,7 @@ public class MctsTaluk implements java.io.Serializable {
 	private MctsDistrict mctsDistrict;
 	private int talukId;
 	private String name;
+	private boolean status;
 	private Set<MctsHealthblock> mctsHealthblocks = new HashSet<MctsHealthblock>(
 			0);
 	private Set<MctsVillage> mctsVillages = new HashSet<MctsVillage>(0);
@@ -43,12 +44,13 @@ public class MctsTaluk implements java.io.Serializable {
 	}
 
 	public MctsTaluk(MctsDistrict mctsDistrict, int talukId, String name,
-			Set<MctsHealthblock> mctsHealthblocks, Set<MctsVillage> mctsVillages) {
+			Set<MctsHealthblock> mctsHealthblocks, Set<MctsVillage> mctsVillages, boolean status) {
 		this.mctsDistrict = mctsDistrict;
 		this.talukId = talukId;
 		this.name = name;
 		this.mctsHealthblocks = mctsHealthblocks;
 		this.mctsVillages = mctsVillages;
+		this.status = status;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_taluk_id_seq")
@@ -89,6 +91,15 @@ public class MctsTaluk implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Column(name = "status")
+	public boolean getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsTaluk")
