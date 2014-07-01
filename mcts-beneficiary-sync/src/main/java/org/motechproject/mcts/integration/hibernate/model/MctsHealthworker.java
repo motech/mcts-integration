@@ -39,6 +39,7 @@ public class MctsHealthworker implements java.io.Serializable {
 	private String aadharNo;
 	private String gfAddress;
 	private String careGroupid;
+	private boolean status;
 	private Set<MctsPregnantMother> mctsPregnantMothersForAshaId = new HashSet<MctsPregnantMother>(
 			0);
 	private Set<MctsPregnantMother> mctsPregnantMothersForAnmId = new HashSet<MctsPregnantMother>(
@@ -61,7 +62,7 @@ public class MctsHealthworker implements java.io.Serializable {
 			String contactNo, char sex, String type, String husbandName,
 			String aadharNo, String gfAddress, String careGroupid,
 			Set<MctsPregnantMother> mctsPregnantMothersForAshaId,
-			Set<MctsPregnantMother> mctsPregnantMothersForAnmId) {
+			Set<MctsPregnantMother> mctsPregnantMothersForAnmId, boolean status) {
 		this.mctsPhc = mctsPhc;
 		this.mctsSubcenter = mctsSubcenter;
 		this.mctsVillage = mctsVillage;
@@ -76,6 +77,7 @@ public class MctsHealthworker implements java.io.Serializable {
 		this.careGroupid = careGroupid;
 		this.mctsPregnantMothersForAshaId = mctsPregnantMothersForAshaId;
 		this.mctsPregnantMothersForAnmId = mctsPregnantMothersForAnmId;
+		this.status = status;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_healthworker_id_seq")
@@ -199,6 +201,15 @@ public class MctsHealthworker implements java.io.Serializable {
 
 	public void setCareGroupid(String careGroupid) {
 		this.careGroupid = careGroupid;
+	}
+
+	@Column(name = "status")
+	public boolean getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsHealthworkerByAshaId")

@@ -25,6 +25,7 @@ public class MctsState implements java.io.Serializable {
 	private Integer id;
 	private int stateId;
 	private String name;
+	private boolean status;
 	private Set<MctsDistrict> mctsDistricts = new HashSet<MctsDistrict>(0);
 
 	public MctsState() {
@@ -35,10 +36,11 @@ public class MctsState implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public MctsState(int stateId, String name, Set<MctsDistrict> mctsDistricts) {
+	public MctsState(int stateId, String name, Set<MctsDistrict> mctsDistricts, boolean status) {
 		this.stateId = stateId;
 		this.name = name;
 		this.mctsDistricts = mctsDistricts;
+		this.status = status;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_state_id_seq")
@@ -69,6 +71,15 @@ public class MctsState implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Column(name = "status")
+	public boolean getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsState")

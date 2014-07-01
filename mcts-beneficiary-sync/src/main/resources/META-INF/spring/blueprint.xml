@@ -26,8 +26,8 @@
                     interface="org.motechproject.batch.service.JobTriggerService"/> 
 
     
-    <osgi:reference id="eventRelay" 
-    interface="org.motechproject.event.listener.EventRelay"/>
+<!--     <osgi:reference id="eventRelay" 
+  					interface="org.motechproject.event.listener.EventRelay"/> -->
 
 	<osgi:reference id="httpAgentServiceOsgi" 
                   interface="org.motechproject.http.agent.service.HttpAgent" />

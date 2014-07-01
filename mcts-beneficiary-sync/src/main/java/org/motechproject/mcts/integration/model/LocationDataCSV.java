@@ -107,6 +107,4 @@ public class LocationDataCSV
 		Village = village;
 	}
 	
-	
-	
 }

@@ -100,9 +100,8 @@ public class LocationDataPopulator {
 			LOGGER.info("Writing locations to database");
 			while ((locationCSV = beanReader
 					.read(LocationDataCSV.class, header)) != null) {
-
-				//System.out.println("count" + count++);
-				addLocationToDb(locationCSV);
+				
+				addLocationToDb(locationCSV, true);
 			}
 
 		}
@@ -141,7 +140,7 @@ public class LocationDataPopulator {
 	 * @throws BeneficiaryException 
 	 * 
 	 */
-	public void addLocationToDb(LocationDataCSV locationCSV) throws BeneficiaryException{
+	public void addLocationToDb(LocationDataCSV locationCSV, boolean status) throws BeneficiaryException{
 		int stateId = locationCSV.getStateID();
 		String StateName = locationCSV.getState();
 		int disctrictId = locationCSV.getDCode();
@@ -159,51 +158,58 @@ public class LocationDataPopulator {
 
 		MctsState mctsState = careDataRepository.findEntityByField(
 				MctsState.class, "stateId", stateId);
-		if (mctsState == null) {
+		if (mctsState == null || (mctsState!=null && !mctsState.getStatus() && status)) {
 			mctsState = new MctsState(stateId, StateName);
+			mctsState.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsState);
 		}
 
 		MctsDistrict mctsDistrict = careDataRepository
 				.findUniqueDistrict(disctrictId,mctsState.getId());
-		if ((mctsDistrict == null)) {
+		if (mctsDistrict == null || (mctsDistrict!=null && !mctsDistrict.getStatus() && status)) {
 			mctsDistrict = new MctsDistrict(mctsState, disctrictId,
 					disctrictName);
+			mctsDistrict.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsDistrict);
 		}
 
 		MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,mctsDistrict.getId());
-		if ((mctsTaluk == null)) {
+		if (mctsTaluk == null || (mctsTaluk!=null && !mctsTaluk.getStatus() && status)) {
 			mctsTaluk = new MctsTaluk(mctsDistrict, talukId, talukaName);
+			mctsTaluk.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsTaluk);
 		}
 
 		MctsHealthblock mctsHealthblock = careDataRepository
 				.findUniqueHealthBlock(healthblockId,mctsTaluk.getId());
-		if ((mctsHealthblock == null)) {
+		if (mctsHealthblock == null || (mctsDistrict!=null && !mctsHealthblock.getStatus() && status)) {
 			mctsHealthblock = new MctsHealthblock(mctsTaluk,
 					healthblockId, healthblockName);
+			mctsHealthblock.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsHealthblock);
 		}
 
 		MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,mctsHealthblock.getId());
-		if (mctsPhc == null) {
+		if (mctsPhc == null || (mctsPhc!=null && !mctsPhc.getStatus() && status)) {
 			mctsPhc = new MctsPhc(mctsHealthblock, phcId, phcName);
+			mctsPhc.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsPhc);
 		}
 
 		MctsSubcenter mctsSubcenter = careDataRepository
 				.findUniqueSubcentre(subcenterId,mctsPhc.getId());
-		if (mctsSubcenter == null) {
+		if (mctsSubcenter == null ||(mctsSubcenter!=null && !mctsSubcenter.getStatus() && status)) {
 			mctsSubcenter = new MctsSubcenter(mctsPhc, subcenterId,
 					subcentreName);
+			mctsSubcenter.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsSubcenter);
 		}
 
 		MctsVillage mctsVillage = careDataRepository.findUniqueVillage(villageId,mctsSubcenter.getId(),mctsTaluk.getId());
-		if (mctsVillage == null) {
+		if (mctsVillage == null || (mctsVillage!=null && !mctsVillage.getStatus() && status)) {
 			mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter,
 					villageId, villageName);
+			mctsVillage.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsVillage);
 		}
 	}

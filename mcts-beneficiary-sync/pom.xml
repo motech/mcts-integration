@@ -140,11 +140,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>motech-platform-event</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.unitils</groupId>
             <artifactId>unitils-core</artifactId>
             <version>3.3</version>
@@ -274,14 +269,13 @@
 							<!--org.motechproject.scheduler;version=${motech.version},-->
 							org.motechproject.transliteration.service,
 
+
 							javax.batch.operations,
 							org.motechproject.batch.service;version=${motech.version},,
 							org.motechproject.batch.exception;version=${motech.version},
 							org.motechproject.batch.model;version=${motech.version},
 							org.motechproject.event.listener,
-							*
-
-                        </Import-Package>
+							*                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
