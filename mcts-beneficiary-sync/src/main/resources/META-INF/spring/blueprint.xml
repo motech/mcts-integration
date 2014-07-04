@@ -20,6 +20,7 @@
     <osgi:reference id="platformSettingsService"
                     interface="org.motechproject.server.config.service.PlatformSettingsService"/>
 
+
                     
     <osgi:reference id="jobTriggerService"
                     interface="org.motechproject.batch.service.JobTriggerService"/> 
@@ -27,6 +28,9 @@
     
     <osgi:reference id="eventRelay" 
     interface="org.motechproject.event.listener.EventRelay"/>
+
+	<osgi:reference id="httpAgentServiceOsgi" 
+                  interface="org.motechproject.http.agent.service.HttpAgent" />
 
    <!-- <osgi:reference id="schedulerServiceOsgi" interface="org.motechproject.scheduler.MotechSchedulerService"
                     cardinality="0..1"/> 

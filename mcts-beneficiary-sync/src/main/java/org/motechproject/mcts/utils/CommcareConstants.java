@@ -6,4 +6,5 @@ public class CommcareConstants {
 	public final static String METAXMLNS = "http://openrosa.org/jr/xforms";
 	public final static String DATAXMLNS = "http://bihar.commcarehq.org/mcts/create_mcts_persona";
 	public final static String UPDATEDATAXMLNS = "http://bihar.commcarehq.org/mcts/update_mcts_persona";
+	public final static String POSTURL = "https://www.commcarehq.org/a/bihar/receiver/";
 }

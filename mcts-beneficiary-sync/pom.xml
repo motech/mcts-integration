@@ -40,6 +40,14 @@
             <version>${motech.version}</version>
             
         </dependency>
+         <!-- antlr -->
+      
+      	<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+      	
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-commcare-api</artifactId>
@@ -51,12 +59,29 @@
     <artifactId>motech-transliteration</artifactId>
     <version>0.1-SNAPSHOT</version>
 	</dependency>
+
  <dependency>
         <groupId>org.motechproject</groupId>
     <artifactId>batch</artifactId>
    <version>${motech.version}</version>
 	</dependency>
 
+	<dependency>
+	<groupId>org.motechproject</groupId>
+	<artifactId>motech-http-agent-bundle</artifactId>
+	<version>0.21.1</version>
+	<scope>system</scope>
+     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent-bundle/target/motech-http-agent-bundle-0.21.1.jar</systemPath>
+	</dependency>
+
+
+<dependency>
+	<groupId>org.motechproject</groupId>
+	<artifactId>motech-http-agent</artifactId>
+	<version>0.21.1</version>
+	<scope>system</scope>
+     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent/target/motech-http-agent-0.21.1.jar</systemPath>
+	</dependency>
 
         <dependency>
             <groupId>org.junit</groupId>
@@ -70,7 +95,7 @@
             <scope>test</scope>
             <version>1.8.5</version>
         </dependency>
-<dependency>
+		<dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
                 <version>1.4.9</version>
@@ -240,21 +265,22 @@
                             org.hibernate,
                             org.hibernate.jdbc,
                             org.hibernate.proxy,
+
                            <!-- javassist.util.proxy;version=3.9.0,-->
-                            org.apache.commons.dbcp,
+
+                            org.hibernate.hql.ast,
+                           org.apache.commons.dbcp,
                             org.postgresql,
 							<!--org.motechproject.scheduler;version=${motech.version},-->
 							org.motechproject.transliteration.service,
-<<<<<<< HEAD
+
 							javax.batch.operations,
 							org.motechproject.batch.service;version=${motech.version},,
 							org.motechproject.batch.exception;version=${motech.version},
 							org.motechproject.batch.model;version=${motech.version},
-							  *
-=======
 							org.motechproject.event.listener,
-                            *
->>>>>>> Throw MotechEvent for addition and updation of beneficiaries
+							*
+
                         </Import-Package>
                     </instructions>
                 </configuration>

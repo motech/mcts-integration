@@ -19,6 +19,7 @@ public class UpdateTask {
     private String mctsHusbandName;
     
     private String mctsHusbandName_en;
+    
 	
     
 	private String mctsAge;

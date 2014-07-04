@@ -1,5 +1,7 @@
 package org.motechproject.mcts.integration.client;
 
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ public class UpdateCommcareHQ {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UpdateCommcareHQ.class);
 	 private RestTemplate restTemplate;
 	 private MultiValueMap<String, Object> formData;
+	 private HttpAgent httpAgentServiceOsgi;
 	 private BatchServiceUrlGenerator batchServiceUrlGenerator = new BatchServiceUrlGenerator();
 	 
 	 
@@ -40,7 +43,9 @@ public class UpdateCommcareHQ {
 		 restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
 		 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 		 HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	    // restTemplate.postForEntity(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,void.class);
+	  //  restTemplate.postForEntity(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,void.class);
+	    httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity, Method.POST);
+	    
 		 
 		 
 	 }

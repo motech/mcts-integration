@@ -10,7 +10,8 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 /**
  * Service to call the fixture stub and get data 
  * @author aman
@@ -27,7 +28,10 @@ public class StubDataService {
 	
 	@Autowired
 	private PropertyReader propertyReader;
-
+	
+	/*@Autowired
+	private HttpAgent httpAgentServiceOsgi;
+*/
 	
 	
 	/**
@@ -42,6 +46,7 @@ public class StubDataService {
 				new MappingJacksonHttpMessageConverter());
 		ResponseEntity<DataList> response = restTemplate.getForEntity(url,
 				DataList.class);
+		//ResponseEntity<DataList> response = (ResponseEntity<DataList>) httpAgentServiceOsgi.executeWithReturnTypeSync(url, null, Method.GET);
 		LOGGER.info("returnvalue : "
 				+ response.getBody().getDataList().get(0).getFixtureType()
 				+ " returnVal");

@@ -99,6 +99,7 @@ public class FLWDataPopulator {
 					if(mctsHealthworker == null) {
 						 mctsHealthworker = new MctsHealthworker(
 								mctsPhc, healthworkerId, name, sex, type);
+						
 						mctsHealthworker.setContactNo(contact_No);
 						mctsHealthworker.setHusbandName(husbandName);
 						mctsHealthworker.setAadharNo(aadharNo);

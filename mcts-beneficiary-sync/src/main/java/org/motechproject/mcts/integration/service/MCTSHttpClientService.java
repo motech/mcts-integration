@@ -4,8 +4,11 @@
 package org.motechproject.mcts.integration.service;
 
 import org.springframework.http.HttpStatus;
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.integration.model.NewDataSet;
+import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +32,13 @@ public class MCTSHttpClientService {
     private RestTemplate restTemplate;
     @Autowired
     private PropertyReader propertyReader;
-
     @Autowired
-    public MCTSHttpClientService(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, PropertyReader propertyReader) {
+    private HttpAgent httpAgentServiceOsgi;
+    @Autowired
+    public MCTSHttpClientService(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, PropertyReader propertyReader, HttpAgent httpAgentServiceOsgi) {
         this.restTemplate = restTemplate;
         this.propertyReader = propertyReader;
+        this.httpAgentServiceOsgi = httpAgentServiceOsgi;
     }
 
     /**
@@ -47,7 +52,8 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(beneficiaryRequest, httpHeaders);
       
-        ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
+    //    ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
+        ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi.executeWithReturnTypeSync(propertyReader.getUpdateRequestUrl(), httpEntity, Method.POST);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();
@@ -59,8 +65,9 @@ public class MCTSHttpClientService {
     	HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+        ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi.executeWithReturnTypeSync(CommcareConstants.POSTURL, httpEntity, Method.POST);
+     //   ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
         
-        ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();

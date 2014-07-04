@@ -58,6 +58,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private Date creationTime;
 	private String hhNumber;
 	private String familyNumber;
+	private String ownerId;
+	private String dateOpened;
 	
 
 	public MctsPregnantMother() {
@@ -74,7 +76,7 @@ public class MctsPregnantMother implements java.io.Serializable {
 			String mobileNo, String economicStatus, String category,
 			String beneficiaryAddress, String uidNumber, String pincode,
 			Date lmpDate, String eidNumber, String ward, String town,
-			Date creationTime, String familyNumber, String hhNumber) {
+			Date creationTime, String familyNumber, String hhNumber, String ownerId, String dateOpened) {
 		this.mctsSubcenter = mctsSubcenter;
 		this.mctsHealthworkerByAshaId = mctsHealthworkerByAshaId;
 		this.mctsPregnantMotherMatchStatus = mctsPregnantMotherMatchStatus;
@@ -104,6 +106,8 @@ public class MctsPregnantMother implements java.io.Serializable {
 		this.creationTime = creationTime;
 		this.familyNumber = familyNumber;
 		this.hhNumber = hhNumber;
+		this.ownerId = ownerId;
+		this.dateOpened = dateOpened;
 	}
 
 	@SequenceGenerator(name = "generator", sequenceName = "mcts_pregnant_mother_id_seq")
@@ -400,6 +404,24 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public void setFamilyNumber(String familyNumber) {
 		this.familyNumber = familyNumber;
+	}
+	
+	@Column(name = "owner_Id")
+	public String getOwnerId() {
+		return this.ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+	
+	@Column(name = "date_Opened")
+	public String getDateOpened() {
+		return this.dateOpened;
+	}
+
+	public void setDateOpened(String dateOpened) {
+		this.dateOpened = dateOpened;
 	}
 
 }
