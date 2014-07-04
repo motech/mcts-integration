@@ -35,4 +35,6 @@
         <bean id="fixtureDataService" class="org.motechproject.mcts.integration.service.FixtureDataService">
          <property name="careDataRepository" ref="careDataRepository"/>
         </bean>
+        <!-- <bean id="httpAgentServiceOsgi" class="org.motechproject.http.agent.service.impl.HttpAgentImpl">
+		</bean>	 -->
  </beans>       

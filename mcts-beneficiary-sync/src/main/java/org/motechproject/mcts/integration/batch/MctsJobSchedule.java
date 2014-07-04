@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 /**
  * Client class to schedule mcts job with batch module
  * @author Naveen
@@ -24,11 +26,13 @@ public class MctsJobSchedule {
 	
 	 private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 	 private RestTemplate restTemplate;
+	 private HttpAgent httpAgentServiceOsgi;
 	 private BatchServiceUrlGenerator batchServiceUrlGenerator;
 	 @Autowired
-	 public MctsJobSchedule(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BatchServiceUrlGenerator batchServiceUrlGenerator) {
+	 public MctsJobSchedule(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BatchServiceUrlGenerator batchServiceUrlGenerator, HttpAgent httpAgentServiceOsgi) {
 	        this.restTemplate = restTemplate;
 	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
+	        this.httpAgentServiceOsgi = httpAgentServiceOsgi;
 	    }
    
 	    /**
@@ -43,11 +47,13 @@ public class MctsJobSchedule {
 	        params.setCronExpression(cronExpression);
 	        params.setJobName(jobName);
 	        params.setParamsMap(new HashMap<String, String>());
-			HttpEntity httpEntity = new HttpEntity(params, httpHeaders);
+			HttpEntity<CronJobScheduleParameters> httpEntity = new HttpEntity<CronJobScheduleParameters>(params, httpHeaders);
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
-            	restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
+            	httpAgentServiceOsgi.executeWithReturnTypeSync(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, Method.POST);
+            	//restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
+            
             }
             catch(Exception e) {
             	LOGGER.info(e.getMessage());

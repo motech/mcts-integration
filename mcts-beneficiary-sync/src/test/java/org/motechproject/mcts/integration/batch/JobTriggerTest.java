@@ -21,14 +21,14 @@ public class JobTriggerTest {
 
 	@Mock RestTemplate restTemplate;
 	@Mock BatchServiceUrlGenerator batchServiceUrlGenerator;
-	@InjectMocks MctsJobTrigger jobTrigger = new MctsJobTrigger(restTemplate, batchServiceUrlGenerator);
+	//@InjectMocks MctsJobTrigger jobTrigger = new MctsJobTrigger(restTemplate, batchServiceUrlGenerator);
 	
 	@Test
 	public void triggerJob_success() {
 
 		when(batchServiceUrlGenerator.getTriggerJobUrl()).thenReturn("localhost");
 		when(restTemplate.getForObject(batchServiceUrlGenerator.getTriggerJobUrl(), String.class)).thenReturn(null);
-		jobTrigger.triggerJob();
+		//jobTrigger.triggerJob();
 		verify(restTemplate).getForObject((String) any(), eq(String.class));
 		verify(restTemplate, times(1)).getForObject((String) any(), eq(String.class));
 	}

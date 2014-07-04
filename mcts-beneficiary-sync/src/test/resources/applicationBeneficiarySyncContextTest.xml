@@ -31,10 +31,12 @@
 	<bean id="transliterationService" class="org.motechproject.transliteration.service.TransliterationServiceImpl"></bean>
 	<bean id="httpComponentsClientHttpRequestFactory"
 		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
-
+	
 	<bean id="mctsRestTemplate" class="org.springframework.web.client.RestTemplate">
 		<constructor-arg ref="httpComponentsClientHttpRequestFactory" />
 	</bean>
+	
+	
 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClassName}" />

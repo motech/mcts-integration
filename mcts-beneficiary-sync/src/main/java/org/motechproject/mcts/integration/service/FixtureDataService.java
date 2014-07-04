@@ -1,18 +1,14 @@
 package org.motechproject.mcts.integration.service;
 
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.model.DataList;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.utils.PropertyReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Service to  update the table
@@ -45,6 +41,7 @@ public class FixtureDataService {
 	 * case_groupId.
 	 * @throws BeneficiaryException 
 	 */
+	@MotechListener(subjects = MCTSBatchConstants.EVENT_SUBJECT)
 	public void updateGroupId() throws BeneficiaryException {
 		DataList listData = stubDataService.getFixtureData();
 		for (int i = 0; i < listData.getDataList().size(); i++) {

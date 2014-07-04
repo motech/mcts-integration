@@ -82,6 +82,10 @@ public class PropertyReader {
         return String.format("%s/%s", properties.getProperty("motech.platform.base.url"), properties.getProperty("motech.platform.hub.url"));
     }
     
+    public String getCronExpression() {
+    	return properties.getProperty("mcts.fixtureData.cronEpression");
+    }
+    
     public String getUserIdforCommcare() {
     	return properties.getProperty("beneficiary.sync.commcare.userId");
     }
@@ -98,6 +102,10 @@ public class PropertyReader {
     public String getHubSyncFromUrl() {
         return String.format("%s%s?filepath=", properties.getProperty("motech.base.url"), properties.getProperty("hub.sync.from.url"));
 
+    }
+    
+    public int sizeOfXml() {
+    	return Integer.parseInt(properties.getProperty("mcts.xml.size"));
     }
     
     public int getMaxNumberOfPublishRetryCount(){

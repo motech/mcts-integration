@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
@@ -34,9 +33,9 @@ public class UpdateCaseXmlService {
 	@Autowired
 	PropertyReader propertyReader;
 	
-	@Autowired
-	FixtureDataService fixtureDataService;
+	
 
+	//TODO add listener whenever a recird is updated
 	public void updateXml(MctsPregnantMother mctsPregnantMother) throws BeneficiaryException
 			 {
 		UpdateData data = new UpdateData();
@@ -53,14 +52,14 @@ public class UpdateCaseXmlService {
 			workerId = -1;
 		}
 		Case caseTask = createCaseForBeneficiary(mctsPregnantMother,
-				userId);
-		/*if ((caseTask.getUpdateTask().getMctsFullname() != null)
+				userId, workerId);
+		if ((caseTask.getUpdateTask().getMctsFullname() != null)
 		&& (caseTask.getUpdateTask().getMctsHusbandName() != null)
 		&& (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
 		&& (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
 			data.setCaseTask(caseTask);
-}*/
-		data.setCaseTask(caseTask);
+		}
+		//data.setCaseTask(caseTask);
 
 		data.setXmlns(CommcareConstants.UPDATEDATAXMLNS);
 		String returnvalue = ObjectToXMLConverter.converObjectToXml(
@@ -71,17 +70,9 @@ public class UpdateCaseXmlService {
 		
 	}
 	private Case createCaseForBeneficiary(
-			MctsPregnantMother mctsPregnantMother, String userId) throws BeneficiaryException {
-		int workerId;
+			MctsPregnantMother mctsPregnantMother, String userId, int workerId) throws BeneficiaryException {
 
-		if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
-			workerId = mctsPregnantMother.getMctsHealthworkerByAshaId()
-					.getHealthworkerId();
-		} else {
-			workerId = -1;
-		}
-
-		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
+		String ownerId = mctsPregnantMother.getOwnerId();
 		String caseId = mctsPregnantMother.getMctsPersonaCaseUId();
 		
 
@@ -136,42 +127,22 @@ public class UpdateCaseXmlService {
 		Date birth = mctsPregnantMother.getBirthDate();
 		DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
 		DateTime date = new DateTime();
-		String age;
-		String dob;
+		String age = "";
+		String dob = "";
 
-		if (mctsName == null) {
-			mctsName = "";
-		}
-		if (mctsName_en == null) {
-			mctsName_en = "";
-		}
+		
 		if (birth != null) {
 			dob = birthDate.toString();
 			age = Integer.toString(Days.daysBetween(
 					date.withTimeAtStartOfDay(),
 					birthDate.withTimeAtStartOfDay()).getDays() / 365);
-		} else {
-			age = " ";
-			dob = " ";
-		}
-		if (husbandName == null) {
-			husbandName = " ";
-			mctsPregnantMother.getName();
-		}
-		if (husbandName_en == null) {
-			husbandName_en = " ";
-		}
-		if (mctsId == null) {
-			mctsId = " ";
-		}
-		if (phone == null) {
-			phone = " ";
-		}
+		} 
 
 		updateTask.setCaseName(mctsPregnantMother.getName());
 		updateTask.setCaseType(CommcareConstants.CASETYPE);
-		updateTask.setOwnerId(ownerId);
-		updateTask.setMctsHusbandName(husbandName_en);
+		updateTask.setOwnerId(ownerId); 
+		updateTask.setMctsHusbandName(husbandName);
+		updateTask.setMctsHusbandName_en(husbandName_en);
 		updateTask.setMctsFullname(mctsName);
 		updateTask.setMctsFullname_en(mctsName_en);
 		updateTask.setMctsAge(age);

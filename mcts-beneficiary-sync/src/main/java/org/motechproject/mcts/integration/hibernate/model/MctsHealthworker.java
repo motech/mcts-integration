@@ -129,7 +129,7 @@ public class MctsHealthworker implements java.io.Serializable {
 		this.healthworkerId = healthworkerId;
 	}
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	public String getName() {
 		return this.name;
 	}
@@ -147,7 +147,7 @@ public class MctsHealthworker implements java.io.Serializable {
 		this.contactNo = contactNo;
 	}
 
-	@Column(name = "sex", nullable = false, length = 1)
+	@Column(name = "sex", length = 1)
 	public char getSex() {
 		return this.sex;
 	}

@@ -41,6 +41,14 @@
             <version>${motech.version}</version>
             
         </dependency>
+         <!-- antlr -->
+      
+      	<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+      	
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-commcare-api</artifactId>
@@ -52,8 +60,22 @@
     <artifactId>motech-transliteration</artifactId>
     <version>0.1-SNAPSHOT</version>
 	</dependency>
+	<dependency>
+	<groupId>org.motechproject</groupId>
+	<artifactId>motech-http-agent-bundle</artifactId>
+	<version>0.21.1</version>
+	<scope>system</scope>
+     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent-bundle/target/motech-http-agent-bundle-0.21.1.jar</systemPath>
+	</dependency>
 
 
+<dependency>
+	<groupId>org.motechproject</groupId>
+	<artifactId>motech-http-agent</artifactId>
+	<version>0.21.1</version>
+	<scope>system</scope>
+     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent/target/motech-http-agent-0.21.1.jar</systemPath>
+	</dependency>
 
         <dependency>
             <groupId>org.junit</groupId>
@@ -67,7 +89,7 @@
             <scope>test</scope>
             <version>1.8.5</version>
         </dependency>
-<dependency>
+		<dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
                 <version>1.4.9</version>
@@ -218,6 +240,7 @@
                         	org.hibernate.jdbc,
                             org.hibernate.proxy,
                             javassist.util.proxy,
+                            org.hibernate.hql.ast,
                             org.apache.commons.dbcp,
                             org.postgresql,
 							org.motechproject.scheduler,

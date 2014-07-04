@@ -3,6 +3,8 @@ package org.motechproject.mcts.integration.batch;
 import java.io.File;
 import java.util.Map;
 
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ public class PostXml {
 	  private final static Logger LOGGER = LoggerFactory.getLogger(MCTSHttpClientService.class);
 
 	    private RestTemplate restTemplate;
+	    private HttpAgent httpAgentServiceOsgi;
 	   // private BeneficiarySyncSettings beneficiarySyncSettings;
 	    private MultiValueMap<String, Object> formData;
 	    private BatchServiceUrlGenerator batchServiceUrlGenerator;
@@ -51,7 +54,8 @@ public class PostXml {
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 	        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	        restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
+	      //  restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
+	        httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Method.POST);
 	      
 	    }
 
