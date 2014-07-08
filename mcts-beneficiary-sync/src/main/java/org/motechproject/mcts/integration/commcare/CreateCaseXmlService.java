@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
@@ -40,7 +41,7 @@ public class CreateCaseXmlService {
 	Map<Integer, Object> hm;
 
 	private final static Logger LOGGER = LoggerFactory
-			.getLogger(MCTSFormUpdateService.class);
+			.getLogger(CreateCaseXmlService.class);
 
 	@Autowired
 	StubDataService stubDataService;
@@ -67,7 +68,11 @@ public class CreateCaseXmlService {
 
 
 
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
+	@MotechListener(subjects=MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
+	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+		createCaseXml();
+	}
+	
 	public void createCaseXml() throws BeneficiaryException   {
 
 		List<MctsPregnantMother> mctsPregnantMother = careDataRepository
@@ -100,12 +105,11 @@ public class CreateCaseXmlService {
 					Data.class);
 			LOGGER.debug("returned : " + returnvalue);
 			
-			HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-			if (status.value() == 200) {
+	// TODO post xml to the url if response is 200 then only execute the following statment	
 				for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
 					careDataRepository.saveOrUpdate(entry.getValue());
 				}
-			}
+			
 		}
 
 	}

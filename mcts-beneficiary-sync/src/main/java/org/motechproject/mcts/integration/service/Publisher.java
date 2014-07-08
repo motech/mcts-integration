@@ -41,11 +41,12 @@ public class Publisher {
 			.getLogger(Publisher.class);
 	private static String URL;
 
-	@MotechListener(subjects=MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
+	//TODO Uncomment Later
+	/*@MotechListener(subjects=MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
 	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
 		String url = (String)motechEvent.getParameters().get(MCTSEventConstants.PARAM_PUBLISHER_URL);
 		publish(url);
-	}
+	}*/
 	/**
 	 * Method to <code>Publish</code> updates to hub along with
 	 * <code>callBack URL</code> and to <code>retry</code> sending notifications

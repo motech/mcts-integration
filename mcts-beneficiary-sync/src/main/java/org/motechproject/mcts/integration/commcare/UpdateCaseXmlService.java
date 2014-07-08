@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.commcare;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
@@ -9,6 +10,7 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MCTSEventConstants;
@@ -30,7 +32,7 @@ import org.motechproject.mcts.integration.service.FixtureDataService;
 public class UpdateCaseXmlService {
 	
 	private final static Logger LOGGER = LoggerFactory
-			.getLogger(MCTSFormUpdateService.class);
+			.getLogger(UpdateCaseXmlService.class);
 
 	@Autowired
 	PropertyReader propertyReader;
@@ -38,12 +40,27 @@ public class UpdateCaseXmlService {
 	@Autowired
 	FixtureDataService fixtureDataService;
 	
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
-	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
-		MctsPregnantMother mctsPregnantMother = (MctsPregnantMother)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
-		updateXml(mctsPregnantMother);
+	@Autowired
+	CareDataRepository careDataRepository;
+
+	
+	public CareDataRepository getCareDataRepository() {
+		return careDataRepository;
 	}
 
+	public void setCareDataRepository(CareDataRepository careDataRepository) {
+		this.careDataRepository = careDataRepository;
+	}
+	
+	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
+	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+		Integer  id = (Integer)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
+		MctsPregnantMother mctsPregnantMother = careDataRepository.getMotherFromPrimaryId(id);
+		LOGGER.error("EVENT_BENEFICIARY_UPDATED called");
+		updateXml(mctsPregnantMother);
+	}
+	
+	
 
 	//TODO add listener whenever a recird is updated
 	public void updateXml(MctsPregnantMother mctsPregnantMother) throws BeneficiaryException
@@ -69,7 +86,6 @@ public class UpdateCaseXmlService {
 		&& (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
 			data.setCaseTask(caseTask);
 		}
-		//data.setCaseTask(caseTask);
 
 		data.setXmlns(CommcareConstants.UPDATEDATAXMLNS);
 		String returnvalue = ObjectToXMLConverter.converObjectToXml(

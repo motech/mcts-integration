@@ -1,7 +1,8 @@
 package org.motechproject.mcts.integration.service;
 
-import org.motechproject.mcts.integration.model.DataList;
+import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.utils.PropertyReader;
+import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,21 +40,20 @@ public class StubDataService {
 	 * 
 	 * @return
 	 */
-	public DataList getFixtureData() {
+	public Data getFixtureData() {
 		
 		String url = propertyReader.getStubUrl();
-		restTemplate.getMessageConverters().add(
-				new MappingJacksonHttpMessageConverter());
-		ResponseEntity<DataList> response = restTemplate.getForEntity(url,
-				DataList.class);
+		ResponseEntity<String> response = restTemplate.getForEntity(url,
+				String.class);
+		Data data = (Data)XmlStringToObjectConverter.unmarshal(response.getBody(), Data.class);
 		//ResponseEntity<DataList> response = (ResponseEntity<DataList>) httpAgentServiceOsgi.executeWithReturnTypeSync(url, null, Method.GET);
 		LOGGER.info("returnvalue : "
-				+ response.getBody().getDataList().get(0).getFixtureType()
+				+ data.getObjects().get(0).getFixtureType()
 				+ " returnVal");
 		LOGGER.info("returnvalue : "
-				+ response.getBody().getDataList().get(0).getFields()
-						.getGroupId() + " returnVal");
-		return response.getBody();
+				+ data.getObjects().get(0).getFields()
+						.getGroupId().getFieldList().get(0).getFieldValue() + " returnVal");
+		return data;
 	}
 
 }

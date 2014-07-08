@@ -32,24 +32,22 @@ import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
-
-import org.motechproject.mcts.integration.repository.CareDataRepository;
-
 import org.motechproject.mcts.utils.MCTSEventConstants;
-
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.transliteration.service.TransliterationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+@Transactional
 @Service
 public class MCTSBeneficiarySyncService {
 	private final static Logger LOGGER = LoggerFactory
-			.getLogger(MCTSHttpClientService.class);
+			.getLogger(MCTSBeneficiarySyncService.class);
 	private static final String DATE_FORMAT = "dd-MM-yyyy";
 
 	@Autowired
@@ -60,7 +58,7 @@ public class MCTSBeneficiarySyncService {
 	private Publisher publisher;
 	@Autowired
 	private CareDataService careDataService;
-	@Autowired CareDataRepository careDataRepository;
+
 	@Autowired
 	private TransliterationService transliterationService;
 	@Autowired
@@ -80,7 +78,7 @@ public class MCTSBeneficiarySyncService {
 
 	public String syncBeneficiaryData(DateTime startDate, DateTime endDate)
 
-			throws BeneficiaryException {
+	throws BeneficiaryException {
 		NewDataSet newDataSet = syncFrom(startDate, endDate);
 		if (newDataSet == null) {
 			LOGGER.info("No New Updates Received. Exiting");
@@ -98,13 +96,16 @@ public class MCTSBeneficiarySyncService {
 			MotechEvent motechEvent = new MotechEvent(
 					MCTSEventConstants.EVENT_BENEFICIARIES_ADDED, parameters);
 			eventRelay.sendEventMessage(motechEvent);
-			return String.format(
-					"%s New Updates Received and %s Processed Successfully",
-					newDataSet.getRecords().size(), count);
-		} else
 			return String
-					.format("All %s received updates are in error. None added to database.",
+					.format("%s New Updates Received and %s added to the DB Successfully",
+							newDataSet.getRecords().size(), count);
+		} 
+			
+		 else {
+			return String
+					.format("All %s received updates are already present in database or have some error. None added to database.",
 							newDataSet.getRecords().size());
+		}
 
 	}
 
@@ -143,20 +144,37 @@ public class MCTSBeneficiarySyncService {
 										// db
 		for (Record record : newDataSet.getRecords()) {
 			MctsPregnantMother mctsPregnantMother = new MctsPregnantMother();
+			String beneficiaryId = record.getBeneficiaryID();
+			mctsPregnantMother = careDataService.findEntityByField(
+					MctsPregnantMother.class, "mctsId", beneficiaryId);
 
-			//check whether this is already present in th database
+			// check whether this is already present in th database
+			if (beneficiaryId != null && beneficiaryId.length() == 18) {
+				// checks if beneficiary already present in db with same mctsId
+				if (mctsPregnantMother == null) {
+					mctsPregnantMother = mapRecordToMctsPregnantMother(record,
+							startDate, mctsPregnantMother, beneficiaryId);
+					if (mctsPregnantMother != null) {
+						count++;
+						careDataService.saveOrUpdate(mctsPregnantMother);
+						LOGGER.info(String.format(
+								"MctsPregnantMother [%s] added to db",
+								mctsPregnantMother.getMctsId()));
+					}
+				} else {
+					mctsPregnantMother = updateRecordToMctsPregnantMother(
+							record, startDate, mctsPregnantMother,
+							beneficiaryId);
+				}
+			} else {
+				LOGGER.error("Beneficiary Id cannot be Null. Data not added to Db");
+			}
 
-			mctsPregnantMother = matchRecordToMctsPregnantMother(record,
-					startDate);
-			if (mctsPregnantMother != null) {
-				careDataService.saveOrUpdate(mctsPregnantMother);
-				count++;
-				LOGGER.info(String.format(
-						"MctsPregnantMother [%s] added to db",
-						mctsPregnantMother.getMctsId()));
-			} else
+			if (mctsPregnantMother == null) {
 				addToMctsPregnantMotherMaster(record, startDate);
-			LOGGER.error("SKIPPED Adding this record to Database");
+				LOGGER.error("SKIPPED Adding this record to Database");
+
+			}
 		}
 		Date endDate = new Date(); // Sets the endDate when data ended to be
 									// added to db to be send to Hub to query db
@@ -166,6 +184,7 @@ public class MCTSBeneficiarySyncService {
 		return count;
 	}
 
+
 	/**
 	 * 
 	 * @param record
@@ -173,56 +192,36 @@ public class MCTSBeneficiarySyncService {
 	 * @return
 	 * @throws BeneficiaryException
 	 */
-	private MctsPregnantMother matchRecordToMctsPregnantMother(Record record,
-			Date startDate) throws BeneficiaryException {
-		String beneficiaryId = record.getBeneficiaryID();
-		MctsPregnantMother mctsPregnantMother = careDataService
-				.findEntityByField(MctsPregnantMother.class, "mctsId",
-						beneficiaryId);
+	
+	private MctsPregnantMother updateRecordToMctsPregnantMother(Record record,
+			Date startDate, MctsPregnantMother mctsPregnantMother,
+			String beneficiaryId) throws BeneficiaryException {
+
 		LOGGER.info(record.toString());
-		// checks that Beneficiary Id should be 18 char long
-		if (beneficiaryId != null && beneficiaryId.length() == 18) {
-			// checks if beneficiary already present in db with same mctsId
-			if (record.getBeneficiaryName().length() > 0) {
-				if (mctsPregnantMother == null) {
-					mctsPregnantMother = mapRecordToMctsPregnantMother(record,
-							startDate, mctsPregnantMother, beneficiaryId);
-				} else {
-					boolean check = checkMctsPregnantMotherWithRecord(record,
-							mctsPregnantMother);
-					if (check == true) {
-						mctsPregnantMother = mapRecordToMctsPregnantMother(
-								record, startDate, mctsPregnantMother,
-								beneficiaryId);
-						HashMap<String, Object> parameters = new HashMap<>();
-						parameters.put(
-								MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-								mctsPregnantMother);
-						MotechEvent motechEvent = new MotechEvent(
-								MCTSEventConstants.EVENT_BENEFICIARY_UPDATED);
-						eventRelay.sendEventMessage(motechEvent);// Throws a
-																	// motechEvent
-																	// with
-																	// Updated
-																	// Beneficiary
-					} else {
-						LOGGER.error(String
-								.format("Changes in either AshaId, AnmId or subCentreId. Hence skiping adding to the DataBase"));
-						return null;
-					}
-				}
-			} else {
-				LOGGER.error("Beneficiary name cannot be null. Data not added to Db");
-				return null;
-			}
+
+		boolean check = checkMctsPregnantMotherWithRecord(record,
+				mctsPregnantMother);
+		if (check == true) {
+			mctsPregnantMother = mapRecordToMctsPregnantMother(record,
+					startDate, mctsPregnantMother, beneficiaryId);
+			careDataService.saveOrUpdate(mctsPregnantMother);
+			HashMap<String, Object> parameters = new HashMap<>();
+			parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
+					mctsPregnantMother.getId());
+			MotechEvent motechEvent = new MotechEvent(
+					MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
+			eventRelay.sendEventMessage(motechEvent);// Throws a
+														// motechEvent
+														// with Updated
+														// Beneficiary
+			return mctsPregnantMother;
 		} else {
-			LOGGER.error("Beneficiary Id is invalid. Data not added to Db");
+			LOGGER.error(String
+					.format("Changes in either AshaId, AnmId or subCentreId. Hence skiping adding to the DataBase"));
 			return null;
 		}
-		return mctsPregnantMother;
-	}
 
-	
+	}
 
 	/**
 	 * Map the <code>Record</code> object received from MCTS to
@@ -236,7 +235,9 @@ public class MCTSBeneficiarySyncService {
 			Date startDate, MctsPregnantMother mctsPregnantMother,
 			String beneficiaryId) throws BeneficiaryException {
 
-		if (mctsPregnantMother == null) {//if mctsPregnantMother is null then creates a new else updates the existing
+		if (mctsPregnantMother == null) {// if mctsPregnantMother is null then
+											// creates a new else updates the
+											// existing
 			mctsPregnantMother = new MctsPregnantMother();
 		}
 
@@ -311,16 +312,16 @@ public class MCTSBeneficiarySyncService {
 		}
 		return mctsPregnantMother;
 
-
 	}
 
 	/**
 	 * Checks whetehr asha/anm/subcenter changed
+	 * 
 	 * @param record
 	 * @param mctsPregnantMother
 	 * @return
 	 */
-	private boolean checkMctsPregnatMotherWithRecord(Record record,
+	private boolean checkMctsPregnantMotherWithRecord(Record record,
 			MctsPregnantMother mctsPregnantMother) {
 		boolean s = true;
 		MctsHealthworker anmWorker = mctsPregnantMother
@@ -332,23 +333,26 @@ public class MCTSBeneficiarySyncService {
 			String recordAnmId = record.getANMID();
 			String recordAshaId = record.getASHAID();
 			String recordSubcenterId = record.getSubCentreID();
-			if(recordAnmId == null || !recordAnmId.equals(String.valueOf(anmWorker
-					.getHealthworkerId()))){
+			if (recordAnmId == null
+					|| !recordAnmId.equals(String.valueOf(anmWorker
+							.getHealthworkerId()))) {
 				s = false;
 			}
-			if(recordAshaId == null || !recordAshaId.equals(String.valueOf(ashaWorker
-					.getHealthworkerId()))){
+			if (recordAshaId == null
+					|| !recordAshaId.equals(String.valueOf(ashaWorker
+							.getHealthworkerId()))) {
 				s = false;
 			}
-			if(recordSubcenterId == null || !recordSubcenterId.equals(String.valueOf(subCentre.getSubcenterId()))){
+			if (recordSubcenterId == null
+					|| !recordSubcenterId.equals(String.valueOf(subCentre
+							.getSubcenterId()))) {
 				s = false;
 			}
-			
+
 		} else {
 			s = false;
 		}
 		return s;
-
 
 	}
 
@@ -361,28 +365,6 @@ public class MCTSBeneficiarySyncService {
 	 * @return <code>true</code> if none of the above is changed else
 	 *         <code>false</code>
 	 */
-	private boolean checkMctsPregnantMotherWithRecord(Record record,
-			MctsPregnantMother mctsPregnantMother) {
-		boolean check = false;
-		MctsHealthworker AnmWorker = mctsPregnantMother
-				.getMctsHealthworkerByAnmId();
-		MctsHealthworker AshaWorker = mctsPregnantMother
-				.getMctsHealthworkerByAshaId();
-		MctsSubcenter subCentre = mctsPregnantMother.getMctsSubcenter();
-		if ((AnmWorker != null) && (AshaWorker != null) && (subCentre != null)) {
-			if ((record.getANMID() == String.valueOf(AnmWorker
-					.getHealthworkerId()))
-					&& (record.getASHAID() == String.valueOf(AshaWorker
-							.getHealthworkerId()) && (record.getSubCentreID() == String
-							.valueOf(subCentre.getSubcenterId())))) {
-				check = true;
-			} else {
-				check = false;
-			}
-		}
-		return check;
-
-	}
 
 	/**
 	 * This is to save the data as it is received from mcts maps record to
@@ -474,6 +456,7 @@ public class MCTSBeneficiarySyncService {
 			Location location, String type) throws BeneficiaryException {
 		int healthWorkerId = validateAndReturnAsInt("mctsHealthWorkerId",
 				mctsHealthWorkerId);
+
 		MctsHealthworker mctsHealthworker = careDataService.findEntityByField(
 				MctsHealthworker.class, "healthworkerId", healthWorkerId);
 		// Checks if HealthWorker exist in db...if not then logs an error
@@ -484,6 +467,7 @@ public class MCTSBeneficiarySyncService {
 							mctsHealthWorkerId));
 			mctsHealthworker = new MctsHealthworker();
 			mctsHealthworker.setHealthworkerId(healthWorkerId);
+
 			mctsHealthworker.setMctsPhc(location.getMctsPhc());
 			mctsHealthworker.setMctsSubcenter(location.getMctsSubcenter());
 			mctsHealthworker.setMctsVillage(location.getMctsVillage());
@@ -509,9 +493,12 @@ public class MCTSBeneficiarySyncService {
 	 */
 	private int validateAndReturnAsInt(String field, String id)
 			throws BeneficiaryException {
-		//TODO
-		if (id.isEmpty()==false && id != null/* && id.substring(1, id.length()-1).matches("//d+")*/) {
-
+		// TODO
+		if (id.isEmpty() == false && id != null/*
+												 * && id.substring(1,
+												 * id.length()
+												 * -1).matches("//d+")
+												 */) {
 
 			return Integer.parseInt(id);
 		} else
@@ -531,7 +518,8 @@ public class MCTSBeneficiarySyncService {
 			throws BeneficiaryException {
 		Location location = new Location();
 		location.setMctsState(careDataService.findEntityByField(
-				MctsState.class, "stateId", Integer.parseInt(record.getStateID())));
+				MctsState.class, "stateId",
+				Integer.parseInt(locationCSV.getStateID())));
 		try {
 			// sets District
 			HashMap<String, Object> params = new HashMap<String, Object>();

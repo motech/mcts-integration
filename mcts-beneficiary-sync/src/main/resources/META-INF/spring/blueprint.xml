@@ -20,8 +20,7 @@
     <osgi:reference id="platformSettingsService"
                     interface="org.motechproject.server.config.service.PlatformSettingsService"/>
     
-<!--     <osgi:reference id="eventRelay" 
-  					interface="org.motechproject.event.listener.EventRelay"/> -->
+
 
 	<osgi:reference id="httpAgentServiceOsgi" 
                   interface="org.motechproject.http.agent.service.HttpAgent" />

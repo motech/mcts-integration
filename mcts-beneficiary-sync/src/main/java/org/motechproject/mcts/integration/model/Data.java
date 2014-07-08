@@ -1,31 +1,32 @@
 package org.motechproject.mcts.integration.model;
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+
+
 public class Data {
-	private Fields fields;
-	private String fixtureType;
-	
-	public Data() {
-		
+	private List<Objects> objects;
+	private Meta meta;
+
+	public Meta getMeta() {
+		return meta;
+	}
+	@JsonProperty("meta")
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
-	public Data(Fields fields, String fixtureType) {
-		this.fields = fields;
-		this.fixtureType = fixtureType;
+	public List<Objects> getObjects() {
+		return objects;
 	}
-	
-	public Fields getFields() {
-		return fields;
+	@JsonProperty("objects")
+	public void setObjects(List<Objects> objects) {
+		this.objects = objects;
 	}
-	public void setFields(Fields fields) {
-		this.fields = fields;
-	}
-	
-	
-	public String getFixtureType() {
-		return fixtureType;
-	}
-	public void setFixtureType(String fixtureType) {
-		this.fixtureType = fixtureType;
-	}
+
 	
 }

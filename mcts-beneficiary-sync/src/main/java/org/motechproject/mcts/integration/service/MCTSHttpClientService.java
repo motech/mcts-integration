@@ -3,9 +3,9 @@
  */
 package org.motechproject.mcts.integration.service;
 
-import org.springframework.http.HttpStatus;
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
+import org.motechproject.mcts.integration.commcare.Data;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.utils.CommcareConstants;
@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.motechproject.mcts.integration.commcare.Data;
 
 @Service
 public class MCTSHttpClientService {
@@ -62,6 +62,7 @@ public class MCTSHttpClientService {
     }
     
     public HttpStatus syncToCommcare(Data data) {
+		
     	HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
@@ -71,8 +72,8 @@ public class MCTSHttpClientService {
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
         return response.getStatusCode();
-
-        
+    	
+    	 
     }
 
     /**
