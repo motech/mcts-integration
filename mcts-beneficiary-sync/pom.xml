@@ -60,18 +60,20 @@
     <version>0.1-SNAPSHOT</version>
 	</dependency>
 
+
  <dependency>
         <groupId>org.motechproject</groupId>
     <artifactId>batch</artifactId>
    <version>${motech.version}</version>
 	</dependency>
 
+
 	<dependency>
 	<groupId>org.motechproject</groupId>
 	<artifactId>motech-http-agent-bundle</artifactId>
 	<version>0.21.1</version>
 	<scope>system</scope>
-     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent-bundle/target/motech-http-agent-bundle-0.21.1.jar</systemPath>
+     <systemPath>${basedir}/lib/motech-http-agent-bundle-0.21.1.jar</systemPath>
 	</dependency>
 
 
@@ -80,7 +82,7 @@
 	<artifactId>motech-http-agent</artifactId>
 	<version>0.21.1</version>
 	<scope>system</scope>
-     <systemPath>/home/aman/work/motech/utils/http-agent/http-agent/target/motech-http-agent-0.21.1.jar</systemPath>
+     <systemPath>${basedir}/lib/motech-http-agent-0.21.1.jar</systemPath>
 	</dependency>
 
         <dependency>
