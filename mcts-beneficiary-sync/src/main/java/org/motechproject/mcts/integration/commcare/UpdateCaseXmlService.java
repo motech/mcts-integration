@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.commcare;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
@@ -9,7 +10,7 @@ import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.service.FixtureDataService;
+import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MCTSEventConstants;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.motechproject.mcts.integration.service.FixtureDataService;
 /**
  * Class to create xml for update cases.
  * @author aman
@@ -31,20 +32,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCaseXmlService {
 	
 	private final static Logger LOGGER = LoggerFactory
-			.getLogger(MCTSFormUpdateService.class);
+			.getLogger(UpdateCaseXmlService.class);
 
 	@Autowired
 	PropertyReader propertyReader;
-	
+
 	@Autowired
 	FixtureDataService fixtureDataService;
 	
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
-	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
-		MctsPregnantMother mctsPregnantMother = (MctsPregnantMother)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
-		updateXml(mctsPregnantMother);
+	@Autowired
+	CareDataRepository careDataRepository;
+
+	
+	public CareDataRepository getCareDataRepository() {
+		return careDataRepository;
 	}
 
+	public void setCareDataRepository(CareDataRepository careDataRepository) {
+		this.careDataRepository = careDataRepository;
+	}
+	
+	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
+	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+		Integer  id = (Integer)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
+		MctsPregnantMother mctsPregnantMother = careDataRepository.getMotherFromPrimaryId(id);
+		LOGGER.error("EVENT_BENEFICIARY_UPDATED called");
+		updateXml(mctsPregnantMother);
+	}
+	
+	
+
+	//TODO add listener whenever a recird is updated
 	public void updateXml(MctsPregnantMother mctsPregnantMother) throws BeneficiaryException
 			 {
 		UpdateData data = new UpdateData();
@@ -61,14 +79,13 @@ public class UpdateCaseXmlService {
 			workerId = -1;
 		}
 		Case caseTask = createCaseForBeneficiary(mctsPregnantMother,
-				userId);
-		/*if ((caseTask.getUpdateTask().getMctsFullname() != null)
+				userId, workerId);
+		if ((caseTask.getUpdateTask().getMctsFullname() != null)
 		&& (caseTask.getUpdateTask().getMctsHusbandName() != null)
 		&& (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
 		&& (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
 			data.setCaseTask(caseTask);
-}*/
-		data.setCaseTask(caseTask);
+		}
 
 		data.setXmlns(CommcareConstants.UPDATEDATAXMLNS);
 		String returnvalue = ObjectToXMLConverter.converObjectToXml(
@@ -79,17 +96,9 @@ public class UpdateCaseXmlService {
 		
 	}
 	private Case createCaseForBeneficiary(
-			MctsPregnantMother mctsPregnantMother, String userId) throws BeneficiaryException {
-		int workerId;
+			MctsPregnantMother mctsPregnantMother, String userId, int workerId) throws BeneficiaryException {
 
-		if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
-			workerId = mctsPregnantMother.getMctsHealthworkerByAshaId()
-					.getHealthworkerId();
-		} else {
-			workerId = -1;
-		}
-
-		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
+		String ownerId = mctsPregnantMother.getOwnerId();
 		String caseId = mctsPregnantMother.getMctsPersonaCaseUId();
 		
 
@@ -144,42 +153,22 @@ public class UpdateCaseXmlService {
 		Date birth = mctsPregnantMother.getBirthDate();
 		DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
 		DateTime date = new DateTime();
-		String age;
-		String dob;
+		String age = "";
+		String dob = "";
 
-		if (mctsName == null) {
-			mctsName = "";
-		}
-		if (mctsName_en == null) {
-			mctsName_en = "";
-		}
+		
 		if (birth != null) {
 			dob = birthDate.toString();
 			age = Integer.toString(Days.daysBetween(
 					date.withTimeAtStartOfDay(),
 					birthDate.withTimeAtStartOfDay()).getDays() / 365);
-		} else {
-			age = " ";
-			dob = " ";
-		}
-		if (husbandName == null) {
-			husbandName = " ";
-			mctsPregnantMother.getName();
-		}
-		if (husbandName_en == null) {
-			husbandName_en = " ";
-		}
-		if (mctsId == null) {
-			mctsId = " ";
-		}
-		if (phone == null) {
-			phone = " ";
-		}
+		} 
 
 		updateTask.setCaseName(mctsPregnantMother.getName());
 		updateTask.setCaseType(CommcareConstants.CASETYPE);
-		updateTask.setOwnerId(ownerId);
-		updateTask.setMctsHusbandName(husbandName_en);
+		updateTask.setOwnerId(ownerId); 
+		updateTask.setMctsHusbandName(husbandName);
+		updateTask.setMctsHusbandName_en(husbandName_en);
 		updateTask.setMctsFullname(mctsName);
 		updateTask.setMctsFullname_en(mctsName_en);
 		updateTask.setMctsAge(age);

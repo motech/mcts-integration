@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
+import org.motechproject.mcts.integration.commcare.UpdateCaseXmlService;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
@@ -79,6 +80,8 @@ public class BeneficiarySyncController {
 
 	@Autowired
 	private FixtureDataService fixtureDataService;
+	
+	@Autowired private UpdateCaseXmlService updateCaseXmlService;
 
 	/**
 	 * Method to validate connection
@@ -273,6 +276,8 @@ public class BeneficiarySyncController {
 		createCaseXmlService.createCaseXml();
 		return "success";
 	}
+	
+	
 	
 
 	@ExceptionHandler(value = { RestException.class })
