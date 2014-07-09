@@ -12,6 +12,7 @@ import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
+import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
@@ -19,6 +20,7 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.motechproject.mcts.integration.service.FixtureDataService;
@@ -42,6 +44,9 @@ public class UpdateCaseXmlService {
 	
 	@Autowired
 	CareDataRepository careDataRepository;
+	
+	@Autowired
+	MCTSHttpClientService mCTSHttpClientService;
 
 	
 	public CareDataRepository getCareDataRepository() {
@@ -92,7 +97,7 @@ public class UpdateCaseXmlService {
 				data,
 				UpdateData.class);
 		LOGGER.debug("returned : " + returnvalue);
-		
+		HttpStatus status = mCTSHttpClientService.syncToCommcareUpdate(data);
 		
 	}
 	private Case createCaseForBeneficiary(
