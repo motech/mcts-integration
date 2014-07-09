@@ -73,7 +73,7 @@ public class MctsState implements java.io.Serializable {
 		this.name = name;
 	}
 
-	@Column(name = "status")
+	@Column(name = "status", columnDefinition="boolean default false")
 	public boolean getStatus() {
 		return this.status;
 	}

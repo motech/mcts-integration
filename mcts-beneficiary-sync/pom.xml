@@ -247,6 +247,7 @@
                             org.postgresql,
 							org.motechproject.scheduler,
 							org.motechproject.transliteration.service,
+							org.springframework.web.multipart.commons,
                             *
                         </Import-Package>
                     </instructions>

@@ -19,7 +19,7 @@ import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.supercsv.exception.SuperCsvReflectionException;
@@ -29,12 +29,14 @@ import org.supercsv.prefs.CsvPreference;
 
 /**
  * Service method to read flw CSV file and populate the database
+ * 
  * @author aman
- *
+ * 
  */
 @Transactional
-@Repository
-//@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
+@Service
+// @TransactionConfiguration(transactionManager = "txManager", defaultRollback =
+// true)
 public class FLWDataPopulator {
 
 	private final static Logger LOGGER = LoggerFactory
@@ -50,11 +52,10 @@ public class FLWDataPopulator {
 
 	@Autowired
 	private CareDataRepository careDataRepository;
-	
-	
-	
+
 	/**
-	 * Method to populate table mcts_HealthWorker 
+	 * Method to populate table mcts_HealthWorker
+	 * 
 	 * @throws Exception
 	 */
 	public void populateFLWData(MultipartFile file) throws BeneficiaryException {
@@ -64,23 +65,23 @@ public class FLWDataPopulator {
 		try {
 			byte[] bytes = file.getBytes();
 			String path = System.getProperty("java.io.tmpdir");
-			newFile = new File(path +"/flw.xml");
+			newFile = new File(path + "/flw.xml");
 			FileOutputStream out = new FileOutputStream(newFile);
 			out.write(bytes);
 			System.out.println("size" + newFile.getTotalSpace());
 			beanReader = new CsvBeanReader(new FileReader(newFile),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
-			
+
 			int count = 0;
 			while ((flwDataCSV = beanReader.read(FLWDataCSV.class, header)) != null) {
 				System.out.println("count" + count++);
-				
-				int  phcId = flwDataCSV.getPHC_ID();
-				
+
+				int phcId = flwDataCSV.getPHC_ID();
+
 				MctsPhc mctsPhc = careDataRepository.getMctsPhc(phcId);
-				
-				if(mctsPhc != null) {
+
+				if (mctsPhc != null) {
 					int healthworkerId = flwDataCSV.getId();
 					String name = flwDataCSV.getName();
 					String contact_No = flwDataCSV.getContact_No();
@@ -91,60 +92,67 @@ public class FLWDataPopulator {
 					String husbandName = flwDataCSV.getHusband_Name();
 					String aadharNo = flwDataCSV.getAadhar_No();
 					String gfAddress = flwDataCSV.getGF_Address();
-					
-					MctsSubcenter mctsSubcenre = careDataRepository.getMctsSubcentre(subcentreId);
-					MctsVillage mctsVillage = careDataRepository.getMctsVillage(villageId);
-					
-					MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", healthworkerId);
-					if(mctsHealthworker == null || (mctsHealthworker!=null && !mctsHealthworker.getStatus())) {
-						 mctsHealthworker = new MctsHealthworker(
-								mctsPhc, healthworkerId, name, sex, type);
-						
-						mctsHealthworker.setContactNo(contact_No);
-						mctsHealthworker.setHusbandName(husbandName);
-						mctsHealthworker.setAadharNo(aadharNo);
-						mctsHealthworker.setGfAddress(gfAddress);
-						mctsHealthworker.setStatus(true);
-						if(mctsSubcenre!=null) {
-							mctsHealthworker.setMctsSubcenter(mctsSubcenre);
-						}
-						if(mctsVillage!=null) {
-							mctsHealthworker.setMctsVillage(mctsVillage);
-						}
-						careDataRepository.saveOrUpdate(mctsHealthworker);
+
+					MctsSubcenter mctsSubcenre = careDataRepository
+							.getMctsSubcentre(subcentreId);
+					MctsVillage mctsVillage = careDataRepository
+							.getMctsVillage(villageId);
+
+					MctsHealthworker mctsHealthworker = careDataRepository
+							.findEntityByField(MctsHealthworker.class,
+									"healthworkerId", healthworkerId);
+					if (mctsHealthworker == null) {
+						mctsHealthworker = new MctsHealthworker();
 					}
+					mctsHealthworker.setMctsPhc(mctsPhc);
+					mctsHealthworker.setHealthworkerId(healthworkerId);
+					mctsHealthworker.setName(name);
+					mctsHealthworker.setSex(sex);
+					mctsHealthworker.setType(type);
+					mctsHealthworker.setContactNo(contact_No);
+					mctsHealthworker.setHusbandName(husbandName);
+					mctsHealthworker.setAadharNo(aadharNo);
+					mctsHealthworker.setGfAddress(gfAddress);
+					mctsHealthworker.setStatus(true);
+					if (mctsSubcenre != null) {
+						mctsHealthworker.setMctsSubcenter(mctsSubcenre);
+					}
+					if (mctsVillage != null) {
+						mctsHealthworker.setMctsVillage(mctsVillage);
+					}
+					careDataRepository.saveOrUpdate(mctsHealthworker);
+
 					
 				}
-				
+
 				else {
-						LOGGER.error("invalid phc id in row"+count);
+					LOGGER.error("invalid phc id in row" + count);
 				}
-				
 
 			}
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e);
-		}
-		catch(IOException e) {
-			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e);
-		}
-		catch (SuperCsvReflectionException e) {
-			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e);
-		}
-		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e);
-		}
-		catch (HibernateException e) {
-			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e);
-		}
-		finally {
+		} catch (IOException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.FILE_READING_WRTING_FAILED, e);
+		} catch (SuperCsvReflectionException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS, e);
+		} catch (IllegalArgumentException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH, e);
+		} catch (HibernateException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.DATABASE_OPERATION_FAILED, e);
+		} finally {
 			if (beanReader != null) {
 				try {
 					beanReader.close();
 				} catch (IOException e) {
-					throw new BeneficiaryException(ApplicationErrors.FILE_CLOSING_FAILED,e.getMessage());
+					throw new BeneficiaryException(
+							ApplicationErrors.FILE_CLOSING_FAILED,
+							e.getMessage());
 				}
 			}
 			flwDataPopulator(newFile);
@@ -152,8 +160,12 @@ public class FLWDataPopulator {
 
 	}
 
+
+	
+
 	/**
 	 * Method to populate table mcts_flw_master
+	 * 
 	 * @throws Exception
 	 */
 	public void flwDataPopulator(File file) throws BeneficiaryException {
@@ -163,7 +175,7 @@ public class FLWDataPopulator {
 			beanReader = new CsvBeanReader(new FileReader(file),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
-			
+
 			while ((flwDataCSV = beanReader.read(FLWDataCSV.class, header)) != null) {
 
 				String districtId = flwDataCSV.getDistrict_ID().toString();
@@ -181,38 +193,41 @@ public class FLWDataPopulator {
 				String healthWorkerId = flwDataCSV.getId().toString();
 				String contact_No = flwDataCSV.getContact_No();
 				String phcId = flwDataCSV.getPHC_ID().toString();
-				
+
 				String status = "1";
 				String comments = " ";
-				MctsPhc mctsPhc = careDataRepository
-						.getMctsPhc(flwDataCSV.getPHC_ID());
-				if(mctsPhc == null) {
+				MctsPhc mctsPhc = careDataRepository.getMctsPhc(flwDataCSV
+						.getPHC_ID());
+				if (mctsPhc == null) {
 					status = "0";
 					comments = "Invalid phc id";
 				}
 				MctsFlwData mctsFlwData = new MctsFlwData(districtId, talukaId,
-						healthBlockId, subCentreId, villageId, name,
-						sex, type, aadharNo, husbandName, gfAdress,
-						healthWorkerId, contact_No, phcId, status, comments);
+						healthBlockId, subCentreId, villageId, name, sex, type,
+						aadharNo, husbandName, gfAdress, healthWorkerId,
+						contact_No, phcId, status, comments);
 				careDataRepository.saveOrUpdate(mctsFlwData);
 
 			}
 
-		}
-		catch (FileNotFoundException e) {
-			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e.getMessage());
-		}
-		catch(IOException e) {
-			throw new BeneficiaryException(ApplicationErrors.FILE_READING_WRTING_FAILED,e.getMessage());
-		}
-		catch (SuperCsvReflectionException e) {
-			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
-		}
-		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage());
-		}
-		catch (HibernateException e) {
-			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e.getMessage());
+		} catch (FileNotFoundException e) {
+			throw new BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND,
+					e.getMessage());
+		} catch (IOException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.FILE_READING_WRTING_FAILED,
+					e.getMessage());
+		} catch (SuperCsvReflectionException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,
+					e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,
+					e.getMessage());
+		} catch (HibernateException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.DATABASE_OPERATION_FAILED, e.getMessage());
 		}
 
 		finally {
@@ -220,7 +235,9 @@ public class FLWDataPopulator {
 				try {
 					beanReader.close();
 				} catch (IOException e) {
-					throw new BeneficiaryException(ApplicationErrors.FILE_CLOSING_FAILED,e.getMessage());
+					throw new BeneficiaryException(
+							ApplicationErrors.FILE_CLOSING_FAILED,
+							e.getMessage());
 				}
 			}
 		}

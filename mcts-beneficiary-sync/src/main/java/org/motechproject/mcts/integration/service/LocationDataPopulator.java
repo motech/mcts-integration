@@ -19,21 +19,19 @@ import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.integration.web.BeneficiarySyncController;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.supercsv.exception.SuperCsvReflectionException;
 import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
-import org.springframework.web.multipart.MultipartFile;
 
 @Transactional
-@Repository
+@Service
 // @TransactionConfiguration(transactionManager = "txManager", defaultRollback =
 // true)
 public class LocationDataPopulator {
@@ -55,7 +53,7 @@ public class LocationDataPopulator {
 //	@Autowired
 //	private CSVFileReader cSVFileReader;
 	
-
+	
 
 	
 	public LocationDataPopulator() {
@@ -156,59 +154,83 @@ public class LocationDataPopulator {
 		int villageId = locationCSV.getVCode();
 		String villageName = locationCSV.getVillage();
 
+		
 		MctsState mctsState = careDataRepository.findEntityByField(
 				MctsState.class, "stateId", stateId);
-		if (mctsState == null || (mctsState!=null && !mctsState.getStatus() && status)) {
+		if (mctsState == null) {
 			mctsState = new MctsState(stateId, StateName);
+			mctsState.setStatus(false);
+		}
+		if (!mctsState.getStatus()) {
 			mctsState.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsState);
 		}
-
+			
+			
+		
 		MctsDistrict mctsDistrict = careDataRepository
 				.findUniqueDistrict(disctrictId,mctsState.getId());
-		if (mctsDistrict == null || (mctsDistrict!=null && !mctsDistrict.getStatus() && status)) {
+		if (mctsDistrict == null ) {
 			mctsDistrict = new MctsDistrict(mctsState, disctrictId,
 					disctrictName);
+			mctsDistrict.setStatus(false);
+		}
+		if (!mctsDistrict.getStatus()) {
 			mctsDistrict.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsDistrict);
 		}
 
 		MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,mctsDistrict.getId());
-		if (mctsTaluk == null || (mctsTaluk!=null && !mctsTaluk.getStatus() && status)) {
+		if (mctsTaluk == null) {
 			mctsTaluk = new MctsTaluk(mctsDistrict, talukId, talukaName);
+			mctsTaluk.setStatus(false);
+		}
+		if (!mctsTaluk.getStatus()) {
 			mctsTaluk.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsTaluk);
 		}
-
+		
 		MctsHealthblock mctsHealthblock = careDataRepository
 				.findUniqueHealthBlock(healthblockId,mctsTaluk.getId());
-		if (mctsHealthblock == null || (mctsDistrict!=null && !mctsHealthblock.getStatus() && status)) {
+		if (mctsHealthblock == null) {
 			mctsHealthblock = new MctsHealthblock(mctsTaluk,
 					healthblockId, healthblockName);
+			mctsHealthblock.setStatus(false);
+		}
+		if (!mctsHealthblock.getStatus()) {
 			mctsHealthblock.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsHealthblock);
 		}
 
 		MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,mctsHealthblock.getId());
-		if (mctsPhc == null || (mctsPhc!=null && !mctsPhc.getStatus() && status)) {
+		if (mctsPhc == null) {
 			mctsPhc = new MctsPhc(mctsHealthblock, phcId, phcName);
+			mctsPhc.setStatus(false);
+		}
+		if (!mctsPhc.getStatus()) {
 			mctsPhc.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsPhc);
 		}
-
+		
 		MctsSubcenter mctsSubcenter = careDataRepository
 				.findUniqueSubcentre(subcenterId,mctsPhc.getId());
-		if (mctsSubcenter == null ||(mctsSubcenter!=null && !mctsSubcenter.getStatus() && status)) {
+		if (mctsSubcenter == null) {
 			mctsSubcenter = new MctsSubcenter(mctsPhc, subcenterId,
 					subcentreName);
+			mctsSubcenter.setStatus(false);
+		}
+		if (!mctsSubcenter.getStatus()) {
 			mctsSubcenter.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsSubcenter);
 		}
-
+		
 		MctsVillage mctsVillage = careDataRepository.findUniqueVillage(villageId,mctsSubcenter.getId(),mctsTaluk.getId());
-		if (mctsVillage == null || (mctsVillage!=null && !mctsVillage.getStatus() && status)) {
+		if (mctsVillage == null) {
 			mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter,
 					villageId, villageName);
+			mctsVillage.setStatus(false);
+		}
+		if (!mctsVillage.getStatus()) {
 			mctsVillage.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsVillage);
 		}

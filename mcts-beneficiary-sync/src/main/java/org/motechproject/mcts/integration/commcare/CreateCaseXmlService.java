@@ -78,42 +78,46 @@ public class CreateCaseXmlService {
 				.getMctsPregnantMother();
 		LOGGER.debug("size :" + mctsPregnantMother.size());
 		int size = mctsPregnantMother.size();
-		int sizeOfXml = propertyReader.sizeOfXml();
-		int times = size / sizeOfXml;
-		if (times > 0) {
-			for (int i = 0; i <= times; i++) {
-				hm = new HashMap<Integer, Object>();
-				Data data = createXml(mctsPregnantMother.subList(i * sizeOfXml,
-						(i + 1) * sizeOfXml - 1));
-				String returnvalue = ObjectToXMLConverter.converObjectToXml(
-						data, Data.class);
-				LOGGER.debug("returned : " + returnvalue);
-				HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-				if (status.value() == 200) {
-					for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
-						careDataRepository.saveOrUpdate(entry.getValue());
+		if (size>0) {
+			int sizeOfXml = propertyReader.sizeOfXml();
+			int times = size / sizeOfXml;
+			if (times > 0) {
+				for (int i = 0; i <= times; i++) {
+					hm = new HashMap<Integer, Object>();
+					Data data = createXml(mctsPregnantMother.subList(i * sizeOfXml,
+							(i + 1) * sizeOfXml - 1));
+					String returnvalue = ObjectToXMLConverter.converObjectToXml(
+							data, Data.class);
+					LOGGER.debug("returned : " + returnvalue);
+					HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+					if (status.value() == 200) {
+						for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
+							careDataRepository.saveOrUpdate(entry.getValue());
+						}
 					}
 				}
 			}
-		}
 
-		else {
-			hm = new HashMap<Integer, Object>();
-			Data data = createXml(mctsPregnantMother);
-			String returnvalue = ObjectToXMLConverter.converObjectToXml(data,
-					Data.class);
-			LOGGER.debug("returned : " + returnvalue);
+			else {
+				hm = new HashMap<Integer, Object>();
+				Data data = createXml(mctsPregnantMother);
+				String returnvalue = ObjectToXMLConverter.converObjectToXml(data,
+						Data.class);
+				LOGGER.debug("returned : " + returnvalue);
 
-			// TODO post xml to the url if response is 200 then only execute the
-			// following statment
-			HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-			if (status.value() == 200) {
-				for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
-					careDataRepository.saveOrUpdate(entry.getValue());
+				// TODO post xml to the url if response is 200 then only execute the
+				// following statment
+				HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+				if (status.value()/100 == 2) {
+					for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
+						careDataRepository.saveOrUpdate(entry.getValue());
+						LOGGER.debug("received valid response code");
+					}
+
 				}
-
 			}
 		}
+		
 	}
 
 	/**
