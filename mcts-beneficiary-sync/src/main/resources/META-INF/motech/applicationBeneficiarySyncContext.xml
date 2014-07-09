@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context
@@ -12,13 +12,14 @@
 		  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 	<import resource="classpath:META-INF/motech/applicationHibernateContext.xml" />
- <mvc:annotation-driven/>
- 
- 
-    <mvc:interceptors>
-        <bean class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor"/>
-    </mvc:interceptors>
-    
+	<mvc:annotation-driven />
+
+
+	<mvc:interceptors>
+		<bean
+			class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor" />
+	</mvc:interceptors>
+
 	<context:component-scan base-package="org.motechproject.mcts" />
 
 	<util:properties id="beneficiarySyncProperties"
@@ -31,13 +32,16 @@
 
 	<bean id="httpComponentsClientHttpRequestFactory"
 		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
-	
+
 
 	<bean id="mctsRestTemplate" class="org.springframework.web.client.RestTemplate">
 		<constructor-arg ref="httpComponentsClientHttpRequestFactory" />
 	</bean>
 
-
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="100000" />
+	</bean>
 
 
 </beans>

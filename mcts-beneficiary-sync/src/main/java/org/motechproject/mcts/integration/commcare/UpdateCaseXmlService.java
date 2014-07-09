@@ -61,13 +61,11 @@ public class UpdateCaseXmlService {
 	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
 		Integer  id = (Integer)motechEvent.getParameters().get(MCTSEventConstants.PARAM_BENEFICIARY_KEY);
 		MctsPregnantMother mctsPregnantMother = careDataRepository.getMotherFromPrimaryId(id);
-		LOGGER.error("EVENT_BENEFICIARY_UPDATED called");
 		updateXml(mctsPregnantMother);
 	}
 	
 	
 
-	//TODO add listener whenever a recird is updated
 	public void updateXml(MctsPregnantMother mctsPregnantMother) throws BeneficiaryException
 			 {
 		UpdateData data = new UpdateData();
@@ -98,6 +96,11 @@ public class UpdateCaseXmlService {
 				UpdateData.class);
 		LOGGER.debug("returned : " + returnvalue);
 		HttpStatus status = mCTSHttpClientService.syncToCommcareUpdate(data);
+		
+		// Accepted status code is 2xx
+		if (status.value() / 100 == 2) {
+			LOGGER.debug("valid response received");
+		}
 		
 	}
 	private Case createCaseForBeneficiary(
