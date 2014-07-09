@@ -66,14 +66,13 @@ public class CreateCaseXmlService {
 		this.careDataRepository = careDataRepository;
 	}
 
-
-
-	@MotechListener(subjects=MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
-	public void handleEvent(MotechEvent motechEvent) throws BeneficiaryException{
+	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
+	public void handleEvent(MotechEvent motechEvent)
+			throws BeneficiaryException {
 		createCaseXml();
 	}
-	
-	public void createCaseXml() throws BeneficiaryException   {
+
+	public void createCaseXml() throws BeneficiaryException {
 
 		List<MctsPregnantMother> mctsPregnantMother = careDataRepository
 				.getMctsPregnantMother();
@@ -104,14 +103,17 @@ public class CreateCaseXmlService {
 			String returnvalue = ObjectToXMLConverter.converObjectToXml(data,
 					Data.class);
 			LOGGER.debug("returned : " + returnvalue);
-			
-	// TODO post xml to the url if response is 200 then only execute the following statment	
+
+			// TODO post xml to the url if response is 200 then only execute the
+			// following statment
+			HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+			if (status.value() == 200) {
 				for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
 					careDataRepository.saveOrUpdate(entry.getValue());
 				}
-			
-		}
 
+			}
+		}
 	}
 
 	/**
@@ -134,14 +136,15 @@ public class CreateCaseXmlService {
 		for (int i = 0; i < mctsPregnantMother.size(); i++) {
 			Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),
 					userId);
-			
-			 if ((caseTask.getCreateTask().getCaseName() != null) &&
-			  (caseTask.getUpdateTask().getMctsHusbandName() != null) &&
-			  (caseTask.getUpdateTask().getMctsHusbandName_en() != null) &&
-			  (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
-			  cases.add(caseTask); }
-			 
-			//cases.add(caseTask);
+
+			if ((caseTask.getCreateTask().getCaseName() != null)
+					&& (caseTask.getUpdateTask().getMctsHusbandName() != null)
+					&& (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
+					&& (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
+				cases.add(caseTask);
+			}
+
+			// cases.add(caseTask);
 
 		}
 		data.setCases(cases);
@@ -231,7 +234,7 @@ public class CreateCaseXmlService {
 		String phone = mctsPregnantMother.getMobileNo();
 		Date birth = mctsPregnantMother.getBirthDate();
 		DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
-		
+
 		DateTime date = new DateTime();
 		String age = "";
 		String dob = "";
@@ -242,8 +245,8 @@ public class CreateCaseXmlService {
 					date.withTimeAtStartOfDay(),
 					birthDate.withTimeAtStartOfDay()).getDays() / 365);
 		}
-		
-		if (mctsPregnantMother.getLmpDate()!=null) {
+
+		if (mctsPregnantMother.getLmpDate() != null) {
 			DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
 			DateTime edd = lmpDate.plusDays(280);
 			updateTask.setMctsEdd(edd.toString());

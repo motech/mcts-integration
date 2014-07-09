@@ -6,6 +6,7 @@ package org.motechproject.mcts.integration.service;
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.commcare.Data;
+import org.motechproject.mcts.integration.commcare.UpdateData;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.utils.CommcareConstants;
@@ -98,4 +99,16 @@ public class MCTSHttpClientService {
         LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
         return responseBody;
     }
+
+	public HttpStatus syncToCommcareUpdate(UpdateData data) {
+		HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+        ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi.executeWithReturnTypeSync(CommcareConstants.POSTURL, httpEntity, Method.POST);
+     //   ResponseEntity<String> response = restTemplate.postForEntity(propertyReader.getUpdateRequestUrl(), httpEntity, String.class);
+        
+        if (response != null)
+            LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+        return response.getStatusCode();
+	}
 }
