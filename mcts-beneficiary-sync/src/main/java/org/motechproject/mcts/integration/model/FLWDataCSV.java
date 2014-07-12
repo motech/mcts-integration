@@ -1,5 +1,7 @@
 package org.motechproject.mcts.integration.model;
 
+import org.motechproject.mcts.integration.service.IntegerValidator;
+
 /**
  * Class to read FLWData from CSV file and transfer data to hibernate generated model class
  * @author aman
@@ -23,45 +25,45 @@ public class FLWDataCSV {
 	private String GF_Address;
 	
 	public Integer getId() {
-		return Integer.parseInt(id);
+		return IntegerValidator.validateAndReturnAsInt("healthworkerId", id);
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
 	
 	public Integer getDistrict_ID() {
-		return Integer.parseInt(District_ID);
+		return IntegerValidator.validateAndReturnAsInt("districtId", District_ID);
 	}
 	public void setDistrict_ID(String district_ID) {
 		District_ID = district_ID;
 	}
 	public Integer getTaluka_ID() {
-		return Integer.parseInt(Taluka_ID);
+		return IntegerValidator.validateAndReturnAsInt("talukaId", Taluka_ID);
 	}
 	public void setTaluka_ID(String taluka_ID) {
 		Taluka_ID = taluka_ID;
 	}
 	public Integer getHealthBlock_ID() {
-		return Integer.parseInt(HealthBlock_ID);
+		return IntegerValidator.validateAndReturnAsInt("HealthBlock_ID", HealthBlock_ID);
 	}
 	public void setHealthBlock_ID(String healthBlock_ID) {
 		HealthBlock_ID = healthBlock_ID;
 	}
 	
 	public Integer getSubCentre_ID() {
-		return Integer.parseInt(SubCentre_ID);
+		return IntegerValidator.validateAndReturnAsInt("SubCentre_ID", SubCentre_ID);
 	}
 	public void setSubCentre_ID(String subCentre_ID) {
 		SubCentre_ID = subCentre_ID;
 	}
 	public Integer getPHC_ID() {
-		return Integer.parseInt(PHC_ID);
+		return IntegerValidator.validateAndReturnAsInt("PHC_ID", PHC_ID);
 	}
 	public void setPHC_ID(String pHC_ID) {
 		PHC_ID = pHC_ID;
 	}
 	public Integer getVillage_ID() {
-		return Integer.parseInt(Village_ID);
+		return IntegerValidator.validateAndReturnAsInt("Village_ID", Village_ID);
 	}
 	public void setVillage_ID(String Village_ID) {
 		this.Village_ID = Village_ID;

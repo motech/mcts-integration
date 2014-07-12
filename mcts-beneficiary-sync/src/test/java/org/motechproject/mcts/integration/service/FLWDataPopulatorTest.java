@@ -75,7 +75,7 @@ public class FLWDataPopulatorTest
 		mctsPhc.setPhcId(175);
 		when(careDataRepository.getMctsPhc(175)).thenReturn(mctsPhc);
 		File file = new File(propertyReader.getFLWCsvFileLocation());//TODOAman chang to test res
-		fLWDataPopulator.flwDataPopulator(file);
+//		fLWDataPopulator.flwDataPopulator(file);
 		ArgumentCaptor<MctsFlwData> captor = ArgumentCaptor
 				.forClass(MctsFlwData.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());

@@ -128,7 +128,7 @@ public class Record {
 		return aNMID;
 	}
 
-	@XmlElement(name = "ASHA_ID")
+	@XmlElement(name = "ASHA_ID", defaultValue="")
 	public String getASHAID() {
 		return aSHAID;
 	}
@@ -311,14 +311,7 @@ public class Record {
 	}
 
 	public void setBirthdate(String birthdate){
-		Date date;
-		try {
-			date = new SimpleDateFormat("dd-MM-yyyy").parse(birthdate);
-			this.birthdate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-		} catch (ParseException e) {
-			//TODO
-		}
-
+		this.birthdate = birthdate;
 	}
 
 	public void setGender(String gender) {
@@ -354,14 +347,7 @@ public class Record {
 	}
 
 	public void setLMPDate(String lMPDate){
-		Date date;
-		try {
-			date = new SimpleDateFormat("dd-MM-yyyy").parse(lMPDate);
-			this.lMPDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-		} catch (ParseException e) {
-			//TODO
-		}
-
+			this.lMPDate = lMPDate;
 	}
 
 	public Record(String stateID, String stateName, String districtID,
