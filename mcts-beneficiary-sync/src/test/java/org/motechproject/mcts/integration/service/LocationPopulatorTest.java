@@ -47,7 +47,7 @@ public class LocationPopulatorTest {
 	@Ignore
 	public void shouldSyncCsvDataToLocationMaster() throws Exception {
 		File file = new File(propertyReader.getFLWCsvFileLocation()); //TODO Aman get from test res
-		locationDataPopulator.saveLocationData(file);
+	//	locationDataPopulator.saveLocationData(file);
 		ArgumentCaptor<MctsLocationMaster> captor = ArgumentCaptor
 				.forClass(MctsLocationMaster.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());

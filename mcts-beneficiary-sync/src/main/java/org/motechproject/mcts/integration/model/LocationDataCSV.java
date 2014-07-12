@@ -1,5 +1,7 @@
 package org.motechproject.mcts.integration.model;
 
+import org.motechproject.mcts.integration.service.IntegerValidator;
+
 /**
  * Class to read LocationData from CSV file and transfer data to hibernate generated model class
  * @author aman
@@ -23,7 +25,7 @@ public class LocationDataCSV
 	private String Village;
 	
 	public Integer getStateID() {
-		return Integer.parseInt(StateID);
+		return IntegerValidator.validateAndReturnAsInt("stateId", StateID);
 	}
 	public void setStateID(String stateID) {
 		StateID = stateID;
@@ -35,7 +37,7 @@ public class LocationDataCSV
 		State = state;
 	}
 	public Integer getDCode() {
-		return Integer.parseInt(DCode);
+		return IntegerValidator.validateAndReturnAsInt("dCode", DCode);
 	}
 	public void setDCode(String dCode) {
 		DCode = dCode;
@@ -47,7 +49,7 @@ public class LocationDataCSV
 		District = district;
 	}
 	public Integer getTCode() {
-		return Integer.parseInt(TCode);
+		return IntegerValidator.validateAndReturnAsInt("tCode", TCode);
 	}
 	public void setTCode(String tCode) {
 		TCode = tCode;
@@ -59,7 +61,7 @@ public class LocationDataCSV
 		Taluka_Name = taluka_Name;
 	}
 	public Integer getBID() {
-		return Integer.parseInt(BID);
+		return IntegerValidator.validateAndReturnAsInt("BID", BID);
 	}
 	public void setBID(String bID) {
 		BID = bID;
@@ -71,7 +73,7 @@ public class LocationDataCSV
 		Block = block;
 	}
 	public Integer getPID() {
-		return Integer.parseInt(PID);
+		return IntegerValidator.validateAndReturnAsInt("PID", PID);
 	}
 	public void setPID(String pID) {
 		PID = pID;
@@ -83,8 +85,8 @@ public class LocationDataCSV
 		PHC = pHC;
 	}
 	public Integer getSID() {
-		return Integer.parseInt(SID);
-	}
+		return IntegerValidator.validateAndReturnAsInt("SID", SID);	
+		}
 	public void setSID(String sID) {
 		SID = sID;
 	}
@@ -95,7 +97,7 @@ public class LocationDataCSV
 		SUBCenter = sUBCenter;
 	}
 	public Integer getVCode() {
-		return Integer.parseInt(VCode);
+		return IntegerValidator.validateAndReturnAsInt("VCode", VCode);
 	}
 	public void setVCode(String vCode) {
 		VCode = vCode;
