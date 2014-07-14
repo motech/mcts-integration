@@ -17,8 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "mcts_pregnant_mother_master", schema = "report")
-public class MctsPregnantMotherMaster implements java.io.Serializable {
+@Table(name = "mcts_pregnant_mother_error_log", schema = "report")
+public class MctsPregnantMotherErrorLog implements java.io.Serializable {
 
 	private Integer id;
 	private String stateID;
@@ -56,10 +56,10 @@ public class MctsPregnantMotherMaster implements java.io.Serializable {
 	private String lMPDate;
 	private Date creationTime;
 	
-	public MctsPregnantMotherMaster() {
+	public MctsPregnantMotherErrorLog() {
 	}
 
-	public MctsPregnantMotherMaster(Integer id, String stateID,
+	public MctsPregnantMotherErrorLog(Integer id, String stateID,
 			String stateName, String districtID, String districtName,
 			String blockID, String blockName, String tehsilID,
 			String tehsilName, String facilityID, String facilityName,

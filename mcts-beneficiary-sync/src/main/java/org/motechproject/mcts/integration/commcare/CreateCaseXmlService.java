@@ -30,6 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mchange.v2.async.CarefulRunnableQueue;
+
 /**
  * 
  * 
@@ -38,8 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class CreateCaseXmlService {
-
-	Map<Integer, Object> hm;
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(CreateCaseXmlService.class);
@@ -79,46 +79,59 @@ public class CreateCaseXmlService {
 				.getMctsPregnantMother();
 		LOGGER.debug("size :" + mctsPregnantMother.size());
 		int size = mctsPregnantMother.size();
-		if (size>0) {
+		if (size > 0) {
 			int sizeOfXml = propertyReader.sizeOfXml();
 			int times = size / sizeOfXml;
 			if (times > 0) {
 				for (int i = 0; i <= times; i++) {
-					hm = new HashMap<Integer, Object>();
-					Data data = createXml(mctsPregnantMother.subList(i * sizeOfXml,
-							(i + 1) * sizeOfXml - 1));
-					String returnvalue = ObjectToXMLConverter.converObjectToXml(
-							data, Data.class);
+					Data data = createXml(mctsPregnantMother.subList(i
+							* sizeOfXml, (i + 1) * sizeOfXml - 1));
+					String returnvalue = ObjectToXMLConverter
+							.converObjectToXml(data, Data.class);
 					LOGGER.debug("returned : " + returnvalue);
-					HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+					HttpStatus status = mCTSHttpClientService
+							.syncToCommcare(data);
 					if (status.value() == 200) {
-						for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
-							careDataRepository.saveOrUpdate(entry.getValue());
-						}
+						updateCaseUId(data);
+
 					}
 				}
 			}
 
 			else {
-				hm = new HashMap<Integer, Object>();
 				Data data = createXml(mctsPregnantMother);
-				String returnvalue = ObjectToXMLConverter.converObjectToXml(data,
-						Data.class);
+				String returnvalue = ObjectToXMLConverter.converObjectToXml(
+						data, Data.class);
 				LOGGER.debug("returned : " + returnvalue);
 
-				// TODO post xml to the url if response is 200 then only execute the
+				// TODO post xml to the url if response is 200 then only execute
+				// the
 				// following statment
 				HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-				if (status.value()/100 == 2) {
-					for (Map.Entry<Integer, Object> entry : hm.entrySet()) {
-						careDataRepository.saveOrUpdate(entry.getValue());
-						LOGGER.debug("received valid response code");
-					}
+				if (status.value() / 100 == 2) {
+					updateCaseUId(data);
 
 				}
 			}
 		}
-		
+
+	}
+
+	/**
+	 * This method is called after commcareHQ returns success after saving cases
+	 * @param data
+	 * @throws BeneficiaryException
+	 */
+	private void updateCaseUId(Data data) throws BeneficiaryException {
+		List<Case> cases = data.getCases();
+		for (Case curr : cases) {
+			MctsPregnantMother mother = careDataRepository
+					.getMotherFromPrimaryId(curr.getMctsPregnantMotherId());
+			mother.setMctsPersonaCaseUId(curr.getCaseId());
+			mother.setDateOpened(new DateTime().toString());
+			careDataRepository.saveOrUpdate(mother);
+
+		}
 	}
 
 	/**
@@ -182,9 +195,8 @@ public class CreateCaseXmlService {
 
 		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
 		String caseId = UUID.randomUUID().toString();
-		mctsPregnantMother.setMctsPersonaCaseUId(caseId);
-		mctsPregnantMother.setDateOpened(date.toString());
-		hm.put(mctsPregnantMother.getId(), mctsPregnantMother);
+//		mctsPregnantMother.setMctsPersonaCaseUId(caseId);
+//		mctsPregnantMother.setDateOpened(date.toString());
 
 		String dateModified = date.toString();
 

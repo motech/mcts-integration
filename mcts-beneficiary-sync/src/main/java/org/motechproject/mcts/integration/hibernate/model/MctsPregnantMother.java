@@ -31,11 +31,11 @@ public class MctsPregnantMother implements java.io.Serializable {
 	private String mctsPersonaCaseUId;
 	private MctsSubcenter mctsSubcenter;
 	private MctsHealthworker mctsHealthworkerByAshaId;
-	private MctsPregnantMotherMatchStatus mctsPregnantMotherMatchStatus;
+	private MctsPregnantMotherMatchStatusLookup mctsPregnantMotherMatchStatus;
 	private MctsHealthworker mctsHealthworkerByAnmId;
 	private MotherCase motherCase;
 	private MctsVillage mctsVillage;
-	private MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus;
+	private MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus;
 	private String mctsId;
 	private String name;
 	private String hindiName;
@@ -67,10 +67,10 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	public MctsPregnantMother(MctsSubcenter mctsSubcenter,
 			MctsHealthworker mctsHealthworkerByAshaId,
-			MctsPregnantMotherMatchStatus mctsPregnantMotherMatchStatus,
+			MctsPregnantMotherMatchStatusLookup mctsPregnantMotherMatchStatus,
 			MctsHealthworker mctsHealthworkerByAnmId, MotherCase motherCase,
 			MctsVillage mctsVillage,
-			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus,
+			MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus,
 			String mctsId, String name, String hindiName, String type, Date birthDate,
 			Character gender, String fatherHusbandName, String hindiFatherHusbandName, String email,
 			String mobileNo, String economicStatus, String category,
@@ -154,12 +154,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "match_status")
-	public MctsPregnantMotherMatchStatus getMctsPregnantMotherMatchStatus() {
+	public MctsPregnantMotherMatchStatusLookup getMctsPregnantMotherMatchStatus() {
 		return this.mctsPregnantMotherMatchStatus;
 	}
 
 	public void setMctsPregnantMotherMatchStatus(
-			MctsPregnantMotherMatchStatus mctsPregnantMotherMatchStatus) {
+			MctsPregnantMotherMatchStatusLookup mctsPregnantMotherMatchStatus) {
 		this.mctsPregnantMotherMatchStatus = mctsPregnantMotherMatchStatus;
 	}
 
@@ -196,12 +196,12 @@ public class MctsPregnantMother implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "case_authorized_status")
-	public MotherCaseMctsAuthorizedStatus getMotherCaseMctsAuthorizedStatus() {
+	public MotherCaseMctsAuthorizedStatusLookup getMotherCaseMctsAuthorizedStatus() {
 		return this.motherCaseMctsAuthorizedStatus;
 	}
 
 	public void setMotherCaseMctsAuthorizedStatus(
-			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus) {
+			MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus) {
 		this.motherCaseMctsAuthorizedStatus = motherCaseMctsAuthorizedStatus;
 	}
 

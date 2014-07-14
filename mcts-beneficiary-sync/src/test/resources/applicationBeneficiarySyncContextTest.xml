@@ -87,7 +87,7 @@
 				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
 
 				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus</value>
+				<!-- <value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus</value> -->
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatus</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
 			</list>

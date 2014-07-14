@@ -32,21 +32,31 @@ public class MotherCaseMctsUpdate implements java.io.Serializable {
 	private static final long serialVersionUID = -8318971109619756076L;
 	private Integer id;
 	private MotherCase motherCase;
-	private MctsPregnantMother mctsPregnantMother;
 	private String mctsId;
-	private MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus;	
+	private MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus;	
+	private String fullMctsId;
+
+	
+	@JoinColumn(name = "full_mcts_id")
+	public String getFullMctsId() {
+		return fullMctsId;
+	}
+
+	public void setFullMctsId(String fullMctsId) {
+		this.fullMctsId = fullMctsId;
+	}
 
 	public MotherCaseMctsUpdate() {
 	}
 
 	public MotherCaseMctsUpdate(Integer id, MotherCase motherCase,
-			MctsPregnantMother mctsPregnantMother, String mctsId,
-			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus) {
+			 String mctsId, String fullMctsId,
+			MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus) {
 		super();
 		this.id = id;
 		this.motherCase = motherCase;
-		this.mctsPregnantMother = mctsPregnantMother;
 		this.mctsId = mctsId;
+		this.fullMctsId = fullMctsId;
 		this.motherCaseMctsAuthorizedStatus = motherCaseMctsAuthorizedStatus;
 	}
 
@@ -74,24 +84,17 @@ public class MotherCaseMctsUpdate implements java.io.Serializable {
 		this.motherCase = motherCase;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "full_mcts_id")
-	public MctsPregnantMother getMctsPregnantMother() {
-		return mctsPregnantMother;
-	}
+	
 
-	public void setMctsPregnantMother(MctsPregnantMother mctsPregnantMother) {
-		this.mctsPregnantMother = mctsPregnantMother;
-	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "case_authorized_status")
-	public MotherCaseMctsAuthorizedStatus getMotherCaseMctsAuthorizedStatus() {
+	public MotherCaseMctsAuthorizedStatusLookup getMotherCaseMctsAuthorizedStatus() {
 		return this.motherCaseMctsAuthorizedStatus;
 	}
 
 	public void setMotherCaseMctsAuthorizedStatus(
-			MotherCaseMctsAuthorizedStatus motherCaseMctsAuthorizedStatus) {
+			MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus) {
 		this.motherCaseMctsAuthorizedStatus = motherCaseMctsAuthorizedStatus;
 	}
 

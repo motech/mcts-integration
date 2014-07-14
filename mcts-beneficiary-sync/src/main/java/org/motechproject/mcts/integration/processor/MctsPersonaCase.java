@@ -5,7 +5,7 @@ import org.motechproject.commcare.events.CaseEvent;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class MctsPersonaCase implements CaseProcesssor {
 		
 		String mctsId = null;
 		String mctsMatch = null;
-		MctsPregnantMotherMatchStatus matchStatus = null;
+		MctsPregnantMotherMatchStatusLookup matchStatus = null;
 		//get fields received from commcareHQ
 		Map<String , String> fieldValues = caseEvent.getFieldValues();
 		
@@ -48,7 +48,7 @@ public class MctsPersonaCase implements CaseProcesssor {
 		//mcts_match is mandatory field so if not present throw an exception and if present then get the corresponding object for MctsPregnantMotherMatchStatus
 		if(fieldValues.containsKey("mcts_match")) {
 			mctsMatch = fieldValues.get("mcts_match");
-		    matchStatus = careDataService.findEntityByField(MctsPregnantMotherMatchStatus.class, "name", mctsMatch);
+		    matchStatus = careDataService.findEntityByField(MctsPregnantMotherMatchStatusLookup.class, "name", mctsMatch);
 		}
 		else {
 			logger.error("Stopping MctsPersonaCase Processor: couldn't get field value of mcts_match");

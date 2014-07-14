@@ -4,11 +4,8 @@ import java.util.List;
 
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatus;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.integration.web.BeneficiarySyncController;
 import org.motechproject.mcts.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
 import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
 import org.slf4j.Logger;

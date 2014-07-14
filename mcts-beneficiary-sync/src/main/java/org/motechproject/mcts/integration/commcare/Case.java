@@ -3,11 +3,24 @@ package org.motechproject.mcts.integration.commcare;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 @XmlRootElement(name = "case")
 public class Case {
 	
+	private int mctsPregnantMotherId;
+	
+	
+	public int getMctsPregnantMotherId() {
+		return mctsPregnantMotherId;
+	}
+	
+	@XmlTransient
+	public void setMctsPregnantMotherId(int mctsPregnantMotherId) {
+		this.mctsPregnantMotherId = mctsPregnantMotherId;
+	}
+
 	private CreateTask createTask;
 	
     private UpdateTask updateTask;
