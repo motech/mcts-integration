@@ -19,6 +19,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.utils.LocationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ import org.supercsv.prefs.CsvPreference;
 // @TransactionConfiguration(transactionManager = "txManager", defaultRollback =
 // true)
 public class LocationDataPopulator {
-	
+
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(LocationDataPopulator.class);
 
@@ -49,13 +50,10 @@ public class LocationDataPopulator {
 
 	@Autowired
 	private CareDataRepository careDataRepository;
-	
-//	@Autowired
-//	private CSVFileReader cSVFileReader;
-	
-	
 
-	
+	// @Autowired
+	// private CSVFileReader cSVFileReader;
+
 	public LocationDataPopulator() {
 
 	}
@@ -74,13 +72,13 @@ public class LocationDataPopulator {
 			throws BeneficiaryException {
 
 		File newFile = null;
-		
+
 		ICsvBeanReader beanReader = null;
 		// String filePath= "/home/aman/Downloads/location.csv";
 
 		LocationDataCSV locationCSV = new LocationDataCSV();
 		try {
-			
+
 			byte[] bytes = file.getBytes();
 			LOGGER.info("thispath" + System.getProperty("java.io.tmpdir"));
 			String path = System.getProperty("java.io.tmpdir");
@@ -94,12 +92,15 @@ public class LocationDataPopulator {
 					CsvPreference.STANDARD_PREFERENCE);
 
 			final String[] header = beanReader.getHeader(true);
-			int count = 0;
 			LOGGER.info("Writing locations to database");
 			while ((locationCSV = beanReader
 					.read(LocationDataCSV.class, header)) != null) {
-				
-				addLocationToDb(locationCSV, true);
+				if (LocationValidator.isValidateLocation(locationCSV) == true) {
+					addLocationToDb(locationCSV, true);
+				} else {
+					saveLocationData(locationCSV);
+				}
+
 			}
 
 		}
@@ -111,12 +112,14 @@ public class LocationDataPopulator {
 			throw new BeneficiaryException(
 					ApplicationErrors.FILE_READING_WRTING_FAILED,
 					e.getMessage());
-		}
-		catch (SuperCsvReflectionException e) {
-			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
-		}
-		catch (IllegalArgumentException e) {
-			throw new BeneficiaryException(ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage());
+		} catch (SuperCsvReflectionException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,
+					e.getMessage());
+		} catch (IllegalArgumentException e) {
+			throw new BeneficiaryException(
+					ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,
+					e.getMessage());
 		}
 
 		finally {
@@ -129,16 +132,16 @@ public class LocationDataPopulator {
 							e.getMessage());
 				}
 			}
-			saveLocationData(newFile);
 		}
 
 	}
-	
+
 	/**
-	 * @throws BeneficiaryException 
+	 * @throws BeneficiaryException
 	 * 
 	 */
-	public void addLocationToDb(LocationDataCSV locationCSV, boolean status) throws BeneficiaryException{
+	public void addLocationToDb(LocationDataCSV locationCSV, boolean status)
+			throws BeneficiaryException {
 		int stateId = locationCSV.getStateID();
 		String StateName = locationCSV.getState();
 		int disctrictId = locationCSV.getDCode();
@@ -151,10 +154,9 @@ public class LocationDataPopulator {
 		String phcName = locationCSV.getPHC();
 		int subcenterId = locationCSV.getSID();
 		String subcentreName = locationCSV.getSUBCenter();
-		int villageId = locationCSV.getVCode();
+		Integer villageId = locationCSV.getVCode();
 		String villageName = locationCSV.getVillage();
 
-		
 		MctsState mctsState = careDataRepository.findEntityByField(
 				MctsState.class, "stateId", stateId);
 		if (mctsState == null) {
@@ -165,12 +167,10 @@ public class LocationDataPopulator {
 			mctsState.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsState);
 		}
-			
-			
-		
-		MctsDistrict mctsDistrict = careDataRepository
-				.findUniqueDistrict(disctrictId,mctsState.getId());
-		if (mctsDistrict == null ) {
+
+		MctsDistrict mctsDistrict = careDataRepository.findUniqueDistrict(
+				disctrictId, mctsState.getId());
+		if (mctsDistrict == null) {
 			mctsDistrict = new MctsDistrict(mctsState, disctrictId,
 					disctrictName);
 			mctsDistrict.setStatus(false);
@@ -180,7 +180,8 @@ public class LocationDataPopulator {
 			careDataRepository.saveOrUpdate(mctsDistrict);
 		}
 
-		MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,mctsDistrict.getId());
+		MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,
+				mctsDistrict.getId());
 		if (mctsTaluk == null) {
 			mctsTaluk = new MctsTaluk(mctsDistrict, talukId, talukaName);
 			mctsTaluk.setStatus(false);
@@ -189,12 +190,12 @@ public class LocationDataPopulator {
 			mctsTaluk.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsTaluk);
 		}
-		
+
 		MctsHealthblock mctsHealthblock = careDataRepository
-				.findUniqueHealthBlock(healthblockId,mctsTaluk.getId());
+				.findUniqueHealthBlock(healthblockId, mctsTaluk.getId());
 		if (mctsHealthblock == null) {
-			mctsHealthblock = new MctsHealthblock(mctsTaluk,
-					healthblockId, healthblockName);
+			mctsHealthblock = new MctsHealthblock(mctsTaluk, healthblockId,
+					healthblockName);
 			mctsHealthblock.setStatus(false);
 		}
 		if (!mctsHealthblock.getStatus()) {
@@ -202,7 +203,8 @@ public class LocationDataPopulator {
 			careDataRepository.saveOrUpdate(mctsHealthblock);
 		}
 
-		MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,mctsHealthblock.getId());
+		MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,
+				mctsHealthblock.getId());
 		if (mctsPhc == null) {
 			mctsPhc = new MctsPhc(mctsHealthblock, phcId, phcName);
 			mctsPhc.setStatus(false);
@@ -211,9 +213,9 @@ public class LocationDataPopulator {
 			mctsPhc.setStatus(status);
 			careDataRepository.saveOrUpdate(mctsPhc);
 		}
-		
-		MctsSubcenter mctsSubcenter = careDataRepository
-				.findUniqueSubcentre(subcenterId,mctsPhc.getId());
+
+		MctsSubcenter mctsSubcenter = careDataRepository.findUniqueSubcentre(
+				subcenterId, mctsPhc.getId());
 		if (mctsSubcenter == null) {
 			mctsSubcenter = new MctsSubcenter(mctsPhc, subcenterId,
 					subcentreName);
@@ -224,16 +226,20 @@ public class LocationDataPopulator {
 			careDataRepository.saveOrUpdate(mctsSubcenter);
 		}
 		
-		MctsVillage mctsVillage = careDataRepository.findUniqueVillage(villageId,mctsSubcenter.getId(),mctsTaluk.getId());
-		if (mctsVillage == null) {
-			mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter,
-					villageId, villageName);
-			mctsVillage.setStatus(false);
+		if (villageId != null) {
+			MctsVillage mctsVillage = careDataRepository.findUniqueVillage(
+					villageId, mctsSubcenter.getId(), mctsTaluk.getId());
+			if (mctsVillage == null) {
+				mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter, villageId,
+						villageName);
+				mctsVillage.setStatus(false);
+			}
+			if (!mctsVillage.getStatus()) {
+				mctsVillage.setStatus(status);
+				careDataRepository.saveOrUpdate(mctsVillage);
+			}
 		}
-		if (!mctsVillage.getStatus()) {
-			mctsVillage.setStatus(status);
-			careDataRepository.saveOrUpdate(mctsVillage);
-		}
+		
 	}
 
 	/**
@@ -242,6 +248,40 @@ public class LocationDataPopulator {
 	 * @throws BeneficiaryException
 	 * @throws IOException
 	 */
+	public void saveLocationData(LocationDataCSV locationCSV)
+			throws BeneficiaryException {
+
+		String stateId = locationCSV.getStateID().toString();
+		String state = locationCSV.getState();
+		String disctrictId = locationCSV.getDCode().toString();
+		String disctrictName = locationCSV.getDistrict();
+		String talukId = locationCSV.getTCode().toString();
+		String talukaName = locationCSV.getTaluka_Name();
+		String healthblockId = locationCSV.getBID().toString();
+		String healthblockName = locationCSV.getBlock();
+		String phcId = locationCSV.getPID().toString();
+		String phcName = locationCSV.getPHC();
+		String subcenterId = locationCSV.getSID().toString();
+		String subcentreName = locationCSV.getSUBCenter();
+		String villageId = locationCSV.getVCode().toString();
+		String villageName = locationCSV.getVillage();
+		String status = "1";
+		String comments = " ";
+
+		MctsLocationMaster mctsLocationMaster = new MctsLocationMaster(stateId,
+				state, disctrictId, disctrictName, talukId, talukaName,
+				healthblockId, healthblockName, phcId, phcName, subcenterId,
+				subcentreName, villageId, villageName, status, comments);
+		careDataRepository.saveOrUpdate(mctsLocationMaster);
+
+	}
+
+	/**
+	 * Method to populate location master table
+	 * 
+	 * @throws BeneficiaryException
+	 * @throws IOException
+	 *//*
 	public void saveLocationData(File file) throws BeneficiaryException {
 
 		ICsvBeanReader beanReader = null;
@@ -292,7 +332,6 @@ public class LocationDataPopulator {
 			throw new BeneficiaryException(
 					ApplicationErrors.FILE_READING_WRTING_FAILED,
 					e.getMessage());
-		}
 		catch (SuperCsvReflectionException e) {
 			throw new BeneficiaryException(ApplicationErrors.CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage());
 		}

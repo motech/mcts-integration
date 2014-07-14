@@ -9,13 +9,14 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
-import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.integration.service.StubDataService;
 import org.motechproject.mcts.utils.CommcareConstants;
@@ -254,23 +255,27 @@ public class CreateCaseXmlService {
 		DateTime date = new DateTime();
 		String age = "";
 		String dob = "";
-
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+		
 		if (birth != null) {
-			dob = birthDate.toString();
+			dob = fmt.print(birthDate);
 			age = Integer.toString(Days.daysBetween(
-					date.withTimeAtStartOfDay(),
-					birthDate.withTimeAtStartOfDay()).getDays() / 365);
+					birthDate.withTimeAtStartOfDay(),
+					date.withTimeAtStartOfDay()).getDays() / 365);
 		}
 
 		if (mctsPregnantMother.getLmpDate() != null) {
 			DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
 			DateTime edd = lmpDate.plusDays(280);
-			updateTask.setMctsEdd(edd.toString());
+			String eddDate = fmt.print(edd);
+			updateTask.setMctsEdd(eddDate);
 		}
+		
+		
 
-		updateTask.setCaseName(mctsPregnantMother.getName());
-		updateTask.setCaseType(CommcareConstants.CASETYPE);
-		updateTask.setOwnerId(ownerId);
+		//updateTask.setCaseName(mctsPregnantMother.getName());
+		//updateTask.setCaseType(CommcareConstants.CASETYPE);
+		//updateTask.setOwnerId(ownerId);
 		updateTask.setMctsHusbandName(husbandName);
 		updateTask.setMctsHusbandName_en(husbandName_en);
 		updateTask.setMctsFullname(mctsName);
