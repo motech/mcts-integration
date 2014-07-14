@@ -45,6 +45,7 @@ public class CareDataRepository {
 		this.sessionFactory = sessionFactory;
 	}
 
+	//TODO send only for authorized = approved
 	@SuppressWarnings("unchecked")
 	public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
 			DateTime endDate) {

@@ -11,7 +11,7 @@ import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster;
+import org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
@@ -276,7 +276,7 @@ public class LocationDataPopulator {
 				String status = "1";
 				String comments = " ";
 
-				MctsLocationMaster mctsLocationMaster = new MctsLocationMaster(
+				MctsLocationErrorLog mctsLocationMaster = new MctsLocationErrorLog(
 						stateId, state, disctrictId, disctrictName, talukId,
 						talukaName, healthblockId, healthblockName, phcId,
 						phcName, subcenterId, subcentreName, villageId,

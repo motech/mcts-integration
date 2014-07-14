@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -76,10 +76,10 @@ public class FLWDataPopulatorTest
 		when(careDataRepository.getMctsPhc(175)).thenReturn(mctsPhc);
 		File file = new File(propertyReader.getFLWCsvFileLocation());//TODOAman chang to test res
 		fLWDataPopulator.flwDataPopulator(file);
-		ArgumentCaptor<MctsFlwData> captor = ArgumentCaptor
-				.forClass(MctsFlwData.class);
+		ArgumentCaptor<MctsHealthworkerErrorLog> captor = ArgumentCaptor
+				.forClass(MctsHealthworkerErrorLog.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MctsFlwData mctsFlwData = captor.getValue();
+		MctsHealthworkerErrorLog mctsFlwData = captor.getValue();
 		assertEquals("Anita Kumari",mctsFlwData.getName());
 		assertEquals("ASHA",mctsFlwData.getType());
 		verify(careDataRepository).saveOrUpdate((MctsHealthworker)any());

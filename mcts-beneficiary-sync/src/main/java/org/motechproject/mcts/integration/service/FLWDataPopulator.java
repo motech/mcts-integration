@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.hibernate.HibernateException;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsFlwData;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
@@ -202,7 +202,7 @@ public class FLWDataPopulator {
 					status = "0";
 					comments = "Invalid phc id";
 				}
-				MctsFlwData mctsFlwData = new MctsFlwData(districtId, talukaId,
+				MctsHealthworkerErrorLog mctsFlwData = new MctsHealthworkerErrorLog(districtId, talukaId,
 						healthBlockId, subCentreId, villageId, name, sex, type,
 						aadharNo, husbandName, gfAdress, healthWorkerId,
 						contact_No, phcId, status, comments);

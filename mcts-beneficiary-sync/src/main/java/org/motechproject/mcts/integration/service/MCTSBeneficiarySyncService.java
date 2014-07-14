@@ -23,7 +23,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMaster;
+import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
@@ -376,7 +376,7 @@ public class MCTSBeneficiarySyncService {
 	 */
 	private void addToMctsPregnantMotherMaster(Record record, Date startDate)
 			throws BeneficiaryException {
-		MctsPregnantMotherMaster mctsPregnantMotherMaster = new MctsPregnantMotherMaster();
+		MctsPregnantMotherErrorLog mctsPregnantMotherMaster = new MctsPregnantMotherErrorLog();
 		mctsPregnantMotherMaster.setaNMID(record.getANMID());
 		mctsPregnantMotherMaster.setaSHAID(record.getASHAID());
 		mctsPregnantMotherMaster.setBeneficiaryAddress(record

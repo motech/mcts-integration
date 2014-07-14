@@ -19,7 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster;
+import org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -48,14 +48,14 @@ public class LocationPopulatorTest {
 	public void shouldSyncCsvDataToLocationMaster() throws Exception {
 		File file = new File(propertyReader.getFLWCsvFileLocation()); //TODO Aman get from test res
 		locationDataPopulator.saveLocationData(file);
-		ArgumentCaptor<MctsLocationMaster> captor = ArgumentCaptor
-				.forClass(MctsLocationMaster.class);
+		ArgumentCaptor<MctsLocationErrorLog> captor = ArgumentCaptor
+				.forClass(MctsLocationErrorLog.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MctsLocationMaster mctsLocationMaster = captor.getValue();
+		MctsLocationErrorLog mctsLocationMaster = captor.getValue();
 		assertEquals("Saur Bazar",mctsLocationMaster.getTalukaname());
 		assertEquals("Saor Bazar", mctsLocationMaster.getBlock());
-		verify(careDataRepository).saveOrUpdate((MctsLocationMaster)any());
-		verify(careDataRepository, times(1)).saveOrUpdate((MctsLocationMaster)any());
+		verify(careDataRepository).saveOrUpdate((MctsLocationErrorLog)any());
+		verify(careDataRepository, times(1)).saveOrUpdate((MctsLocationErrorLog)any());
 	}
 	
 	@SuppressWarnings("deprecation")

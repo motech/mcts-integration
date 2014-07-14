@@ -7,8 +7,8 @@ import org.motechproject.commcare.events.constants.EventSubjects;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.processor.MctsPersonaCase;
 import org.motechproject.mcts.integration.processor.ClosedCaseProcessor;
+import org.motechproject.mcts.integration.processor.MctsPersonaCase;
 import org.motechproject.mcts.integration.processor.MotherCaseProcessor;
 import org.motechproject.mcts.utils.CaseType;
 import org.slf4j.Logger;
@@ -38,7 +38,8 @@ public class CaseCommcareListener {
 	    	String caseId = caseEvent.getCaseId();
 	        String action = caseEvent.getAction();
 	        String caseName = caseEvent.getCaseName();
-	        
+	        System.out.println("caseEvent.getFieldValues().toString()"+caseEvent.getFieldValues().toString());
+	        System.out.println("case event received :"+caseEvent.getCaseType()+"----"+caseEvent.getFieldValues().get("mcts_id")+"----"+caseEvent.getFieldValues());
 	        logger.info(format("Received case. id: %s, case name: %s; action: %s;", caseId, caseName, action));
 	        if (CLOSE_ACTION_IDENTIFIER.equals(action)) {
 	            processClose(caseEvent);
