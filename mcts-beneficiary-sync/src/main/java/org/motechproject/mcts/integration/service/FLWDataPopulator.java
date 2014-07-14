@@ -194,11 +194,11 @@ public class FLWDataPopulator {
 			status = "0";
 			comments = "Invalid phc id";
 		}
-		MctsFlwData mctsFlwData = new MctsFlwData(districtId, talukaId,
+		MctsHealthworkerErrorLog mctsHealthworkerErrorLog = new MctsHealthworkerErrorLog(districtId, talukaId,
 				healthBlockId, subCentreId, villageId, name, sex, type,
 				aadharNo, husbandName, gfAdress, healthWorkerId,
 				contact_No, phcId, status, comments);
-		careDataRepository.saveOrUpdate(mctsFlwData);
+		careDataRepository.saveOrUpdate(mctsHealthworkerErrorLog);
 	}
 	
 	

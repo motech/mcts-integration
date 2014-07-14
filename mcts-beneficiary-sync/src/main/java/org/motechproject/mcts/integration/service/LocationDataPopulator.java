@@ -268,7 +268,7 @@ public class LocationDataPopulator {
 		String status = "1";
 		String comments = " ";
 
-		MctsLocationMaster mctsLocationMaster = new MctsLocationMaster(stateId,
+		MctsLocationErrorLog mctsLocationMaster = new MctsLocationErrorLog(stateId,
 				state, disctrictId, disctrictName, talukId, talukaName,
 				healthblockId, healthblockName, phcId, phcName, subcenterId,
 				subcentreName, villageId, villageName, status, comments);
@@ -351,6 +351,6 @@ public class LocationDataPopulator {
 			}
 		}
 
-	}
+	}*/
 
 }
