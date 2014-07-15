@@ -136,4 +136,8 @@ public class PropertyReader {
 	        form.add("j_password", properties.getProperty("motech.platform.password"));
 		return form;
 	}
+	
+	public String getOwnerId() {
+		return properties.getProperty("mcts.fixtureData.ownerId");
+	}
 }

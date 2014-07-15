@@ -195,11 +195,7 @@ public class CreateCaseXmlService {
 
 		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
 		String caseId = UUID.randomUUID().toString();
-//		mctsPregnantMother.setMctsPersonaCaseUId(caseId);
-//		mctsPregnantMother.setDateOpened(date.toString());
-
 		String dateModified = date.toString();
-
 		CreateTask task = createTaskandReturn(mctsPregnantMother, workerId,
 				ownerId);
 		UpdateTask updatedTask = updateTaskandReturn(mctsPregnantMother,
@@ -210,6 +206,7 @@ public class CreateCaseXmlService {
 		caseTask.setDateModified(dateModified);
 		caseTask.setCaseId(caseId);
 		caseTask.setUserId(userId);
+		caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
 
 		return caseTask;
 
