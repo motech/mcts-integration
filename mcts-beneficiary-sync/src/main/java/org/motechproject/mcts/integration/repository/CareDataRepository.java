@@ -119,7 +119,7 @@ public class CareDataRepository {
 			getCurrentSession().saveOrUpdate(entity);
 		}
 		catch (HibernateException e) {
-			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e.getMessage());
+			throw new BeneficiaryException(ApplicationErrors.DATABASE_OPERATION_FAILED,e);
 		}
 	}
 

@@ -67,11 +67,7 @@ public class CreateCaseXmlService {
 		this.careDataRepository = careDataRepository;
 	}
 
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
-	public void handleEvent(MotechEvent motechEvent)
-			throws BeneficiaryException {
-		createCaseXml();
-	}
+	
 
 	public void createCaseXml() throws BeneficiaryException {
 

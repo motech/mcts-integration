@@ -16,6 +16,7 @@ public enum ApplicationErrors implements BeneficiaryErrors {
 	INVALID_ARGUMENT(3008,"Argument Value received does not satisfy the constraints", HttpStatus.INTERNAL_SERVER_ERROR),
 	CONNECTION_ERROR(3009,"Cannot create connection with third party",HttpStatus.INTERNAL_SERVER_ERROR),
 	CLASS_AND_OBJECT_DOES_NOT_MATCH(3010,"Class and Object are not of same type",HttpStatus.INTERNAL_SERVER_ERROR),
+	NUMBERS_MISMATCH(3011,"Number types do not match",HttpStatus.INTERNAL_SERVER_ERROR),
 	JAXB_ERROR(5001,"JAX_B error",HttpStatus.INTERNAL_SERVER_ERROR),
 	PROPERTY_ERROR(7001,"Property Error",HttpStatus.INTERNAL_SERVER_ERROR);
 	private final int code;

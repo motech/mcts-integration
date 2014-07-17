@@ -137,6 +137,25 @@ public class PropertyReader {
 		return form;
 	}
 	
+	public String getFixtureLoginUrl() {
+		return String.format("%s", properties.getProperty("fixture.base.url"));
+	}
+	
+	public MultiValueMap<String, String> getFixtureLoginForm() {
+		MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+		form.add("j_username", properties.getProperty("fixture.username"));
+		form.add("j_password", properties.getProperty("fixture.password"));
+		return form;
+	}
+	
+	public String getFixtureUserName() {
+		return properties.getProperty("fixture.username");
+	}
+	
+	public String getFixturePassword() {
+		return properties.getProperty("fixture.password");
+	}
+	
 	public String getOwnerId() {
 		return properties.getProperty("mcts.fixtureData.ownerId");
 	}

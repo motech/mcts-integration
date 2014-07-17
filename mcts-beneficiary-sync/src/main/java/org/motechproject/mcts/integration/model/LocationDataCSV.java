@@ -15,6 +15,27 @@ public class LocationDataCSV
 	private String District;
 	private String TCode;
 	private String Taluka_Name;
+	public String getStateID() {
+		return StateID;
+	}
+	public String getDCode() {
+		return DCode;
+	}
+	public String getTCode() {
+		return TCode;
+	}
+	public String getBID() {
+		return BID;
+	}
+	public String getPID() {
+		return PID;
+	}
+	public String getSID() {
+		return SID;
+	}
+	public String getVCode() {
+		return VCode;
+	}
 	private String BID;
 	private String Block;
 	private String PID;
@@ -24,7 +45,7 @@ public class LocationDataCSV
 	private String VCode;
 	private String Village;
 	
-	public Integer getStateID() {
+	public Integer getStateIDasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("stateId", StateID);
 	}
 	public void setStateID(String stateID) {
@@ -36,7 +57,7 @@ public class LocationDataCSV
 	public void setState(String state) {
 		State = state;
 	}
-	public Integer getDCode() {
+	public Integer getDCodeasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("dCode", DCode);
 	}
 	public void setDCode(String dCode) {
@@ -48,7 +69,7 @@ public class LocationDataCSV
 	public void setDistrict(String district) {
 		District = district;
 	}
-	public Integer getTCode() {
+	public Integer getTCodeasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("tCode", TCode);
 	}
 	public void setTCode(String tCode) {
@@ -60,7 +81,7 @@ public class LocationDataCSV
 	public void setTaluka_Name(String taluka_Name) {
 		Taluka_Name = taluka_Name;
 	}
-	public Integer getBID() {
+	public Integer getBIDasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("BID", BID);
 	}
 	public void setBID(String bID) {
@@ -72,7 +93,7 @@ public class LocationDataCSV
 	public void setBlock(String block) {
 		Block = block;
 	}
-	public Integer getPID() {
+	public Integer getPIDasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("PID", PID);
 	}
 	public void setPID(String pID) {
@@ -84,7 +105,7 @@ public class LocationDataCSV
 	public void setPHC(String pHC) {
 		PHC = pHC;
 	}
-	public Integer getSID() {
+	public Integer getSIDasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("SID", SID);	
 		}
 	public void setSID(String sID) {
@@ -96,7 +117,7 @@ public class LocationDataCSV
 	public void setSUBCenter(String sUBCenter) {
 		SUBCenter = sUBCenter;
 	}
-	public Integer getVCode() {
+	public Integer getVCodeasInteger() {
 		return IntegerValidator.validateAndReturnAsInt("VCode", VCode);
 	}
 	public void setVCode(String vCode) {
