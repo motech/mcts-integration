@@ -132,7 +132,7 @@ public class FLWDataPopulator {
 			int healthworkerId = flwDataCSV.getIdasInteger();
 			String name = flwDataCSV.getName();
 			String contact_No = flwDataCSV.getContact_No();
-			char sex = 'F';
+			char sex = ' ';
 			if (flwDataCSV.getSex()!=null)
 			sex= flwDataCSV.getSex().charAt(0);
 			String type = flwDataCSV.getType();
