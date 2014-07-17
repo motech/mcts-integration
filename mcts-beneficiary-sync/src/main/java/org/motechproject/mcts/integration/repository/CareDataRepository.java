@@ -397,4 +397,11 @@ public class CareDataRepository {
 	}
 
 }
+	
+	public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
+		
+		String queryString = "from MctsPregnantMother mPregMother where mPregMother.motherCase.id='"+id+"'";
+		List<MctsPregnantMother> motherList = getCurrentSession().createQuery(queryString).list(); 
+		return motherList.get(0);
+	}
 }

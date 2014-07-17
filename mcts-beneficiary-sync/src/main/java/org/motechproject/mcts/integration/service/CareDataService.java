@@ -75,6 +75,10 @@ public class CareDataService {
         }
     }
     
+    public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
+    	return careDataRepository.getMctsPregnantMotherFromCaseId(id);
+    }
+    
     /**
      * Method to get entities from db with constraints of upper and lower value on a particular field 
      * @param entityClass: class whose data is to be fetched
