@@ -67,11 +67,7 @@ public class CreateCaseXmlService {
 		this.careDataRepository = careDataRepository;
 	}
 
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
-	public void handleEvent(MotechEvent motechEvent)
-			throws BeneficiaryException {
-		createCaseXml();
-	}
+	
 
 	public void createCaseXml() throws BeneficiaryException {
 
@@ -195,11 +191,7 @@ public class CreateCaseXmlService {
 
 		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
 		String caseId = UUID.randomUUID().toString();
-//		mctsPregnantMother.setMctsPersonaCaseUId(caseId);
-//		mctsPregnantMother.setDateOpened(date.toString());
-
 		String dateModified = date.toString();
-
 		CreateTask task = createTaskandReturn(mctsPregnantMother, workerId,
 				ownerId);
 		UpdateTask updatedTask = updateTaskandReturn(mctsPregnantMother,
@@ -210,6 +202,7 @@ public class CreateCaseXmlService {
 		caseTask.setDateModified(dateModified);
 		caseTask.setCaseId(caseId);
 		caseTask.setUserId(userId);
+		caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
 
 		return caseTask;
 

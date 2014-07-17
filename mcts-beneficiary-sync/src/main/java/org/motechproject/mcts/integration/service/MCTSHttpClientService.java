@@ -72,6 +72,7 @@ public class MCTSHttpClientService {
         
         if (response != null)
             LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), response.getBody()));
+        	
         return response.getStatusCode();
     	
     	 
@@ -94,7 +95,9 @@ public class MCTSHttpClientService {
 
         if (response == null)
             return null;
-
+        if (response.getBody().getRecords() == null) {
+        	return null;
+        }
         NewDataSet responseBody = response.getBody();
         LOGGER.info(String.format("Sync done successfully. Response [StatusCode %s] : %s", response.getStatusCode(), responseBody));
         return responseBody;

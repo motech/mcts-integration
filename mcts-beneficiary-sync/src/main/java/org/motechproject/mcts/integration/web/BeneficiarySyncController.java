@@ -184,17 +184,17 @@ public class BeneficiarySyncController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/addFLW", method = RequestMethod.POST)
+	@RequestMapping(value = "/addFLW/{stateId}", method = RequestMethod.POST)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public String addFLWData(@RequestParam("file") MultipartFile file)
+	public String addFLWData(@RequestParam("file") MultipartFile file, @PathVariable("stateId") String stateId)
 			throws BeneficiaryException {
 
 		LOGGER.info("Request to upload xml file of job:");
 	
 	
 		try {
-			fLWDataPopulator.populateFLWData(file);
+			fLWDataPopulator.populateFLWData(file, stateId);
 			return "Data Added Successfully";
 
 		}

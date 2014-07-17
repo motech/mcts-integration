@@ -6,6 +6,7 @@ import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.MCTSBatchConstants;
+import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ public class FixtureDataService {
 	private StubDataService stubDataService;
 	@Autowired
 	private CareDataRepository careDataRepository;
+	
+	@Autowired PropertyReader propertyReader;
 
 	public CareDataRepository getCareDataRepository() {
 		return careDataRepository;
@@ -72,7 +75,7 @@ public class FixtureDataService {
 			updateGroupId();
 			String caseId = careDataRepository.getCaeGroupIdfromAshaId(id);
 			if (caseId == null) {
-				return "6ed07f7dca6e2fb170a17446c2499ba7";
+				return propertyReader.getOwnerId();
 			} else {
 				return caseGroupId;
 			}

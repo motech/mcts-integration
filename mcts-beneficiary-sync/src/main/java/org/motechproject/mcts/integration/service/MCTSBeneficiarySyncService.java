@@ -151,7 +151,7 @@ public class MCTSBeneficiarySyncService {
 			String beneficiaryId = record.getBeneficiaryID();
 
 			// check whether this is already present in th database
-			if (BeneficiaryValidator.isValidateBeneficiary(record)==true) {
+			if (BeneficiaryValidator.isValidateBeneficiary(record) == true) {
 				mctsPregnantMother = careDataService.findEntityByField(
 						MctsPregnantMother.class, "mctsId", beneficiaryId);
 				// checks if beneficiary already present in db with same mctsId
@@ -172,12 +172,13 @@ public class MCTSBeneficiarySyncService {
 				}
 			} else {
 				LOGGER.error("Not a Valid Beneficiary");
+				addToMctsPregnantMotherMaster(record, startDate);
+				LOGGER.error("SKIPPED Adding this record to Database");
 			}
 
 			if (mctsPregnantMother == null) {
 				addToMctsPregnantMotherMaster(record, startDate);
 				LOGGER.error("SKIPPED Adding this record to Database");
-
 			}
 		}
 		Date endDate = new Date(); // Sets the endDate when data ended to be
@@ -216,7 +217,8 @@ public class MCTSBeneficiarySyncService {
 			eventRelay.sendEventMessage(motechEvent);// Throws a
 														// motechEvent
 														// with Updated
-														// Beneficiary
+			// Beneficiary
+
 			return mctsPregnantMother;
 		} else {
 			LOGGER.error(String
@@ -288,24 +290,25 @@ public class MCTSBeneficiarySyncService {
 		// in correct format
 
 		String lmp = record.getLMPDate();
-		if (lmp == null) {
-
+		if (lmp == null || lmp.isEmpty()) {
 			LOGGER.error(String.format("Null value received in LMP Date Field"));
 		}
-		Date lmpDate = DateValidator.checkDateInFormat(lmp, "dd-MM-yyyy");
-		mctsPregnantMother.setLmpDate(lmpDate);
-		LOGGER.debug("lmp date : " + lmp);
-		LOGGER.debug("LMP Date is: " + mctsPregnantMother.getLmpDate());
-		if (lmpDate == null) {
-			LOGGER.error(String
-					.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
-							record.getLMPDate(), beneficiaryId));
+		else {
+			Date lmpDate = DateValidator.checkDateInFormat(lmp, "dd-MM-yyyy");
+			mctsPregnantMother.setLmpDate(lmpDate);
+			LOGGER.debug("lmp date : " + lmp);
+			LOGGER.debug("LMP Date is: " + mctsPregnantMother.getLmpDate());
+			if (lmpDate == null) {
+				LOGGER.error(String
+						.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
+								record.getLMPDate(), beneficiaryId));
+			}
 		}
+		
 		// Parse the BirthDate to dd-mm-YYYY format and logs an error if not
 		// in correct format
 		String dob = record.getBirthdate();
-		if (dob == null) {
-
+		if (dob == null || (dob.isEmpty())) {
 			LOGGER.error(String
 					.format("Null value received in BirthDate Date Field"));
 		} else {
@@ -340,6 +343,7 @@ public class MCTSBeneficiarySyncService {
 				.getMctsHealthworkerByAnmId();
 		MctsHealthworker ashaWorker = mctsPregnantMother
 				.getMctsHealthworkerByAshaId();
+		addLocationToDbIfNotPresent(record);
 		Location location = getUniqueLocationMap(record);
 		MctsSubcenter recordSubcentre = location.getMctsSubcenter();
 		MctsSubcenter subCentre = mctsPregnantMother.getMctsSubcenter();
@@ -440,7 +444,7 @@ public class MCTSBeneficiarySyncService {
 	 */
 	private void addLocationToDbIfNotPresent(Record record)
 			throws BeneficiaryException {
-		
+
 		LocationDataCSV locationDataCSV = new LocationDataCSV();
 		locationDataCSV.setStateID(record.getStateID());
 		locationDataCSV.setState(record.getStateName());
@@ -512,67 +516,74 @@ public class MCTSBeneficiarySyncService {
 			throws BeneficiaryException {
 		Location location = new Location();
 		location.setMctsState(careDataService.findEntityByField(
-				MctsState.class, "stateId",
-				IntegerValidator.validateAndReturnAsInt("stateId", record.getStateID())));
+				MctsState.class,
+				"stateId",
+				IntegerValidator.validateAndReturnAsInt("stateId",
+						record.getStateID())));
 		try {
 			// sets District
 			HashMap<String, Object> params = new HashMap<String, Object>();
 
 			params.put("mctsState", location.getMctsState());
 
-			params.put(
-					"disctrictId",
-					IntegerValidator.validateAndReturnAsInt("disctrictId",
-							record.getDistrictID()));
+			params.put("disctrictId", IntegerValidator.validateAndReturnAsInt(
+					"disctrictId", record.getDistrictID()));
 			location.setMctsDistrict(careDataService
 					.findListOfEntitiesByMultipleField(MctsDistrict.class,
 							params).get(0));
 			// sets Taluka
 			params = new HashMap<String, Object>();
 			params.put("mctsDistrict", location.getMctsDistrict());
-			params.put("talukId",
-					IntegerValidator.validateAndReturnAsInt("talukId", record.getTehsilID()));
+			params.put(
+					"talukId",
+					IntegerValidator.validateAndReturnAsInt("talukId",
+							record.getTehsilID()));
 			location.setMctsTaluk(careDataService
 					.findListOfEntitiesByMultipleField(MctsTaluk.class, params)
 					.get(0));
 			// sets Village
 			params = new HashMap<String, Object>();
 			params.put("mctsTaluk", location.getMctsTaluk());
-			params.put("villageId",
-					IntegerValidator.validateAndReturnAsInt("villageId", record.getVillageID()));
-			location.setMctsVillage(careDataService
-					.findListOfEntitiesByMultipleField(MctsVillage.class,
-							params).get(0));
+			if (record.getVillageID() != null && !record.getVillageID().isEmpty()) {
+				params.put(
+						"villageId",
+						IntegerValidator.validateAndReturnAsInt("villageId",
+								record.getVillageID()));
+				location.setMctsVillage(careDataService
+						.findListOfEntitiesByMultipleField(MctsVillage.class,
+								params).get(0));
+			}
+			
 			// sets HealthBlock
 			params = new HashMap<String, Object>();
 			params.put("mctsTaluk", location.getMctsTaluk());
-			params.put(
-					"healthblockId",
-					IntegerValidator.validateAndReturnAsInt("healthblockId", record.getBlockID()));
+			params.put("healthblockId", IntegerValidator
+					.validateAndReturnAsInt("healthblockId",
+							record.getBlockID()));
 			location.setMctsHealthblock(careDataService
 					.findListOfEntitiesByMultipleField(MctsHealthblock.class,
 							params).get(0));
 			// sets Phc
 			params = new HashMap<String, Object>();
 			params.put("mctsHealthblock", location.getMctsHealthblock());
-			params.put("phcId",
-					IntegerValidator.validateAndReturnAsInt("phcId", record.getFacilityID()));
+			params.put(
+					"phcId",
+					IntegerValidator.validateAndReturnAsInt("phcId",
+							record.getFacilityID()));
 			location.setMctsPhc(careDataService
 					.findListOfEntitiesByMultipleField(MctsPhc.class, params)
 					.get(0));
 			// sets SubCenter
 			params = new HashMap<String, Object>();
 			params.put("mctsPhc", location.getMctsPhc());
-			params.put(
-					"subcenterId",
-					IntegerValidator.validateAndReturnAsInt("subcenterId",
-							record.getSubCentreID()));
+			params.put("subcenterId", IntegerValidator.validateAndReturnAsInt(
+					"subcenterId", record.getSubCentreID()));
 			location.setMctsSubcenter(careDataService
 					.findListOfEntitiesByMultipleField(MctsSubcenter.class,
 							params).get(0));
 		} catch (NumberFormatException e) {
 			LOGGER.error(String.format("Invalid Location Code Received"), e);
-			// TODO throw proper Exception
+			throw new BeneficiaryException(ApplicationErrors.NUMBERS_MISMATCH,e);
 		}
 		return location;
 	}
@@ -647,22 +658,5 @@ public class MCTSBeneficiarySyncService {
 		publisher.publish(updateUrl);
 	}
 
-	boolean validateRecordsAndReturn(Record record) {
-		if ((record.getStateID() == null) || (record.getStateName() == null)
-				|| (record.getDistrictID() == null)
-				|| (record.getDistrictName() == null)
-				|| (record.getVillageID() == null) //TODO remove
-				|| (record.getVillageName() == null) //TODO remove
-				|| (record.getSubCentreID() == null)
-				|| (record.getSubCentreName() == null)
-				|| (record.getBlockID() == null)
-				|| (record.getBlockName() == null)
-				|| (record.getTehsilID() == null)
-				|| (record.getTehsilName() == null)
-				|| (record.getFacilityID() == null)
-				|| (record.getTehsilName() == null)) {
-			return false;
-		}
-		return true;
-	}
+	
 }
