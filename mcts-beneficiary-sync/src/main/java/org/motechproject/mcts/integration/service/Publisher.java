@@ -5,8 +5,14 @@ package org.motechproject.mcts.integration.service;
 
 import java.io.UnsupportedEncodingException;
 
+
+
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
+
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
+
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.utils.MCTSEventConstants;
@@ -29,6 +35,8 @@ public class Publisher {
 	private PropertyReader propertyReader;
 	@Autowired
 	private RestTemplate restTemplate;
+	@Autowired
+	private HttpAgent httpAgentServiceOsgi;
 	private final static String MODE = "publish";
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(Publisher.class);
@@ -123,8 +131,10 @@ public class Publisher {
 			LOGGER.debug("Notify hub at the url: " + getUrl());
 			LOGGER.info("Sending HUb the Notification");
 			try {
-				response = restTemplate.postForEntity(getUrl(), httpEntity,
-						String.class);
+				/*response = restTemplate.postForEntity(getUrl(), httpEntity,
+						String.class);*/
+				response = (ResponseEntity<String>) httpAgentServiceOsgi.executeWithReturnTypeSync(getUrl(), httpEntity, Method.POST);
+				
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage());
 			}
@@ -147,8 +157,9 @@ public class Publisher {
 		LOGGER.debug("Login Url is: " + propertyReader.getMotechPlatformLoginUrl());
 		LOGGER.debug("Login Params are: " + propertyReader.getMotechPlatformLoginForm());
 		try {
-			response = restTemplate.postForEntity(
-					propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), String.class);
+			/*response = restTemplate.postForEntity(
+					propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), String.class);*/
+			response = (ResponseEntity<String>) httpAgentServiceOsgi.executeWithReturnTypeSync(propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), Method.POST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}

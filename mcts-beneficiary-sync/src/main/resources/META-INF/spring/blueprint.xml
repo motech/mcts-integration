@@ -9,7 +9,7 @@
     <import resource="classpath:META-INF/motech/applicationBeneficiarySyncContext.xml"/>
 	<import resource="classpath:META-INF/motech/applicationHibernateContext.xml"/>
 
-    <osgi:reference id="eventRelayOsgi" cardinality="0..1" interface="org.motechproject.event.listener.EventRelay"/>
+    <osgi:reference id="eventRelayOsgi" interface="org.motechproject.event.listener.EventRelay"/>
 
     <osgi:reference id="eventListenerRegistry"
                     interface="org.motechproject.event.listener.EventListenerRegistryService"/>

@@ -583,7 +583,7 @@ public class MCTSBeneficiarySyncService {
 							params).get(0));
 		} catch (NumberFormatException e) {
 			LOGGER.error(String.format("Invalid Location Code Received"), e);
-			// TODO throw proper Exception
+			throw new BeneficiaryException(ApplicationErrors.NUMBERS_MISMATCH,e);
 		}
 		return location;
 	}
@@ -658,23 +658,5 @@ public class MCTSBeneficiarySyncService {
 		publisher.publish(updateUrl);
 	}
 
-	boolean validateRecordsAndReturn(Record record) {
-		if ((record.getStateID() == null)
-				|| (record.getStateName() == null)
-				|| (record.getDistrictID() == null)
-				|| (record.getDistrictName() == null)
-				|| (record.getVillageID() == null) // TODO remove
-				|| (record.getVillageName() == null) // TODO remove
-				|| (record.getSubCentreID() == null)
-				|| (record.getSubCentreName() == null)
-				|| (record.getBlockID() == null)
-				|| (record.getBlockName() == null)
-				|| (record.getTehsilID() == null)
-				|| (record.getTehsilName() == null)
-				|| (record.getFacilityID() == null)
-				|| (record.getTehsilName() == null)) {
-			return false;
-		}
-		return true;
-	}
+	
 }

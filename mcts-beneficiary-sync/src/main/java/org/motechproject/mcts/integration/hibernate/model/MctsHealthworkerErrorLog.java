@@ -32,7 +32,6 @@ public class MctsHealthworkerErrorLog implements java.io.Serializable {
 	private String healthworkerId;
 	private String contactNo;
 	private String phcId;
-	private String status;
 	private String comments;
 
 	public MctsHealthworkerErrorLog() {
@@ -46,7 +45,7 @@ public class MctsHealthworkerErrorLog implements java.io.Serializable {
 			String healthblockId, String subcentreId, String villageId,
 			String name, String sex, String type, String aadharNo,
 			String husbandName, String gfAddress, String healthworkerId,
-			String contactNo, String phcId, String status, String comments) {
+			String contactNo, String phcId, String comments) {
 		this.districtId = districtId;
 		this.talukaId = talukaId;
 		this.healthblockId = healthblockId;
@@ -61,7 +60,6 @@ public class MctsHealthworkerErrorLog implements java.io.Serializable {
 		this.healthworkerId = healthworkerId;
 		this.contactNo = contactNo;
 		this.phcId = phcId;
-		this.status = status;
 		this.comments = comments;
 	}
 
@@ -203,14 +201,7 @@ public class MctsHealthworkerErrorLog implements java.io.Serializable {
 		this.phcId = phcId;
 	}
 
-	@Column(name = "status")
-	public String getStatus() {
-		return this.status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
+	
 
 	@Column(name = "comments")
 	public String getComments() {

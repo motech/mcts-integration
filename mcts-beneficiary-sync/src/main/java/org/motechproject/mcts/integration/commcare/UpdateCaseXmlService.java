@@ -58,16 +58,12 @@ public class UpdateCaseXmlService {
 		this.careDataRepository = careDataRepository;
 	}
 
-	@MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARY_UPDATED)
-	public void handleEvent(MotechEvent motechEvent)
-			throws BeneficiaryException {
-		Integer id = (Integer) motechEvent.getParameters().get(
-				MCTSEventConstants.PARAM_BENEFICIARY_KEY);
+	public void updateXml(Integer mctsPregnantMotherId) throws BeneficiaryException {
 		MctsPregnantMother mctsPregnantMother = careDataRepository
-				.getMotherFromPrimaryId(id);
+				.getMotherFromPrimaryId(mctsPregnantMotherId);
 		updateXml(mctsPregnantMother);
 	}
-
+	
 	public void updateXml(MctsPregnantMother mctsPregnantMother)
 			throws BeneficiaryException {
 		UpdateData data = new UpdateData();
