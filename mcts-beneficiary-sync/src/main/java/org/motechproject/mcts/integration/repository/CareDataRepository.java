@@ -349,7 +349,7 @@ public class CareDataRepository {
 		
 	}
 	
-	public String getCaeGroupIdfromAshaId(int id) {
+	public String getCaseGroupIdfromAshaId(int id) {
 	//	int workerId = Integer.parseInt(id);
 		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+id+"'";
 		LOGGER.debug("query : "+queryString);

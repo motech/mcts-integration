@@ -10,6 +10,7 @@ import static org.mockito.Mockito.eq;
 import java.io.File;
 import java.lang.Object;
 
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,55 +24,69 @@ import org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class LocationPopulatorTest {
-	@InjectMocks 
+	@InjectMocks
 	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
-	
+
 	@Mock
 	CareDataRepository careDataRepository;
-	
+
 	@Mock
 	private PropertyReader propertyReader;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		 MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.initMocks(this);
 	}
-	
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
-	@Ignore
 	public void shouldSyncCsvDataToLocationMaster() throws Exception {
-		File file = new File(propertyReader.getFLWCsvFileLocation()); //TODO Aman get from test res
-		//locationDataPopulator.saveLocationData(file);
+		File file = new File("src/test/resources/location2.csv");
+		System.out.println("size : "+file.getTotalSpace());
+		DiskFileItem fileItem = new DiskFileItem("file",
+				"application/vnd.ms-excel", false, file.getName(),
+				(int) file.length(), file.getParentFile());
+		fileItem.getOutputStream();
+		System.out.println("content-type : "+fileItem.getContentType());
+		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+		locationDataPopulator.populateLocations(multipartFile);
 		ArgumentCaptor<MctsLocationErrorLog> captor = ArgumentCaptor
 				.forClass(MctsLocationErrorLog.class);
+		ArgumentCaptor<Object> captor2 = ArgumentCaptor.forClass(Object.class);
 		verify(careDataRepository).saveOrUpdate(captor.capture());
 		MctsLocationErrorLog mctsLocationMaster = captor.getValue();
-		assertEquals("Saur Bazar",mctsLocationMaster.getTalukaname());
+		assertEquals("Saur Bazar", mctsLocationMaster.getTalukaname());
 		assertEquals("Saor Bazar", mctsLocationMaster.getBlock());
-		verify(careDataRepository).saveOrUpdate((MctsLocationErrorLog)any());
-		verify(careDataRepository, times(1)).saveOrUpdate((MctsLocationErrorLog)any());
+		verify(careDataRepository).saveOrUpdate((MctsLocationErrorLog) any());
+		verify(careDataRepository, times(1)).saveOrUpdate(
+				(MctsLocationErrorLog) any());
+		verify(careDataRepository, times(7)).saveOrUpdate(captor2.capture());
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	@Ignore
 	public void shouldSyncCsvDataToLocation() throws Exception {
-		when(careDataRepository.findEntityByField(Object.class, eq((String)any()), (Object)any())).thenReturn(null);
-		File file = new File(propertyReader.getFLWCsvFileLocation());//TODO Aman - change proeprty
-		//locationDataPopulator.populateLocations(file);
-		ArgumentCaptor<Object> captor = ArgumentCaptor
-				.forClass(Object.class);
+		when(
+				careDataRepository.findEntityByField(Object.class,
+						eq((String) any()), (Object) any())).thenReturn(null);
+		File file = new File(propertyReader.getFLWCsvFileLocation());// TODO
+																		// Aman
+																		// -
+																		// change
+																		// proeprty
+		// locationDataPopulator.populateLocations(file);
+		ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
 		verify(careDataRepository, times(7)).saveOrUpdate(captor.capture());
 		Object object = captor.getValue();
-		//assertEquals("Bihar",mctsState.getName());
-		//verify(careDataRepository).saveOrUpdate((Object)any());
-		verify(careDataRepository, times(7)).saveOrUpdate((Object)any());
-		
+		// assertEquals("Bihar",mctsState.getName());
+		// verify(careDataRepository).saveOrUpdate((Object)any());
+		verify(careDataRepository, times(7)).saveOrUpdate((Object) any());
+
 	}
 }

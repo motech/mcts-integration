@@ -7,6 +7,8 @@ import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.motechproject.mcts.utils.PropertyReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class FixtureDataService {
+	
+	private final static Logger LOGGER = LoggerFactory
+			.getLogger(FixtureDataService.class);
 
 	@Autowired
 	private StubDataService stubDataService;
@@ -58,22 +63,18 @@ public class FixtureDataService {
 				;
 				careDataRepository.saveOrUpdate(mctsHealthworker);
 			} else {
-				//TODO log the error !
+				LOGGER.error("No MCTS Healthworker found with id : "+id);
 			}
 
 		}
 	}
 
 	public String getCaseGroupIdfromAshaId(int id) throws BeneficiaryException {
-		/*
-		 * if (healthworkerId=="") { return "6ed07f7dca6e2fb170a17446c2499ba7";
-		 * }
-		 */
-
-		String caseGroupId = careDataRepository.getCaeGroupIdfromAshaId(id);
+		
+		String caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
 		if (caseGroupId == null) {
 			updateGroupId();
-			String caseId = careDataRepository.getCaeGroupIdfromAshaId(id);
+			String caseId = careDataRepository.getCaseGroupIdfromAshaId(id);
 			if (caseId == null) {
 				return propertyReader.getOwnerId();
 			} else {
