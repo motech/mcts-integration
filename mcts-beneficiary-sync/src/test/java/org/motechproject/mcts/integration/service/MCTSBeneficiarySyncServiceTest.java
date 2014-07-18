@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -131,5 +132,15 @@ public class MCTSBeneficiarySyncServiceTest {
                 "    </records>\n" +
                 "</newdataset>";*/
     }
+    
+   /* @Test
+    public void validateAndReturnAsIntTest(){
+    	try{System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test1", "67"));
+    	System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test2", ""));
+    	System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test3", ""));}
+    	catch(BeneficiaryException e){
+    		System.out.println(e.getMessage());
+    	}
+    }*/
 
 }

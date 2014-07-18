@@ -3,14 +3,14 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="mctsIntegrationConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+   <!--  <appender name="mctsIntegrationConsoleAppender" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.EnhancedPatternLayout">
             <param name="ConversionPattern" value="[%p] %d [%c] %m%n" />
         </layout>
-    </appender>
+    </appender> -->
 
    
-<!--  <logger name="org.motechproject.mcts.integration.service" additivity="true">
+	<!--  <logger name="org.motechproject.mcts.integration.service" additivity="true">
         <level value="ERROR"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger> -->
@@ -19,7 +19,11 @@
         <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
+    	  <level value="DEBUG"/>
+       	 <appender-ref ref="mctsIntegrationConsoleAppender" />
+    <logger name="org.motechproject.event.MotechEvent">
     
+    </logger>
     <logger name="org.motechproject.mcts.integration" additivity="true">
         <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
@@ -30,6 +34,12 @@
         <level value="DEBUG"/>
         <appender-ref ref="mctsIntegrationConsoleAppender" />
     </logger>
+    
+	<logger name="org.motechproject.event.listener" addititvity="true">
+		<level value="DEBUG"/>
+        <appender-ref ref="mctsIntegrationConsoleAppender" />
+	</logger>
+    
 
 <!--     <root>
         <level value="ERROR" />

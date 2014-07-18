@@ -283,64 +283,6 @@ public class LocationDataPopulator {
 
 	}
 
-	/**
-	 * Method to populate location master table
-	 * 
-	 * @throws BeneficiaryException
-	 * @throws IOException
-	 */
-	/*
-	 * public void saveLocationData(File file) throws BeneficiaryException {
-	 * 
-	 * ICsvBeanReader beanReader = null; // String filePath=
-	 * "/home/aman/Downloads/location.csv";
-	 * 
-	 * LocationDataCSV locationCSV = new LocationDataCSV(); try {
-	 * 
-	 * beanReader = new CsvBeanReader(new FileReader(file),
-	 * CsvPreference.STANDARD_PREFERENCE);
-	 * 
-	 * final String[] header = beanReader.getHeader(true); int count = 0; while
-	 * ((locationCSV = beanReader .read(LocationDataCSV.class, header)) != null)
-	 * {
-	 * 
-	 * System.out.println("count" + count++); String stateId =
-	 * locationCSV.getStateID().toString(); String state =
-	 * locationCSV.getState(); String disctrictId =
-	 * locationCSV.getDCode().toString(); String disctrictName =
-	 * locationCSV.getDistrict(); String talukId =
-	 * locationCSV.getTCode().toString(); String talukaName =
-	 * locationCSV.getTaluka_Name(); String healthblockId =
-	 * locationCSV.getBID().toString(); String healthblockName =
-	 * locationCSV.getBlock(); String phcId = locationCSV.getPID().toString();
-	 * String phcName = locationCSV.getPHC(); String subcenterId =
-	 * locationCSV.getSID().toString(); String subcentreName =
-	 * locationCSV.getSUBCenter(); String villageId =
-	 * locationCSV.getVCode().toString(); String villageName =
-	 * locationCSV.getVillage(); String status = "1"; String comments = " ";
-	 * 
-	 * MctsLocationErrorLog mctsLocationMaster = new MctsLocationErrorLog(
-	 * stateId, state, disctrictId, disctrictName, talukId, talukaName,
-	 * healthblockId, healthblockName, phcId, phcName, subcenterId,
-	 * subcentreName, villageId, villageName, status, comments);
-	 * careDataRepository.saveOrUpdate(mctsLocationMaster); } }
-	 * 
-	 * catch (FileNotFoundException e) { throw new
-	 * BeneficiaryException(ApplicationErrors.FILE_NOT_FOUND, e.getMessage()); }
-	 * catch (IOException e) { throw new BeneficiaryException(
-	 * ApplicationErrors.FILE_READING_WRTING_FAILED, e.getMessage()); catch
-	 * (SuperCsvReflectionException e) { throw new
-	 * BeneficiaryException(ApplicationErrors
-	 * .CSV_FILE_DOES_NOT_MATCH_WITH_HEADERS,e.getMessage()); } catch
-	 * (IllegalArgumentException e) { throw new
-	 * BeneficiaryException(ApplicationErrors
-	 * .NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH,e.getMessage()); }
-	 * 
-	 * finally { if (beanReader != null) { try { beanReader.close(); } catch
-	 * (IOException e) { throw new BeneficiaryException(
-	 * ApplicationErrors.FILE_CLOSING_FAILED, e.getMessage()); } } }
-	 * 
-	 * }
-	 */
+	
 
 }

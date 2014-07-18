@@ -2,6 +2,7 @@ package org.motechproject.mcts.integration.repository;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class BaseRepositoryIT {
         return sessionFactory.getCurrentSession();
     }
     
+    @Ignore
     @Test
     public void testIsSessionFactoryAvailable(){
     	Assert.notNull(getCurrentSession());

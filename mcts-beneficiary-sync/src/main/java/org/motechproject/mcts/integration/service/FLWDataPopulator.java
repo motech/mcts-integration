@@ -43,8 +43,6 @@ import org.supercsv.prefs.CsvPreference;
  */
 @Transactional
 @Service
-// @TransactionConfiguration(transactionManager = "txManager", defaultRollback =
-// true)
 public class FLWDataPopulator {
 
 	private final static Logger LOGGER = LoggerFactory
