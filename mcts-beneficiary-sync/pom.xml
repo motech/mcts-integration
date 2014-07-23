@@ -50,7 +50,11 @@
     <artifactId>motech-transliteration</artifactId>
     <version>0.1-SNAPSHOT</version>
 	</dependency>
-
+ <dependency>
+        <groupId>org.motechproject</groupId>
+    <artifactId>batch</artifactId>
+   <version>${motech.version}</version>
+	</dependency>
 
 
         <dependency>
@@ -193,6 +197,27 @@
                             org.springframework.aop.framework,
                             org.springframework.beans.factory.config,
 							org.springframework.http.client,
+							org.springframework.web.servlet.config,
+							org.springframework.context.config,
+							org.springframework.batch.core.jsr.configuration.xml,
+							org.springframework.batch.item.file.transform,
+							org.springframework.batch.core.configuration.xml,
+							org.springframework.batch.core.scope,
+							org.springframework.batch.core.job.flow.support,
+							org.springframework.batch.core.job.flow.support.state,
+							org.springframework.batch.core.jsr,
+							org.springframework.batch.core.jsr.launch,
+							org.springframework.aop.scope,
+							org.springframework.batch.core.launch.support,
+							org.springframework.batch.core.explore.support,
+							org.springframework.batch.core.configuration.support,
+							org.springframework.batch.core.jsr.configuration.support,
+							org.springframework.batch.item.database.support,
+							org.springframework.batch.core.repository.support,
+							 org.springframework.batch.support.transaction,
+							org.springframework.beans.factory.xml,
+							org.eclipse.gemini.blueprint.config,
+							org.springframework.jdbc.config,
                             net.sf.cglib.core,
                             net.sf.cglib.proxy,
                             net.sf.cglib.reflect,
@@ -203,9 +228,13 @@
                            <!-- javassist.util.proxy;version=3.9.0,-->
                             org.apache.commons.dbcp,
                             org.postgresql,
-							org.motechproject.scheduler,
+							<!--org.motechproject.scheduler;version=${motech.version},-->
 							org.motechproject.transliteration.service,
-                            *
+							javax.batch.operations,
+							org.motechproject.batch.service;version=${motech.version},,
+							org.motechproject.batch.exception;version=${motech.version},
+							org.motechproject.batch.model;version=${motech.version},
+							  *
                         </Import-Package>
                     </instructions>
                 </configuration>
