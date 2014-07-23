@@ -18,6 +18,9 @@ public class CaseInfoParserImpl implements CaseInfoParser {
 	@JsonProperty("caseElementPath")
     private String caseElementPath = "//case";
 	
+	@JsonProperty("subcaseElementPath")
+    private String subcaseElementPath = "//subcase_0";
+	
 	@JsonProperty("keyConversionMap")
     private Map<String, String> keyConversionMap = new HashMap<>();
     
@@ -33,6 +36,7 @@ public class CaseInfoParserImpl implements CaseInfoParser {
 		
 		 Map<String, String> mapper = new HashMap<>();
 	        Multimap<String, FormValueElement> subElements = element.getSubElements();
+	        //Map<String, String> elements = element.getAttributes();
 	        if (empty(subElements))
 	            return mapper;
 	        
@@ -55,6 +59,11 @@ public class CaseInfoParserImpl implements CaseInfoParser {
 	@Override
 	public FormValueElement getCaseElement(FormValueElement startElement) {
 		return (FormValueElement) startElement.searchFirst(caseElementPath);
+	}
+	
+	@Override
+	public FormValueElement getsubcaseElement(FormValueElement startElement) {
+		return (FormValueElement) startElement.searchFirst(subcaseElementPath);
 	}
 	
 	private boolean empty(Multimap<?, ?> subElements) {
@@ -85,5 +94,6 @@ public class CaseInfoParserImpl implements CaseInfoParser {
 	        Collection<FormValueElement> subElementValue = subElement.getValue();
 	        return (FormValueElement) CollectionUtils.get(subElementValue, 0);
 	    }
+	
 
 }

@@ -17,7 +17,7 @@ public class UnapprovedFormProcessor implements FormProcessor {
 	
 	@Autowired
 	CareDataService careDataService;
-	private static final Logger logger = LoggerFactory.getLogger("ClosedCaseProcessor");
+	private static final Logger logger = LoggerFactory.getLogger("UnapprovedFormProcessor");
 	@Override
 	public void process(Map<String, String> motherInfo) throws BeneficiaryException {
 		MctsPregnantMother mctsPregnantMother = (MctsPregnantMother) careDataService.findEntityByField(MctsPregnantMother.class, "mctsPersonaCaseUId", motherInfo.get("caseId"));
