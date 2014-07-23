@@ -12,7 +12,7 @@
 
         <pmd.skip>true</pmd.skip>
 		<jdk.version>1.7</jdk.version>
-		<checkstyle.skip>true</checkstyle.skip>>>>>>>> moved listener to another class for create and update xml
+		<checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <dependencies>
