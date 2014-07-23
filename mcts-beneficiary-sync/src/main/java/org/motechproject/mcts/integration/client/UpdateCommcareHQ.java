@@ -20,34 +20,39 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class UpdateCommcareHQ {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(UpdateCommcareHQ.class);
-	 private RestTemplate restTemplate;
-	 private MultiValueMap<String, Object> formData;
-	 private HttpAgent httpAgentServiceOsgi;
-	 private BatchServiceUrlGenerator batchServiceUrlGenerator = new BatchServiceUrlGenerator();
-	 
-	 
-	 @Autowired
-	 public UpdateCommcareHQ(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BatchServiceUrlGenerator batchServiceUrlGenerator) {
-	        this.restTemplate = restTemplate;
-	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
-	    }
-	 
-	 public void sendUpdate() {
-		 LOGGER.info("Started service to upload case xml to stub");
-		 HttpHeaders httpHeaders = new HttpHeaders();
-		 httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-		 formData = new LinkedMultiValueMap<String, Object>();
-		 formData.add("xml_submission_file", new FileSystemResource("C:\\Users\\Rakesh\\Desktop\\update_commcare.xml"));
-		 restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
-		 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-		 HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	  //  restTemplate.postForEntity(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,void.class);
-	    httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity, Method.POST);
-	    
-		 
-		 
-	 }
+
+    private final static Logger LOGGER = LoggerFactory
+            .getLogger(UpdateCommcareHQ.class);
+    private RestTemplate restTemplate;
+    private MultiValueMap<String, Object> formData;
+    private HttpAgent httpAgentServiceOsgi;
+    private BatchServiceUrlGenerator batchServiceUrlGenerator = new BatchServiceUrlGenerator();
+
+    @Autowired
+    public UpdateCommcareHQ(
+            @Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+            BatchServiceUrlGenerator batchServiceUrlGenerator) {
+        this.restTemplate = restTemplate;
+        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
+    }
+
+    public void sendUpdate() {
+        LOGGER.info("Started service to upload case xml to stub");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        formData = new LinkedMultiValueMap<String, Object>();
+        formData.add("xml_submission_file", new FileSystemResource(
+                "C:\\Users\\Rakesh\\Desktop\\update_commcare.xml"));
+        restTemplate.getMessageConverters().add(
+                new MappingJacksonHttpMessageConverter());
+        restTemplate.getMessageConverters().add(
+                new StringHttpMessageConverter());
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(
+                formData, httpHeaders);
+        httpAgentServiceOsgi.executeSync(
+                batchServiceUrlGenerator.getCaseUploadUrl(), requestEntity,
+                Method.POST);
+
+    }
 
 }

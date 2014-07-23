@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         
  	
- 	<import resource="classpath:applicationBeneficiarySyncContext.xml" />       
+ 	<import resource="classpath:applicationBeneficiarySyncContextTest.xml" />       
         <util:properties id="beneficiarySyncProperties"
 		location="classpath:/beneficiary_sync.properties" />
 	<util:properties id="hibernateProperties" location="classpath:/hibernate.properties" />
@@ -18,7 +18,7 @@
 		properties-ref="hibernateProperties" ignore-unresolvable="true" />
 	<context:property-placeholder location="classpath:postgres.properties"
 		ignore-unresolvable="true" />
-        <import resource="classpath:applicationHibernateContext.xml" />
+       <!--  <import resource="classpath:applicationHibernateContext.xml" /> -->
        
         <bean id="locationDataPopulator" class="org.motechproject.mcts.integration.service.LocationDataPopulator">
         <property name="careDataRepository" ref="careDataRepository"/>
@@ -29,12 +29,15 @@
  -->        <bean id="careDataRepository" class="org.motechproject.mcts.integration.repository.CareDataRepository">
         <constructor-arg index="0" ref="sessionFactory"/>
         </bean>
-        <bean id="mCTSFormUpdateService" class="org.motechproject.mcts.integration.service.MCTSFormUpdateService">
-        <property name="careDataRepository" ref="careDataRepository"/>
-        </bean>
+     <!--     <bean id="commonsHttpClient" class="org.apache.commons.httpclient.HttpClient">
+        <constructor-arg ref="multiThreadedHttpConnectionManager"/>
+    </bean>
+    <bean id="multiThreadedHttpConnectionManager"
+          class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager"/>
+    
         <bean id="fixtureDataService" class="org.motechproject.mcts.integration.service.FixtureDataService">
          <property name="careDataRepository" ref="careDataRepository"/>
         </bean>
-        <!-- <bean id="httpAgentServiceOsgi" class="org.motechproject.http.agent.service.impl.HttpAgentImpl">
+         <bean id="httpAgentServiceOsgi" class="org.motechproject.http.agent.service.impl.HttpAgentImpl">
 		</bean>	 -->
  </beans>       

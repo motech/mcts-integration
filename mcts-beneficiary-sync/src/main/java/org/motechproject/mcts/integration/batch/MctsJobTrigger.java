@@ -1,6 +1,5 @@
 package org.motechproject.mcts.integration.batch;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
@@ -37,7 +36,6 @@ public class MctsJobTrigger {
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
             	httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getTriggerJobUrl(), null, Method.GET);
-           	 //  restTemplate.getForObject(batchServiceUrlGenerator.getTriggerJobUrl(), String.class);
             }
             catch(Exception e) {
            	    LOGGER.info(e.getMessage());

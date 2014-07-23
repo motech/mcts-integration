@@ -2,6 +2,8 @@ package org.motechproject.mcts.integration.batch;
 
 import java.util.HashMap;
 
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.motechproject.mcts.utils.CronJobScheduleParameters;
@@ -11,12 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import org.motechproject.http.agent.service.HttpAgent;
-import org.motechproject.http.agent.service.Method;
 /**
  * Client class to schedule mcts job with batch module
  * @author Naveen
@@ -52,8 +51,6 @@ public class MctsJobSchedule {
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
             try {
             	httpAgentServiceOsgi.executeWithReturnTypeSync(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, Method.POST);
-            	//restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), httpEntity, String.class);
-            
             }
             catch(Exception e) {
             	LOGGER.info(e.getMessage());

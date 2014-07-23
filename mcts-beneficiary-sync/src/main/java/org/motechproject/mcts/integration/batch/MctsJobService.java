@@ -2,11 +2,11 @@ package org.motechproject.mcts.integration.batch;
 
 import java.util.HashMap;
 
+import org.motechproject.event.MotechEvent;
 import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.scheduler.MotechSchedulerService;
 import org.motechproject.scheduler.domain.CronSchedulableJob;
-import org.motechproject.event.MotechEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MctsJobService {

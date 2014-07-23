@@ -12,15 +12,15 @@ import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
 import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
 import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
 import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
-import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
+import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.FlwValidator;
@@ -78,7 +78,6 @@ public class FLWDataPopulator {
 			newFile = new File(path + "/flw.xml");
 			FileOutputStream out = new FileOutputStream(newFile);
 			out.write(bytes);
-			System.out.println("size" + newFile.getTotalSpace());
 			beanReader = new CsvBeanReader(new FileReader(newFile),
 					CsvPreference.STANDARD_PREFERENCE);
 			final String[] header = beanReader.getHeader(true);
@@ -112,7 +111,7 @@ public class FLWDataPopulator {
 				} catch (IOException e) {
 					throw new BeneficiaryException(
 							ApplicationErrors.FILE_CLOSING_FAILED,
-							e.getMessage());
+							e);
 				}
 			}
 
@@ -121,7 +120,7 @@ public class FLWDataPopulator {
 	}
 
 	public void addFLWToDb(FLWDataCSV flwDataCSV, String stateId) throws BeneficiaryException {
-		LocationDataCSV locationCSV = createLocationCSV(flwDataCSV, stateId);
+		    LocationDataCSV locationCSV = createLocationCSV(flwDataCSV, stateId);
 			locationDataPopulator.addLocationToDb(locationCSV, true);
 			Location location = getUniqueLocation(locationCSV);
 		
@@ -131,8 +130,10 @@ public class FLWDataPopulator {
 			String name = flwDataCSV.getName();
 			String contact_No = flwDataCSV.getContact_No();
 			char sex = ' ';
-			if (flwDataCSV.getSex()!=null)
-			sex= flwDataCSV.getSex().charAt(0);
+			if (flwDataCSV.getSex()!=null) {
+			    sex= flwDataCSV.getSex().charAt(0);
+			}
+			
 			String type = flwDataCSV.getType();
 			Integer villageId = flwDataCSV.getVillage_IDasInteger();
 			String husbandName = flwDataCSV.getHusband_Name();
@@ -246,7 +247,7 @@ public class FLWDataPopulator {
 		return location;
 	}
 	
-	private Location getUniqueLocation(LocationDataCSV locationDataCSV) throws BeneficiaryException {
+	 Location getUniqueLocation(LocationDataCSV locationDataCSV) throws BeneficiaryException {
 		Location location = new Location();
 		location.setMctsState(careDataService.findEntityByField(
 				MctsState.class,

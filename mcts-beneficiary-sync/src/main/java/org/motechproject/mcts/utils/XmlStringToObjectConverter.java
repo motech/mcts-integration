@@ -11,6 +11,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryError;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,17 +31,19 @@ public class XmlStringToObjectConverter {
     	return objectMapper;
     }
 	@SuppressWarnings("unchecked")
-	public static <T> T stringXmlToObject(Class<T> clazz, String data) throws Exception{
+	public static <T> T stringXmlToObject(Class<T> clazz, String data) throws BeneficiaryException  {
 		StringReader reader = new StringReader(data);
 		JAXBContext jc;
 		LOGGER.debug(data);
+		Object object;
 		try {
 			jc = JAXBContext.newInstance(clazz);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+	        object = unmarshaller.unmarshal(reader);
 		} catch (JAXBException e) {
-			throw new Exception(String.format("Invalid Content Received. The Content Received is:\n %s. \nExiting", data), e);
+		    throw new BeneficiaryException(ApplicationErrors.JAXB_PARSING_ERROR,e,e.getMessage());
 		}
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		Object object = unmarshaller.unmarshal(reader);
+		
 		return (T) object;
 	}
 	

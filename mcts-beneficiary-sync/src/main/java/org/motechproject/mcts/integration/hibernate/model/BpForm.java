@@ -1,7 +1,7 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,14 +15,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import java.math.BigDecimal;
-import java.util.Date;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "bp_form", uniqueConstraints = @UniqueConstraint(columnNames = "instance_id"))
 public class BpForm extends Form {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 54354532942982959L;
     private int id;
     private Flw flw;
     private MotherCase motherCase;
@@ -164,7 +168,9 @@ public class BpForm extends Form {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK, CascadeType.EVICT})
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
+            CascadeType.EVICT })
     public Flw getFlw() {
         return this.flw;
     }
@@ -175,7 +181,9 @@ public class BpForm extends Form {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK, CascadeType.EVICT})
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
+            CascadeType.EVICT })
     public MotherCase getMotherCase() {
         return this.motherCase;
     }
@@ -1161,7 +1169,6 @@ public class BpForm extends Form {
         this.postponing = postponing;
     }
 
-
     @Column(name = "institutional")
     public String getInstitutional() {
         return this.institutional;
@@ -1181,14 +1188,9 @@ public class BpForm extends Form {
         this.creationTime = creationTime;
     }
 
-    /*@Override
-    public String toString() {
-        return FormToString.toString(this);
-    }*/
-    
     @Override
-    public String toString(){
-    	return String.format("%s", this.getId());
+    public String toString() {
+        return String.format("%s", this.getId());
     }
 
     @Column(name = "anc1_weight")

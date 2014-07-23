@@ -227,7 +227,7 @@
                 </executions>
             </plugin>
             
-            <!-- pmd -->
+           <!-- pmd --> 
 			 <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
@@ -258,7 +258,7 @@
 				</executions>
 		        </plugin>
 		        
-		     <!-- checkstyle -->
+		  <!-- checkstyle  -->   
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -280,6 +280,7 @@
 				    </execution>
 				</executions>
 		        </plugin> 
+		        
             <!-- build a OSGI bundle  -->
             <plugin>
                 <groupId>org.apache.felix</groupId>

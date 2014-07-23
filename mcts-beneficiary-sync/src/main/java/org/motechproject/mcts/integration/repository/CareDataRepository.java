@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -95,7 +96,7 @@ public class CareDataRepository {
 				+ "	    bp.anc4_hemoglobin\n"
 				+ "FROM updatable_cases\n"
 				+ "LEFT JOIN bp_form bp on bp.case_id=updatable_cases.mother_case_id\n"
-				+ "JOIN report.mcts_pregnant_mother mother ON updatable_cases.mother_case_id = mother.case_id\n"
+				+ "JOIN report.mcts_pregnant_mother mother ON updatable_cases.mother_case_id = mother.mother_case_id\n"
 				+ "WHERE (mother.id, service_type) NOT IN (SELECT * FROM mcts_updated_services);\n";
 		//TODO split this statement. 
 		return mapToBeneficiaryList(getCurrentSession().createSQLQuery(
@@ -160,7 +161,7 @@ public class CareDataRepository {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass, HashMap<String, Object> fieldParams) {
+	public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass, Map<String, Object> fieldParams) {
 		Criteria criteria = getCurrentSession().createCriteria(entityClass);
 		for (String key : fieldParams.keySet()){
 			criteria.add(Restrictions.eq(key, fieldParams.get(key)));
@@ -191,8 +192,7 @@ public class CareDataRepository {
 	public long getNextKey() {
 		  Query query = sessionFactory.getCurrentSession().createSQLQuery(
 		    "select nextval('" + SEQUENCE + "')");
-		  Long key = Long.parseLong(query.uniqueResult().toString());
-		  return key;
+		  return(Long.parseLong(query.uniqueResult().toString()));
 		 }
 	
 	public void flush() {
@@ -244,8 +244,7 @@ public class CareDataRepository {
 	
 	public List<Object[]> getmctsIdcaseId() {
 		String queryString = "select m.motherCase.id, n.mctsId from AwwRegisterMotherForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
-		List<Object[]> mctsIds = getCurrentSession().createQuery(queryString).list();
-		return mctsIds;
+		return(getCurrentSession().createQuery(queryString).list());
 	}
 	
 	public void updateQuery(String queryString) {
@@ -256,13 +255,11 @@ public class CareDataRepository {
 
 	public List<Object[]> getmctsIdcaseIdfromEditForm() {
 		String queryString = "select m.motherCase.id, n.mctsId from MotherEditForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
-		List<Object[]> mctsIds = getCurrentSession().createQuery(queryString).list();
-		return mctsIds;
+		return(getCurrentSession().createQuery(queryString).list());
 	}
 
 	public MctsHealthworker getHealthWorkerfromId(String id) {
 		int healthWorkerId = Integer.parseInt(id);
-		String type = "ASHA";
 		String queryString = "from MctsHealthworker worker where worker.healthworkerId='"+healthWorkerId+"' and worker.type='ASHA'";
 		LOGGER.debug("queryString"+queryString);
 		List<Object> worker = getCurrentSession().createQuery(queryString).list();
@@ -350,7 +347,6 @@ public class CareDataRepository {
 	}
 	
 	public String getCaseGroupIdfromAshaId(int id) {
-	//	int workerId = Integer.parseInt(id);
 		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"+id+"'";
 		LOGGER.debug("query : "+queryString);
 		List<String> caseGroupId = getCurrentSession().createQuery(queryString).list();

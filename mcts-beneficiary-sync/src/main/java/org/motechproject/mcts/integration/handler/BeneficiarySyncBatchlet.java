@@ -24,7 +24,7 @@ public class BeneficiarySyncBatchlet implements Batchlet {
 	 CareDataRepository careDataRepository;
 	
 	 @Override
-	public String process() throws Exception {
+	public String process() {
 		beneficiariesList= careDataRepository.getBeneficiariesToSync(startDate, endDate);
 		LOGGER.info("beneficiaries list size"+Integer.toString(beneficiariesList.size()));
 		System.out.println("beneficiaries list size"+Integer.toString(beneficiariesList.size()));

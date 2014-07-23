@@ -39,36 +39,40 @@ public class ObjectToXMLConverter {
 	 */
 	public static String converObjectToXml(Object dataToWrite, Class<?> classInstance)
 			throws BeneficiaryException {
-		if (dataToWrite.getClass() != classInstance) {
-			throw new BeneficiaryException(ApplicationErrors.CLASS_AND_OBJECT_DOES_NOT_MATCH);
-		} else {
-			try {
-				JAXBContext jaxbContext = JAXBContext.newInstance(classInstance);
-				Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        if (dataToWrite.getClass() != classInstance) {
+            throw new BeneficiaryException(
+                    ApplicationErrors.CLASS_AND_OBJECT_DOES_NOT_MATCH);
+        } else {
+            try {
+                JAXBContext jaxbContext = JAXBContext
+                        .newInstance(classInstance);
+                Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-	            // Set UTF-8 Encoding
-				jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-	            
-				  // The below code will take care of avoiding the conversion of < to &lt; and > to &gt; etc
-	            StringWriter stringWriter = new StringWriter();
-	        //   PrintWriter printWriter = new PrintWriter(stringWriter);
-				
-				//TODO naveen - commented 3 lines below
-	            //DataWriter dataWriter = new DataWriter(printWriter, "UTF-8", new JaxbCharacterEscapeHandler());
-	            
-				//jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "ASCII");
-				jaxbMarshaller.marshal(dataToWrite, stringWriter);
-				return stringWriter.toString();
-			}
-			catch (PropertyException e) {
-				throw new BeneficiaryException(ApplicationErrors.PROPERTY_ERROR, e);
-			}
-			catch (JAXBException e) {
-				throw new BeneficiaryException(ApplicationErrors.JAXB_ERROR, e);
-			}
-			
-		}
-	}
+                // Set UTF-8 Encoding
+                jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+
+                // The below code will take care of avoiding the conversion of <
+                // to &lt; and > to &gt; etc
+                StringWriter stringWriter = new StringWriter();
+                // PrintWriter printWriter = new PrintWriter(stringWriter);
+
+                // TODO naveen - commented 3 lines below
+                // DataWriter dataWriter = new DataWriter(printWriter, "UTF-8",
+                // new JaxbCharacterEscapeHandler());
+
+                // jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING,
+                // "ASCII");
+                jaxbMarshaller.marshal(dataToWrite, stringWriter);
+                return stringWriter.toString();
+            } catch (PropertyException e) {
+                throw new BeneficiaryException(
+                        ApplicationErrors.PROPERTY_ERROR, e);
+            } catch (JAXBException e) {
+                throw new BeneficiaryException(ApplicationErrors.JAXB_ERROR, e);
+            }
+
+        }
+    }
 
 	/**
 	 * This method write the mcts url and headers to the txetfile

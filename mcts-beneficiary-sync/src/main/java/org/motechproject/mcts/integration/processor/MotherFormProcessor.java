@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.parser.CaseInfoParser;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class MotherFormProcessor {
 
 	}
 
-	private Map<String, String> parseMotherForm(CommcareForm commcareForm) {
+	private Map<String, String> parseMotherForm(CommcareForm commcareForm) throws BeneficiaryException {
 		String namespace = this.getNamespace(commcareForm);
 		String appVersion = this.getAppVersion(commcareForm);
 		Map<String, String> motherInfo = new HashMap<>();
@@ -77,7 +78,7 @@ public class MotherFormProcessor {
 	}
 
 	private Map<String, String> parse(FormValueElement startElement,
-			CommcareForm commcareForm) {
+			CommcareForm commcareForm) throws BeneficiaryException {
 		FormValueElement caseElement = startElement;
 		if (!startElement.getElementName().equals("case")) {
 			caseElement = infoParser.getCaseElement(startElement);
@@ -116,13 +117,12 @@ public class MotherFormProcessor {
 	}
 
 	private Map<String, String> parseCaseInfo(FormValueElement caseElement,
-			CommcareForm commcareForm) {
+			CommcareForm commcareForm) throws BeneficiaryException {
 		Map<String, String> caseInfo = new HashMap<>();
 		final String caseId = caseElement.getAttributes().get("case_id");
 
 		if (StringUtils.isEmpty(caseId)) {
-			throw new RuntimeException(String.format(
-					"Empty case id found in form(%s)", commcareForm.getId()));
+			throw new BeneficiaryException(ApplicationErrors.FOUND_EMPTY_STRING);
 		} else {
 			caseInfo.put("caseId", caseId);
 		}

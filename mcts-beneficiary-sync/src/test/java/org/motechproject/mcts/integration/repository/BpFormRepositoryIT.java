@@ -7,14 +7,14 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.hibernate.model.BpForm;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-@Ignore
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 public class BpFormRepositoryIT extends BaseRepositoryIT {
 
 	@After
@@ -136,7 +136,7 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		}
 	}
 
-	public List<BpForm> getListOfBpFormsWithAncHemoglobinCombinations() {
+	private List<BpForm> getListOfBpFormsWithAncHemoglobinCombinations() {
 
 		List<BpForm> bpFormsToAdd = new ArrayList<BpForm>();
 		BpForm bpForm0 = new BpForm();
@@ -222,13 +222,13 @@ public class BpFormRepositoryIT extends BaseRepositoryIT {
 		return bpFormsToAdd;
 	}
 
-	public void addBpFormsToCurrentSession(List<BpForm> bpFormsToBeAdded) {
+	private void addBpFormsToCurrentSession(List<BpForm> bpFormsToBeAdded) {
 		for (BpForm bpForm : bpFormsToBeAdded) {
 			getCurrentSession().save(bpForm);
 		}
 	}
 
-	public BpForm shouldReturnBpFormWithGivenId(List<BpForm> bpForms, int id) {
+	private BpForm shouldReturnBpFormWithGivenId(List<BpForm> bpForms, int id) {
 		for (BpForm bpForm : bpForms) {
 			if (id == bpForm.getId())
 				return bpForm;

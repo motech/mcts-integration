@@ -68,7 +68,6 @@ public class MCTSBeneficiarySyncServiceTest {
     }
     
     @Test
-    @Ignore
     public void shouldWriteDataToFile() throws Exception{
 		when(propertyReader.getSyncRequestOutputFileLocation()).thenReturn("updateRequestXML");
 		

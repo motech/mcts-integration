@@ -1,7 +1,5 @@
 package org.motechproject.mcts.integration.web;
 
-import java.io.File;
-
 import org.motechproject.mcts.integration.batch.PostXml;
 import org.motechproject.mcts.integration.client.UpdateCommcareHQ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ public class commcareHQTestController {
 	@RequestMapping(value = "/update", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody public void updateCommcareHq()
 			{
-				//sendXml(new File("C:\\Users\\Rakesh\\Desktop\\update_commcare.xml"));		
 				updateCommcareHQ.sendUpdate();
 		
 		

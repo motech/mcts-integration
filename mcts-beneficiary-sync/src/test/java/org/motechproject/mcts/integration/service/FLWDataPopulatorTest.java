@@ -1,45 +1,44 @@
 package org.motechproject.mcts.integration.service;
 
-import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
 import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.integration.model.FLWDataCSV;
+import org.motechproject.mcts.integration.model.Location;
+import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.integration.service.FLWDataPopulator;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FLWDataPopulatorTest {
-	@InjectMocks
+	
 	private FLWDataPopulator fLWDataPopulator = new FLWDataPopulator();
+	FLWDataPopulator fLWDataPopulatorSpy = Mockito.spy(fLWDataPopulator);
 	@Mock
 	CareDataRepository careDataRepository;
 	@Mock
 	private PropertyReader propertyReader;
+	@Mock 
+	LocationDataPopulator locationDataPopulator;
+	Location location = new Location();
 	private MctsPhc mctsPhc;
 
 	@Before
 	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
 		mctsPhc = new MctsPhc();
 		mctsPhc.setId(10);
 		mctsPhc.setName("SaurBazar");
@@ -48,58 +47,25 @@ public class FLWDataPopulatorTest {
 		when(
 				careDataRepository.findEntityByField(MctsHealthworker.class,
 						"healthworkerId", 69735)).thenReturn(null);
+		Mockito.doNothing().when(locationDataPopulator).addLocationToDb((LocationDataCSV)any(), anyBoolean());
+		 Mockito.doNothing().when(fLWDataPopulatorSpy).flwDataPopulator((FLWDataCSV)any());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldSyncCsvDataToDatabase() throws Exception {
-
-		File file = new File("src/test/resources/FLW2.csv");
-		DiskFileItem fileItem = new DiskFileItem("file",
-				"application/vnd.ms-excel", false, file.getName(),
-				(int) file.length(), file.getParentFile());
-		fileItem.getOutputStream();
-		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-		fLWDataPopulator.populateFLWData(multipartFile, "10");
-		ArgumentCaptor<MctsHealthworker> captor = ArgumentCaptor
-				.forClass(MctsHealthworker.class);
-		ArgumentCaptor<MctsHealthworkerErrorLog> captor2 = ArgumentCaptor
-				.forClass(MctsHealthworkerErrorLog.class);
-		verify(careDataRepository).saveOrUpdate(captor2.capture());
-		MctsHealthworkerErrorLog mctsFlwData = captor2.getValue();
-		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MctsHealthworker mctsHealthworker = captor.getValue();
-		assertEquals("SaurBazar", mctsHealthworker.getMctsPhc().getName());
-		assertEquals("ASHA", mctsHealthworker.getType());
-		assertEquals(175, mctsHealthworker.getMctsPhc().getPhcId());
-		assertEquals((Integer) 10, mctsHealthworker.getMctsPhc().getId());
-		verify(careDataRepository).saveOrUpdate((MctsHealthworker) any());
-		verify(careDataRepository, times(1)).saveOrUpdate(
-				(MctsHealthworker) any());
-		verify(careDataRepository, times(0)).saveOrUpdate(
-				(MctsHealthworkerErrorLog) any());
+	    Mockito.doReturn(location).when(fLWDataPopulatorSpy).getUniqueLocation((LocationDataCSV)any());
+	    Mockito.doNothing().when(fLWDataPopulatorSpy).addFLWToDb((FLWDataCSV)any(),anyString());
+		@SuppressWarnings("resource")
+        String content = new String(Files.readAllBytes(Paths.get("src/test/resources/FLW2.csv")));
+		MockMultipartFile multipartFile = new MockMultipartFile(
+		        "FLW2.csv",                //filename
+		        content.getBytes());
+		fLWDataPopulatorSpy.populateFLWData(multipartFile, "10");
+		Mockito.verify(fLWDataPopulatorSpy, Mockito.times(1)).addFLWToDb((FLWDataCSV)any(),anyString());
+		Mockito.verify(fLWDataPopulatorSpy, Mockito.times(1)).flwDataPopulator((FLWDataCSV)any());
 
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void shouldSyncCsvDataToflw() throws Exception {
-
-		File file = new File(propertyReader.getFLWCsvFileLocation());// TODOAman
-																		// chang
-																		// to
-																		// test
-																		// res
-		// fLWDataPopulator.flwDataPopulator(file);
-		ArgumentCaptor<MctsHealthworkerErrorLog> captor = ArgumentCaptor
-				.forClass(MctsHealthworkerErrorLog.class);
-		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MctsHealthworkerErrorLog mctsFlwData = captor.getValue();
-		assertEquals("Anita Kumari", mctsFlwData.getName());
-		assertEquals("ASHA", mctsFlwData.getType());
-		verify(careDataRepository).saveOrUpdate((MctsHealthworker) any());
-		verify(careDataRepository, times(1)).saveOrUpdate(
-				(MctsHealthworker) any());
-
-	}
+	
 }

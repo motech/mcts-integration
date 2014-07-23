@@ -1,7 +1,6 @@
 package org.motechproject.mcts.integration.batch;
 
 import java.io.File;
-import java.util.Map;
 
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
@@ -32,12 +31,13 @@ public class PostXml {
 
 	    private RestTemplate restTemplate;
 	    private HttpAgent httpAgentServiceOsgi;
-	   // private BeneficiarySyncSettings beneficiarySyncSettings;
 	    private MultiValueMap<String, Object> formData;
 	    private BatchServiceUrlGenerator batchServiceUrlGenerator;
 	    @Autowired
-	    public PostXml(@Qualifier("mctsRestTemplate") RestTemplate restTemplate,BatchServiceUrlGenerator batchServiceUrlGenerator) {
+	    public PostXml(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BatchServiceUrlGenerator batchServiceUrlGenerator, HttpAgent httpAgentServiceOsgi) {
 	        this.restTemplate = restTemplate;
+	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
+	        this.httpAgentServiceOsgi = httpAgentServiceOsgi;
 	    }
 	    
 	    /**
@@ -54,7 +54,6 @@ public class PostXml {
 	        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 	        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData,httpHeaders);
-	      //  restTemplate.postForEntity(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Map.class);
 	        httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getUploadXmlUrl(), requestEntity, Method.POST);
 	      
 	    }

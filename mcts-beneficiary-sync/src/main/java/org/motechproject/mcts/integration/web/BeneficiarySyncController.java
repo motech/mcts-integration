@@ -7,6 +7,7 @@
  */
 package org.motechproject.mcts.integration.web;
 
+import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +16,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
-import org.motechproject.mcts.integration.commcare.UpdateCaseXmlService;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
@@ -25,7 +25,6 @@ import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
-import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,253 +50,245 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping(value = "/beneficiary")
 public class BeneficiarySyncController {
-	
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(BeneficiarySyncController.class);
-	private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
-	private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
 
-	@Autowired
-    private PropertyReader propertyReader;
-	
-	@Autowired
-	private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
-	
-	@Autowired 
-	private CreateCaseXmlService createCaseXmlService;
-	
-	@Autowired
-	private MotechBeneficiarySyncService motechBeneficiarySyncService;
-	
-	@Autowired
-	private LocationDataPopulator locationDataPopulator;
+    private final static Logger LOGGER = LoggerFactory
+            .getLogger(BeneficiarySyncController.class);
+    private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
+    private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
 
-	@Autowired
-	private FLWDataPopulator fLWDataPopulator;
+    @Autowired
+    private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
 
-	@Autowired
-	private MCTSFormUpdateService mCTSFormUpdateService;
+    @Autowired
+    private CreateCaseXmlService createCaseXmlService;
 
-	@Autowired
-	private FixtureDataService fixtureDataService;
-	
-	@Autowired private UpdateCaseXmlService updateCaseXmlService;
+    @Autowired
+    private MotechBeneficiarySyncService motechBeneficiarySyncService;
 
-	/**
-	 * Method to validate connection
-	 * 
-	 * @param query
-	 * @return string
-	 */
-	@RequestMapping(value = "ping", method = RequestMethod.GET)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String ping(@RequestParam("query") String query){
-		return String.format("Ping Received Succefully with query param: %s", query);
-	}
-	
+    @Autowired
+    private LocationDataPopulator locationDataPopulator;
 
-	/**
-	 * Method to send request to MCTS to send updates
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 * @throws BeneficiaryException
-	 */
-	@RequestMapping(value = "syncFrom", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public String syncFrom(@RequestParam("startDate") String startDate,
-			@RequestParam("endDate") String endDate) throws BeneficiaryException{
-		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
+    @Autowired
+    private FLWDataPopulator fLWDataPopulator;
 
-		validateDateFormat(startDate);
-		validateDateFormat(endDate);
-		LOGGER.info("Arguments are Valid");
-		DateTime parsedStartDate = parseDate(startDate);
-		DateTime parsedEndDate = parseDate(endDate);
-		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
-		return mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-	}
-	
-	/**
-	 * Method to post updates to MCTS
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "syncTo", method = RequestMethod.GET)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String syncTo(@RequestParam("startDate") String startDate,
-			@RequestParam("endDate") String endDate) throws Exception {
-		LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: " + endDate);
-		validateDateFormat(startDate);
-		validateDateFormat(endDate);
-		LOGGER.info("Arguments are Valid");
-		DateTime parsedStartDate = parseDate(startDate);
-		DateTime parsedEndDate = parseDate(endDate);
-		
-		LOGGER.debug("Parsed startDate is: " + parsedStartDate + " & endDate is: " + parsedEndDate);
-		motechBeneficiarySyncService.syncBeneficiaryData(parsedStartDate, parsedEndDate);
-			
-		return "Updates Sent Successfully";
-	}
+    @Autowired
+    private MCTSFormUpdateService mCTSFormUpdateService;
 
-	/**
-	 * Method to add locations to database
-	 * 
-	 * @param file
-	 * @return
-	 * @throws  
-	 * @throws  
-	 * @throws  
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/addLocations", method = RequestMethod.POST)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String addLocationData(@RequestParam("file") MultipartFile file)
-			throws BeneficiaryException {
+    @Autowired
+    private FixtureDataService fixtureDataService;
 
-		LOGGER.info("Request to upload xml file of job:");
-		
-		try {
-			locationDataPopulator.populateLocations(file);
-			return "Data Added Successfully";
-		}
+    /**
+     * Method to validate connection
+     * 
+     * @param query
+     * @return string
+     */
+    @RequestMapping(value = "ping", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String ping(@RequestParam("query") String query) {
+        return String.format("Ping Received Succefully with query param: %s",
+                query);
+    }
 
-		catch (BeneficiaryException e) {
-			LOGGER.error("Adding Location Data to the database failed");
-			throw new RestException(e, e.getMessage());
-		}
+    /**
+     * Method to send request to MCTS to send updates
+     * 
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws BeneficiaryException 
+     * @throws Exception
+     */
+    @RequestMapping(value = "syncFrom", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String syncFrom(@RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) throws BeneficiaryException {
+        LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: "
+                + endDate);
 
-		
+        validateDateFormat(startDate);
+        validateDateFormat(endDate);
+        LOGGER.info("Arguments are Valid");
+        DateTime parsedStartDate = parseDate(startDate);
+        DateTime parsedEndDate = parseDate(endDate);
+        LOGGER.debug("Parsed startDate is: " + parsedStartDate
+                + " & endDate is: " + parsedEndDate);
+        return mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate,
+                parsedEndDate);
+    }
 
-	}
+    /**
+     * Method to post updates to MCTS
+     * 
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws BeneficiaryException 
+     * @throws FileNotFoundException 
+     * @throws Exception
+     */
+    @RequestMapping(value = "syncTo", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String syncTo(@RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate) throws BeneficiaryException {
+        LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: "
+                + endDate);
+        validateDateFormat(startDate);
+        validateDateFormat(endDate);
+        LOGGER.info("Arguments are Valid");
+        DateTime parsedStartDate = parseDate(startDate);
+        DateTime parsedEndDate = parseDate(endDate);
 
-	/**
-	 * Method to add FLWs to database
-	 * 
-	 * @param file
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/addFLW/{stateId}", method = RequestMethod.POST)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String addFLWData(@RequestParam("file") MultipartFile file, @PathVariable("stateId") String stateId)
-			throws BeneficiaryException {
+        LOGGER.debug("Parsed startDate is: " + parsedStartDate
+                + " & endDate is: " + parsedEndDate);
+        motechBeneficiarySyncService.syncBeneficiaryData(parsedStartDate,
+                parsedEndDate);
 
-		LOGGER.info("Request to upload xml file of job:");
-	
-	
-		try {
-			fLWDataPopulator.populateFLWData(file, stateId);
-			return "Data Added Successfully";
+        return "Updates Sent Successfully";
+    }
 
-		}
-		
-		catch (BeneficiaryException e) {
-			LOGGER.error("Adding FLW Data to the database failed", e);
-			throw new RestException(e, e.getMessage());
-		} 
+    /**
+     * Method to add locations to database
+     * 
+     * @param file
+     * @return
+     * @throws
+     * @throws
+     * @throws
+     * @throws Exception
+     */
+    @RequestMapping(value = "/addLocations", method = RequestMethod.POST)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String addLocationData(@RequestParam("file") MultipartFile file)
+            throws BeneficiaryException {
 
-		
-	}
+        LOGGER.info("Request to upload xml file of job:");
 
-	/**
-	 * Method to update caseIds and match status if mctsId is matched
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public String updateStatus() {
-		mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
-		return "success";
-	}
+        try {
+            locationDataPopulator.populateLocations(file);
+            return "Data Added Successfully";
+        }
 
-	/**
+        catch (BeneficiaryException e) {
+            LOGGER.error("Adding Location Data to the database failed");
+            throw new RestException(e, e.getMessage());
+        }
 
-	 * Method to validate the input date arguments
+    }
 
-	 * @param date
-	 */
-	private static void validateDateFormat(String date) {
-		if (!Pattern.matches(VALID_DATE_PATTERN, date))
-			throw new IllegalArgumentException(String.format(
-					"Invalid date format. Date format should be: %s.",
-					DATE_TIME_FORMAT));
-	}
-	
-	/**
-	 * method to convert from String to dateTime format
-	 * 
-	 * @param dateString
-	 * @return
-	 */
-	private static DateTime parseDate(String dateString) {
-		DateTimeFormatter dateTimeFormatter = DateTimeFormat
-				.forPattern(DATE_TIME_FORMAT);
-		return dateTimeFormatter.parseDateTime(dateString);
-	}
+    /**
+     * Method to add FLWs to database
+     * 
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/addFLW/{stateId}", method = RequestMethod.POST)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String addFLWData(@RequestParam("file") MultipartFile file,
+            @PathVariable("stateId") String stateId)
+            throws BeneficiaryException {
 
-	/**
-	 * Controller to update the case_groupId in the database
-	 * 
-	 * @param type
-	 * @return
-	 * @throws BeneficiaryException 
-	 */
-	@RequestMapping(value = "/getFixData/{type}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public String getFixData(@PathVariable("type") String type) throws BeneficiaryException {
-		fixtureDataService.updateGroupId();
-		return "successful";
-	}
-	
-	/*@RequestMapping(value = "/getCaseGroupId/{workerId}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public String getCaseGroupId(@PathVariable("workerId") String Id) throws BeneficiaryException {
-		String caseGroupId = fixtureDataService.getCaseGroupIdfromAshaId(Id);
-		return caseGroupId;
-		
-	}*/
-	
-	@RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public String getCaseXml() throws Exception {
-		createCaseXmlService.createCaseXml();
-		return "success";
-	}
-	
-	
-	
+        LOGGER.info("Request to upload xml file of job:");
 
-	@ExceptionHandler(value = { RestException.class })
-	@ResponseBody
-	public BeneficiaryError restExceptionHandler(RestException ex,
-			HttpServletResponse response) {
-		LOGGER.error(ex.getMessage(),ex);
-		BeneficiaryError error = new BeneficiaryError();
+        try {
+            fLWDataPopulator.populateFLWData(file, stateId);
+            return "Data Added Successfully";
 
-		try {
-			response.setStatus(ex.getHttpStatus().value());
-			error.setErrorCode(String.valueOf(ex.getBatchException()
-					.getErrorCode()));
-			error.setErrorMessage(ex.getBatchException().getErrorMessage());
-			error.setApplication("motech-platform-batch");
+        }
 
-		} catch (Exception e) {
-			System.out.println("in last exception");
-		}
-		return error;
-	}
+        catch (BeneficiaryException e) {
+            LOGGER.error("Adding FLW Data to the database failed", e);
+            throw new RestException(e, e.getMessage());
+        }
+
+    }
+
+    /**
+     * Method to update caseIds and match status if mctsId is matched
+     * 
+     * @return
+     */
+    @RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public String updateStatus() {
+        mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
+        return "success";
+    }
+
+    /**
+     * 
+     * Method to validate the input date arguments
+     * 
+     * @param date
+     */
+    private static void validateDateFormat(String date) {
+        if (!Pattern.matches(VALID_DATE_PATTERN, date))
+            throw new IllegalArgumentException(String.format(
+                    "Invalid date format. Date format should be: %s.",
+                    DATE_TIME_FORMAT));
+    }
+
+    /**
+     * method to convert from String to dateTime format
+     * 
+     * @param dateString
+     * @return
+     */
+    private static DateTime parseDate(String dateString) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat
+                .forPattern(DATE_TIME_FORMAT);
+        return dateTimeFormatter.parseDateTime(dateString);
+    }
+
+    /**
+     * Controller to update the case_groupId in the database
+     * 
+     * @param type
+     * @return
+     * @throws BeneficiaryException
+     */
+    @RequestMapping(value = "/getFixData/{type}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getFixData(@PathVariable("type") String type)
+            throws BeneficiaryException {
+        fixtureDataService.updateGroupId();
+        return "successful";
+    }
+
+    @RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getCaseXml() throws Exception {
+        createCaseXmlService.createCaseXml();
+        return "success";
+    }
+
+    @ExceptionHandler(value = { RestException.class })
+    @ResponseBody
+    public BeneficiaryError restExceptionHandler(RestException ex,
+            HttpServletResponse response) {
+        LOGGER.error(ex.getMessage(), ex);
+        BeneficiaryError error = new BeneficiaryError();
+
+        try {
+            response.setStatus(ex.getHttpStatus().value());
+            error.setErrorCode(String.valueOf(ex.getBatchException()
+                    .getErrorCode()));
+            error.setErrorMessage(ex.getBatchException().getErrorMessage());
+            error.setApplication("motech-platform-batch");
+
+        } catch (Exception e) {
+            System.out.println("in last exception");
+        }
+        return error;
+    }
 
 }

@@ -16,7 +16,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 	private boolean bundleClassLoaderSet = false;
 	@Override
 	public boolean preHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler) throws Exception {
+			HttpServletResponse response, Object handler) {
 		LOGGER.info("preHandler Called");
 //		if (classLoader == null){
 		classLoader = Thread.currentThread().getContextClassLoader();
@@ -27,7 +27,7 @@ public class RequestLoggingInterceptor extends HandlerInterceptorAdapter {
 	}
 	
 	 @Override
-	    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+	    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 		 LOGGER.info("afterCompletion Called");
 		 if (bundleClassLoaderSet){
 			 Thread.currentThread().setContextClassLoader(classLoader);

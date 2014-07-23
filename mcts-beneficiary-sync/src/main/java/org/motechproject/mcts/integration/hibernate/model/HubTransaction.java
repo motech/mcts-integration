@@ -22,65 +22,69 @@ import javax.persistence.TemporalType;
 @Table(name = "hub_transaction", schema = "report")
 public class HubTransaction implements java.io.Serializable {
 
-	private int id;
-	private Date startDate;
-	private Date endDate;
-	private Boolean isNotified;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8519082727068392956L;
+    private int id;
+    private Date startDate;
+    private Date endDate;
+    private Boolean isNotified;
 
-	public HubTransaction() {
-	}
+    public HubTransaction() {
+    }
 
-	public HubTransaction(int id) {
-		this.id = id;
-	}
+    public HubTransaction(int id) {
+        this.id = id;
+    }
 
-	public HubTransaction(int id, Date startDate, Date endDate,
-			Boolean isNotified) {
-		this.id = id;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.isNotified = isNotified;
-	}
+    public HubTransaction(int id, Date startDate, Date endDate,
+            Boolean isNotified) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isNotified = isNotified;
+    }
 
-	@SequenceGenerator(name = "generator", sequenceName = "hub_transaction_id_seq")
-	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
-	@Column(name = "id", unique = true, nullable = false)
-	public int getId() {
-		return this.id;
-	}
+    @SequenceGenerator(name = "generator", sequenceName = "hub_transaction_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "id", unique = true, nullable = false)
+    public int getId() {
+        return this.id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date", length = 29)
-	public Date getStartDate() {
-		return this.startDate;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date", length = 29)
+    public Date getStartDate() {
+        return this.startDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date", length = 29)
-	public Date getEndDate() {
-		return this.endDate;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date", length = 29)
+    public Date getEndDate() {
+        return this.endDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	@Column(name = "is_notified")
-	public Boolean getIsNotified() {
-		return this.isNotified;
-	}
+    @Column(name = "is_notified")
+    public Boolean getIsNotified() {
+        return this.isNotified;
+    }
 
-	public void setIsNotified(Boolean isNotified) {
-		this.isNotified = isNotified;
-	}
+    public void setIsNotified(Boolean isNotified) {
+        this.isNotified = isNotified;
+    }
 
 }

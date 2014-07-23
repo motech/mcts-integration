@@ -34,263 +34,255 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CreateCaseXmlService {
 
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(CreateCaseXmlService.class);
+    private final static Logger LOGGER = LoggerFactory
+            .getLogger(CreateCaseXmlService.class);
 
-	@Autowired
-	StubDataService stubDataService;
+    @Autowired
+    StubDataService stubDataService;
 
-	@Autowired
-	PropertyReader propertyReader;
+    @Autowired
+    PropertyReader propertyReader;
 
-	@Autowired
-	CareDataRepository careDataRepository;
+    @Autowired
+    CareDataRepository careDataRepository;
 
-	@Autowired
-	MCTSHttpClientService mCTSHttpClientService;
+    @Autowired
+    MCTSHttpClientService mCTSHttpClientService;
 
-	@Autowired
-	FixtureDataService fixtureDataService;
+    @Autowired
+    FixtureDataService fixtureDataService;
 
-	public CareDataRepository getCareDataRepository() {
-		return careDataRepository;
-	}
+    public CareDataRepository getCareDataRepository() {
+        return careDataRepository;
+    }
 
-	public void setCareDataRepository(CareDataRepository careDataRepository) {
-		this.careDataRepository = careDataRepository;
-	}
+    public void setCareDataRepository(CareDataRepository careDataRepository) {
+        this.careDataRepository = careDataRepository;
+    }
 
-	
+    public void createCaseXml() throws BeneficiaryException {
 
-	public void createCaseXml() throws BeneficiaryException {
+        List<MctsPregnantMother> mctsPregnantMother = careDataRepository
+                .getMctsPregnantMother();
+        LOGGER.debug("size :" + mctsPregnantMother.size());
+        int size = mctsPregnantMother.size();
+        if (size > 0) {
+            int sizeOfXml = propertyReader.sizeOfXml();
+            int times = size / sizeOfXml;
+            if (times > 0) {
+                for (int i = 0; i <= times; i++) {
+                    Data data = createXml(mctsPregnantMother.subList(i
+                            * sizeOfXml, (i + 1) * sizeOfXml - 1));
+                    String returnvalue = ObjectToXMLConverter
+                            .converObjectToXml(data, Data.class);
+                    LOGGER.debug("returned : " + returnvalue);
+                    HttpStatus status = mCTSHttpClientService
+                            .syncToCommcare(data);
+                    if (status.value() == 200) {
+                        updateCaseUId(data);
 
-		List<MctsPregnantMother> mctsPregnantMother = careDataRepository
-				.getMctsPregnantMother();
-		LOGGER.debug("size :" + mctsPregnantMother.size());
-		int size = mctsPregnantMother.size();
-		if (size > 0) {
-			int sizeOfXml = propertyReader.sizeOfXml();
-			int times = size / sizeOfXml;
-			if (times > 0) {
-				for (int i = 0; i <= times; i++) {
-					Data data = createXml(mctsPregnantMother.subList(i
-							* sizeOfXml, (i + 1) * sizeOfXml - 1));
-					String returnvalue = ObjectToXMLConverter
-							.converObjectToXml(data, Data.class);
-					LOGGER.debug("returned : " + returnvalue);
-					HttpStatus status = mCTSHttpClientService
-							.syncToCommcare(data);
-					if (status.value() == 200) {
-						updateCaseUId(data);
+                    }
+                }
+            }
 
-					}
-				}
-			}
+            else {
+                Data data = createXml(mctsPregnantMother);
+                String returnvalue = ObjectToXMLConverter.converObjectToXml(
+                        data, Data.class);
+                LOGGER.debug("returned : " + returnvalue);
 
-			else {
-				Data data = createXml(mctsPregnantMother);
-				String returnvalue = ObjectToXMLConverter.converObjectToXml(
-						data, Data.class);
-				LOGGER.debug("returned : " + returnvalue);
+                // post xml to the url if response is 200 then only add
+                // case UUID to the database
+                HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
+                if (status.value() / 100 == 2) {
+                    updateCaseUId(data);
 
-				// TODO post xml to the url if response is 200 then only execute
-				// the
-				// following statment
-				HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-				if (status.value() / 100 == 2) {
-					updateCaseUId(data);
+                }
+            }
+        }
 
-				}
-			}
-		}
+    }
 
-	}
+    /**
+     * This method is called after commcareHQ returns success after saving cases
+     * 
+     * @param data
+     * @throws BeneficiaryException
+     */
+    private void updateCaseUId(Data data) throws BeneficiaryException {
+        List<Case> cases = data.getCases();
+        for (Case curr : cases) {
+            MctsPregnantMother mother = careDataRepository
+                    .getMotherFromPrimaryId(curr.getMctsPregnantMotherId());
+            mother.setMctsPersonaCaseUId(curr.getCaseId());
+            mother.setDateOpened(new DateTime().toString());
+            careDataRepository.saveOrUpdate(mother);
 
-	/**
-	 * This method is called after commcareHQ returns success after saving cases
-	 * @param data
-	 * @throws BeneficiaryException
-	 */
-	private void updateCaseUId(Data data) throws BeneficiaryException {
-		List<Case> cases = data.getCases();
-		for (Case curr : cases) {
-			MctsPregnantMother mother = careDataRepository
-					.getMotherFromPrimaryId(curr.getMctsPregnantMotherId());
-			mother.setMctsPersonaCaseUId(curr.getCaseId());
-			mother.setDateOpened(new DateTime().toString());
-			careDataRepository.saveOrUpdate(mother);
+        }
+    }
 
-		}
-	}
+    /**
+     * Method which takes 50 or less cases at a time and creates Data Object.
+     * 
+     * @param mctsPregnantMother
+     * @return
+     * @throws BeneficiaryException
+     * @throws Exception
+     */
+    public Data createXml(List<MctsPregnantMother> mctsPregnantMother)
+            throws BeneficiaryException {
+        Data data = new Data();
+        List<Case> cases = new ArrayList<Case>();
+        data.setXmlns(CommcareConstants.DATAXMLNS);
+        String userId = propertyReader.getUserIdforCommcare();
+        Meta meta = createMetaandReturn(userId);
+        meta.setTimeEnd(new DateTime().toString());
+        data.setMeta(meta);
+        for (int i = 0; i < mctsPregnantMother.size(); i++) {
+            Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),
+                    userId);
 
-	/**
-	 * Method which takes 50 or less cases at a time and creates Data Object.
-	 * 
-	 * @param mctsPregnantMother
-	 * @return
-	 * @throws BeneficiaryException
-	 * @throws Exception
-	 */
-	public Data createXml(List<MctsPregnantMother> mctsPregnantMother)
-			throws BeneficiaryException {
-		Data data = new Data();
-		List<Case> cases = new ArrayList<Case>();
-		data.setXmlns(CommcareConstants.DATAXMLNS);
-		String userId = propertyReader.getUserIdforCommcare();
-		Meta meta = createMetaandReturn(userId);
-		meta.setTimeEnd(new DateTime().toString());
-		data.setMeta(meta);
-		for (int i = 0; i < mctsPregnantMother.size(); i++) {
-			Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),
-					userId);
+            if ((caseTask.getCreateTask().getCaseName() != null)
+                    && (caseTask.getUpdateTask().getMctsHusbandName() != null)
+                    && (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
+                    && (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
+                cases.add(caseTask);
+            }
 
-			if ((caseTask.getCreateTask().getCaseName() != null)
-					&& (caseTask.getUpdateTask().getMctsHusbandName() != null)
-					&& (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
-					&& (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
-				cases.add(caseTask);
-			}
+        }
+        data.setCases(cases);
 
-			// cases.add(caseTask);
+        return data;
+    }
 
-		}
-		data.setCases(cases);
+    /**
+     * Method to create Case for indiavidual mother and returns it.
+     * 
+     * @param mctsPregnantMother
+     * @param userId
+     * @return
+     * @throws BeneficiaryException
+     * @throws Exception
+     */
+    public Case createCaseForBeneficiary(MctsPregnantMother mctsPregnantMother,
+            String userId) throws BeneficiaryException {
 
-		return data;
-	}
+        Case caseTask = new Case();
+        DateTime date = new DateTime();
+        int workerId;
 
-	/**
-	 * Method to create Case for indiavidual mother and returns it.
-	 * 
-	 * @param mctsPregnantMother
-	 * @param userId
-	 * @return
-	 * @throws BeneficiaryException
-	 * @throws Exception
-	 */
-	public Case createCaseForBeneficiary(MctsPregnantMother mctsPregnantMother,
-			String userId) throws BeneficiaryException {
+        if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
+            workerId = mctsPregnantMother.getMctsHealthworkerByAshaId()
+                    .getHealthworkerId();
+        } else {
+            workerId = -1;
+        }
+        String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
+        String caseId = UUID.randomUUID().toString();
+        String dateModified = date.toString();
+        CreateTask task = createTaskandReturn(mctsPregnantMother, workerId,
+                ownerId);
+        UpdateTask updatedTask = updateTaskandReturn(mctsPregnantMother,
+                workerId, ownerId);
+        caseTask.setCreateTask(task);
+        caseTask.setUpdateTask(updatedTask);
+        caseTask.setXmlns(CommcareConstants.XMLNS);
+        caseTask.setDateModified(dateModified);
+        caseTask.setCaseId(caseId);
+        caseTask.setUserId(userId);
+        caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
 
-		Case caseTask = new Case();
-		DateTime date = new DateTime();
-		int workerId;
+        return caseTask;
 
-		if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
-			workerId = mctsPregnantMother.getMctsHealthworkerByAshaId()
-					.getHealthworkerId();
-		} else {
-			workerId = -1;
-		}
+    }
 
-		String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
-		String caseId = UUID.randomUUID().toString();
-		String dateModified = date.toString();
-		CreateTask task = createTaskandReturn(mctsPregnantMother, workerId,
-				ownerId);
-		UpdateTask updatedTask = updateTaskandReturn(mctsPregnantMother,
-				workerId, ownerId);
-		caseTask.setCreateTask(task);
-		caseTask.setUpdateTask(updatedTask);
-		caseTask.setXmlns(CommcareConstants.XMLNS);
-		caseTask.setDateModified(dateModified);
-		caseTask.setCaseId(caseId);
-		caseTask.setUserId(userId);
-		caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
+    /**
+     * Method to create Object Meta and return it.
+     * 
+     * @param userId
+     * @return
+     */
+    private Meta createMetaandReturn(String userId) {
+        Meta meta = new Meta();
+        meta.setXmlns(CommcareConstants.METAXMLNS);
+        meta.setInstanceID(UUID.randomUUID().toString());
+        meta.setTimeStart(new DateTime().toString());
+        meta.setUserID(userId);
 
-		return caseTask;
+        return meta;
+    }
 
-	}
+    /**
+     * Method to create Object updateTask and return it
+     * 
+     * @param mctsPregnantMother
+     * @return
+     * @throws BeneficiaryException
+     */
+    public UpdateTask updateTaskandReturn(
+            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
+            throws BeneficiaryException {
+        UpdateTask updateTask = new UpdateTask();
 
-	/**
-	 * Method to create Object Meta and return it.
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	private Meta createMetaandReturn(String userId) {
-		Meta meta = new Meta();
-		meta.setXmlns(CommcareConstants.METAXMLNS);
-		meta.setInstanceID(UUID.randomUUID().toString());
-		meta.setTimeStart(new DateTime().toString());
-		meta.setUserID(userId);
+        String mctsName = mctsPregnantMother.getHindiName();
+        String mctsName_en = mctsPregnantMother.getName();
+        String husbandName = mctsPregnantMother.getHindiFatherHusbandName();
+        String husbandName_en = mctsPregnantMother.getFatherHusbandName();
+        String mctsId = mctsPregnantMother.getMctsId();
+        String phone = mctsPregnantMother.getMobileNo();
+        Date birth = mctsPregnantMother.getBirthDate();
+        DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
 
-		return meta;
-	}
+        DateTime date = new DateTime();
+        String age = "";
+        String dob = "";
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
-	/**
-	 * Method to create Object updateTask and return it
-	 * 
-	 * @param mctsPregnantMother
-	 * @return
-	 * @throws BeneficiaryException
-	 */
-	public UpdateTask updateTaskandReturn(
-			MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
-			throws BeneficiaryException {
-		UpdateTask updateTask = new UpdateTask();
+        if (birth != null) {
+            dob = fmt.print(birthDate);
+            age = Integer.toString(Days.daysBetween(
+                    birthDate.withTimeAtStartOfDay(),
+                    date.withTimeAtStartOfDay()).getDays() / 365);
+        }
 
-		String mctsName = mctsPregnantMother.getHindiName();
-		String mctsName_en = mctsPregnantMother.getName();
-		String husbandName = mctsPregnantMother.getHindiFatherHusbandName();
-		String husbandName_en = mctsPregnantMother.getFatherHusbandName();
-		String mctsId = mctsPregnantMother.getMctsId();
-		String phone = mctsPregnantMother.getMobileNo();
-		Date birth = mctsPregnantMother.getBirthDate();
-		DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
+        if (mctsPregnantMother.getLmpDate() != null) {
+            DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
+            DateTime edd = lmpDate.plusDays(280);
+            String eddDate = fmt.print(edd);
+            updateTask.setMctsEdd(eddDate);
+        }
 
-		DateTime date = new DateTime();
-		String age = "";
-		String dob = "";
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
-		
-		if (birth != null) {
-			dob = fmt.print(birthDate);
-			age = Integer.toString(Days.daysBetween(
-					birthDate.withTimeAtStartOfDay(),
-					date.withTimeAtStartOfDay()).getDays() / 365);
-		}
+        updateTask.setMctsHusbandName(husbandName);
+        updateTask.setMctsHusbandName_en(husbandName_en);
+        updateTask.setMctsFullname(mctsName);
+        updateTask.setMctsFullname_en(mctsName_en);
+        updateTask.setMctsAge(age);
+        updateTask.setMctsDob(dob);
+        updateTask.setMctsId(mctsId);
+        updateTask.setMctsPhoneNumber(phone);
+        updateTask.setAshaId(Integer.toString(workerId));
 
-		if (mctsPregnantMother.getLmpDate() != null) {
-			DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
-			DateTime edd = lmpDate.plusDays(280);
-			String eddDate = fmt.print(edd);
-			updateTask.setMctsEdd(eddDate);
-		}
-		
-		
+        return updateTask;
+    }
 
-		//updateTask.setCaseName(mctsPregnantMother.getName());
-		//updateTask.setCaseType(CommcareConstants.CASETYPE);
-		//updateTask.setOwnerId(ownerId);
-		updateTask.setMctsHusbandName(husbandName);
-		updateTask.setMctsHusbandName_en(husbandName_en);
-		updateTask.setMctsFullname(mctsName);
-		updateTask.setMctsFullname_en(mctsName_en);
-		updateTask.setMctsAge(age);
-		updateTask.setMctsDob(dob);
-		updateTask.setMctsId(mctsId);
-		updateTask.setMctsPhoneNumber(phone);
-		updateTask.setAshaId(Integer.toString(workerId));
+    /**
+     * Method to create Object createTask and return it
+     * 
+     * @param mctsPregnantMother
+     * @return
+     * @throws BeneficiaryException
+     */
+    private CreateTask createTaskandReturn(
+            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
+            throws BeneficiaryException {
+        CreateTask createTask = new CreateTask();
 
-		return updateTask;
-	}
+        createTask.setCaseType(CommcareConstants.CASETYPE);
+        createTask.setCaseName(mctsPregnantMother.getHindiName());
+        LOGGER.debug("workerId : " + workerId);
+        LOGGER.debug("ownerId : " + ownerId);
+        createTask.setOwnerId(ownerId);
 
-	/**
-	 * Method to create Object createTask and return it
-	 * 
-	 * @param mctsPregnantMother
-	 * @return
-	 * @throws BeneficiaryException
-	 */
-	private CreateTask createTaskandReturn(
-			MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
-			throws BeneficiaryException {
-		CreateTask createTask = new CreateTask();
-
-		createTask.setCaseType(CommcareConstants.CASETYPE);
-		createTask.setCaseName(mctsPregnantMother.getHindiName());
-		createTask.setOwnerId(ownerId);
-
-		return createTask;
-	}
+        return createTask;
+    }
 }

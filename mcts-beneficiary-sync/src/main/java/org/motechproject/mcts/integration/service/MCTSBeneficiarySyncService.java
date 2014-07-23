@@ -5,17 +5,11 @@ package org.motechproject.mcts.integration.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
@@ -71,19 +65,20 @@ public class MCTSBeneficiarySyncService {
 	@Autowired
 	private EventRelay eventRelay;
 
-	/**
-	 * Main Method to send <code>Get</code> Updates request to MCTS,
-	 * <code>Add</code> the received updates to database and <code>Notify</code>
-	 * Hub
-	 * 
-	 * @param startDate
-	 * @param endDate
-	 * @throws BeneficiaryException
-	 */
+	    /**
+     * Main Method to send <code>Get</code> Updates request to MCTS,
+     * <code>Add</code> the received updates to database and <code>Notify</code>
+     * Hub
+     * 
+     * @param startDate
+     * @param endDate
+     * @throws BeneficiaryException
+     * @throws Exception
+     */
 
-	public String syncBeneficiaryData(DateTime startDate, DateTime endDate)
+	public String syncBeneficiaryData(DateTime startDate, DateTime endDate) throws BeneficiaryException
 
-	throws BeneficiaryException {
+	{
 		NewDataSet newDataSet = syncFrom(startDate, endDate);
 		if (newDataSet == null) {
 			LOGGER.info("No New Updates Received. Exiting");
@@ -119,8 +114,10 @@ public class MCTSBeneficiarySyncService {
 	 * @param startDate
 	 * @param endDate
 	 * @return String of XML of the updates received from MCTS
+	 * @throws BeneficiaryException 
+	 * @throws Exception 
 	 */
-	protected NewDataSet syncFrom(DateTime startDate, DateTime endDate) {
+	protected NewDataSet syncFrom(DateTime startDate, DateTime endDate) throws BeneficiaryException {
 		LOGGER.info("Creating Request Body To Be Sent To MCTS");
 		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
 		requestBody.putAll(propertyReader
@@ -239,11 +236,10 @@ public class MCTSBeneficiarySyncService {
 	private MctsPregnantMother mapRecordToMctsPregnantMother(Record record,
 			Date startDate, MctsPregnantMother mctsPregnantMother,
 			String beneficiaryId) throws BeneficiaryException {
-
-		if (mctsPregnantMother == null) {// if mctsPregnantMother is null then
-											// creates a new else updates the
-											// existing
+	    // if mctsPregnantMother is null then creates a new else updates the existing
+		if (mctsPregnantMother == null) {
 			mctsPregnantMother = new MctsPregnantMother();
+			mctsPregnantMother.setCreationTime(startDate);
 		}
 
 		String gender = record.getGender();
@@ -259,7 +255,7 @@ public class MCTSBeneficiarySyncService {
 		mctsPregnantMother
 				.setBeneficiaryAddress(record.getBeneficiaryAddress());
 		mctsPregnantMother.setCategory(record.getCategory());
-		mctsPregnantMother.setCreationTime(startDate);
+		
 		mctsPregnantMother.setEconomicStatus(record.getEconomicStatus());
 		mctsPregnantMother.setEidNumber(record.getEIDNumber());
 		mctsPregnantMother.setEmail(record.getEmail());
@@ -272,14 +268,11 @@ public class MCTSBeneficiarySyncService {
 		mctsPregnantMother.setMctsId(beneficiaryId);
 		mctsPregnantMother.setMobileNo(record.getMobileno());
 		// checks that beneficiary name cannot be null
-		if (beneficiaryName != null && beneficiaryName.length() > 0) {
-			mctsPregnantMother.setName(beneficiaryName);
-			mctsPregnantMother.setHindiName(transliterate(beneficiaryName));
-		} else {
-			LOGGER.error(String.format(
-					"Beneficiary Name Cannot be null for MctsId[%s]",
-					beneficiaryId));
-			return null;
+		if(isBeneficiaryNameValid(beneficiaryName, mctsPregnantMother)==false) {
+		    LOGGER.error(String.format(
+                    "Beneficiary Name Cannot be null for MctsId[%s]",
+                    beneficiaryId));
+            return null;
 		}
 		mctsPregnantMother.setPincode(record.getPinCode());
 		mctsPregnantMother.setTown(record.getTown());
@@ -297,14 +290,12 @@ public class MCTSBeneficiarySyncService {
 			Date lmpDate = DateValidator.checkDateInFormat(lmp, "dd-MM-yyyy");
 			mctsPregnantMother.setLmpDate(lmpDate);
 			LOGGER.debug("lmp date : " + lmp);
-			LOGGER.debug("LMP Date is: " + mctsPregnantMother.getLmpDate());
 			if (lmpDate == null) {
 				LOGGER.error(String
 						.format("Invalid LMP Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
 								record.getLMPDate(), beneficiaryId));
 			}
 		}
-		
 		// Parse the BirthDate to dd-mm-YYYY format and logs an error if not
 		// in correct format
 		String dob = record.getBirthdate();
@@ -316,8 +307,6 @@ public class MCTSBeneficiarySyncService {
 			Date dobDate = DateValidator.checkDateInFormat(dob, "dd-MM-yyyy");
 			mctsPregnantMother.setBirthDate(dobDate);
 			LOGGER.debug("birth date : " + dob);
-			LOGGER.debug("Birth Date is: "
-					+ mctsPregnantMother.getBirthDate().toString());
 			if (dobDate == null) {
 				LOGGER.error(String
 						.format("Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
@@ -325,10 +314,20 @@ public class MCTSBeneficiarySyncService {
 			}
 		}
 		return mctsPregnantMother;
-
 	}
 
-	/**
+	private boolean isBeneficiaryNameValid(String beneficiaryName, MctsPregnantMother mctsPregnantMother) throws BeneficiaryException {
+	    if (beneficiaryName != null && beneficiaryName.length() > 0) {
+            mctsPregnantMother.setName(beneficiaryName);
+            mctsPregnantMother.setHindiName(transliterate(beneficiaryName));
+            return true;
+        }
+	    else {
+	        return false;
+	    }
+    }
+
+    /**
 	 * Checks whetehr asha/anm/subcenter changed
 	 * 
 	 * @param record
@@ -493,7 +492,7 @@ public class MCTSBeneficiarySyncService {
 			mctsHealthworker.setMctsSubcenter(location.getMctsSubcenter());
 			mctsHealthworker.setMctsVillage(location.getMctsVillage());
 			mctsHealthworker.setName("asd");
-			mctsHealthworker.setSex('F');
+			mctsHealthworker.setSex(' ');
 			mctsHealthworker.setType(type);
 			mctsHealthworker.setStatus(false);
 			careDataService.saveOrUpdate(mctsHealthworker);
@@ -627,7 +626,7 @@ public class MCTSBeneficiarySyncService {
 							outputFileLocation, e.getMessage());
 			LOGGER.error(error);
 			throw new BeneficiaryException(
-					ApplicationErrors.FILE_READING_WRTING_FAILED, error);
+					ApplicationErrors.FILE_READING_WRTING_FAILED,e,e.getMessage());
 		}
 	}
 

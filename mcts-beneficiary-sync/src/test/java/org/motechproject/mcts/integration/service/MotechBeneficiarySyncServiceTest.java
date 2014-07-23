@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,15 +23,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 
-@PrepareForTest(FileUtils.class)
+@PrepareForTest(ObjectToXMLConverter.class)
 @RunWith(PowerMockRunner.class)
 public class MotechBeneficiarySyncServiceTest {
 	@Mock
@@ -135,14 +139,16 @@ public class MotechBeneficiarySyncServiceTest {
 		verify(mctsHttpClientService).syncTo(beneficiaryRequest);
 	}
 	
-	@Test
 	@Ignore
+	@Test
 	public void shouldWriteSyncDataToFile() throws Exception{
+	    PowerMockito.mockStatic(ObjectToXMLConverter.class);
 		BeneficiaryRequest beneficiaryRequest =  getListOfBeneficiaryDetailsToSync();
 		when(propertyReader.getUpdateXmlOutputFileLocation()).thenReturn("testXML");
-		//when(propertyReader.getUpdateXmlOutputFileLocation()).thenReturn(MotechBeneficiarySyncServiceTest.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "testXML");
 		when(propertyReader.getUpdateUrlOutputFileLocation()).thenReturn("testURL");
-		
+		File xmlFile = new File("src/test/resources/");
+		File updateRequestUrlFile = new File("src/test/resources/");
+		Mockito.when(ObjectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrlFile)).thenReturn("abc");
 		motechBeneficiarySyncService.writeSyncDataToFile(beneficiaryRequest);
 		verify(propertyReader).getUpdateXmlOutputFileLocation();
 		verify(propertyReader).getUpdateUrlOutputFileLocation();
