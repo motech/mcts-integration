@@ -82,13 +82,36 @@ public class MotherFormProcessor {
 		if (!startElement.getElementName().equals("case")) {
 			caseElement = infoParser.getCaseElement(startElement);
 		}
+		FormValueElement attributeElements = startElement;
+		if (!startElement.getElementName().equals("subcase_0")) {
+			attributeElements = infoParser.getsubcaseElement(startElement);
+		}
 
 		if (caseElement == null) {
 			return null;
 		}
 		Map<String, String> infoMap = parseCaseInfo(caseElement, commcareForm);
+		if (attributeElements != null) {
+			attributeElements = infoParser.getCaseElement(attributeElements);
+			infoMap = parseSubcaseInfo(attributeElements, commcareForm, infoMap);
+		}
 		infoMap.putAll(extractHeaders(commcareForm));
 		infoMap.putAll(infoParser.parse(startElement, true));
+		return infoMap;
+	}
+
+	private Map<String, String> parseSubcaseInfo(
+			FormValueElement attributeElements, CommcareForm commcareForm,
+			Map<String, String> infoMap) {
+		final String caseId = attributeElements.getAttributes().get("case_id");
+
+		if (StringUtils.isEmpty(caseId)) {
+			throw new RuntimeException(String.format(
+					"Empty case id found in form(%s)", commcareForm.getId()));
+		} else {
+			infoMap.put("pregnancyId", caseId);
+		}
+
 		return infoMap;
 	}
 
