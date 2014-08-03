@@ -30,9 +30,9 @@ public class MotherCaseMctsUpdate implements java.io.Serializable {
 	private String mctsId;
 	private MotherCaseMctsAuthorizedStatusLookup motherCaseMctsAuthorizedStatus;	
 	private String fullMctsId;
+	private String dateModified;
 
-	
-	@JoinColumn(name = "full_mcts_id")
+    @JoinColumn(name = "full_mcts_id")
 	public String getFullMctsId() {
 		return fullMctsId;
 	}
@@ -101,4 +101,14 @@ public class MotherCaseMctsUpdate implements java.io.Serializable {
 	public void setMctsId(String mctsId) {
 		this.mctsId = mctsId;
 	}
+	
+	@Column(name = "date_modified")
+	public String getDateModified() {
+        return dateModified;
+    }
+
+    public void setDateModified(String dateModified) {
+        this.dateModified = dateModified;
+    }
+
 }

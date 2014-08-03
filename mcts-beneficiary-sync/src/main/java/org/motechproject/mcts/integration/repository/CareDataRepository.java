@@ -375,29 +375,33 @@ public class CareDataRepository {
 		
 	}
 
-	public MotherCase matchMctsPersonawithMotherCase(int hhNum,
-			int familyNum) {
-		String queryString = "from MotherCase mcase where mcase.hhNumber='"+hhNum+"' and mcase.familyNumber='"+familyNum+"'";
-		List<MotherCase> motherCase = getCurrentSession().createQuery(queryString).list();
-		if (motherCase.size() == 0) {
-			return null;
-		}
-		else if (motherCase.size()>1) 
-		{
-			LOGGER.info("error : multiple match found");
-			return null;
-		}
-		else 
-		{
-			return motherCase.get(0);
-	}
+	public MotherCase matchMctsPersonawithMotherCase(int hhNum, int familyNum,
+            String ownerId) {
+        String queryString = "from MotherCase mcase where mcase.hhNumber='"
+                + hhNum + "' and mcase.familyNumber='" + familyNum
+                + "' and mcase.flwGroup.id=" + ownerId + "";
+        List<MotherCase> motherCase = getCurrentSession().createQuery(
+                queryString).list();
+        if (motherCase.size() == 0) {
+            return null;
+        } else if (motherCase.size() > 1) {
+            LOGGER.info("error : multiple match found");
+            return null;
+        } else {
+            return motherCase.get(0);
+        }
 
-}
+    }
 	
 	public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
 		
 		String queryString = "from MctsPregnantMother mPregMother where mPregMother.motherCase.id='"+id+"'";
-		List<MctsPregnantMother> motherList = getCurrentSession().createQuery(queryString).list(); 
-		return motherList.get(0);
+		List<MctsPregnantMother> motherList = getCurrentSession().createQuery(queryString).list();
+		if(motherList == null) {
+		    LOGGER.info("No mcts persona case found for the mother case with id="+id);
+		    return null;
+		} else {
+		    return motherList.get(0);
+		}
 	}
 }

@@ -98,26 +98,25 @@ public class MCTSFormUpdateService {
 	
 	
 	public void updateMctsPregnantMotherForm(int primaryId) throws BeneficiaryException {
-		MctsPregnantMother mother = careDataRepository.getMotherFromPrimaryId(primaryId);
-		if (mother != null) {
-			String hhNumber = mother.getHhNumber();
-			String familyNumber = mother.getFamilyNumber();
-			if ((hhNumber!=null)&& (familyNumber!=null) ) {
-				Integer hhNum = Integer.parseInt(hhNumber);
-				int familyNum = Integer.parseInt(familyNumber);
-				MotherCase motherCase = careDataRepository.matchMctsPersonawithMotherCase(hhNum, familyNum);
-				if (motherCase != null) {
-					mother.setMotherCase(motherCase);
-					careDataRepository.saveOrUpdate(mother);
-				}
-			}
-			
-			else {
-				LOGGER.info("empty fields : either hhNumber or familyNumber is empty");
-			}
-			
-			
-			
-		}
-	}
+        MctsPregnantMother mother = careDataRepository
+                .getMotherFromPrimaryId(primaryId);
+        if (mother != null) {
+            String hhNumber = mother.getHhNumber();
+            String familyNumber = mother.getFamilyNumber();
+            if ((hhNumber != null) && (familyNumber != null)) {
+                Integer hhNum = IntegerValidator.validateAndReturnAsInt("hhNumber", hhNumber); 
+                Integer familyNum = IntegerValidator.validateAndReturnAsInt("familyNumber", familyNumber);
+                String ownerId = mother.getOwnerId();
+                MotherCase motherCase = careDataRepository
+                        .matchMctsPersonawithMotherCase(hhNum, familyNum, ownerId);
+                if (motherCase != null) {
+                    mother.setMotherCase(motherCase);
+                    careDataRepository.saveOrUpdate(mother);
+                }
+            }  else {
+                LOGGER.info("empty fields : either hhNumber or familyNumber is empty");
+            }
+
+        }
+    }
 }

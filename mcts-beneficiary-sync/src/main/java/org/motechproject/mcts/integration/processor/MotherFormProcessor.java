@@ -17,142 +17,127 @@ import org.springframework.stereotype.Component;
 @Component
 public class MotherFormProcessor {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger("mcts-form-processor");
+    private static final Logger logger = LoggerFactory
+            .getLogger("mcts-form-processor");
 
-	private static final String FORM_NAME_ATTRIBUTE = "name";
-	private static final String FORM_XMLNS_ATTRIBUTE = "xmlns";
-	@Autowired
-	CaseInfoParser infoParser;
-	@Autowired
-	UnapprovedFormProcessor unapprovedFormProcessor;
-	@Autowired
-	ApprovedFormProcessor approvedFormProcessor;
-	@Autowired
-	ClosedFormProcessor closedFormProcessor;
+    private static final String FORM_NAME_ATTRIBUTE = "name";
+    private static final String FORM_XMLNS_ATTRIBUTE = "xmlns";
+    @Autowired
+    CaseInfoParser infoParser;
+    @Autowired
+    FormsProcessor formsProcessor;
 
-	public MotherFormProcessor() {
+    public MotherFormProcessor() {
 
-	}
+    }
 
-	public void process(CommcareForm commcareForm) throws BeneficiaryException {
+    public void process(CommcareForm commcareForm) throws BeneficiaryException {
 
-		final Map<String, String> formAttributes = commcareForm.getForm()
-				.getAttributes();
-		String formName = formAttributes.get(FORM_NAME_ATTRIBUTE);
-		String xmlns = formAttributes.get(FORM_XMLNS_ATTRIBUTE);
-		logger.info(String.format(
-				"Received form. id: %s, type: %s; xmlns: %s;",
-				commcareForm.getId(), formName, xmlns));
+        final Map<String, String> formAttributes = commcareForm.getForm()
+                .getAttributes();
+        String formName = formAttributes.get(FORM_NAME_ATTRIBUTE);
+        String xmlns = formAttributes.get(FORM_XMLNS_ATTRIBUTE);
+        logger.info(String.format(
+                "Received form. id: %s, type: %s; xmlns: %s;",
+                commcareForm.getId(), formName, xmlns));
 
-		Map<String, String> motherForm = parseMotherForm(commcareForm);
+        Map<String, String> motherForm = parseMotherForm(commcareForm);
+        formsProcessor.processForm(motherForm);
 
-		if (motherForm.containsKey("mctsMatch")) {
-			if (motherForm.get("mctsMatch").equals("yes")) {
-				unapprovedFormProcessor.process(motherForm);
-			}
+    }
 
-			else if (motherForm.get("mctsMatch").equals("closed")) {
-				closedFormProcessor.process(motherForm);
-			}
-		} else if (motherForm.containsKey("authorized")
-				&& motherForm.get("authorized").equals("approved")) {
-			approvedFormProcessor.process(motherForm);
-		}
+    private Map<String, String> parseMotherForm(CommcareForm commcareForm)
+            throws BeneficiaryException {
+        String namespace = this.getNamespace(commcareForm);
+        String appVersion = this.getAppVersion(commcareForm);
+        Map<String, String> motherInfo = new HashMap<>();
+        Map<String, String> formFields = parse(commcareForm.getForm(),
+                commcareForm);
+        if (formFields == null) {
+            return null;
+        }
+        motherInfo.putAll(formFields);
+        motherInfo.put("appVersion", appVersion);
+        motherInfo.put("namespace", namespace);
+        return motherInfo;
+    }
 
-	}
+    private Map<String, String> parse(FormValueElement startElement,
+            CommcareForm commcareForm) throws BeneficiaryException {
+        FormValueElement caseElement = startElement;
+        if (!startElement.getElementName().equals("case")) {
+            caseElement = infoParser.getCaseElement(startElement);
+        }
+        FormValueElement attributeElements = startElement;
+        if (!startElement.getElementName().equals("subcase_0")) {
+            attributeElements = infoParser.getsubcaseElement(startElement);
+        }
 
-	private Map<String, String> parseMotherForm(CommcareForm commcareForm) throws BeneficiaryException {
-		String namespace = this.getNamespace(commcareForm);
-		String appVersion = this.getAppVersion(commcareForm);
-		Map<String, String> motherInfo = new HashMap<>();
-		Map<String, String> formFields = parse(commcareForm.getForm(),
-				commcareForm);
-		if (formFields == null) {
-			return null;
-		}
-		motherInfo.putAll(formFields);
-		motherInfo.put("appVersion", appVersion);
-		motherInfo.put("namespace", namespace);
-		return motherInfo;
-	}
+        if (caseElement == null) {
+            return null;
+        }
+        Map<String, String> infoMap = parseCaseInfo(caseElement, commcareForm);
+        if (attributeElements != null) {
+            attributeElements = infoParser.getCaseElement(attributeElements);
+            infoMap = parseSubcaseInfo(attributeElements, commcareForm, infoMap);
+        }
+        infoMap.putAll(extractHeaders(commcareForm));
+        infoMap.putAll(infoParser.parse(startElement, true));
+        return infoMap;
+    }
 
-	private Map<String, String> parse(FormValueElement startElement,
-			CommcareForm commcareForm) throws BeneficiaryException {
-		FormValueElement caseElement = startElement;
-		if (!startElement.getElementName().equals("case")) {
-			caseElement = infoParser.getCaseElement(startElement);
-		}
-		FormValueElement attributeElements = startElement;
-		if (!startElement.getElementName().equals("subcase_0")) {
-			attributeElements = infoParser.getsubcaseElement(startElement);
-		}
+    private Map<String, String> parseSubcaseInfo(
+            FormValueElement attributeElements, CommcareForm commcareForm,
+            Map<String, String> infoMap) {
+        final String caseId = attributeElements.getAttributes().get("case_id");
 
-		if (caseElement == null) {
-			return null;
-		}
-		Map<String, String> infoMap = parseCaseInfo(caseElement, commcareForm);
-		if (attributeElements != null) {
-			attributeElements = infoParser.getCaseElement(attributeElements);
-			infoMap = parseSubcaseInfo(attributeElements, commcareForm, infoMap);
-		}
-		infoMap.putAll(extractHeaders(commcareForm));
-		infoMap.putAll(infoParser.parse(startElement, true));
-		return infoMap;
-	}
+        if (StringUtils.isEmpty(caseId)) {
+            throw new RuntimeException(String.format(
+                    "Empty case id found in form(%s)", commcareForm.getId()));
+        } else {
+            infoMap.put("pregnancyId", caseId);
+        }
 
-	private Map<String, String> parseSubcaseInfo(
-			FormValueElement attributeElements, CommcareForm commcareForm,
-			Map<String, String> infoMap) {
-		final String caseId = attributeElements.getAttributes().get("case_id");
+        return infoMap;
+    }
 
-		if (StringUtils.isEmpty(caseId)) {
-			throw new RuntimeException(String.format(
-					"Empty case id found in form(%s)", commcareForm.getId()));
-		} else {
-			infoMap.put("pregnancyId", caseId);
-		}
+    private Map<String, String> parseCaseInfo(FormValueElement caseElement,
+            CommcareForm commcareForm) throws BeneficiaryException {
+        Map<String, String> caseInfo = new HashMap<>();
+        final String caseId = caseElement.getAttributes().get("case_id");
 
-		return infoMap;
-	}
+        if (StringUtils.isEmpty(caseId)) {
+            throw new BeneficiaryException(ApplicationErrors.FOUND_EMPTY_STRING);
+        } else {
+            caseInfo.put("caseId", caseId);
+        }
 
-	private Map<String, String> parseCaseInfo(FormValueElement caseElement,
-			CommcareForm commcareForm) throws BeneficiaryException {
-		Map<String, String> caseInfo = new HashMap<>();
-		final String caseId = caseElement.getAttributes().get("case_id");
+        final String dateModified = caseElement.getAttributes().get(
+                "date_modified");
+        caseInfo.put("dateModified", dateModified);
+        caseInfo.putAll(infoParser.parse(caseElement, true));
 
-		if (StringUtils.isEmpty(caseId)) {
-			throw new BeneficiaryException(ApplicationErrors.FOUND_EMPTY_STRING);
-		} else {
-			caseInfo.put("caseId", caseId);
-		}
+        return caseInfo;
+    }
 
-		final String dateModified = caseElement.getAttributes().get(
-				"date_modified");
-		caseInfo.put("dateModified", dateModified);
-		caseInfo.putAll(infoParser.parse(caseElement, true));
+    private String getNamespace(CommcareForm commcareForm) {
+        return this.getAttribute(commcareForm, "xmlns");
+    }
 
-		return caseInfo;
-	}
+    private String getAttribute(CommcareForm commcareForm, String name) {
+        return commcareForm.getForm().getAttributes().get(name);
+    }
 
-	private String getNamespace(CommcareForm commcareForm) {
-		return this.getAttribute(commcareForm, "xmlns");
-	}
+    private String getAppVersion(CommcareForm commcareForm) {
+        return commcareForm.getMetadata().get("appVersion");
+    }
 
-	private String getAttribute(CommcareForm commcareForm, String name) {
-		return commcareForm.getForm().getAttributes().get(name);
-	}
-
-	private String getAppVersion(CommcareForm commcareForm) {
-		return commcareForm.getMetadata().get("appVersion");
-	}
-
-	public Map<String, String> extractHeaders(final CommcareForm commcareForm) {
-		return new HashMap<String, String>() {
-			{
-				put("serverDateModified", commcareForm.getReceivedOn());
-			}
-		};
-	}
+    public Map<String, String> extractHeaders(final CommcareForm commcareForm) {
+        return new HashMap<String, String>() {
+            {
+                put("serverDateModified", commcareForm.getReceivedOn());
+            }
+        };
+    }
 
 }
