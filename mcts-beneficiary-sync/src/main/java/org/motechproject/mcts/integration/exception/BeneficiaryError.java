@@ -1,5 +1,6 @@
 package org.motechproject.mcts.integration.exception;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Date;
@@ -11,90 +12,91 @@ import javax.xml.bind.annotation.XmlRootElement;
 // @JsonSerialize(include = Inclusion.NON_NULL)
 public class BeneficiaryError {
 
-	// transactionId
-	private String errorCode;
-	private String errorMessage;
-	private String application;
-	private Date timeStamp;
-	private String hostName;
-	// BatchErrorDetail 
+    // transactionId
+    private String errorCode;
+    private String errorMessage;
+    private String application;
+    private Date timeStamp;
+    private String hostName;
 
-	public BeneficiaryError() {
-		timeStamp = new Date();
-		hostName = getNetworkHostName();
-	}
+    // BatchErrorDetail
 
-	private String getNetworkHostName() {
-		String hostName = null;
+    public BeneficiaryError() {
+        timeStamp = new Date();
+        hostName = getNetworkHostName();
+    }
 
-		try {
-			hostName = InetAddress.getLocalHost().getCanonicalHostName();
+    private String getNetworkHostName() {
+        String name = null;
 
-			if ("localhost".equalsIgnoreCase(hostName)) {
-				NetworkInterface networkInterface = NetworkInterface
-						.getByName("eth0");
+        try {
+            name = InetAddress.getLocalHost().getCanonicalHostName();
 
-				Enumeration<InetAddress> a = networkInterface
-						.getInetAddresses();
+            if ("localhost".equalsIgnoreCase(name)) {
+                NetworkInterface networkInterface = NetworkInterface
+                        .getByName("eth0");
 
-				for (; a.hasMoreElements();) {
-					InetAddress addr = a.nextElement();
-					hostName = addr.getCanonicalHostName();
-					// Check for ipv4 only
-					if (!hostName.contains(":")) {
-						break;
-					}
-				}
-			}
+                Enumeration<InetAddress> a = networkInterface
+                        .getInetAddresses();
 
-		} catch (Exception e) {
-			// log
-			// Do nothing..
-		}
+                for (; a.hasMoreElements();) {
+                    InetAddress addr = a.nextElement();
+                    name = addr.getCanonicalHostName();
+                    // Check for ipv4 only
+                    if (!name.contains(":")) {
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new BeneficiaryException(
+                    ApplicationErrors.FILE_READING_WRTING_FAILED, e,
+                    e.getMessage());
+        }
 
-		return hostName;
-	}
+        return name;
+    }
 
-	// //@XmlJavaTypeAdapter(JaxbRFC3339DateSerializer.class)
-	// @JsonSerialize(using=JsonRFC3339DateSerializer.class)
-	public Date getTimeStamp() {
-		return timeStamp;
-	}
+    // //@XmlJavaTypeAdapter(JaxbRFC3339DateSerializer.class)
+    // @JsonSerialize(using=JsonRFC3339DateSerializer.class)
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
 
-	public void setTimeStamp(Date timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
-	public String getHostName() {
-		return hostName;
-	}
+    public String getHostName() {
+        return hostName;
+    }
 
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
 
-	public String getErrorCode() {
-		return errorCode;
-	}
+    public String getErrorCode() {
+        return errorCode;
+    }
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public String getApplication() {
-		return application;
-	}
+    public String getApplication() {
+        return application;
+    }
 
-	public void setApplication(String application) {
-		this.application = application;
-	}
+    public void setApplication(String application) {
+        this.application = application;
+    }
 
 }

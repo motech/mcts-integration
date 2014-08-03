@@ -12,38 +12,43 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Client class to trigger scheduled job with batch
+ *
  * @author Naveen
  *
  */
 public class MctsJobTrigger {
-	
-	 private final static Logger LOGGER = LoggerFactory.getLogger(MctsJobTrigger.class);
-	 private RestTemplate restTemplate;
-	 private HttpAgent httpAgentServiceOsgi;
-	 private BatchServiceUrlGenerator batchServiceUrlGenerator;
-	 @Autowired
-	 public MctsJobTrigger(@Qualifier("mctsRestTemplate") RestTemplate restTemplate, BatchServiceUrlGenerator batchServiceUrlGenerator,  HttpAgent httpAgentServiceOsgi) {
-	        this.restTemplate = restTemplate;
-	        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
-	        this.httpAgentServiceOsgi = httpAgentServiceOsgi;
-	    }
-	   
-	 /**
-	  * Method to trigger <code>job</code> scheduled with <batch> module
-	  */
-		public void triggerJob() {
-	        LOGGER.info("Started service to trigger mcts job with batch");
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-            try {
-            	httpAgentServiceOsgi.executeSync(batchServiceUrlGenerator.getTriggerJobUrl(), null, Method.GET);
-            }
-            catch(Exception e) {
-           	    LOGGER.info(e.getMessage());
-           }
-	       
 
-	    }
-	    
-	    
-	  
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(MctsJobTrigger.class);
+    private RestTemplate restTemplate;
+    private HttpAgent httpAgentServiceOsgi;
+    private BatchServiceUrlGenerator batchServiceUrlGenerator;
+
+    @Autowired
+    public MctsJobTrigger(
+            @Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+            BatchServiceUrlGenerator batchServiceUrlGenerator,
+            HttpAgent httpAgentServiceOsgi) {
+        this.restTemplate = restTemplate;
+        this.batchServiceUrlGenerator = batchServiceUrlGenerator;
+        this.httpAgentServiceOsgi = httpAgentServiceOsgi;
+    }
+
+    /**
+     * Method to trigger <code>job</code> scheduled with <batch> module
+     */
+    public void triggerJob() {
+        LOGGER.info("Started service to trigger mcts job with batch");
+        restTemplate.getMessageConverters().add(
+                new StringHttpMessageConverter());
+        try {
+            httpAgentServiceOsgi.executeSync(
+                    batchServiceUrlGenerator.getTriggerJobUrl(), null,
+                    Method.GET);
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+        }
+
+    }
+
 }

@@ -9,29 +9,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Updates")
 public class BeneficiarySubscriberUpdateUrlDTO {
-	
-	@XmlElement(name = "UpdateUrl")
-	    private List<String> allUrls;
 
-	    public BeneficiarySubscriberUpdateUrlDTO() {
-	    	allUrls = new ArrayList<>();
-	    }
+    @XmlElement(name = "UpdateUrl")
+    private List<String> allUrls;
 
-	    public void addBeneficiaryDetails(String updateUrl) {
-	    	allUrls.add(updateUrl);
-	    }
+    public BeneficiarySubscriberUpdateUrlDTO() {
+        allUrls = new ArrayList<>();
+    }
 
-	    public List<String> getAllBeneficiaryDetails() {
-	        return allUrls;
-	    }
-	    
-	    @Override
-	    public String toString(){
-	    	StringBuilder s = new StringBuilder();
-	    	for (String updateUrl : allUrls)
-	    	{
-	    		s.append(updateUrl + "\n");
-	    	}
-	    	return s.toString();
-	    }
+    public void addBeneficiaryDetails(String updateUrl) {
+        allUrls.add(updateUrl);
+    }
+
+    public List<String> getAllBeneficiaryDetails() {
+        return allUrls;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (String updateUrl : allUrls) {
+            s.append(updateUrl + "\n");
+        }
+        return s.toString();
+    }
 }

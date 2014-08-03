@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public class RestException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
+    private static final long STATUS = 500;
 
     private String reason;
 
@@ -24,7 +25,7 @@ public class RestException extends RuntimeException {
     }
 
     public RestException(String reason) {
-        super("HttpStatus:" + 500 + " reason:" + reason);
+        super("HttpStatus:" + STATUS + " reason:" + reason);
         this.reason = reason;
     }
 

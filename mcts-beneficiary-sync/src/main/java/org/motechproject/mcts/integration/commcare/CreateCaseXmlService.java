@@ -14,8 +14,8 @@ import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
-import org.motechproject.mcts.integration.service.StubDataService;
 import org.motechproject.mcts.utils.CommcareConstants;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -26,31 +26,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 
- * 
- * @author aman Class to convert Object to xml
+ * Class to convert Object to xml
+ *
+ * @author aman
  */
 @Transactional
 @Service
 public class CreateCaseXmlService {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(CreateCaseXmlService.class);
 
-    @Autowired
-    StubDataService stubDataService;
 
     @Autowired
-    PropertyReader propertyReader;
+    private PropertyReader propertyReader;
 
     @Autowired
-    CareDataRepository careDataRepository;
+    private CareDataRepository careDataRepository;
 
     @Autowired
-    MCTSHttpClientService mCTSHttpClientService;
+    private MCTSHttpClientService mCTSHttpClientService;
 
     @Autowired
-    FixtureDataService fixtureDataService;
+    private FixtureDataService fixtureDataService;
 
     public CareDataRepository getCareDataRepository() {
         return careDataRepository;
@@ -60,7 +58,7 @@ public class CreateCaseXmlService {
         this.careDataRepository = careDataRepository;
     }
 
-    public void createCaseXml() throws BeneficiaryException {
+    public void createCaseXml() {
 
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository
                 .getMctsPregnantMother();
@@ -78,14 +76,12 @@ public class CreateCaseXmlService {
                     LOGGER.debug("returned : " + returnvalue);
                     HttpStatus status = mCTSHttpClientService
                             .syncToCommcare(data);
-                    if (status.value() == 200) {
+                    if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
                         updateCaseUId(data);
 
                     }
                 }
-            }
-
-            else {
+            } else {
                 Data data = createXml(mctsPregnantMother);
                 String returnvalue = ObjectToXMLConverter.converObjectToXml(
                         data, Data.class);
@@ -94,9 +90,8 @@ public class CreateCaseXmlService {
                 // post xml to the url if response is 200 then only add
                 // case UUID to the database
                 HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-                if (status.value() / 100 == 2) {
+                if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
                     updateCaseUId(data);
-
                 }
             }
         }
@@ -105,11 +100,10 @@ public class CreateCaseXmlService {
 
     /**
      * This method is called after commcareHQ returns success after saving cases
-     * 
      * @param data
      * @throws BeneficiaryException
      */
-    private void updateCaseUId(Data data) throws BeneficiaryException {
+    private void updateCaseUId(Data data) {
         List<Case> cases = data.getCases();
         for (Case curr : cases) {
             MctsPregnantMother mother = careDataRepository
@@ -123,14 +117,13 @@ public class CreateCaseXmlService {
 
     /**
      * Method which takes 50 or less cases at a time and creates Data Object.
-     * 
+     *
      * @param mctsPregnantMother
      * @return
      * @throws BeneficiaryException
      * @throws Exception
      */
-    public Data createXml(List<MctsPregnantMother> mctsPregnantMother)
-            throws BeneficiaryException {
+    public Data createXml(List<MctsPregnantMother> mctsPregnantMother) {
         Data data = new Data();
         List<Case> cases = new ArrayList<Case>();
         data.setXmlns(CommcareConstants.DATAXMLNS);
@@ -144,8 +137,8 @@ public class CreateCaseXmlService {
 
             if ((caseTask.getCreateTask().getCaseName() != null)
                     && (caseTask.getUpdateTask().getMctsHusbandName() != null)
-                    && (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
-                    && (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
+                    && (caseTask.getUpdateTask().getMctsHusbandNameEn() != null)
+                    && (caseTask.getUpdateTask().getMctsFullnameEn() != null)) {
                 cases.add(caseTask);
             }
 
@@ -157,7 +150,7 @@ public class CreateCaseXmlService {
 
     /**
      * Method to create Case for indiavidual mother and returns it.
-     * 
+     *
      * @param mctsPregnantMother
      * @param userId
      * @return
@@ -165,7 +158,7 @@ public class CreateCaseXmlService {
      * @throws Exception
      */
     public Case createCaseForBeneficiary(MctsPregnantMother mctsPregnantMother,
-            String userId) throws BeneficiaryException {
+            String userId) {
 
         Case caseTask = new Case();
         DateTime date = new DateTime();
@@ -177,7 +170,7 @@ public class CreateCaseXmlService {
         } else {
             workerId = -1;
         }
-        String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId);
+        String ownerId = mctsPregnantMother.getOwnerId();
         String caseId = UUID.randomUUID().toString();
         String dateModified = date.toString();
         CreateTask task = createTaskandReturn(mctsPregnantMother, workerId,
@@ -197,37 +190,20 @@ public class CreateCaseXmlService {
     }
 
     /**
-     * Method to create Object Meta and return it.
-     * 
-     * @param userId
-     * @return
-     */
-    private Meta createMetaandReturn(String userId) {
-        Meta meta = new Meta();
-        meta.setXmlns(CommcareConstants.METAXMLNS);
-        meta.setInstanceID(UUID.randomUUID().toString());
-        meta.setTimeStart(new DateTime().toString());
-        meta.setUserID(userId);
-
-        return meta;
-    }
-
-    /**
      * Method to create Object updateTask and return it
-     * 
+     *
      * @param mctsPregnantMother
      * @return
      * @throws BeneficiaryException
      */
     public UpdateTask updateTaskandReturn(
-            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
-            throws BeneficiaryException {
+            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId) {
         UpdateTask updateTask = new UpdateTask();
 
         String mctsName = mctsPregnantMother.getHindiName();
-        String mctsName_en = mctsPregnantMother.getName();
+        String mctsNameEn = mctsPregnantMother.getName();
         String husbandName = mctsPregnantMother.getHindiFatherHusbandName();
-        String husbandName_en = mctsPregnantMother.getFatherHusbandName();
+        String husbandNameEn = mctsPregnantMother.getFatherHusbandName();
         String mctsId = mctsPregnantMother.getMctsId();
         String phone = mctsPregnantMother.getMobileNo();
         Date birth = mctsPregnantMother.getBirthDate();
@@ -242,20 +218,20 @@ public class CreateCaseXmlService {
             dob = fmt.print(birthDate);
             age = Integer.toString(Days.daysBetween(
                     birthDate.withTimeAtStartOfDay(),
-                    date.withTimeAtStartOfDay()).getDays() / 365);
+                    date.withTimeAtStartOfDay()).getDays() / MctsConstants.NUMBER_OF_DAYS_IN_YEAR);
         }
 
         if (mctsPregnantMother.getLmpDate() != null) {
             DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
-            DateTime edd = lmpDate.plusDays(280);
+            DateTime edd = lmpDate.plusDays(MctsConstants.EDD_CONSTANT);
             String eddDate = fmt.print(edd);
             updateTask.setMctsEdd(eddDate);
         }
 
         updateTask.setMctsHusbandName(husbandName);
-        updateTask.setMctsHusbandName_en(husbandName_en);
+        updateTask.setMctsHusbandNameEn(husbandNameEn);
         updateTask.setMctsFullname(mctsName);
-        updateTask.setMctsFullname_en(mctsName_en);
+        updateTask.setMctsFullnameEn(mctsNameEn);
         updateTask.setMctsAge(age);
         updateTask.setMctsDob(dob);
         updateTask.setMctsId(mctsId);
@@ -266,15 +242,30 @@ public class CreateCaseXmlService {
     }
 
     /**
+     * Method to create Object Meta and return it.
+     *
+     * @param userId
+     * @return
+     */
+    private Meta createMetaandReturn(String userId) {
+        Meta meta = new Meta();
+        meta.setXmlns(CommcareConstants.METAXMLNS);
+        meta.setInstanceID(UUID.randomUUID().toString());
+        meta.setTimeStart(new DateTime().toString());
+        meta.setUserID(userId);
+
+        return meta;
+    }
+
+    /**
      * Method to create Object createTask and return it
-     * 
+     *
      * @param mctsPregnantMother
      * @return
      * @throws BeneficiaryException
      */
     private CreateTask createTaskandReturn(
-            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
-            throws BeneficiaryException {
+            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId) {
         CreateTask createTask = new CreateTask();
 
         createTask.setCaseType(CommcareConstants.CASETYPE);

@@ -39,8 +39,10 @@ public class CaseInfoParserImpl implements CaseInfoParser {
         Map<String, String> mapper = new HashMap<>();
         Multimap<String, FormValueElement> subElements = element
                 .getSubElements();
-        if (empty(subElements))
+
+        if (empty(subElements)) {
             return mapper;
+        }
 
         Map<String, Collection<FormValueElement>> subElementsMap = subElements
                 .asMap();
@@ -59,7 +61,7 @@ public class CaseInfoParserImpl implements CaseInfoParser {
         }
         return mapper;
     }
-    
+
     @Override
     public FormValueElement getCaseElement(FormValueElement startElement) {
         return (FormValueElement) startElement.searchFirst(caseElementPath);
@@ -75,9 +77,11 @@ public class CaseInfoParserImpl implements CaseInfoParser {
     }
 
     private String applyConversions(String key) {
-        key = applyKeyConversionMap(key);
-        key = applyCamelConversion(key);
-        return key;
+
+        String param;
+        param = applyKeyConversionMap(key);
+        param = applyCamelConversion(param);
+        return param;
     }
 
     private String applyKeyConversionMap(String keyValue) {

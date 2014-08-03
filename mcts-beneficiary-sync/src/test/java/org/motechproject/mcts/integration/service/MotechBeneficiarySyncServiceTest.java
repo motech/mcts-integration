@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -15,15 +16,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
@@ -34,8 +34,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.HttpStatus;
 
-@PrepareForTest(ObjectToXMLConverter.class)
+
 @RunWith(PowerMockRunner.class)
+@PrepareForTest(ObjectToXMLConverter.class)
 public class MotechBeneficiarySyncServiceTest {
 	@Mock
 	private CareDataService careDataService;
@@ -132,26 +133,39 @@ public class MotechBeneficiarySyncServiceTest {
 	}
 	
 	@Test
-	public void shouldSyncToMcts(){
+	public void shouldSyncToMcts() throws BeneficiaryException{
 		BeneficiaryRequest beneficiaryRequest =  getListOfBeneficiaryDetailsToSync();
 		HttpStatus httpStatus = motechBeneficiarySyncService.syncTo(beneficiaryRequest);
 		when(mctsHttpClientService.syncTo(beneficiaryRequest)).thenReturn(HttpStatus.OK);
 		verify(mctsHttpClientService).syncTo(beneficiaryRequest);
 	}
 	
-	@Ignore
 	@Test
 	public void shouldWriteSyncDataToFile() throws Exception{
 	    PowerMockito.mockStatic(ObjectToXMLConverter.class);
 		BeneficiaryRequest beneficiaryRequest =  getListOfBeneficiaryDetailsToSync();
 		when(propertyReader.getUpdateXmlOutputFileLocation()).thenReturn("testXML");
 		when(propertyReader.getUpdateUrlOutputFileLocation()).thenReturn("testURL");
-		File xmlFile = new File("src/test/resources/");
-		File updateRequestUrlFile = new File("src/test/resources/");
+		String outputXMLFileLocation = String.format("%s_%s.xml", propertyReader
+                .getUpdateXmlOutputFileLocation(),
+                DateTime.now().toString("yyyy-MM-dd") + "T"
+                        + DateTime.now().toString("HH:mm"));
+		File xmlFile = new File(outputXMLFileLocation);
+		String outputURLFileLocation = String.format("%s_%s.txt",
+                propertyReader.getUpdateUrlOutputFileLocation(), DateTime.now()
+                        .toString("yyyy-MM-dd")
+                        + "T"
+                        + DateTime.now().toString("HH:mm"));
+		File updateRequestUrlFile = new File(outputURLFileLocation);
 		Mockito.when(ObjectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrlFile)).thenReturn("abc");
+		Mockito.when(ObjectToXMLConverter.converObjectToXml(beneficiaryRequest, BeneficiaryRequest.class)).thenReturn("abc");
 		motechBeneficiarySyncService.writeSyncDataToFile(beneficiaryRequest);
-		verify(propertyReader).getUpdateXmlOutputFileLocation();
-		verify(propertyReader).getUpdateUrlOutputFileLocation();
+		PowerMockito.verifyStatic();
+		ObjectToXMLConverter.converObjectToXml(beneficiaryRequest, BeneficiaryRequest.class);
+		PowerMockito.verifyStatic();
+		ObjectToXMLConverter.writeUrlToFile(xmlFile, updateRequestUrlFile);
+		verify(propertyReader,times(2)).getUpdateXmlOutputFileLocation();
+		verify(propertyReader,times(2)).getUpdateUrlOutputFileLocation();
 	}
 
 	@Test

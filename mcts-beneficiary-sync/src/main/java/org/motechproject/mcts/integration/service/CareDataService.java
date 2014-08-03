@@ -1,7 +1,6 @@
 package org.motechproject.mcts.integration.service;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CareDataService {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(CareDataService.class);
 
     @Autowired
@@ -33,8 +32,7 @@ public class CareDataService {
         return careDataRepository.getBeneficiariesToSync(startDate, endDate);
     }
 
-    public void mapMotherCaseToMctsPregnantMother(String caseId, String mctsId)
-            throws BeneficiaryException {
+    public void mapMotherCaseToMctsPregnantMother(String caseId, String mctsId) {
         MotherCase motherCase = careDataRepository.findEntityByField(
                 MotherCase.class, "caseId", caseId);
         if (motherCase == null) {
@@ -44,47 +42,46 @@ public class CareDataService {
             return;
         }
 
-        MctsPregnantMother MctsPregnantMother = getExistingOrNewMctsPregnantMother(
+        MctsPregnantMother mctsPregnantMother = getExistingOrNewMctsPregnantMother(
                 mctsId, motherCase);
-        careDataRepository.saveOrUpdate(MctsPregnantMother);
+        careDataRepository.saveOrUpdate(mctsPregnantMother);
     }
 
     private MctsPregnantMother getExistingOrNewMctsPregnantMother(
-            String mctsId, MotherCase motherCase) throws BeneficiaryException {
-        MctsPregnantMother MctsPregnantMother = careDataRepository
+            String mctsId, MotherCase motherCase) {
+        MctsPregnantMother mctsPregnantMother = careDataRepository
                 .findEntityByField(MctsPregnantMother.class, "motherCase",
                         motherCase);
 
-        if (MctsPregnantMother != null) {
+        if (mctsPregnantMother != null) {
             LOGGER.info(String
                     .format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.",
-                            MctsPregnantMother.getMctsId(),
+                            mctsPregnantMother.getMctsId(),
                             motherCase.getCaseId(), mctsId));
-            MctsPregnantMother.setMctsId(mctsId);
+            mctsPregnantMother.setMctsId(mctsId);
         } else {
             LOGGER.info(String
                     .format("Creating MCTS Pregnant Mother with MCTS Id: %s for Mother Case: %s.",
                             mctsId, motherCase.getCaseId()));
-            MctsPregnantMother = new MctsPregnantMother();
-            MctsPregnantMother.setMctsId(mctsId);
-            MctsPregnantMother.setMotherCase(motherCase);
+            mctsPregnantMother = new MctsPregnantMother();
+            mctsPregnantMother.setMctsId(mctsId);
+            mctsPregnantMother.setMotherCase(motherCase);
         }
-        return MctsPregnantMother;
+        return mctsPregnantMother;
     }
 
-    public void updateSyncedBeneficiaries(List<Beneficiary> syncedBeneficiaries)
-            throws BeneficiaryException {
+    public void updateSyncedBeneficiaries(List<Beneficiary> syncedBeneficiaries) {
         LOGGER.info(String.format(
                 "Updating %s beneficiaries as updated to MCTS",
                 syncedBeneficiaries.size()));
         DateTime serviceUpdateTime = DateTime.now();
         for (Beneficiary syncedBeneficiary : syncedBeneficiaries) {
-            MctsPregnantMother MctsPregnantMother = careDataRepository.load(
+            MctsPregnantMother mctsPregnantMother = careDataRepository.load(
                     MctsPregnantMother.class,
                     syncedBeneficiary.getMctsPregnantMotherId());
             MctsPregnantMotherServiceUpdate mctsPregnantMotherServiceUpdate = new MctsPregnantMotherServiceUpdate();
             mctsPregnantMotherServiceUpdate
-                    .setMctsPregnantMother(MctsPregnantMother);
+                    .setMctsPregnantMother(mctsPregnantMother);
             mctsPregnantMotherServiceUpdate
                     .setServiceDeliveryDate(syncedBeneficiary
                             .getServiceDeliveryDate());
@@ -104,7 +101,7 @@ public class CareDataService {
     /**
      * Method to get entities from db with constraints of upper and lower value
      * on a particular field
-     * 
+     *
      * @param entityClass
      *            : class whose data is to be fetched
      * @param fieldName
@@ -128,7 +125,7 @@ public class CareDataService {
     /**
      * Method to get the unique element of the <code>entityClass</code> having a
      * specific value for a field
-     * 
+     *
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -139,7 +136,7 @@ public class CareDataService {
      * @throws BeneficiaryException
      */
     public <T> T findEntityByField(Class<T> entityClass, String fieldName,
-            Object fieldValue) throws BeneficiaryException {
+            Object fieldValue) {
         LOGGER.debug(String
                 .format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName, fieldValue));
@@ -150,7 +147,7 @@ public class CareDataService {
     /**
      * Method to get all the element of the <code>entityClass</code> having a
      * specific value for a field
-     * 
+     *
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -176,11 +173,11 @@ public class CareDataService {
 
     /**
      * Method to Save of Update the entity in Db
-     * 
+     *
      * @param entity
      * @throws BeneficiaryException
      */
-    public <T> void saveOrUpdate(T entity) throws BeneficiaryException {
+    public <T> void saveOrUpdate(T entity) {
         careDataRepository.saveOrUpdate(entity);
     }
 }

@@ -1,57 +1,63 @@
 package org.motechproject.mcts.integration.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
 
-import java.io.File;
-import java.lang.Object;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog;
+import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
+import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
-import org.motechproject.mcts.integration.model.FLWDataCSV;
-import org.motechproject.mcts.integration.model.LocationDataCSV;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationPopulatorTest {
     
+    @InjectMocks
 	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
-	LocationDataPopulator locationDataPopulatorSpy = Mockito.spy(locationDataPopulator);
 
 	@Mock
 	CareDataRepository careDataRepository;
 
 	@Mock
 	private PropertyReader propertyReader;
-
+	
+	private MctsState mctsState;
+	private MctsDistrict mctsDistrict;
+	private MctsTaluk mctsTaluk;
+	private MctsHealthblock mctsHealthblock;
+	private MctsPhc mctsPhc;
+	private MctsSubcenter mctsSubcenter;
+	private MctsVillage mctsVillage;
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		  Mockito.doNothing().when(locationDataPopulatorSpy).addLocationToDb((LocationDataCSV)any(),anyBoolean());
-		  Mockito.doNothing().when(locationDataPopulatorSpy).saveLocationData((LocationDataCSV)any());
+		  
+		  
+		  mctsState = new MctsState(10, "Bihar");
+		  mctsDistrict = new MctsDistrict(mctsState, 11, "Saharsa");
+		  mctsTaluk = new MctsTaluk(mctsDistrict, 12, "Saur Bazar");
+		  mctsHealthblock = new MctsHealthblock(mctsTaluk, 13, "Saor Bazar");
+		  mctsPhc = new MctsPhc(mctsHealthblock, 14, "saur bazar");
+		  mctsSubcenter = new MctsSubcenter(mctsPhc, 15, "saor bazar");
+		  mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter, 16, "random");
+		  
+		  
 	}
 
 	@SuppressWarnings("deprecation")
@@ -64,11 +70,12 @@ public class LocationPopulatorTest {
                 "location2.csv",                //filename
                 content.getBytes());
 	
-        locationDataPopulatorSpy.populateLocations(multipartFile);
-        Mockito.verify(locationDataPopulatorSpy, Mockito.times(1)).addLocationToDb((LocationDataCSV)any(),anyBoolean());
-        Mockito.verify(locationDataPopulatorSpy, Mockito.times(1)).saveLocationData((LocationDataCSV)any());
+        locationDataPopulator.populateLocations(multipartFile);
+        verify(careDataRepository,times(8)).saveOrUpdate(anyObject());
 		
 	}
+	
+	
 	
 	
 

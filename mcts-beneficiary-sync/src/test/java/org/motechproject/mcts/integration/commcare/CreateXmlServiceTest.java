@@ -2,6 +2,7 @@ package org.motechproject.mcts.integration.commcare;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -75,7 +76,7 @@ public class CreateXmlServiceTest {
 		Mockito.when(mCTSHttpClientService.syncToCommcare((Data) any()))
 				.thenReturn(status);
 		Mockito.when(propertyReader.getUserIdforCommcare()).thenReturn("1234");
-		Mockito.when(fixtureDataService.getCaseGroupIdfromAshaId(anyInt())).thenReturn("6efbnkfb");
+		Mockito.when(fixtureDataService.getCaseGroupIdfromAshaId(anyInt(),anyString())).thenReturn("6efbnkfb");
 		Mockito.when(careDataRepository
 					.getMotherFromPrimaryId(anyInt())).thenReturn(mother1).thenReturn(mother2);
 		

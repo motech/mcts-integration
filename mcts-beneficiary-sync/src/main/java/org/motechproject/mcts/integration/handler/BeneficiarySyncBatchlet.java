@@ -1,4 +1,5 @@
 package org.motechproject.mcts.integration.handler;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,27 +15,31 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BeneficiarySyncBatchlet implements Batchlet {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(BeneficiarySyncBatchlet.class);
-	List<Beneficiary> beneficiariesList = new ArrayList<Beneficiary>();
-	private DateTime startDate = new DateTime(2014,01,03,12,30,30);
-	private DateTime endDate = new DateTime(2014,02,03,12,30,30);
-	
-	@Autowired
-	 CareDataRepository careDataRepository;
-	
-	 @Override
-	public String process() {
-		beneficiariesList= careDataRepository.getBeneficiariesToSync(startDate, endDate);
-		LOGGER.info("beneficiaries list size"+Integer.toString(beneficiariesList.size()));
-		System.out.println("beneficiaries list size"+Integer.toString(beneficiariesList.size()));
-		return null;
-	}
 
-	@Override
-	public void stop() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(BeneficiarySyncBatchlet.class);
+    private List<Beneficiary> beneficiariesList = new ArrayList<Beneficiary>();
+    private DateTime startDate = new DateTime();
+    private DateTime endDate = new DateTime();
+
+    @Autowired
+    private CareDataRepository careDataRepository;
+
+    @Override
+    public String process() {
+        beneficiariesList = careDataRepository.getBeneficiariesToSync(
+                startDate, endDate);
+        LOGGER.info("beneficiaries list size"
+                + Integer.toString(beneficiariesList.size()));
+        LOGGER.debug("beneficiaries list size"
+                + Integer.toString(beneficiariesList.size()));
+        return null;
+    }
+
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

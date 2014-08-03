@@ -9,7 +9,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
-import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
@@ -20,14 +19,14 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service to call the fixture stub and get data
- * 
+ *
  * @author aman
- * 
+ *
  */
 @Service
 public class StubDataService {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(FixtureDataService.class);
 
     @Autowired
@@ -38,7 +37,7 @@ public class StubDataService {
 
     /**
      * Method to call the stub controller and get the data
-     * 
+     *
      * @return
      */
     public Data getFixtureData() {
@@ -72,7 +71,7 @@ public class StubDataService {
                         .getFixturePassword()));
     }
 
-    private String getRequest(String requestUrl) {
+     String getRequest(String requestUrl) {
 
         HttpMethod getMethod = buildRequest(requestUrl);
 

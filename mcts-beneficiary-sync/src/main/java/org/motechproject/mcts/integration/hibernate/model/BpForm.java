@@ -166,18 +166,7 @@ public class BpForm extends Form {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
-            CascadeType.EVICT })
-    public Flw getFlw() {
-        return this.flw;
-    }
-
-    public void setFlw(Flw flw) {
-        this.flw = flw;
-    }
+   
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
@@ -220,6 +209,19 @@ public class BpForm extends Form {
 
     public void setDateModified(Date dateModified) {
         this.dateModified = dateModified;
+    }
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
+            CascadeType.EVICT })
+    public Flw getFlw() {
+        return this.flw;
+    }
+
+    public void setFlw(Flw flw) {
+        this.flw = flw;
     }
 
     @Temporal(TemporalType.DATE)

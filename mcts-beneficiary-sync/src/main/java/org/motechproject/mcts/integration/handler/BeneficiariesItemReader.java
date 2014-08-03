@@ -7,20 +7,18 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public class BeneficiariesItemReader {
 
     private static final String CURRENT_INDEX = "current.index";
-    List<Beneficiary> beneficiariesList;
-    int currentIndex = 0;
+    private List<Beneficiary> beneficiariesList;
+    @SuppressWarnings("unused")
+    private int currentIndex;
     private DateTime startDate;
     private DateTime endDate;
 
-    @Autowired
-    CareDataRepository careDataRepository;
 
     public BeneficiariesItemReader(CareDataRepository careDataRepository) {
 

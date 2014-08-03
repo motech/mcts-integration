@@ -34,7 +34,7 @@ import org.supercsv.prefs.CsvPreference;
 @Service
 public class LocationDataPopulator {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(LocationDataPopulator.class);
 
     public CareDataRepository getCareDataRepository() {
@@ -55,15 +55,14 @@ public class LocationDataPopulator {
     /**
      * Method to populate locations such as state, district, taluka, block, phc,
      * subcentre, village
-     * 
+     *
      * @param file
      * @throws BeneficiaryException
      * @throws IOException
      * @throws FileNotFoundException
      * @throws Exception
      */
-    public void populateLocations(MultipartFile file)
-            throws BeneficiaryException {
+    public void populateLocations(MultipartFile file) {
         File newFile = null;
         ICsvBeanReader beanReader = null;
         LocationDataCSV locationCSV = new LocationDataCSV();
@@ -82,7 +81,7 @@ public class LocationDataPopulator {
             LOGGER.info("Writing locations to database");
             while ((locationCSV = beanReader
                     .read(LocationDataCSV.class, header)) != null) {
-                if (LocationValidator.isValidateLocation(locationCSV) == true) {
+                if (LocationValidator.isValidateLocation(locationCSV)) {
                     addLocationToDb(locationCSV, true);
                 } else {
                     saveLocationData(locationCSV);
@@ -103,15 +102,13 @@ public class LocationDataPopulator {
             throw new BeneficiaryException(
                     ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH, e,
                     e.getMessage());
-        }
-
-        finally {
+        }  finally {
             if (beanReader != null) {
                 try {
                     beanReader.close();
                 } catch (IOException e) {
                     throw new BeneficiaryException(
-                            ApplicationErrors.FILE_CLOSING_FAILED,
+                            ApplicationErrors.FILE_CLOSING_FAILED, e,
                             e.getMessage());
                 }
             }
@@ -121,12 +118,11 @@ public class LocationDataPopulator {
 
     /**
      * @throws BeneficiaryException
-     * 
+     *
      */
-    public void addLocationToDb(LocationDataCSV locationCSV, boolean status)
-            throws BeneficiaryException {
+    public void addLocationToDb(LocationDataCSV locationCSV, boolean status) {
         int stateId = locationCSV.getStateIDasInteger();
-        String StateName = locationCSV.getState();
+        String stateName = locationCSV.getState();
         int disctrictId = locationCSV.getDCodeasInteger();
         String disctrictName = locationCSV.getDistrict();
         int talukId = locationCSV.getTCodeasInteger();
@@ -140,7 +136,7 @@ public class LocationDataPopulator {
         Integer villageId = locationCSV.getVCodeasInteger();
         String villageName = locationCSV.getVillage();
 
-        MctsState mctsState = addStateToDbandReturn(stateId, StateName, status);
+        MctsState mctsState = addStateToDbandReturn(stateId, stateName, status);
         MctsDistrict mctsDistrict = findUniqueDistrictandReturn(mctsState,
                 disctrictId, disctrictName, status);
         MctsTaluk mctsTaluk = findUniqueTalukandReturn(mctsDistrict, talukId,
@@ -170,12 +166,11 @@ public class LocationDataPopulator {
 
     /**
      * Method to populate location master table
-     * 
+     *
      * @throws BeneficiaryException
      * @throws IOException
      */
-    public void saveLocationData(LocationDataCSV locationCSV)
-            throws BeneficiaryException {
+    public void saveLocationData(LocationDataCSV locationCSV) {
 
         String stateId = locationCSV.getStateID();
         String state = locationCSV.getState();
@@ -209,12 +204,12 @@ public class LocationDataPopulator {
 
     }
 
-    MctsState addStateToDbandReturn(int stateId, String StateName,
-            boolean status) throws BeneficiaryException {
+    MctsState addStateToDbandReturn(int stateId, String stateName,
+            boolean status) {
         MctsState mctsState = careDataRepository.findEntityByField(
                 MctsState.class, "stateId", stateId);
         if (mctsState == null) {
-            mctsState = new MctsState(stateId, StateName);
+            mctsState = new MctsState(stateId, stateName);
             mctsState.setStatus(false);
         }
         if (!mctsState.getStatus()) {
@@ -225,8 +220,7 @@ public class LocationDataPopulator {
     }
 
     private MctsDistrict findUniqueDistrictandReturn(MctsState mctsState,
-            int disctrictId, String disctrictName, boolean status)
-            throws BeneficiaryException {
+            int disctrictId, String disctrictName, boolean status) {
         MctsDistrict mctsDistrict = careDataRepository.findUniqueDistrict(
                 disctrictId, mctsState.getId());
         if (mctsDistrict == null) {
@@ -242,8 +236,7 @@ public class LocationDataPopulator {
     }
 
     private MctsSubcenter findUniqueSubcentreandReturn(MctsPhc mctsPhc,
-            int subcenterId, String subcentreName, boolean status)
-            throws BeneficiaryException {
+            int subcenterId, String subcentreName, boolean status) {
         MctsSubcenter mctsSubcenter = careDataRepository.findUniqueSubcentre(
                 subcenterId, mctsPhc.getId());
         if (mctsSubcenter == null) {
@@ -259,8 +252,7 @@ public class LocationDataPopulator {
     }
 
     private MctsPhc findUniquePhcandReturn(MctsHealthblock mctsHealthblock,
-            int phcId, String phcName, boolean status)
-            throws BeneficiaryException {
+            int phcId, String phcName, boolean status) {
         MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,
                 mctsHealthblock.getId());
         if (mctsPhc == null) {
@@ -275,8 +267,7 @@ public class LocationDataPopulator {
     }
 
     private MctsHealthblock findUniqueBlockandReturn(MctsTaluk mctsTaluk,
-            int healthblockId, String healthblockName, boolean status)
-            throws BeneficiaryException {
+            int healthblockId, String healthblockName, boolean status) {
         MctsHealthblock mctsHealthblock = careDataRepository
                 .findUniqueHealthBlock(healthblockId, mctsTaluk.getId());
         if (mctsHealthblock == null) {
@@ -292,8 +283,7 @@ public class LocationDataPopulator {
     }
 
     private MctsTaluk findUniqueTalukandReturn(MctsDistrict mctsDistrict,
-            int talukId, String talukaName, boolean status)
-            throws BeneficiaryException {
+            int talukId, String talukaName, boolean status) {
         MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,
                 mctsDistrict.getId());
         if (mctsTaluk == null) {

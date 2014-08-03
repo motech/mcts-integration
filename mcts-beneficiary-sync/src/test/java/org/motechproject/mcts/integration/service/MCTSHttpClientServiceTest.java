@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.mcts.integration.commcare.Data;
+import org.motechproject.mcts.integration.commcare.UpdateData;
 import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
@@ -49,7 +51,7 @@ public class MCTSHttpClientServiceTest {
 	}
 	
 	@Test
-	public void shouldSyncBeneficiariesToMCTS() {
+	public void shouldSyncBeneficiariesToMCTS() throws BeneficiaryException {
 		String requestUrl = "requestUrl";
 		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
 		when(propertyReader.getUpdateRequestUrl()).thenReturn(
@@ -80,6 +82,22 @@ public class MCTSHttpClientServiceTest {
 		NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
 
 		assertEquals(response(), actualResponse);
+	}
+	
+	@Test
+	public void shouldSyncToCommcare() {
+	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
+        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+        Data data =  new Data();
+        mctsHttpClientService.syncToCommcare(data);
+	}
+	
+	@Test
+	public void shouldSyncToCommcareUpdate() {
+	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
+        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+        UpdateData data =  new UpdateData();
+        mctsHttpClientService.syncToCommcareUpdate(data);
 	}
 	
 	private NewDataSet response() {

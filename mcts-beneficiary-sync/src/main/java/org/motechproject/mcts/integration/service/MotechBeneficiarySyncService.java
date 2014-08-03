@@ -16,6 +16,7 @@ import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.model.BeneficiaryDetails;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MotechBeneficiarySyncService {
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(MotechBeneficiarySyncService.class);
 
     @Autowired
@@ -53,16 +54,16 @@ public class MotechBeneficiarySyncService {
      * Fetches Updates from <code>Motech</code> db, post the updates to Mcts
      * Updates the <code>mcts_pregnant_mother_service_updates</code> table with
      * the updates sent to Mcts
-     * 
+     *
      * @param startDate
      * @param endDate
      * @throws FileNotFoundException
      * @throws BeneficiaryException
      */
-    public void syncBeneficiaryData(DateTime startDate, DateTime endDate)
-            throws BeneficiaryException {
+    public void syncBeneficiaryData(DateTime startDate, DateTime endDate) {
         List<Beneficiary> beneficiariesToSync = getBeneficiariesToSync(
-                startDate, endDate);// gets the updates from the Motech Database
+                startDate, endDate); // gets the updates from the Motech
+                                     // Database
         LOGGER.info(String.format(
                 "Found %s beneficiary records to sync to MCTS",
                 beneficiariesToSync.size()));
@@ -73,11 +74,11 @@ public class MotechBeneficiarySyncService {
         }
         BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
         beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
-        HttpStatus httpStatus = syncTo(beneficiaryRequest);// sends Updates to
-                                                           // Mcts
+        HttpStatus httpStatus = syncTo(beneficiaryRequest); // sends Updates to
+                                                            // Mcts
         // if httpStatus returned from Mcts is 2** then update the
         // mcts_pregnant_mother_service_updates table
-        if (httpStatus.value() / 100 == 2) {
+        if (httpStatus.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
             writeSyncDataToFile(beneficiaryRequest); // Writes the updates sent
                                                      // to Mcts to a file
             updateSyncedBeneficiaries(beneficiariesToSync);
@@ -87,7 +88,7 @@ public class MotechBeneficiarySyncService {
     /**
      * Calls the Method from <code>CareDataService</code> class to get the
      * <code>Beneficiaries</code> Updates to be sent to Mcts
-     * 
+     *
      * @param startDate
      * @param endDate
      * @return <code>List of Beneficiaries</code> to be sent to Mcts
@@ -100,7 +101,7 @@ public class MotechBeneficiarySyncService {
     /**
      * Maps the List of Beneficiaries received from Database to
      * <code>BeneficiaryRequest</code> to be sent to Mcts
-     * 
+     *
      * @param beneficiariesToSync
      * @return
      */
@@ -121,9 +122,10 @@ public class MotechBeneficiarySyncService {
     /**
      * Calls the Method from <code>MCTSHttpClientService</code> class to send
      * the updates to Mcts
-     * 
+     *
      * @param beneficiaryRequest
      * @return
+     *
      */
     protected HttpStatus syncTo(BeneficiaryRequest beneficiaryRequest) {
         return mctsHttpClientService.syncTo(beneficiaryRequest);
@@ -131,7 +133,7 @@ public class MotechBeneficiarySyncService {
 
     /**
      * Write the updates to be sent to Mcts in a xml file
-     * 
+     *
      * @param beneficiaryRequest
      * @throws BeneficiaryException
      * @throws
@@ -139,9 +141,9 @@ public class MotechBeneficiarySyncService {
      * @throws IOException
      */
     @SuppressWarnings("deprecation")
-    protected void writeSyncDataToFile(BeneficiaryRequest beneficiaryRequest)
-            throws BeneficiaryException {
-        // TODO: To be removed in future and post updates directly to Mcts
+    protected void writeSyncDataToFile(BeneficiaryRequest beneficiaryRequest) {
+
+        // To be removed in future and post updates directly to Mcts
         outputXMLFileLocation = String.format("%s_%s.xml", propertyReader
                 .getUpdateXmlOutputFileLocation(),
                 DateTime.now().toString("yyyy-MM-dd") + "T"
@@ -183,13 +185,12 @@ public class MotechBeneficiarySyncService {
      * <code>CareDataService</code> class to update the
      * <code>mcts_pregnant_mother_service_updates</code> table with the updates
      * sent to Mcts
-     * 
+     *
      * @param beneficiariesToSync
      *            List of beneficiaries sent to Mcts
      * @throws BeneficiaryException
      */
-    private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync)
-            throws BeneficiaryException {
+    private void updateSyncedBeneficiaries(List<Beneficiary> beneficiariesToSync) {
         LOGGER.info("Updating database with %s Synced Beneficiaries "
                 + beneficiariesToSync.size());
         careDataService.updateSyncedBeneficiaries(beneficiariesToSync);

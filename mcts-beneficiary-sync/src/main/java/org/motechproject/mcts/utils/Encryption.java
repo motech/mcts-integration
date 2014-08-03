@@ -19,58 +19,67 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.motechproject.mcts.integration.exception.ApplicationErrors;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 
-public class Encryption {
+public final class Encryption {
 
-	private static String Encrypt(String D) throws InvalidKeyException,
-			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-			NoSuchPaddingException, UnsupportedEncodingException,
-			InvalidKeySpecException, IllegalBlockSizeException,
-			BadPaddingException {
-		Cipher ci = getCipher(Cipher.ENCRYPT_MODE);
-		byte[] eVal = ci.doFinal(D.getBytes("UTF-8"));
-		byte[] encodedBytes = Base64.encodeBase64(eVal);
-		return new String(encodedBytes, "UTF-8");
-	}
+    private Encryption() {
 
-	private static Cipher getCipher(int mode) throws InvalidKeyException,
-			InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-			NoSuchPaddingException, UnsupportedEncodingException,
-			InvalidKeySpecException {
-		Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		byte[] ivector = "1e3f5e2f4e61e798".getBytes("UTF-8"); // as provided
-		ci.init(mode, generateKey(), new IvParameterSpec(ivector));
-		return ci;
-	}
+    }
 
-	static String SALT_STR = "!Y@NM@NG@L";
-	static String key = "MCTS@MOTECH";
+    private static String unicode = "UTF-8";
 
-	private static Key generateKey() throws NoSuchAlgorithmException,
-			UnsupportedEncodingException, InvalidKeySpecException {
-		SecretKeyFactory factory = SecretKeyFactory
-				.getInstance("PBKDF2WithHmacSHA1");
-		char[] Key = key.toCharArray();
-		byte[] salt = SALT_STR.getBytes("UTF-8");
-		java.security.spec.KeySpec spec = new PBEKeySpec(Key, salt, 65536, 128);
-		SecretKey tmp = factory.generateSecret(spec);
-		byte[] encoded = tmp.getEncoded();
-		return new SecretKeySpec(encoded, "AES");
+    private static String encrypt(String d) throws InvalidKeyException,
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            NoSuchPaddingException, UnsupportedEncodingException,
+            InvalidKeySpecException, IllegalBlockSizeException,
+            BadPaddingException {
+        Cipher ci = getCipher(Cipher.ENCRYPT_MODE);
+        byte[] eVal = ci.doFinal(d.getBytes(unicode));
+        byte[] encodedBytes = Base64.encodeBase64(eVal);
+        return new String(encodedBytes, "UTF-8");
+    }
 
-	}
+    private static Cipher getCipher(int mode) throws InvalidKeyException,
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            NoSuchPaddingException, UnsupportedEncodingException,
+            InvalidKeySpecException {
+        Cipher ci = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        byte[] ivector = "1e3f5e2f4e61e798".getBytes(unicode); // as provided
+        ci.init(mode, generateKey(), new IvParameterSpec(ivector));
+        return ci;
+    }
 
-	public static String encryptWithTimeInSeconds(String password) {
-		try {
-			long time = Calendar.getInstance().getTimeInMillis();
-			long timeInSeconds = time / 1000;
+    private static final String SALT_STR = "!Y@NM@NG@L";
+    private static final String KEY = "MCTS@MOTECH";
 
-			String data = password + timeInSeconds;
+    private static Key generateKey() throws NoSuchAlgorithmException,
+            UnsupportedEncodingException, InvalidKeySpecException {
+        SecretKeyFactory factory = SecretKeyFactory
+                .getInstance("PBKDF2WithHmacSHA1");
+        char[] key = KEY.toCharArray();
+        byte[] salt = SALT_STR.getBytes(unicode);
+        java.security.spec.KeySpec spec = new PBEKeySpec(key, salt, MctsConstants.ITERATION_COUNT, MctsConstants.KEY_LENGTH);
+        SecretKey tmp = factory.generateSecret(spec);
+        byte[] encoded = tmp.getEncoded();
+        return new SecretKeySpec(encoded, "AES");
 
-			return Encrypt(data);
-		} catch (Exception e) {
-			throw new RuntimeException("Password encryption failed");
-		}
+    }
 
-	}
+    public static String encryptWithTimeInSeconds(String password) {
+        try {
+            long time = Calendar.getInstance().getTimeInMillis();
+            long timeInSeconds = time / MctsConstants.MILLISECOND_CONVERTOR;
+
+            String data = password + timeInSeconds;
+
+            return encrypt(data);
+        } catch (Exception e) {
+            throw new BeneficiaryException(
+                    ApplicationErrors.RUN_TIME_EXCEPTION, e, e.getMessage());
+        }
+
+    }
 
 }

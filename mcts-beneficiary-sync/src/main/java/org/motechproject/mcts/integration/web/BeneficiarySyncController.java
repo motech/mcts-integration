@@ -42,16 +42,16 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * Controller class to call the services 1. Sync from Mcts to Motech 2. Sync To
  * Mcts from Motech
- * 
+ *
  * @author mohit
- * 
+ *
  */
 
 @Controller
 @RequestMapping(value = "/beneficiary")
 public class BeneficiarySyncController {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(BeneficiarySyncController.class);
     private static final String DATE_TIME_FORMAT = "dd-MM-yyyy";
     private static final String VALID_DATE_PATTERN = "^\\d{2}-\\d{2}-\\d{4}$";
@@ -79,7 +79,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to validate connection
-     * 
+     *
      * @param query
      * @return string
      */
@@ -93,18 +93,18 @@ public class BeneficiarySyncController {
 
     /**
      * Method to send request to MCTS to send updates
-     * 
+     *
      * @param startDate
      * @param endDate
      * @return
-     * @throws BeneficiaryException 
+     * @throws BeneficiaryException
      * @throws Exception
      */
     @RequestMapping(value = "syncFrom", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String syncFrom(@RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) throws BeneficiaryException {
+            @RequestParam("endDate") String endDate) {
         LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: "
                 + endDate);
 
@@ -114,26 +114,26 @@ public class BeneficiarySyncController {
         DateTime parsedStartDate = parseDate(startDate);
         DateTime parsedEndDate = parseDate(endDate);
         LOGGER.debug("Parsed startDate is: " + parsedStartDate
-                + " & endDate is: " + parsedEndDate);
+                + " & Parsed endDate is: " + parsedEndDate);
         return mctsBeneficiarySyncService.syncBeneficiaryData(parsedStartDate,
                 parsedEndDate);
     }
 
     /**
      * Method to post updates to MCTS
-     * 
+     *
      * @param startDate
      * @param endDate
      * @return
-     * @throws BeneficiaryException 
-     * @throws FileNotFoundException 
+     * @throws BeneficiaryException
+     * @throws FileNotFoundException
      * @throws Exception
      */
     @RequestMapping(value = "syncTo", method = RequestMethod.GET)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public String syncTo(@RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) throws BeneficiaryException {
+            @RequestParam("endDate") String endDate) {
         LOGGER.debug("Requested startDate is: " + startDate + " & endDate is: "
                 + endDate);
         validateDateFormat(startDate);
@@ -143,7 +143,7 @@ public class BeneficiarySyncController {
         DateTime parsedEndDate = parseDate(endDate);
 
         LOGGER.debug("Parsed startDate is: " + parsedStartDate
-                + " & endDate is: " + parsedEndDate);
+                + " & Parsed endDate is: " + parsedEndDate);
         motechBeneficiarySyncService.syncBeneficiaryData(parsedStartDate,
                 parsedEndDate);
 
@@ -152,7 +152,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to add locations to database
-     * 
+     *
      * @param file
      * @return
      * @throws
@@ -163,17 +163,14 @@ public class BeneficiarySyncController {
     @RequestMapping(value = "/addLocations", method = RequestMethod.POST)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public String addLocationData(@RequestParam("file") MultipartFile file)
-            throws BeneficiaryException {
+    public String addLocationData(@RequestParam("file") MultipartFile file) {
 
         LOGGER.info("Request to upload xml file of job:");
 
         try {
             locationDataPopulator.populateLocations(file);
             return "Data Added Successfully";
-        }
-
-        catch (BeneficiaryException e) {
+        } catch (BeneficiaryException e) {
             LOGGER.error("Adding Location Data to the database failed");
             throw new RestException(e, e.getMessage());
         }
@@ -182,7 +179,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to add FLWs to database
-     * 
+     *
      * @param file
      * @return
      * @throws Exception
@@ -191,8 +188,7 @@ public class BeneficiarySyncController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public String addFLWData(@RequestParam("file") MultipartFile file,
-            @PathVariable("stateId") String stateId)
-            throws BeneficiaryException {
+            @PathVariable("stateId") String stateId) {
 
         LOGGER.info("Request to upload xml file of job:");
 
@@ -200,9 +196,7 @@ public class BeneficiarySyncController {
             fLWDataPopulator.populateFLWData(file, stateId);
             return "Data Added Successfully";
 
-        }
-
-        catch (BeneficiaryException e) {
+        } catch (BeneficiaryException e) {
             LOGGER.error("Adding FLW Data to the database failed", e);
             throw new RestException(e, e.getMessage());
         }
@@ -211,7 +205,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to update caseIds and match status if mctsId is matched
-     * 
+     *
      * @return
      */
     @RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
@@ -223,21 +217,22 @@ public class BeneficiarySyncController {
     }
 
     /**
-     * 
+     *
      * Method to validate the input date arguments
-     * 
+     *
      * @param date
      */
     private static void validateDateFormat(String date) {
-        if (!Pattern.matches(VALID_DATE_PATTERN, date))
+        if (!Pattern.matches(VALID_DATE_PATTERN, date)) {
             throw new IllegalArgumentException(String.format(
                     "Invalid date format. Date format should be: %s.",
                     DATE_TIME_FORMAT));
+        }
     }
 
     /**
      * method to convert from String to dateTime format
-     * 
+     *
      * @param dateString
      * @return
      */
@@ -249,7 +244,7 @@ public class BeneficiarySyncController {
 
     /**
      * Controller to update the case_groupId in the database
-     * 
+     *
      * @param type
      * @return
      * @throws BeneficiaryException
@@ -257,8 +252,7 @@ public class BeneficiarySyncController {
     @RequestMapping(value = "/getFixData/{type}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getFixData(@PathVariable("type") String type)
-            throws BeneficiaryException {
+    public String getFixData(@PathVariable("type") String type) {
         fixtureDataService.updateGroupId();
         return "successful";
     }
@@ -266,7 +260,7 @@ public class BeneficiarySyncController {
     @RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getCaseXml() throws Exception {
+    public String getCaseXml() {
         createCaseXmlService.createCaseXml();
         return "success";
     }
@@ -286,7 +280,7 @@ public class BeneficiarySyncController {
             error.setApplication("motech-platform-batch");
 
         } catch (Exception e) {
-            System.out.println("in last exception");
+            LOGGER.error("in last exception");
         }
         return error;
     }

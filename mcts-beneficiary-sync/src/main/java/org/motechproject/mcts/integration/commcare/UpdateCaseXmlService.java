@@ -11,9 +11,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -25,28 +25,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class to create xml for update cases.
- * 
+ *
  * @author aman
- * 
+ *
  */
 @Transactional
 @Service
 public class UpdateCaseXmlService {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(UpdateCaseXmlService.class);
 
     @Autowired
-    PropertyReader propertyReader;
+    private PropertyReader propertyReader;
 
     @Autowired
-    FixtureDataService fixtureDataService;
+    private CareDataRepository careDataRepository;
 
     @Autowired
-    CareDataRepository careDataRepository;
-
-    @Autowired
-    MCTSHttpClientService mCTSHttpClientService;
+    private MCTSHttpClientService mCTSHttpClientService;
 
     public CareDataRepository getCareDataRepository() {
         return careDataRepository;
@@ -56,8 +53,7 @@ public class UpdateCaseXmlService {
         this.careDataRepository = careDataRepository;
     }
 
-    public void updateXml(Integer mctsPregnantMotherId)
-            throws BeneficiaryException {
+    public void updateXml(Integer mctsPregnantMotherId) {
         MctsPregnantMother mctsPregnantMother = careDataRepository
                 .getMotherFromPrimaryId(mctsPregnantMotherId);
         String caseGuid = mctsPregnantMother.getMctsPersonaCaseUId();
@@ -66,8 +62,7 @@ public class UpdateCaseXmlService {
         }
     }
 
-    public void updateXml(MctsPregnantMother mctsPregnantMother)
-            throws BeneficiaryException {
+    public void updateXml(MctsPregnantMother mctsPregnantMother) {
         UpdateData data = new UpdateData();
         String userId = propertyReader.getUserIdforCommcare();
         Meta meta = createMetaandReturn(userId);
@@ -85,8 +80,8 @@ public class UpdateCaseXmlService {
                 workerId);
         if ((caseTask.getUpdateTask().getMctsFullname() != null)
                 && (caseTask.getUpdateTask().getMctsHusbandName() != null)
-                && (caseTask.getUpdateTask().getMctsHusbandName_en() != null)
-                && (caseTask.getUpdateTask().getMctsFullname_en() != null)) {
+                && (caseTask.getUpdateTask().getMctsHusbandNameEn() != null)
+                && (caseTask.getUpdateTask().getMctsFullnameEn() != null)) {
             data.setCaseTask(caseTask);
         }
 
@@ -98,15 +93,14 @@ public class UpdateCaseXmlService {
         HttpStatus status = mCTSHttpClientService.syncToCommcareUpdate(data);
 
         // Accepted status code is 2xx
-        if (status.value() / 100 == 2) {
+        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
             LOGGER.debug("valid response received");
         }
 
     }
 
     private Case createCaseForBeneficiary(
-            MctsPregnantMother mctsPregnantMother, String userId, int workerId)
-            throws BeneficiaryException {
+            MctsPregnantMother mctsPregnantMother, String userId, int workerId) {
 
         String ownerId = mctsPregnantMother.getOwnerId();
         String caseId = mctsPregnantMother.getMctsPersonaCaseUId();
@@ -129,7 +123,7 @@ public class UpdateCaseXmlService {
 
     /**
      * Mehtod to create Meta Object and return it.
-     * 
+     *
      * @param userId
      * @return
      */
@@ -146,7 +140,7 @@ public class UpdateCaseXmlService {
 
     /**
      * Method to create UpdateTask Object and return it.
-     * 
+     *
      * @param mctsPregnantMother
      * @param userId
      * @param workerId
@@ -154,43 +148,43 @@ public class UpdateCaseXmlService {
      * @throws BeneficiaryException
      */
     public UpdateTask updateTaskandReturn(
-            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId)
-            throws BeneficiaryException {
+            MctsPregnantMother mctsPregnantMother, int workerId, String ownerId) {
         UpdateTask updateTask = new UpdateTask();
 
         String mctsName = mctsPregnantMother.getHindiName();
-        String mctsName_en = mctsPregnantMother.getName();
+        String mctsNameEn = mctsPregnantMother.getName();
         String husbandName = mctsPregnantMother.getHindiFatherHusbandName();
-        String husbandName_en = mctsPregnantMother.getFatherHusbandName();
+        String husbandNameEn = mctsPregnantMother.getFatherHusbandName();
         String phone = mctsPregnantMother.getMobileNo();
-        Date birth = mctsPregnantMother.getBirthDate();
+
         DateTime birthDate = new DateTime(mctsPregnantMother.getBirthDate());
+        Date birth = mctsPregnantMother.getBirthDate();
         DateTime date = new DateTime();
         String age = "";
         String dob = "";
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
+        if (mctsPregnantMother.getLmpDate() != null) {
+            DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
+            DateTime edd = lmpDate.plusDays(MctsConstants.EDD_CONSTANT);
+            String eddDate = fmt.print(edd);
+            updateTask.setMctsEdd(eddDate);
+        }
+
         if (birth != null) {
             dob = fmt.print(birthDate);
             age = Integer.toString(Days.daysBetween(
                     birthDate.withTimeAtStartOfDay(),
-                    date.withTimeAtStartOfDay()).getDays() / 365);
-        }
-
-        if (mctsPregnantMother.getLmpDate() != null) {
-            DateTime lmpDate = new DateTime(mctsPregnantMother.getLmpDate());
-            DateTime edd = lmpDate.plusDays(280);
-            String eddDate = fmt.print(edd);
-            updateTask.setMctsEdd(eddDate);
+                    date.withTimeAtStartOfDay()).getDays() / MctsConstants.NUMBER_OF_DAYS_IN_YEAR);
         }
 
         updateTask.setCaseName(mctsPregnantMother.getName());
         updateTask.setCaseType(CommcareConstants.CASETYPE);
         updateTask.setOwnerId(ownerId);
         updateTask.setMctsHusbandName(husbandName);
-        updateTask.setMctsHusbandName_en(husbandName_en);
+        updateTask.setMctsHusbandNameEn(husbandNameEn);
         updateTask.setMctsFullname(mctsName);
-        updateTask.setMctsFullname_en(mctsName_en);
+        updateTask.setMctsFullnameEn(mctsNameEn);
         updateTask.setMctsAge(age);
         updateTask.setMctsDob(dob);
         updateTask.setMctsPhoneNumber(phone);

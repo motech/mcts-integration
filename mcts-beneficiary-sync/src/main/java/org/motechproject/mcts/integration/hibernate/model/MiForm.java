@@ -98,15 +98,7 @@ public class MiForm implements java.io.Serializable {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    public Flw getFlw() {
-        return this.flw;
-    }
-
-    public void setFlw(Flw flw) {
-        this.flw = flw;
-    }
+   
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
@@ -162,7 +154,16 @@ public class MiForm implements java.io.Serializable {
     public Date getServerDateModified() {
         return this.serverDateModified;
     }
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    public Flw getFlw() {
+        return this.flw;
+    }
 
+    public void setFlw(Flw flw) {
+        this.flw = flw;
+    }
     public void setServerDateModified(Date serverDateModified) {
         this.serverDateModified = serverDateModified;
     }

@@ -1,12 +1,10 @@
 package org.motechproject.mcts.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.util.Properties;
-
-import org.motechproject.mcts.utils.Encryption;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.springframework.util.MultiValueMap;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -22,9 +21,7 @@ public class PropertyReaderTest {
 
     @Mock
     private Properties properties;
-    @Mock
-    private Encryption encryption;
-
+  
     @InjectMocks
     private PropertyReader propertyReader = Mockito.spy(new PropertyReader(properties));
 
@@ -35,7 +32,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void shouldGetSyncUrl() {
+    public void shouldGetSyncUrl() throws BeneficiaryException {
         when(properties.getProperty("mcts.base.url")).thenReturn("baseUrl");
         when(properties.getProperty("beneficiary.sync.update.request.url")).thenReturn("requestUrl");
         when(properties.getProperty("beneficiary.sync.update.request.operation.key")).thenReturn("operation");
@@ -51,7 +48,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void te()
+    public void te() throws BeneficiaryException
     {
     	 when(propertyReader.getPassword()).thenReturn("myPassword");
     	 System.out.println(propertyReader.getPassword());
@@ -64,7 +61,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void shouldGetDefaultBeneficiaryListQueryParams() {
+    public void shouldGetDefaultBeneficiaryListQueryParams() throws BeneficiaryException {
         when(properties.getProperty("beneficiary.state.id")).thenReturn("31");
         when(properties.getProperty("beneficiary.sync.get.request.authentication.username.key")).thenReturn("username");
         when(properties.getProperty("mcts.authentication.username")).thenReturn("myUser");

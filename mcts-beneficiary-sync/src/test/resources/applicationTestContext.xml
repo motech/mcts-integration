@@ -29,6 +29,7 @@
  -->        <bean id="careDataRepository" class="org.motechproject.mcts.integration.repository.CareDataRepository">
         <constructor-arg index="0" ref="sessionFactory"/>
         </bean>
+         
      <!--     <bean id="commonsHttpClient" class="org.apache.commons.httpclient.HttpClient">
         <constructor-arg ref="multiThreadedHttpConnectionManager"/>
     </bean>

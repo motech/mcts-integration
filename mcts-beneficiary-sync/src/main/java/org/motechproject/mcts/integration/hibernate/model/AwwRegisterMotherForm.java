@@ -23,7 +23,7 @@ import org.hibernate.annotations.CascadeType;
 public class AwwRegisterMotherForm extends Form {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 372075782967319995L;
     private int id;

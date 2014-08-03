@@ -340,15 +340,7 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
         this.dateNextBp = dateNextBp;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "date_next_cf")
-    public Date getDateNextCf() {
-        return this.dateNextCf;
-    }
-
-    public void setDateNextCf(Date dateNextCf) {
-        this.dateNextCf = dateNextCf;
-    }
+    
 
     @Temporal(TemporalType.DATE)
     @Column(name = "date_next_eb")
@@ -358,6 +350,16 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
 
     public void setDateNextEb(Date dateNextEb) {
         this.dateNextEb = dateNextEb;
+    }
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "date_next_cf")
+    public Date getDateNextCf() {
+        return this.dateNextCf;
+    }
+
+    public void setDateNextCf(Date dateNextCf) {
+        this.dateNextCf = dateNextCf;
     }
 
     @Temporal(TemporalType.DATE)
@@ -370,14 +372,7 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
         this.dateNextPnc = dateNextPnc;
     }
 
-    @Column(name = "eats_meat")
-    public String getEatsMeat() {
-        return this.eatsMeat;
-    }
-
-    public void setEatsMeat(String eatsMeat) {
-        this.eatsMeat = eatsMeat;
-    }
+   
 
     @Temporal(TemporalType.DATE)
     @Column(name = "edd")
@@ -438,6 +433,15 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
     @Column(name = "lmp")
     public Date getLmp() {
         return this.lmp;
+    }
+    
+    @Column(name = "eats_meat")
+    public String getEatsMeat() {
+        return this.eatsMeat;
+    }
+
+    public void setEatsMeat(String eatsMeat) {
+        this.eatsMeat = eatsMeat;
     }
 
     public void setLmp(Date lmp) {

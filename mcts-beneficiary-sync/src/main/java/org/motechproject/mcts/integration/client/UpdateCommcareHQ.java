@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class UpdateCommcareHQ {
 
-    private final static Logger LOGGER = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(UpdateCommcareHQ.class);
     private RestTemplate restTemplate;
     private MultiValueMap<String, Object> formData;

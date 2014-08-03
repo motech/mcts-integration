@@ -17,27 +17,37 @@ import org.springframework.stereotype.Component;
 @Component
 public class MotherFormProcessor {
 
-    private static final Logger logger = LoggerFactory
+
+    private static final Logger LOGGER = LoggerFactory
             .getLogger("mcts-form-processor");
 
     private static final String FORM_NAME_ATTRIBUTE = "name";
     private static final String FORM_XMLNS_ATTRIBUTE = "xmlns";
     @Autowired
-    CaseInfoParser infoParser;
+    private CaseInfoParser infoParser;
     @Autowired
     FormsProcessor formsProcessor;
+    
+    @Autowired
+    private UnapprovedFormProcessor unapprovedFormProcessor;
+    @Autowired
+    private ApprovedFormProcessor approvedFormProcessor;
+    @Autowired
+    private ClosedFormProcessor closedFormProcessor;
 
     public MotherFormProcessor() {
 
     }
 
-    public void process(CommcareForm commcareForm) throws BeneficiaryException {
+
+    public void process(CommcareForm commcareForm) {
 
         final Map<String, String> formAttributes = commcareForm.getForm()
                 .getAttributes();
         String formName = formAttributes.get(FORM_NAME_ATTRIBUTE);
         String xmlns = formAttributes.get(FORM_XMLNS_ATTRIBUTE);
-        logger.info(String.format(
+
+        LOGGER.info(String.format(
                 "Received form. id: %s, type: %s; xmlns: %s;",
                 commcareForm.getId(), formName, xmlns));
 
@@ -46,8 +56,9 @@ public class MotherFormProcessor {
 
     }
 
-    private Map<String, String> parseMotherForm(CommcareForm commcareForm)
-            throws BeneficiaryException {
+   
+
+    private Map<String, String> parseMotherForm(CommcareForm commcareForm) {
         String namespace = this.getNamespace(commcareForm);
         String appVersion = this.getAppVersion(commcareForm);
         Map<String, String> motherInfo = new HashMap<>();
@@ -65,18 +76,20 @@ public class MotherFormProcessor {
     private Map<String, String> parse(FormValueElement startElement,
             CommcareForm commcareForm) throws BeneficiaryException {
         FormValueElement caseElement = startElement;
-        if (!startElement.getElementName().equals("case")) {
+     
+        if (!("case").equals(startElement.getElementName())) {
             caseElement = infoParser.getCaseElement(startElement);
         }
         FormValueElement attributeElements = startElement;
-        if (!startElement.getElementName().equals("subcase_0")) {
+        if (!("subcase_0").equals(startElement.getElementName())) {
             attributeElements = infoParser.getsubcaseElement(startElement);
         }
 
         if (caseElement == null) {
             return null;
         }
-        Map<String, String> infoMap = parseCaseInfo(caseElement, commcareForm);
+
+        Map<String, String> infoMap = parseCaseInfo(caseElement);
         if (attributeElements != null) {
             attributeElements = infoParser.getCaseElement(attributeElements);
             infoMap = parseSubcaseInfo(attributeElements, commcareForm, infoMap);
@@ -92,8 +105,10 @@ public class MotherFormProcessor {
         final String caseId = attributeElements.getAttributes().get("case_id");
 
         if (StringUtils.isEmpty(caseId)) {
-            throw new RuntimeException(String.format(
-                    "Empty case id found in form(%s)", commcareForm.getId()));
+
+            LOGGER.error("Empty case id found in form(%s)",
+                    commcareForm.getId());
+            throw new BeneficiaryException(ApplicationErrors.RUN_TIME_EXCEPTION);
         } else {
             infoMap.put("pregnancyId", caseId);
         }
@@ -101,8 +116,8 @@ public class MotherFormProcessor {
         return infoMap;
     }
 
-    private Map<String, String> parseCaseInfo(FormValueElement caseElement,
-            CommcareForm commcareForm) throws BeneficiaryException {
+
+    private Map<String, String> parseCaseInfo(FormValueElement caseElement) {
         Map<String, String> caseInfo = new HashMap<>();
         final String caseId = caseElement.getAttributes().get("case_id");
 
