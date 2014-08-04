@@ -381,6 +381,7 @@ public class CareDataRepository {
     public MctsPregnantMother getMotherFromPrimaryId(int primaryId) {
         String queryString = "from MctsPregnantMother mother where mother.id='"
                 + primaryId + "'";
+        LOGGER.debug("queryString : "+queryString);
         List<MctsPregnantMother> mother = getCurrentSession().createQuery(
                 queryString).list();
         if (mother.size() == 0) {
