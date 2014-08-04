@@ -8,15 +8,14 @@ import org.motechproject.mcts.integration.hibernate.model.DontKnowForm;
 import org.motechproject.mcts.integration.hibernate.model.MapExistingForm;
 import org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatusLookup;
 import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsUpdate;
 import org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm;
 import org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
+import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.utils.CommcareNamespaceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +57,11 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
                             .toString(motherCase.getId()));
-            MotherCaseMctsAuthorizedStatusLookup authorizeStatus = careDataService
-                    .findEntityByField(
-                            MotherCaseMctsAuthorizedStatusLookup.class, "name",
-                            motherForm.get("authorized"));
+            
+            //MotherCaseMctsAuthorizedStatus authorizeStatus = getAuthorizedStatus(moth)
+            
             mctsPregnantMother
-                    .setMotherCaseMctsAuthorizedStatus(authorizeStatus);
+                    .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get("authorized")));
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             MappingToApproveForm mappingToApproveForm = new MappingToApproveForm();
@@ -99,11 +97,8 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            MctsPregnantMotherMatchStatusLookup matchStatus = careDataService
-                    .findEntityByField(
-                            MctsPregnantMotherMatchStatusLookup.class, "name",
-                            motherForm.get("mctsMatch"));
-            mctsPregnantMother.setMctsPregnantMotherMatchStatus(matchStatus);
+            
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
 
             careDataService.saveOrUpdate(mctsPregnantMother);
 
@@ -138,18 +133,11 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            MctsPregnantMotherMatchStatusLookup matchStatus = careDataService
-                    .findEntityByField(
-                            MctsPregnantMotherMatchStatusLookup.class, "name",
-                            motherForm.get("mctsMatch"));
-            MotherCaseMctsAuthorizedStatusLookup authorizedStatus = careDataService
-                    .findEntityByField(
-                            MotherCaseMctsAuthorizedStatusLookup.class, "name",
-                            motherForm.get("authorized"));
+          
 
-            mctsPregnantMother.setMctsPregnantMotherMatchStatus(matchStatus);
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
             mctsPregnantMother
-                    .setMotherCaseMctsAuthorizedStatus(authorizedStatus);
+            .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get("authorized")));
             mctsPregnantMother.setMotherCase(motherCase);
 
             careDataService.saveOrUpdate(mctsPregnantMother);
@@ -223,11 +211,8 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            MctsPregnantMotherMatchStatusLookup matchStatus = careDataService
-                    .findEntityByField(
-                            MctsPregnantMotherMatchStatusLookup.class, "name",
-                            motherForm.get("mctsMatch"));
-            mctsPregnantMother.setMctsPregnantMotherMatchStatus(matchStatus);
+            
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             UnmappedToReviewForm unmappedToReviewForm = new UnmappedToReviewForm();
@@ -262,13 +247,9 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            MctsPregnantMotherMatchStatusLookup matchStatus = careDataService
-                    .findEntityByField(
-                            MctsPregnantMotherMatchStatusLookup.class, "name",
-                            motherForm.get("mctsMatch"));
             mctsPregnantMother.setHhNumber(motherForm.get("hhNumber"));
             mctsPregnantMother.setFamilyNumber(motherForm.get("familyNumber"));
-            mctsPregnantMother.setMctsPregnantMotherMatchStatus(matchStatus);
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
             careDataService.saveOrUpdate(mctsPregnantMother);
             
             mctsFormUpdateService
@@ -322,12 +303,54 @@ public class FormsProcessor {
                 logger.error(String.format("Received case doesn't have Mother case with with case Id = %s",motherForm.get("pregnancyId")));
                 return;
             }
-            MctsPregnantMotherMatchStatusLookup matchStatus = careDataService.findEntityByField(MctsPregnantMotherMatchStatusLookup.class, "name", motherForm.get("mctsMatch"));
-            mctsPregnantMother.setMctsPregnantMotherMatchStatus(matchStatus);
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
             mctsPregnantMother.setMotherCase(motherCase);
             
             careDataService.saveOrUpdate(mctsPregnantMother);
         }
         
+    }
+    
+    private MCTSPregnantMotherMatchStatus getMatchStatus(String status) {
+        if("closed".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.CLOSED;
+        }
+        else if("yes".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.YES;
+        }
+        else if("no".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.NO;
+        }
+        else if("unknown".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.UNKNOWN;
+        }
+        else if("archive".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.ARCHIVE;
+        }
+        else if("blank".equals(status)) {
+            return MCTSPregnantMotherMatchStatus.BLANK;
+        }
+        else {
+            return null;
+        }
+    }
+    
+    
+    private MCTSPregnantMotherCaseAuthorisedStatus getAuthorizedStatus(String status) {
+        if("pending".equals(status)) {
+            return MCTSPregnantMotherCaseAuthorisedStatus.PENDING;
+        }
+        else if("approved".equals(status)) {
+            return MCTSPregnantMotherCaseAuthorisedStatus.APPROVED;
+        }
+        else if("denied".equals(status)) {
+            return MCTSPregnantMotherCaseAuthorisedStatus.DENIED;
+        }
+        else if("blank".equals(status)) {
+            return MCTSPregnantMotherCaseAuthorisedStatus.BLANK;
+        }
+        else {
+            return null;
+        }
     }
 }

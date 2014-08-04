@@ -5,6 +5,7 @@ package org.motechproject.mcts.integration.service;
 
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
+import org.motechproject.mcts.integration.commcare.CloseData;
 import org.motechproject.mcts.integration.commcare.Data;
 import org.motechproject.mcts.integration.commcare.UpdateData;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
@@ -131,5 +132,10 @@ public class MCTSHttpClientService {
                             response.getStatusCode(), response.getBody()));
         }
         return response.getStatusCode();
+    }
+
+    public HttpStatus syncToCloseCommcare(CloseData data) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

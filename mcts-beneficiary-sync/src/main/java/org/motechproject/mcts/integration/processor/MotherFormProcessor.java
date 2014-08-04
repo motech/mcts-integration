@@ -28,13 +28,8 @@ public class MotherFormProcessor {
     @Autowired
     FormsProcessor formsProcessor;
     
-    @Autowired
-    private UnapprovedFormProcessor unapprovedFormProcessor;
-    @Autowired
-    private ApprovedFormProcessor approvedFormProcessor;
-    @Autowired
-    private ClosedFormProcessor closedFormProcessor;
-
+    
+   
     public MotherFormProcessor() {
 
     }
