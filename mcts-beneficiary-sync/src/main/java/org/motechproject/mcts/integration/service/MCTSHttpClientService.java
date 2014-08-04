@@ -135,7 +135,19 @@ public class MCTSHttpClientService {
     }
 
     public HttpStatus syncToCloseCommcare(CloseData data) {
-        // TODO Auto-generated method stub
-        return null;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+        ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
+                .executeWithReturnTypeSync(CommcareConstants.POSTURL,
+                        httpEntity, Method.POST);
+
+        if (response != null) {
+            LOGGER.info(String
+                    .format("Sync done successfully for Creating the Xml. Response [StatusCode %s] : %s",
+                            response.getStatusCode(), response.getBody()));
+        }
+
+        return response.getStatusCode();
     }
 }

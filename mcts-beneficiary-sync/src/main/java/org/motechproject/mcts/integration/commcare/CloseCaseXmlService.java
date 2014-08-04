@@ -76,13 +76,7 @@ public class CloseCaseXmlService {
             mctsPregnantMother.get(i).setmCTSPregnantMotherMatchStatus(MCTSPregnantMotherMatchStatus.ARCHIVE);
             Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),
                     userId);
-
-            if ((caseTask.getCreateTask().getCaseName() != null)
-                    && (caseTask.getUpdateTask().getMctsHusbandName() != null)
-                    && (caseTask.getUpdateTask().getMctsHusbandNameEn() != null)
-                    && (caseTask.getUpdateTask().getMctsFullnameEn() != null)) {
-                cases.add(caseTask);
-            }
+            cases.add(caseTask);
         }
         data.setCases(cases);
         return data;

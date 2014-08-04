@@ -435,7 +435,7 @@ public class CareDataRepository {
         DateTime lastDate = date.minusDays(180);
         String queryString = "from MctsPregnantMother mother where mother.creationTime<DATE('"
                 + lastDate.toString("yyyy-MM-dd")
-                + "') and mother.mctsPregnantMotherMatchStatus=null and mother.motherCaseMctsAuthorizedStatus=null";
+                + "') and mother.mCTSPregnantMotherCaseAuthorisedStatus=null and mother.mCTSPregnantMotherMatchStatus=null";
         List<MctsPregnantMother> mother = getCurrentSession().createQuery(
                 queryString).list();
         if (mother.size() == 0) {
