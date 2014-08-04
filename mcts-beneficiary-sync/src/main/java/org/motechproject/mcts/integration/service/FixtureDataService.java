@@ -69,10 +69,22 @@ public class FixtureDataService {
         }
     }
 
-    public String getCaseGroupIdfromAshaId(int id, String mctsId) {
-
-        String caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+    public String getCaseGroupIdfromAshaId(Integer id, String mctsId) {
+        
+        String caseGroupId;
+        if (id == null) {
+            String locationId = mctsId.substring(0, 10);
+            caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
+            if (caseGroupId == null) {
+                return null;
+            }
+            else {
+                return caseGroupId;
+            }
+        }
+        caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
         if (caseGroupId == null) {
+            
             updateGroupId();
             caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
             if (caseGroupId == null) {
