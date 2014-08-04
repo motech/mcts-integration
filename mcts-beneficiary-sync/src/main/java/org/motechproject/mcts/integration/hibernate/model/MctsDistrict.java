@@ -2,13 +2,15 @@ package org.motechproject.mcts.integration.hibernate.model;
 
 // Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,90 +24,94 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "mcts_district", schema = "report", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"disctrict_id", "state_id" }))
+        "disctrict_id", "state_id" }))
 public class MctsDistrict implements java.io.Serializable {
 
-	private Integer id;
-	private MctsState mctsState;
-	private int disctrictId;
-	private String name;
-	private boolean status;
-	private Set<MctsTaluk> mctsTaluks = new HashSet<MctsTaluk>(0);
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4872124086594538378L;
+    private Integer id;
+    private MctsState mctsState;
+    private int disctrictId;
+    private String name;
+    private boolean status;
+    private Set<MctsTaluk> mctsTaluks = new HashSet<MctsTaluk>(0);
 
-	public MctsDistrict() {
-	}
+    public MctsDistrict() {
+    }
 
-	public MctsDistrict(MctsState mctsState, int disctrictId, String name) {
-		this.mctsState = mctsState;
-		this.disctrictId = disctrictId;
-		this.name = name;
-	}
+    public MctsDistrict(MctsState mctsState, int disctrictId, String name) {
+        this.mctsState = mctsState;
+        this.disctrictId = disctrictId;
+        this.name = name;
+    }
 
-	public MctsDistrict(MctsState mctsState, int disctrictId, String name,
-			Set<MctsTaluk> mctsTaluks, boolean status) {
-		this.mctsState = mctsState;
-		this.disctrictId = disctrictId;
-		this.name = name;
-		this.mctsTaluks = mctsTaluks;
-		this.status = status;
-	}
+    public MctsDistrict(MctsState mctsState, int disctrictId, String name,
+            Set<MctsTaluk> mctsTaluks, boolean status) {
+        this.mctsState = mctsState;
+        this.disctrictId = disctrictId;
+        this.name = name;
+        this.mctsTaluks = mctsTaluks;
+        this.status = status;
+    }
 
-	@SequenceGenerator(name = "generator", sequenceName = "mcts_district_id_seq")
-	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @SequenceGenerator(name = "generator", sequenceName = "mcts_district_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "state_id", nullable = false)
-	public MctsState getMctsState() {
-		return this.mctsState;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "state_id", nullable = false)
+    public MctsState getMctsState() {
+        return this.mctsState;
+    }
 
-	public void setMctsState(MctsState mctsState) {
-		this.mctsState = mctsState;
-	}
+    public void setMctsState(MctsState mctsState) {
+        this.mctsState = mctsState;
+    }
 
-	@Column(name = "disctrict_id", nullable = false)
-	public int getDisctrictId() {
-		return this.disctrictId;
-	}
+    @Column(name = "disctrict_id", nullable = false)
+    public int getDisctrictId() {
+        return this.disctrictId;
+    }
 
-	public void setDisctrictId(int disctrictId) {
-		this.disctrictId = disctrictId;
-	}
+    public void setDisctrictId(int disctrictId) {
+        this.disctrictId = disctrictId;
+    }
 
-	@Column(name = "name", nullable = false)
-	public String getName() {
-		return this.name;
-	}
+    @Column(name = "name", nullable = false)
+    public String getName() {
+        return this.name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Column(name = "status")
-	public boolean getStatus() {
-		return this.status;
-	}
+    @Column(name = "status")
+    public boolean getStatus() {
+        return this.status;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsDistrict")
-	public Set<MctsTaluk> getMctsTaluks() {
-		return this.mctsTaluks;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsDistrict")
+    public Set<MctsTaluk> getMctsTaluks() {
+        return this.mctsTaluks;
+    }
 
-	public void setMctsTaluks(Set<MctsTaluk> mctsTaluks) {
-		this.mctsTaluks = mctsTaluks;
-	}
+    public void setMctsTaluks(Set<MctsTaluk> mctsTaluks) {
+        this.mctsTaluks = mctsTaluks;
+    }
 
 }

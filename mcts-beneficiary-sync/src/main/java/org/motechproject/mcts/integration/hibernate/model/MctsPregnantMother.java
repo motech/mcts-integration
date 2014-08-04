@@ -2,12 +2,14 @@ package org.motechproject.mcts.integration.hibernate.model;
 
 // Generated May 26, 2014 2:25:24 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;

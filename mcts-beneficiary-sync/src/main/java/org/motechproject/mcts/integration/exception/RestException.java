@@ -6,39 +6,38 @@ import org.springframework.http.HttpStatus;
 
 public class RestException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static final long STATUS = 500;
 
-	private String reason;
+    private String reason;
 
-	private BeneficiaryException batchException;
+    private BeneficiaryException batchException;
 
-	public RestException(BeneficiaryException exception, List<String> errors) {
-		this(exception, errors.toString());
-	}
+    public RestException(BeneficiaryException exception, List<String> errors) {
+        this(exception, errors.toString());
+    }
 
-	public RestException(BeneficiaryException batchException, String reason) {
-		super("HttpStatus:" + batchException.getError().getHttpStatus()
-				+ " reason:" + reason);
-		this.reason = reason;
-		this.batchException = batchException;
-	}
-	
-	public RestException(Exception batchException, String reason) {
-		super("HttpStatus:" + 500
-				+ " reason:" + reason);
-		this.reason = reason;
-		//this.batchException = batchException;
-	}
+    public RestException(BeneficiaryException batchException, String reason) {
+        super("HttpStatus:" + batchException.getError().getHttpStatus()
+                + " reason:" + reason);
+        this.reason = reason;
+        this.batchException = batchException;
+    }
 
-	public HttpStatus getHttpStatus() {
-		return getBatchException().getError().getHttpStatus();
-	}
+    public RestException(String reason) {
+        super("HttpStatus:" + STATUS + " reason:" + reason);
+        this.reason = reason;
+    }
 
-	public String getReason() {
-		return reason;
-	}
+    public HttpStatus getHttpStatus() {
+        return getBatchException().getError().getHttpStatus();
+    }
 
-	public BeneficiaryException getBatchException() {
-		return batchException;
-	}
+    public String getReason() {
+        return reason;
+    }
+
+    public BeneficiaryException getBatchException() {
+        return batchException;
+    }
 }

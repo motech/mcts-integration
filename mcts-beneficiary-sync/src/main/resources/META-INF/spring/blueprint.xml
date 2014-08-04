@@ -19,12 +19,6 @@
 
     <osgi:reference id="platformSettingsService"
                     interface="org.motechproject.server.config.service.PlatformSettingsService"/>
-
-
-                    
-    <osgi:reference id="jobTriggerService"
-                    interface="org.motechproject.batch.service.JobTriggerService"/> 
-
     
 
 

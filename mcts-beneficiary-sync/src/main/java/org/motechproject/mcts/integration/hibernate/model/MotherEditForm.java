@@ -1,17 +1,31 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.motechproject.mcts.integration.hibernate.model.Flw;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-
-import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "mother_edit_form", uniqueConstraints = @UniqueConstraint(columnNames = "instance_id"))
 public class MotherEditForm extends Form {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6311154176644796785L;
     private int id;
     private Flw flw;
     private MotherCase motherCase;
@@ -58,20 +72,13 @@ public class MotherEditForm extends Form {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-   @Cascade({	CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK, CascadeType.EVICT })
-    public Flw getFlw() {
-        return this.flw;
-    }
-
-    public void setFlw(Flw flw) {
-        this.flw = flw;
-    }
+    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
-   @Cascade({	CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK, CascadeType.EVICT })
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
+            CascadeType.EVICT })
     public MotherCase getMotherCase() {
         return this.motherCase;
     }
@@ -95,7 +102,20 @@ public class MotherEditForm extends Form {
     public Date getTimeStart() {
         return this.timeStart;
     }
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.REPLICATE, CascadeType.LOCK,
+            CascadeType.EVICT })
+    public Flw getFlw() {
+        return this.flw;
+    }
 
+    public void setFlw(Flw flw) {
+        this.flw = flw;
+    }
+    
     public void setTimeStart(Date timeStart) {
         this.timeStart = timeStart;
     }
@@ -164,7 +184,6 @@ public class MotherEditForm extends Form {
     public void setAge(Integer age) {
         this.age = age;
     }
-
 
     @Column(name = "update_ward_number")
     public String getUpdateWardNumber() {

@@ -1,16 +1,26 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "location_dimension", uniqueConstraints = @UniqueConstraint(columnNames = {"state", "district", "block"}))
+@Table(name = "location_dimension", uniqueConstraints = @UniqueConstraint(columnNames = {
+        "state", "district", "block" }))
 public class LocationDimension implements java.io.Serializable {
 
-	private int id;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6060839638633366766L;
+    private int id;
     private String state;
     private String district;
-	private String block;
+    private String block;
 
     public LocationDimension() {
 
@@ -23,16 +33,15 @@ public class LocationDimension implements java.io.Serializable {
     }
 
     @Id
-	@Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public int getId() {
-		return this.id;
-	}
+    public int getId() {
+        return this.id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
+    public void setId(int id) {
+        this.id = id;
+    }
 
     @Column(name = "state")
     public String getState() {
@@ -42,7 +51,6 @@ public class LocationDimension implements java.io.Serializable {
     public void setState(String state) {
         this.state = state;
     }
-
 
     @Column(name = "district")
     public String getDistrict() {

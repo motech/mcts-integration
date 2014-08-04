@@ -1,14 +1,19 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
 
 @MappedSuperclass
 public class Form implements java.io.Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3677815893832100806L;
+
     @ExternalPrimaryKey
     private String instanceId;
 
@@ -48,7 +53,6 @@ public class Form implements java.io.Serializable {
     public void setServerDateModified(Date serverDateModified) {
         this.serverDateModified = serverDateModified;
     }
-
 
     @Column(name = "delivery_offset_days")
     public Integer getDeliveryOffsetDays() {

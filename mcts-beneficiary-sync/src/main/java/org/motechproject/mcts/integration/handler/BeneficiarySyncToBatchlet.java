@@ -12,32 +12,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class BeneficiarySyncToBatchlet implements Batchlet{
-	
+public class BeneficiarySyncToBatchlet implements Batchlet {
 
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(BeneficiarySyncToBatchlet.class);
-	List<Beneficiary> beneficiariesList = new ArrayList<Beneficiary>();
-	private DateTime startDate = new DateTime(2014,01,03,12,30,30);
-	private DateTime endDate = new DateTime(2014,02,03,12,30,30);
-	
-	@Autowired
-	MCTSBeneficiarySyncService mctsBeneficiarySyncService;
-	
-	 @Override
-	public String process() throws Exception {
-		 mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
-		 LOGGER.info("beneficiaries list size"+Integer.toString(beneficiariesList.size()));
-		 System.out.println("beneficiaries list size"+Integer.toString(beneficiariesList.size()));
-		return null;
-	}
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(BeneficiarySyncToBatchlet.class);
+    private List<Beneficiary> beneficiariesList = new ArrayList<Beneficiary>();
+    private DateTime startDate = new DateTime();
+    private DateTime endDate = new DateTime();
 
-	@Override
-	public void stop() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+    @Autowired
+    private MCTSBeneficiarySyncService mctsBeneficiarySyncService;
 
+    @Override
+    public String process() {
+        mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        LOGGER.info("beneficiaries list size"
+                + Integer.toString(beneficiariesList.size()));
+        return null;
+    }
 
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

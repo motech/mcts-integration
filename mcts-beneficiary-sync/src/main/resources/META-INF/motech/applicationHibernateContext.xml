@@ -36,18 +36,20 @@
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsSubcenter</value>
-				<!-- <value>org.motechproject.mcts.integration.hibernate.model.MctsFlwData</value> -->
-				<!-- <value>org.motechproject.mcts.integration.hibernate.model.MctsLocationMaster</value> -->
 				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
-				<!-- <value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatus</value> 
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatus</value>-->
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsUpdate</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatusLookup</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.DontKnowForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MapExistingForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.CaseAlreadyClosedForm</value>
 			</list>
 		</property>
 	</bean>
@@ -64,7 +66,7 @@
 				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
 				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
 				<prop key="hibernate.default_schema">${hibernate.default_schema}</prop>
-            	<prop key="hibernate.hbm2ddl.auto">validate</prop>
+            	<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
 	</bean>

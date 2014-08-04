@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationBeneficiarySyncContextTest.xml"})
+@ContextConfiguration(locations = {"classpath:applicationTestContext.xml"})
 @Transactional
 public class BaseRepositoryIT {
 
@@ -23,7 +23,6 @@ public class BaseRepositoryIT {
         return sessionFactory.getCurrentSession();
     }
     
-    @Ignore
     @Test
     public void testIsSessionFactoryAvailable(){
     	Assert.notNull(getCurrentSession());

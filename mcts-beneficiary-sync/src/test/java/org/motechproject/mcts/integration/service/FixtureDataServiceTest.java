@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,5 +78,14 @@ public class FixtureDataServiceTest {
 	public void shouldUpdateGroupId() throws Exception {
 		fixtureDataService.updateGroupId();
 		verify(careDataRepository, times(2)).saveOrUpdate((MctsHealthworker)any());
+	}
+	
+	@Test
+	public void shouldGetCaseGroupIdfromAshaId() {
+	    when(careDataRepository.getCaseGroupIdfromAshaId(15)).thenReturn(null).thenReturn("123");
+	    String groupId = fixtureDataService.getCaseGroupIdfromAshaId(15,"123");
+	    
+	    assertEquals("123",groupId);
+	    
 	}
 }

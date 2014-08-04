@@ -18,7 +18,7 @@ public abstract class SelfUpdatable<T> {
 						this.getClass().getName(), thisId, otherId));
 	}
 
-	protected void updateFields(T source, List<String> ignoredFields) {
+	protected void updateFields(T source, List<String> ignoredFields)  {
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (ignoredFields.contains(field.getName()))
 				continue;

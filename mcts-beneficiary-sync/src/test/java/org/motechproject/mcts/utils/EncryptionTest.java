@@ -23,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 
 public class EncryptionTest {
 	
@@ -39,7 +40,7 @@ public class EncryptionTest {
 	}
 	
 	@Test
-	public void shouldTestDecryprtion() throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, IOException
+	public void shouldTestDecryprtion() throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, IOException, BeneficiaryException
 	{
 		String password = "motech@motech";
 		String encrypted = Encryption.encryptWithTimeInSeconds(password);

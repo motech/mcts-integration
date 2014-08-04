@@ -9,19 +9,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Updates")
 public class ListOfBeneficiariesUpdatesDTO {
-	
-	@XmlElement(name = "BeneficiaryUpdate")
-	    private List<BeneficiaryUpdateDTO> allBeneficiaryUpdates;
 
-	    public ListOfBeneficiariesUpdatesDTO() {
-	        allBeneficiaryUpdates = new ArrayList<>();
-	    }
+    @XmlElement(name = "BeneficiaryUpdate")
+    private List<BeneficiaryUpdateDTO> allBeneficiaryUpdates;
 
-	    public void addBeneficiaryDetails(BeneficiaryUpdateDTO beneficiaryUpdate) {
-	        allBeneficiaryUpdates.add(beneficiaryUpdate);
-	    }
+    public ListOfBeneficiariesUpdatesDTO() {
+        allBeneficiaryUpdates = new ArrayList<>();
+    }
 
-	    public List<BeneficiaryUpdateDTO> getAllBeneficiaryDetails() {
-	        return allBeneficiaryUpdates;
-	    }
+    public void addBeneficiaryDetails(BeneficiaryUpdateDTO beneficiaryUpdate) {
+        allBeneficiaryUpdates.add(beneficiaryUpdate);
+    }
+
+    public List<BeneficiaryUpdateDTO> getAllBeneficiaryDetails() {
+        return allBeneficiaryUpdates;
+    }
 }

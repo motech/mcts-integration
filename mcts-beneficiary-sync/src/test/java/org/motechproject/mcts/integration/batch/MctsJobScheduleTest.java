@@ -1,37 +1,36 @@
 package org.motechproject.mcts.integration.batch;
-import java.util.Properties;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
-@Ignore
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationBeneficiarySyncContextTest.xml"})
+
+@RunWith(MockitoJUnitRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationTestContext.xml"})
 public class MctsJobScheduleTest {
 
-	@Autowired
+	@Mock
 	private RestTemplate mctsRestTemplate;
-	private Properties properties;
-	@Autowired
+	@Mock
 	private BatchServiceUrlGenerator batchServiceUrlGenerator;
-	
+	@Mock HttpAgent httpAgentServiceOsgi;
+	@InjectMocks MctsJobSchedule schedule = new MctsJobSchedule(mctsRestTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
 	@Test
 	public void ScheduleJobtest() {
 		System.out.println("started test");
-		//MctsJobSchedule schedule = new MctsJobSchedule(mctsRestTemplate,batchServiceUrlGenerator);
-		//schedule.scheduleJob("mcts-job","0 15 10 * * ? 2014");
+		schedule.scheduleJob("mcts-job","0 15 10 * * ? 2014");
 	}
 	
 	
 	@Test
 	public void triggerJobTest() {
-		//MctsJobTrigger schedule = new MctsJobTrigger(mctsRestTemplate,batchServiceUrlGenerator);
-		//schedule.triggerJob();
+		MctsJobTrigger schedule = new MctsJobTrigger(mctsRestTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
+		schedule.triggerJob();
 	}
 	
 }

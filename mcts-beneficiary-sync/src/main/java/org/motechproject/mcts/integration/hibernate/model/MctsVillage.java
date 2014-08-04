@@ -2,13 +2,15 @@ package org.motechproject.mcts.integration.hibernate.model;
 
 // Generated May 19, 2014 7:55:47 PM by Hibernate Tools 3.4.0.CR1
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -22,105 +24,110 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "mcts_village", schema = "report", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"village_id", "subcenter_id", "taluk_id" }))
+        "village_id", "subcenter_id", "taluk_id" }))
 public class MctsVillage implements java.io.Serializable {
 
-	private Integer id;
-	private MctsTaluk mctsTaluk;
-	private MctsSubcenter mctsSubcenter;
-	private int villageId;
-	private String name;
-	private boolean status;
-	private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
-			0);
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3995277117692611278L;
+    private Integer id;
+    private MctsTaluk mctsTaluk;
+    private MctsSubcenter mctsSubcenter;
+    private int villageId;
+    private String name;
+    private boolean status;
+    private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
+            0);
 
-	public MctsVillage() {
-	}
+    public MctsVillage() {
+    }
 
-	public MctsVillage(MctsTaluk mctsTaluk, MctsSubcenter mctsSubcenter,
-			int villageId, String name) {
-		this.mctsTaluk = mctsTaluk;
-		this.mctsSubcenter = mctsSubcenter;
-		this.villageId = villageId;
-		this.name = name;
-	}
+    public MctsVillage(MctsTaluk mctsTaluk, MctsSubcenter mctsSubcenter,
+            int villageId, String name) {
+        this.mctsTaluk = mctsTaluk;
+        this.mctsSubcenter = mctsSubcenter;
+        this.villageId = villageId;
+        this.name = name;
+    }
 
-	public MctsVillage(MctsTaluk mctsTaluk, MctsSubcenter mctsSubcenter,
-			int villageId, String name, Set<MctsHealthworker> mctsHealthworkers, boolean status) {
-		this.mctsTaluk = mctsTaluk;
-		this.mctsSubcenter = mctsSubcenter;
-		this.villageId = villageId;
-		this.name = name;
-		this.mctsHealthworkers = mctsHealthworkers;
-		this.status = status;
-	}
+    public MctsVillage(MctsTaluk mctsTaluk, MctsSubcenter mctsSubcenter,
+            int villageId, String name,
+            Set<MctsHealthworker> mctsHealthworkers, boolean status) {
+        this.mctsTaluk = mctsTaluk;
+        this.mctsSubcenter = mctsSubcenter;
+        this.villageId = villageId;
+        this.name = name;
+        this.mctsHealthworkers = mctsHealthworkers;
+        this.status = status;
+    }
 
-	@SequenceGenerator(name = "generator", sequenceName = "mcts_village_id_seq")
-	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @SequenceGenerator(name = "generator", sequenceName = "mcts_village_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "taluk_id", nullable = false)
-	public MctsTaluk getMctsTaluk() {
-		return this.mctsTaluk;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "taluk_id", nullable = false)
+    public MctsTaluk getMctsTaluk() {
+        return this.mctsTaluk;
+    }
 
-	public void setMctsTaluk(MctsTaluk mctsTaluk) {
-		this.mctsTaluk = mctsTaluk;
-	}
+    public void setMctsTaluk(MctsTaluk mctsTaluk) {
+        this.mctsTaluk = mctsTaluk;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subcenter_id", nullable = false)
-	public MctsSubcenter getMctsSubcenter() {
-		return this.mctsSubcenter;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcenter_id", nullable = false)
+    public MctsSubcenter getMctsSubcenter() {
+        return this.mctsSubcenter;
+    }
 
-	public void setMctsSubcenter(MctsSubcenter mctsSubcenter) {
-		this.mctsSubcenter = mctsSubcenter;
-	}
+    public void setMctsSubcenter(MctsSubcenter mctsSubcenter) {
+        this.mctsSubcenter = mctsSubcenter;
+    }
 
-	@Column(name = "village_id", nullable = false)
-	public int getVillageId() {
-		return this.villageId;
-	}
+    @Column(name = "village_id", nullable = false)
+    public int getVillageId() {
+        return this.villageId;
+    }
 
-	public void setVillageId(int villageId) {
-		this.villageId = villageId;
-	}
+    public void setVillageId(int villageId) {
+        this.villageId = villageId;
+    }
 
-	@Column(name = "name", nullable = false)
-	public String getName() {
-		return this.name;
-	}
+    @Column(name = "name", nullable = false)
+    public String getName() {
+        return this.name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Column(name = "status")
-	public boolean getStatus() {
-		return this.status;
-	}
+    @Column(name = "status")
+    public boolean getStatus() {
+        return this.status;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsVillage")
-	public Set<MctsHealthworker> getMctsHealthworkers() {
-		return this.mctsHealthworkers;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsVillage")
+    public Set<MctsHealthworker> getMctsHealthworkers() {
+        return this.mctsHealthworkers;
+    }
 
-	public void setMctsHealthworkers(Set<MctsHealthworker> mctsHealthworkers) {
-		this.mctsHealthworkers = mctsHealthworkers;
-	}
+    public void setMctsHealthworkers(Set<MctsHealthworker> mctsHealthworkers) {
+        this.mctsHealthworkers = mctsHealthworkers;
+    }
 
 }

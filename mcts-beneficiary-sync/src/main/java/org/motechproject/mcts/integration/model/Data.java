@@ -2,31 +2,28 @@ package org.motechproject.mcts.integration.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 
-
 public class Data {
-	private List<Objects> objects;
-	private Meta meta;
+    private List<Objects> objects;
+    private Meta meta;
 
-	public Meta getMeta() {
-		return meta;
-	}
-	@JsonProperty("meta")
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+    public Meta getMeta() {
+        return meta;
+    }
 
-	public List<Objects> getObjects() {
-		return objects;
-	}
-	@JsonProperty("objects")
-	public void setObjects(List<Objects> objects) {
-		this.objects = objects;
-	}
+    @JsonProperty("meta")
+    public void setMeta(Meta meta) {
+        this.meta = meta;
+    }
 
-	
+    public List<Objects> getObjects() {
+        return objects;
+    }
+
+    @JsonProperty("objects")
+    public void setObjects(List<Objects> objects) {
+        this.objects = objects;
+    }
+
 }

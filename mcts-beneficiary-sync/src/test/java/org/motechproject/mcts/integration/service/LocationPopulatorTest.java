@@ -1,35 +1,34 @@
 package org.motechproject.mcts.integration.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
 
-import java.io.File;
-import java.lang.Object;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog;
+import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
+import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
+import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
 import org.motechproject.mcts.integration.hibernate.model.MctsState;
+import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
+import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
+import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationPopulatorTest {
-	@InjectMocks
+    
+    @InjectMocks
 	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
 
 	@Mock
@@ -37,56 +36,48 @@ public class LocationPopulatorTest {
 
 	@Mock
 	private PropertyReader propertyReader;
-
+	
+	private MctsState mctsState;
+	private MctsDistrict mctsDistrict;
+	private MctsTaluk mctsTaluk;
+	private MctsHealthblock mctsHealthblock;
+	private MctsPhc mctsPhc;
+	private MctsSubcenter mctsSubcenter;
+	private MctsVillage mctsVillage;
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		  
+		  
+		  mctsState = new MctsState(10, "Bihar");
+		  mctsDistrict = new MctsDistrict(mctsState, 11, "Saharsa");
+		  mctsTaluk = new MctsTaluk(mctsDistrict, 12, "Saur Bazar");
+		  mctsHealthblock = new MctsHealthblock(mctsTaluk, 13, "Saor Bazar");
+		  mctsPhc = new MctsPhc(mctsHealthblock, 14, "saur bazar");
+		  mctsSubcenter = new MctsSubcenter(mctsPhc, 15, "saor bazar");
+		  mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter, 16, "random");
+		  
+		  
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldSyncCsvDataToLocationMaster() throws Exception {
-		File file = new File("src/test/resources/location2.csv");
-		System.out.println("size : "+file.getTotalSpace());
-		DiskFileItem fileItem = new DiskFileItem("file",
-				"application/vnd.ms-excel", false, file.getName(),
-				(int) file.length(), file.getParentFile());
-		fileItem.getOutputStream();
-		System.out.println("content-type : "+fileItem.getContentType());
-		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-		locationDataPopulator.populateLocations(multipartFile);
-		ArgumentCaptor<MctsLocationErrorLog> captor = ArgumentCaptor
-				.forClass(MctsLocationErrorLog.class);
-		ArgumentCaptor<Object> captor2 = ArgumentCaptor.forClass(Object.class);
-		verify(careDataRepository).saveOrUpdate(captor.capture());
-		MctsLocationErrorLog mctsLocationMaster = captor.getValue();
-		assertEquals("Saur Bazar", mctsLocationMaster.getTalukaname());
-		assertEquals("Saor Bazar", mctsLocationMaster.getBlock());
-		verify(careDataRepository).saveOrUpdate((MctsLocationErrorLog) any());
-		verify(careDataRepository, times(1)).saveOrUpdate(
-				(MctsLocationErrorLog) any());
-		verify(careDataRepository, times(7)).saveOrUpdate(captor2.capture());
+	  
+		
+		String content = new String(Files.readAllBytes(Paths.get("src/test/resources/location2.csv")));
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "location2.csv",                //filename
+                content.getBytes());
+	
+        locationDataPopulator.populateLocations(multipartFile);
+        verify(careDataRepository,times(8)).saveOrUpdate(anyObject());
+		
 	}
+	
+	
+	
+	
 
-	@SuppressWarnings("deprecation")
-	@Test
-	@Ignore
-	public void shouldSyncCsvDataToLocation() throws Exception {
-		when(
-				careDataRepository.findEntityByField(Object.class,
-						eq((String) any()), (Object) any())).thenReturn(null);
-		File file = new File(propertyReader.getFLWCsvFileLocation());// TODO
-																		// Aman
-																		// -
-																		// change
-																		// proeprty
-		// locationDataPopulator.populateLocations(file);
-		ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
-		verify(careDataRepository, times(7)).saveOrUpdate(captor.capture());
-		Object object = captor.getValue();
-		// assertEquals("Bihar",mctsState.getName());
-		// verify(careDataRepository).saveOrUpdate((Object)any());
-		verify(careDataRepository, times(7)).saveOrUpdate((Object) any());
-
-	}
+	
 }

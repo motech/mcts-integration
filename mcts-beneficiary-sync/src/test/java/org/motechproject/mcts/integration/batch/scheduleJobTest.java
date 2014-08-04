@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.batch;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.eq;
@@ -14,10 +15,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.http.agent.service.Method;
+import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.springframework.web.client.RestTemplate;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class scheduleJobTest {
 	
@@ -25,7 +27,8 @@ public class scheduleJobTest {
 	String jobName;
 	@Mock RestTemplate restTemplate;
 	@Mock BatchServiceUrlGenerator batchServiceUrlGenerator;
-	//@InjectMocks MctsJobSchedule jobSchedule = new MctsJobSchedule(restTemplate, batchServiceUrlGenerator);
+	@Mock HttpAgent httpAgentServiceOsgi;
+	@InjectMocks MctsJobSchedule jobSchedule = new MctsJobSchedule(restTemplate, batchServiceUrlGenerator, httpAgentServiceOsgi);
 	
 	@Before
 	 public void setUp() {
@@ -38,9 +41,9 @@ public class scheduleJobTest {
 
 		when(batchServiceUrlGenerator.getScheduleBatchUrl()).thenReturn("localhost");
 		when(restTemplate.postForObject(batchServiceUrlGenerator.getScheduleBatchUrl(), HttpEntity.class,String.class)).thenReturn(null);
-		//jobSchedule.scheduleJob(jobName, cronExpression);
-		verify(restTemplate).postForObject((String) any(), (HttpEntity) any(), eq(String.class));
-		verify(restTemplate, times(1)).postForObject((String) any(), (HttpEntity) any(), eq(String.class));
+		jobSchedule.scheduleJob(jobName, cronExpression);
+		verify(httpAgentServiceOsgi).executeWithReturnTypeSync((String) any(), (HttpEntity) any(), (Method)anyObject());
+		verify(httpAgentServiceOsgi, times(1)).executeWithReturnTypeSync((String) any(), (HttpEntity) any(), (Method)anyObject());
 	}
 	
 }

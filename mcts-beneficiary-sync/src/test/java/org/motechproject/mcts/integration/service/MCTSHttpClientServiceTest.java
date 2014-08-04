@@ -1,5 +1,6 @@
 package org.motechproject.mcts.integration.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,25 +9,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.mcts.integration.commcare.Data;
+import org.motechproject.mcts.integration.commcare.UpdateData;
+import org.motechproject.http.agent.service.Method;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
+import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MCTSHttpClientServiceTest {
@@ -35,31 +40,30 @@ public class MCTSHttpClientServiceTest {
 	private PropertyReader propertyReader;
 	
 	@Mock
-	private RestTemplate restTemplate;
+	private HttpAgent httpAgentServiceOsgi;
 
-	//@InjectMocks
-	//private MCTSHttpClientService mctsHttpClientService = new MCTSHttpClientService(restTemplate, propertyReader);
+	@InjectMocks
+	private MCTSHttpClientService mctsHttpClientService = new MCTSHttpClientService(propertyReader,httpAgentServiceOsgi);
 
 	@Before
 	public void setUp() throws Exception {
 		 MockitoAnnotations.initMocks(this);
 	}
 	
-	@Ignore
 	@Test
-	public void shouldSyncBeneficiariesToMCTS() {
+	public void shouldSyncBeneficiariesToMCTS() throws BeneficiaryException {
 		String requestUrl = "requestUrl";
 		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
 		when(propertyReader.getUpdateRequestUrl()).thenReturn(
 				requestUrl);
-		ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.OK);
-        when(restTemplate.postForEntity((String)anyObject(), (HttpEntity)anyObject(), (Class)anyObject())).thenReturn(response);
-		//mctsHttpClientService.syncTo(beneficiaryRequest);
-		verify(restTemplate).postForEntity((String)anyObject(), (HttpEntity)anyObject(), (Class)anyObject());
+		ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
+		when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+		mctsHttpClientService.syncTo(beneficiaryRequest);
+		verify(httpAgentServiceOsgi).executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method)anyObject());
 	}
 
 	@Test
-	public void shouldSyncBeneficiariesFromMCTS() {
+	public void shouldSyncBeneficiariesFromMCTS() throws BeneficiaryException {
 		String requestUrl = "requestUrl";
 		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -68,15 +72,32 @@ public class MCTSHttpClientServiceTest {
 				httpHeaders);
 		when(propertyReader.getBeneficiaryListRequestUrl())
 				.thenReturn(requestUrl);
+		
 		NewDataSet expectedResponse = response();
+		String returned =ObjectToXMLConverter.converObjectToXml(expectedResponse, NewDataSet.class);
 		when(
-				restTemplate.exchange((String)anyObject(), (HttpMethod)anyObject(),
-						(HttpEntity)anyObject(), (Class)anyObject())).thenReturn(
-				new ResponseEntity<>(expectedResponse, HttpStatus.OK));
+		        httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn(
+				(ResponseEntity) new ResponseEntity<>(returned, HttpStatus.OK));
 
-		//NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
+		NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
 
-		//assertEquals(response(), actualResponse);
+		assertEquals(response(), actualResponse);
+	}
+	
+	@Test
+	public void shouldSyncToCommcare() {
+	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
+        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+        Data data =  new Data();
+        mctsHttpClientService.syncToCommcare(data);
+	}
+	
+	@Test
+	public void shouldSyncToCommcareUpdate() {
+	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
+        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+        UpdateData data =  new UpdateData();
+        mctsHttpClientService.syncToCommcareUpdate(data);
 	}
 	
 	private NewDataSet response() {
