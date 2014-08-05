@@ -18,6 +18,7 @@ public class MapExistingForm {
     private int id;
     private String confirmMapping;
     private String success;
+    private String notMapped;
     private String mctsId;
     private String fullMctsId;
     private String dateAuthorized;
@@ -57,6 +58,14 @@ public class MapExistingForm {
     }
     public void setSuccess(String success) {
         this.success = success;
+    }
+    
+    @Column(name = "not_mapped")
+    public String getNotMapped() {
+        return notMapped;
+    }
+    public void setNotMapped(String notMapped) {
+        this.notMapped = notMapped;
     }
     
     @Column(name = "mcts_id")

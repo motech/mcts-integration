@@ -18,6 +18,11 @@ public class UnapprovedToDiscussForm {
     private String showReasonDisapproved;
     private String badMapping;
     private String ashaCanFix;
+    private String promptFix;
+    private String ashaFixed;
+    private String needToRemap;
+    private String approvedFix;
+    private String unconfirmed;
     private String ashaNeedsToClose;
     private String anmClose;
     private String confirmAnmClose;
@@ -73,6 +78,46 @@ public class UnapprovedToDiscussForm {
         this.ashaCanFix = ashaCanFix;
     }
     
+    @Column(name = "prompt_fix")
+    public String getPromptFix() {
+        return promptFix;
+    }
+    public void setPromptFix(String promptFix) {
+        this.promptFix = promptFix;
+    }
+    
+    @Column(name = "asha_fixed")
+    public String getAshaFixed() {
+        return ashaFixed;
+    }
+    public void setAshaFixed(String ashaFixed) {
+        this.ashaFixed = ashaFixed;
+    }
+    
+    @Column(name = "need_to_remap")
+    public String getNeedToRemap() {
+        return needToRemap;
+    }
+    public void setNeedToRemap(String needToRemap) {
+        this.needToRemap = needToRemap;
+    }
+    
+    @Column(name = "approved_fix")
+    public String getApprovedFix() {
+        return approvedFix;
+    }
+    public void setApprovedFix(String approvedFix) {
+        this.approvedFix = approvedFix;
+    }
+    
+    @Column(name = "unconfirmed")
+    public String getUnconfirmed() {
+        return unconfirmed;
+    }
+    public void setUnconfirmed(String unconfirmed) {
+        this.unconfirmed = unconfirmed;
+    }
+
     @Column(name = "asha_needs_close")
     public String getAshaNeedsToClose() {
         return ashaNeedsToClose;

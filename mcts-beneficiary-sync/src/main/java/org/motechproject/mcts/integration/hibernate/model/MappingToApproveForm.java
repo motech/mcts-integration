@@ -16,6 +16,9 @@ public class MappingToApproveForm {
     private int id;
     private String confirmMappingApproval;
     private String approved;
+    private String confirmNewCaseApproval;
+    private String disapproved;
+    private String reasonDisapproved;
     private String dateModified;
     private boolean close;
     private String dateAuthorized;
@@ -56,6 +59,34 @@ public class MappingToApproveForm {
     public void setApproved(String approved) {
         this.approved = approved;
     }
+    
+    @Column(name = "confirm_new_case_approval")
+    public String getConfirmNewCaseApproval() {
+        return confirmNewCaseApproval;
+    }
+
+    public void setConfirmNewCaseApproval(String confirmNewCaseApproval) {
+        this.confirmNewCaseApproval = confirmNewCaseApproval;
+    }
+    
+    @Column(name = "disapproved")
+    public String getDisapproved() {
+        return disapproved;
+    }
+
+    public void setDisapproved(String disapproved) {
+        this.disapproved = disapproved;
+    }
+
+    @Column(name = "reason_disapproved")
+    public String getReasonDisapproved() {
+        return reasonDisapproved;
+    }
+
+    public void setReasonDisapproved(String reasonDisapproved) {
+        this.reasonDisapproved = reasonDisapproved;
+    }
+
 
     @Column(name = "date_modified")
     public String getDateModified() {

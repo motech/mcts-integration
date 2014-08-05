@@ -1,7 +1,5 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +22,13 @@ public class UnmappedToReviewForm {
     private String mctsHusbandName;
     private String mctsFullName;
     private String langCode;
+    private String isCorrectAsha;
+    private String noAshaExisting;
+    private String noAsha;
+    private String newAsha;
+    private String newAssignment;
+    private String sameAssignment;
+    private String newAshaName;
     private String dateModified;
     private boolean close;
     private String namespace;
@@ -106,6 +111,62 @@ public class UnmappedToReviewForm {
     }
     public void setLangCode(String langCode) {
         this.langCode = langCode;
+    }
+    
+    @Column(name = "is_correct_asha")
+    public String getIsCorrectAsha() {
+        return isCorrectAsha;
+    }
+    public void setIsCorrectAsha(String isCorrectAsha) {
+        this.isCorrectAsha = isCorrectAsha;
+    }
+    
+    @Column(name = "no_asha_existing")
+    public String getNoAshaExisting() {
+        return noAshaExisting;
+    }
+    public void setNoAshaExisting(String noAshaExisting) {
+        this.noAshaExisting = noAshaExisting;
+    }
+    
+    @Column(name = "no_asha")
+    public String getNoAsha() {
+        return noAsha;
+    }
+    public void setNoAsha(String noAsha) {
+        this.noAsha = noAsha;
+    }
+    
+    @Column(name = "new_asha")
+    public String getNewAsha() {
+        return newAsha;
+    }
+    public void setNewAsha(String newAsha) {
+        this.newAsha = newAsha;
+    }
+    
+    @Column(name = "new_assignment")
+    public String getNewAssignment() {
+        return newAssignment;
+    }
+    public void setNewAssignment(String newAssignment) {
+        this.newAssignment = newAssignment;
+    }
+    
+    @Column(name = "same_assignment")
+    public String getSameAssignment() {
+        return sameAssignment;
+    }
+    public void setSameAssignment(String sameAssignment) {
+        this.sameAssignment = sameAssignment;
+    }
+    
+    @Column(name = "new_asha_name")
+    public String getNewAshaName() {
+        return newAshaName;
+    }
+    public void setNewAshaName(String newAshaName) {
+        this.newAshaName = newAshaName;
     }
     
     @Column(name = "date_modified")

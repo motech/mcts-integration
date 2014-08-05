@@ -1,7 +1,5 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +20,17 @@ public class CaseAlreadyClosedForm {
     private String hhNumber;
     private String familyNumber;
     private String successClose;
+    private String successStillOpen;
+    private String died;
+    private String dateDeathKnown;
+    private String dateDeath;
+    private String siteDeath;
+    private String diedVillage;
+    private String placeDeath;
+    private String abortion;
+    private String abortionType;
+    private String dateAbortionKnown;
+    private String dateAborted;
     private String mctsFullName;
     private String mctsHusbandName;
     private String closeReason;
@@ -34,7 +43,8 @@ public class CaseAlreadyClosedForm {
     private String appVersion;
     private MotherCase motherCase;
     private MctsPregnantMother mctsPregnantMother;
-
+    
+    
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -189,6 +199,106 @@ public class CaseAlreadyClosedForm {
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
     }
+    
+    @Column(name = "success_still_open")
+    public String getSuccessStillOpen() {
+        return successStillOpen;
+    }
+
+    public void setSuccessStillOpen(String successStillOpen) {
+        this.successStillOpen = successStillOpen;
+    }
+
+    @Column(name = "died")
+    public String getDied() {
+        return died;
+    }
+
+    public void setDied(String died) {
+        this.died = died;
+    }
+
+    @Column(name = "date_death_known")
+    public String getDateDeathKnown() {
+        return dateDeathKnown;
+    }
+
+    public void setDateDeathKnown(String dateDeathKnown) {
+        this.dateDeathKnown = dateDeathKnown;
+    }
+
+    @Column(name = "date_death")
+    public String getDateDeath() {
+        return dateDeath;
+    }
+
+    public void setDateDeath(String dateDeath) {
+        this.dateDeath = dateDeath;
+    }
+
+    @Column(name = "site_death")
+    public String getSiteDeath() {
+        return siteDeath;
+    }
+
+    public void setSiteDeath(String siteDeath) {
+        this.siteDeath = siteDeath;
+    }
+
+    @Column(name = "died_village")
+    public String getDiedVillage() {
+        return diedVillage;
+    }
+
+    public void setDiedVillage(String diedVillage) {
+        this.diedVillage = diedVillage;
+    }
+
+    @Column(name = "place_death")
+    public String getPlaceDeath() {
+        return placeDeath;
+    }
+
+    public void setPlaceDeath(String placeDeath) {
+        this.placeDeath = placeDeath;
+    }
+
+    @Column(name = "abortion")
+    public String getAbortion() {
+        return abortion;
+    }
+
+    public void setAbortion(String abortion) {
+        this.abortion = abortion;
+    }
+
+    @Column(name = "abortion_type")
+    public String getAbortionType() {
+        return abortionType;
+    }
+
+    public void setAbortionType(String abortionType) {
+        this.abortionType = abortionType;
+    }
+
+    @Column(name = "date_abortion_known")
+    public String getDateAbortionKnown() {
+        return dateAbortionKnown;
+    }
+
+    public void setDateAbortionKnown(String dateAbortionKnown) {
+        this.dateAbortionKnown = dateAbortionKnown;
+    }
+
+    @Column(name = "date_aborted")
+    public String getDateAborted() {
+        return dateAborted;
+    }
+
+    public void setDateAborted(String dateAborted) {
+        this.dateAborted = dateAborted;
+    }
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")

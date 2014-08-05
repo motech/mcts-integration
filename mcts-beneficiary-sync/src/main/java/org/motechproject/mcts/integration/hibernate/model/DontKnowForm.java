@@ -1,7 +1,5 @@
 package org.motechproject.mcts.integration.hibernate.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +16,7 @@ public class DontKnowForm {
     private int id;
     private String dontKnow;
     private String known;
+    private String unconfirmed; 
     private String mctsHusbandName;
     private String mctsFullName;
     private String nameSpace;
@@ -57,6 +56,15 @@ public class DontKnowForm {
 
     public void setKnown(String known) {
         this.known = known;
+    }
+
+    @Column(name = "unconfirmed")
+    public String getUnconfirmed() {
+        return unconfirmed;
+    }
+
+    public void setUnconfirmed(String unconfirmed) {
+        this.unconfirmed = unconfirmed;
     }
 
     @Column(name = "mcts_husband_name")
