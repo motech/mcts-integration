@@ -58,11 +58,7 @@
 
 
 
- <dependency>
-        <groupId>org.motechproject</groupId>
-    <artifactId>batch</artifactId>
-   <version>${motech.version}</version>
-	</dependency>
+ 
 
 
 	<dependency>
@@ -266,9 +262,6 @@
 
 
 							javax.batch.operations,
-							org.motechproject.batch.service;version=${motech.version},,
-							org.motechproject.batch.exception;version=${motech.version},
-							org.motechproject.batch.model;version=${motech.version},
 							org.motechproject.event.listener,
 							*
 							</Import-Package>

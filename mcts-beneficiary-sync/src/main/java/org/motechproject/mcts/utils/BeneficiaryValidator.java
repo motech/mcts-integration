@@ -24,9 +24,6 @@ public final class BeneficiaryValidator {
                 || isValidInteger(record.getBlockID())) {
             return false;
         }
-        if (isValidInteger(record.getASHAID())) {
-            return false;
-        }
         return true;
     }
 

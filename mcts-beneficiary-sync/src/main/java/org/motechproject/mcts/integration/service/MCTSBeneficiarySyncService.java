@@ -344,31 +344,53 @@ public class MCTSBeneficiarySyncService {
                 .getMctsHealthworkerByAshaId();
         addLocationToDbIfNotPresent(record);
         Location location = getUniqueLocationMap(record);
-        MctsSubcenter recordSubcentre = location.getMctsSubcenter();
         MctsSubcenter subCentre = mctsPregnantMother.getMctsSubcenter();
-        Integer subcentreId = subCentre.getId();
 
-        if ((anmWorker != null) && (ashaWorker != null) && (subCentre != null)) {
+        if (anmWorker != null) {
             String recordAnmId = record.getANMID();
-            String recordAshaId = record.getASHAID();
-            Integer recordSubcenterId = recordSubcentre.getId();
+            
+            
             if (recordAnmId == null
                     || !recordAnmId.equals(String.valueOf(anmWorker
                             .getHealthworkerId()))) {
                 s = false;
             }
+            
+            
+
+        } else {
+            if (record.getANMID()==null || (record.getANMID().isEmpty())) {
+                s = true;
+            } else {
+                s = false;
+            }
+        }
+        if (ashaWorker != null) {
+            String recordAshaId = record.getASHAID();
             if (recordAshaId == null
                     || !recordAshaId.equals(String.valueOf(ashaWorker
                             .getHealthworkerId()))) {
                 s = false;
             }
+            
+        } else {
+            if ((record.getASHAID()==null) || (record.getASHAID().isEmpty())) {
+                s = true;
+            }
+            else {
+                s = false;
+            }
+        }
+        if (subCentre != null) {
+            MctsSubcenter recordSubcentre = location.getMctsSubcenter();
+            Integer recordSubcenterId = recordSubcentre.getId();
+            Integer subcentreId = subCentre.getId();
+            
             if (subcentreId != recordSubcenterId) {
                 s = false;
             }
-
-        } else {
-            s = false;
-        }
+        } 
+        
         return s;
 
     }

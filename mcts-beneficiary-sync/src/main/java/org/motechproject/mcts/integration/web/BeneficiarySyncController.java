@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mcts.integration.commcare.CloseCaseXmlService;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
@@ -76,6 +77,9 @@ public class BeneficiarySyncController {
 
     @Autowired
     private FixtureDataService fixtureDataService;
+    
+    @Autowired
+    private CloseCaseXmlService closeCaseXmlService;
 
     /**
      * Method to validate connection
@@ -262,6 +266,14 @@ public class BeneficiarySyncController {
     @ResponseBody
     public String getCaseXml() {
         createCaseXmlService.createCaseXml();
+        return "success";
+    }
+    
+    @RequestMapping(value = "/getCloseCaseXml", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String getCloseCaseXml() {
+        closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
 

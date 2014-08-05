@@ -5,6 +5,7 @@ package org.motechproject.mcts.integration.service;
 
 import org.motechproject.http.agent.service.HttpAgent;
 import org.motechproject.http.agent.service.Method;
+import org.motechproject.mcts.integration.commcare.CloseData;
 import org.motechproject.mcts.integration.commcare.Data;
 import org.motechproject.mcts.integration.commcare.UpdateData;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
@@ -130,6 +131,23 @@ public class MCTSHttpClientService {
                     .format("Sync done successfully for Updating the Xml. Response [StatusCode %s] : %s",
                             response.getStatusCode(), response.getBody()));
         }
+        return response.getStatusCode();
+    }
+
+    public HttpStatus syncToCloseCommcare(CloseData data) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.TEXT_XML);
+        HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
+        ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
+                .executeWithReturnTypeSync(CommcareConstants.POSTURL,
+                        httpEntity, Method.POST);
+
+        if (response != null) {
+            LOGGER.info(String
+                    .format("Sync done successfully for Creating the Xml. Response [StatusCode %s] : %s",
+                            response.getStatusCode(), response.getBody()));
+        }
+
         return response.getStatusCode();
     }
 }

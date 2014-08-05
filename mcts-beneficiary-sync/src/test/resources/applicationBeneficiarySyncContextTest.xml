@@ -51,10 +51,10 @@
 			<list>
 <value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother
 				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup</value>
+				
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate
 				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatusLookup</value>
+				
 				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase
 				</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.Flw
