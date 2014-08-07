@@ -136,6 +136,11 @@
 	<artifactId>javax.batch-api</artifactId>
 	<version>1.0</version>
 </dependency>
+ <dependency>
+        <groupId>org.motechproject</groupId>
+    <artifactId>batch</artifactId>
+   <version>${motech.version}</version>
+	</dependency>
   <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>com.springsource.org.apache.commons.lang</artifactId>
@@ -187,6 +192,7 @@
 							org.motechproject.mcts.*
 						</Export-Package>
                         <Import-Package>
+                        	org.springframework.web.multipart.commons,
                             org.motechproject.server.config;version=${motech.version},
                             org.motechproject.server.config.service;version=${motech.version},
                             org.motechproject.event.listener;version=${motech.version},
@@ -230,14 +236,14 @@
                             javassist.util.proxy,
                             org.apache.commons.dbcp,
                             org.postgresql,
-							org.motechproject.scheduler.service.*,
-
-
-
-
+							org.motechproject.scheduler.service,
+							org.motechproject.scheduler.service.impl,
 							javax.batch.operations,
 							org.motechproject.transliteration.hindi.service,
-                            *
+							org.motechproject.batch.service;version=${motech.version},,
+							org.motechproject.batch.exception;version=${motech.version},
+							org.motechproject.batch.model;version=${motech.version},
+							*
                         </Import-Package>
                     </instructions>
                 </configuration>
