@@ -4,15 +4,10 @@
     <artifactId>mcts</artifactId>
     <groupId>org.motechproject</groupId>
     <version>0.2</version>
+    <packaging>bundle</packaging>
 
     <properties>
-
-
         <motech.version>0.24-SNAPSHOT</motech.version>
-
-        <pmd.skip>true</pmd.skip>
-		<jdk.version>1.7</jdk.version>
-		<checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <dependencies>
@@ -42,7 +37,7 @@
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-scheduler</artifactId>
-            <version>0.21.1</version>
+            <version>${motech.version}</version>
         </dependency>
         <dependency>
             <groupId>org.motechproject</groupId>
@@ -52,29 +47,16 @@
         <!-- tranliteration service -->
         <dependency>
         <groupId>org.motechproject</groupId>
-    <artifactId>motech-transliteration</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <artifactId>hindi-transliteration</artifactId>
+    <version>${motech.version}</version>
+	</dependency>
+	
+	  <dependency>
+        <groupId>org.motechproject</groupId>
+    <artifactId>http-agent</artifactId>
+    <version>${motech.version}</version>
 	</dependency>
 
-
-
- 
-
-
-	<dependency>
-	<groupId>org.motechproject</groupId>
-	<artifactId>motech-http-agent-bundle</artifactId>
-	<version>0.21.1</version>
-	<scope>system</scope>
-     <systemPath>${basedir}/lib/motech-http-agent-bundle-0.21.1.jar</systemPath>
-	</dependency>
-	<dependency>
-	<groupId>org.motechproject</groupId>
-	<artifactId>motech-http-agent</artifactId>
-	<version>0.21.1</version>
-	<scope>system</scope>
-     <systemPath>${basedir}/lib/motech-http-agent-0.21.1.jar</systemPath>
-	</dependency>
 
 
         <dependency>
@@ -245,27 +227,18 @@
                             org.hibernate,
                             org.hibernate.jdbc,
                             org.hibernate.proxy,
-
-
-                           <!-- javassist.util.proxy;version=3.9.0,-->
-
-                            org.hibernate.hql.ast,
-                           org.apache.commons.dbcp,
-
-                           <!-- javassist.util.proxy;version=3.9.0,-->
+                            javassist.util.proxy,
                             org.apache.commons.dbcp,
                             org.postgresql,
-							<!--org.motechproject.scheduler;version=${motech.version},-->
-							org.motechproject.transliteration.service,
+							org.motechproject.scheduler.service.*,
 
 
 
 
 							javax.batch.operations,
-							org.motechproject.event.listener,
-							*
-							</Import-Package>
-
+							org.motechproject.transliteration.hindi.service,
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -404,5 +377,4 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <packaging>bundle</packaging>
 </project>

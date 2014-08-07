@@ -33,7 +33,7 @@ import org.motechproject.mcts.utils.BeneficiaryValidator;
 import org.motechproject.mcts.utils.DateValidator;
 import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.PropertyReader;
-import org.motechproject.transliteration.service.TransliterationService;
+import org.motechproject.transliteration.hindi.service.TransliterationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
