@@ -23,10 +23,8 @@ import org.hibernate.annotations.CascadeType;
 @Table(name = "bp_form", uniqueConstraints = @UniqueConstraint(columnNames = "instance_id"))
 public class BpForm extends Form {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 54354532942982959L;
+
     private int id;
     private Flw flw;
     private MotherCase motherCase;
@@ -166,8 +164,6 @@ public class BpForm extends Form {
         this.id = id;
     }
 
-   
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,
@@ -210,7 +206,7 @@ public class BpForm extends Form {
     public void setDateModified(Date dateModified) {
         this.dateModified = dateModified;
     }
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.PERSIST, CascadeType.MERGE,

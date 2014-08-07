@@ -24,107 +24,104 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "mcts_subcenter", schema = "report", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"subcenter_id", "phc_id" }))
+        "subcenter_id", "phc_id" }))
 public class MctsSubcenter implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6268048461611026059L;
-	private Integer id;
-	private MctsPhc mctsPhc;
-	private int subcenterId;
-	private String name;
-	private boolean status;
-	private Set<MctsVillage> mctsVillages = new HashSet<MctsVillage>(0);
-	private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
-			0);
+    private static final long serialVersionUID = -6268048461611026059L;
+    private Integer id;
+    private MctsPhc mctsPhc;
+    private int subcenterId;
+    private String name;
+    private boolean status;
+    private Set<MctsVillage> mctsVillages = new HashSet<MctsVillage>(0);
+    private Set<MctsHealthworker> mctsHealthworkers = new HashSet<MctsHealthworker>(
+            0);
 
-	public MctsSubcenter() {
-	}
+    public MctsSubcenter() {
+    }
 
-	public MctsSubcenter(MctsPhc mctsPhc, int subcenterId, String name) {
-		this.mctsPhc = mctsPhc;
-		this.subcenterId = subcenterId;
-		this.name = name;
-	}
+    public MctsSubcenter(MctsPhc mctsPhc, int subcenterId, String name) {
+        this.mctsPhc = mctsPhc;
+        this.subcenterId = subcenterId;
+        this.name = name;
+    }
 
-	public MctsSubcenter(MctsPhc mctsPhc, int subcenterId, String name,
-			Set<MctsVillage> mctsVillages,
-			Set<MctsHealthworker> mctsHealthworkers, boolean status) {
-		this.mctsPhc = mctsPhc;
-		this.subcenterId = subcenterId;
-		this.name = name;
-		this.mctsVillages = mctsVillages;
-		this.mctsHealthworkers = mctsHealthworkers;
-		this.status = status;
-	}
+    public MctsSubcenter(MctsPhc mctsPhc, int subcenterId, String name,
+            Set<MctsVillage> mctsVillages,
+            Set<MctsHealthworker> mctsHealthworkers, boolean status) {
+        this.mctsPhc = mctsPhc;
+        this.subcenterId = subcenterId;
+        this.name = name;
+        this.mctsVillages = mctsVillages;
+        this.mctsHealthworkers = mctsHealthworkers;
+        this.status = status;
+    }
 
-	@SequenceGenerator(name = "generator", sequenceName = "mcts_subcenter_id_seq")
-	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "generator")
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @SequenceGenerator(name = "generator", sequenceName = "mcts_subcenter_id_seq")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "generator")
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "phc_id", nullable = false)
-	public MctsPhc getMctsPhc() {
-		return this.mctsPhc;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "phc_id", nullable = false)
+    public MctsPhc getMctsPhc() {
+        return this.mctsPhc;
+    }
 
-	public void setMctsPhc(MctsPhc mctsPhc) {
-		this.mctsPhc = mctsPhc;
-	}
+    public void setMctsPhc(MctsPhc mctsPhc) {
+        this.mctsPhc = mctsPhc;
+    }
 
-	@Column(name = "subcenter_id", nullable = false)
-	public int getSubcenterId() {
-		return this.subcenterId;
-	}
+    @Column(name = "subcenter_id", nullable = false)
+    public int getSubcenterId() {
+        return this.subcenterId;
+    }
 
-	public void setSubcenterId(int subcenterId) {
-		this.subcenterId = subcenterId;
-	}
+    public void setSubcenterId(int subcenterId) {
+        this.subcenterId = subcenterId;
+    }
 
-	@Column(name = "name", nullable = false)
-	public String getName() {
-		return this.name;
-	}
+    @Column(name = "name", nullable = false)
+    public String getName() {
+        return this.name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Column(name = "status")
-	public boolean getStatus() {
-		return this.status;
-	}
+    @Column(name = "status")
+    public boolean getStatus() {
+        return this.status;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsSubcenter")
-	public Set<MctsVillage> getMctsVillages() {
-		return this.mctsVillages;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsSubcenter")
+    public Set<MctsVillage> getMctsVillages() {
+        return this.mctsVillages;
+    }
 
-	public void setMctsVillages(Set<MctsVillage> mctsVillages) {
-		this.mctsVillages = mctsVillages;
-	}
+    public void setMctsVillages(Set<MctsVillage> mctsVillages) {
+        this.mctsVillages = mctsVillages;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsSubcenter")
-	public Set<MctsHealthworker> getMctsHealthworkers() {
-		return this.mctsHealthworkers;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mctsSubcenter")
+    public Set<MctsHealthworker> getMctsHealthworkers() {
+        return this.mctsHealthworkers;
+    }
 
-	public void setMctsHealthworkers(Set<MctsHealthworker> mctsHealthworkers) {
-		this.mctsHealthworkers = mctsHealthworkers;
-	}
+    public void setMctsHealthworkers(Set<MctsHealthworker> mctsHealthworkers) {
+        this.mctsHealthworkers = mctsHealthworkers;
+    }
 
 }

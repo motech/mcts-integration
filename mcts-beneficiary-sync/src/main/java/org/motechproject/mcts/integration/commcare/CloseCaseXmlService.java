@@ -23,26 +23,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class CloseCaseXmlService {
-    
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CloseCaseXmlService.class);
 
-    
     @Autowired
     private CareDataRepository careDataRepository;
-    
+
     @Autowired
     private PropertyReader propertyReader;
-    
+
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
-    
+
     public void createCloseCaseXml() {
-        List<MctsPregnantMother> mctsPregnantMother = careDataRepository.getMctsPregnantMotherForClosedCases();
-        LOGGER.debug("size : "+mctsPregnantMother.size());
+        List<MctsPregnantMother> mctsPregnantMother = careDataRepository
+                .getMctsPregnantMotherForClosedCases();
+        LOGGER.debug("size : " + mctsPregnantMother.size());
         CloseData data = createCloseDataAndReturn(mctsPregnantMother);
-        String returnvalue = ObjectToXMLConverter.converObjectToXml(
-                data, CloseData.class);
+        String returnvalue = ObjectToXMLConverter.converObjectToXml(data,
+                CloseData.class);
         LOGGER.debug("returned : " + returnvalue);
         HttpStatus status = mCTSHttpClientService.syncToCloseCommcare(data);
         if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
@@ -61,10 +61,11 @@ public class CloseCaseXmlService {
             careDataRepository.saveOrUpdate(mother);
 
         }
-        
+
     }
 
-    private CloseData createCloseDataAndReturn(List<MctsPregnantMother> mctsPregnantMother) {
+    private CloseData createCloseDataAndReturn(
+            List<MctsPregnantMother> mctsPregnantMother) {
         CloseData data = new CloseData();
         List<Case> cases = new ArrayList<Case>();
         data.setXmlns(CommcareConstants.DATAXMLNS);
@@ -73,7 +74,8 @@ public class CloseCaseXmlService {
         meta.setTimeEnd(new DateTime().toString());
         data.setMeta(meta);
         for (int i = 0; i < mctsPregnantMother.size(); i++) {
-            mctsPregnantMother.get(i).setmCTSPregnantMotherMatchStatus(MCTSPregnantMotherMatchStatus.ARCHIVE);
+            mctsPregnantMother.get(i).setmCTSPregnantMotherMatchStatus(
+                    MCTSPregnantMotherMatchStatus.ARCHIVE);
             Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),
                     userId);
             cases.add(caseTask);

@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to update the table mcts_Healthworker in the database
- *
+ * 
  * @author aman
- *
+ * 
  */
 @Transactional
 @Service
@@ -45,7 +45,7 @@ public class FixtureDataService {
     /**
      * Method to update the mcts_Healthworker table in database. Create
      * case_groupId.
-     *
+     * 
      * @throws BeneficiaryException
      */
     @MotechListener(subjects = MCTSBatchConstants.EVENT_SUBJECT)
@@ -70,34 +70,32 @@ public class FixtureDataService {
     }
 
     public String getCaseGroupIdfromAshaId(Integer id, String mctsId) {
-        
+
         String caseGroupId;
         if (id == null) {
             String locationId = mctsId.substring(0, 10);
-            caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
+            caseGroupId = careDataRepository
+                    .getOwnerIdFromLocationId(locationId);
             if (caseGroupId == null) {
                 return null;
-            }
-            else {
+            } else {
                 return caseGroupId;
             }
         }
         caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
         if (caseGroupId == null) {
-            
+
             updateGroupId();
             caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
             if (caseGroupId == null) {
                 String locationId = mctsId.substring(0, 10);
-                caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
+                caseGroupId = careDataRepository
+                        .getOwnerIdFromLocationId(locationId);
                 if (caseGroupId == null) {
                     return null;
-                }
-                else {
+                } else {
                     return caseGroupId;
                 }
-                
-                
             } else {
                 return caseGroupId;
             }

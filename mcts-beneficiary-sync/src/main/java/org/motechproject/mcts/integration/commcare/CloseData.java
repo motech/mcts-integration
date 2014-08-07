@@ -11,12 +11,12 @@ public class CloseData {
     private String xmlns;
     private List<Case> cases;
     private Meta meta;
-    
+
     @XmlElement(name = "case")
     public void setCases(List<Case> cases) {
         this.cases = cases;
     }
-    
+
     @XmlAttribute(name = "xmlns")
     public void setXmlns(String xmlns) {
         this.xmlns = xmlns;
@@ -38,5 +38,5 @@ public class CloseData {
     public List<Case> getCases() {
         return cases;
     }
-    
+
 }

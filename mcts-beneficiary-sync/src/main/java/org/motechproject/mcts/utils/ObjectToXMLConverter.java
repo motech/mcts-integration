@@ -84,7 +84,6 @@ public final class ObjectToXMLConverter {
     @Deprecated
     public static String writeUrlToFile(File xmlFile, File updateRequestUrlFile)
             throws IOException, URISyntaxException {
-        // TODO: This method to be removed during actual implementation.
         FileReader fileReader = new FileReader(xmlFile);
         password = Encryption.encryptWithTimeInSeconds("mcts-MOTECH@123");
         BufferedReader bufferReader = new BufferedReader(fileReader);

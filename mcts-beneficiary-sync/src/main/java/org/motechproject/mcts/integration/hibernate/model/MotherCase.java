@@ -29,8 +29,8 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
      */
     private static final long serialVersionUID = -7629916276936204480L;
 
-    private static final Logger logger = LoggerFactory
-            .getLogger("commcare-reporting-mapper");
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(MotherCase.class);
 
     private int id;
     private Flw flw;
@@ -1092,7 +1092,7 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
         validateIfUpdatable(this.caseId, updated.caseId);
 
         if (!isLatest(updated)) {
-            logger.warn(String
+            LOGGER.warn(String
                     .format("Ignoring mother case update with case id: %s since existing server date modified is %s and new server date modified is %s",
                             this.caseId, this.serverDateModified,
                             updated.serverDateModified));
@@ -1108,10 +1108,12 @@ public class MotherCase extends SelfUpdatable<MotherCase> implements
     }
 
     private boolean isLatest(MotherCase updatedObject) {
-        if (this.serverDateModified == null)
+        if (this.serverDateModified == null) {
             return true;
-        else if (updatedObject.serverDateModified == null)
+        }
+        else if (updatedObject.serverDateModified == null) {
             return false;
+        }
         return this.serverDateModified
                 .compareTo(updatedObject.serverDateModified) <= 0;
     }

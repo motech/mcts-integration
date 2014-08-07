@@ -26,14 +26,11 @@ public class MotherFormProcessor {
     @Autowired
     private CaseInfoParser infoParser;
     @Autowired
-    FormsProcessor formsProcessor;
-    
-    
+    private FormsProcessor formsProcessor;
    
     public MotherFormProcessor() {
 
     }
-
 
     public void process(CommcareForm commcareForm) {
 
@@ -69,7 +66,7 @@ public class MotherFormProcessor {
     }
 
     private Map<String, String> parse(FormValueElement startElement,
-            CommcareForm commcareForm) throws BeneficiaryException {
+            CommcareForm commcareForm) {
         FormValueElement caseElement = startElement;
      
         if (!("case").equals(startElement.getElementName())) {

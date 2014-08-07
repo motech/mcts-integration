@@ -9,7 +9,6 @@ import org.motechproject.mcts.integration.hibernate.model.MapExistingForm;
 import org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsUpdate;
 import org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm;
 import org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm;
 import org.motechproject.mcts.integration.service.CareDataService;
@@ -21,17 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 @Component
 public class FormsProcessor {
     @Autowired
-    CareDataService careDataService;
+    private CareDataService careDataService;
     @Autowired
-    MCTSFormUpdateService mctsFormUpdateService;
-    MctsPregnantMother mctsPregnantMother = null;
-    MotherCase motherCase = null;
-    MotherCaseMctsUpdate motherCaseMctsUpdate = null;
+    private MCTSFormUpdateService mctsFormUpdateService;
+    private MctsPregnantMother mctsPregnantMother;
+    private MotherCase motherCase;
 
-    private static final Logger logger = LoggerFactory
+    private static final Logger LOGGER = LoggerFactory
             .getLogger("mcts-forms-processor");
 
     public void processForm(Map<String, String> motherForm)
@@ -40,7 +39,7 @@ public class FormsProcessor {
         if (motherForm.containsKey("namespace")) {
             nameSpace = motherForm.get("namespace");
         } else {
-            logger.debug("No namespace found in this xml");
+            LOGGER.debug("No namespace found in this xml");
             return;
         }
 
@@ -49,7 +48,7 @@ public class FormsProcessor {
                     MotherCase.class, "caseId", motherForm.get("caseId"));
 
             if (motherCase == null) {
-                logger.error(String
+                LOGGER.error(String
                         .format("Received case doesn't have Mother case with with case Id = %s",
                                 motherForm.get("pregnancyId")));
                 return;
@@ -57,11 +56,13 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
                             .toString(motherCase.getId()));
-            
-            //MotherCaseMctsAuthorizedStatus authorizeStatus = getAuthorizedStatus(moth)
-            
+
+            // MotherCaseMctsAuthorizedStatus authorizeStatus =
+            // getAuthorizedStatus(moth)
+
             mctsPregnantMother
-                    .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get("authorized")));
+                    .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
+                            .get("authorized")));
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             MappingToApproveForm mappingToApproveForm = new MappingToApproveForm();
@@ -84,21 +85,18 @@ public class FormsProcessor {
 
             if (motherForm.containsKey("close")) {
                 mappingToApproveForm.setClose(true);
-            }
-
-            else {
+            } else {
                 mappingToApproveForm.setClose(false);
             }
-
             careDataService.saveOrUpdate(mappingToApproveForm);
-        }
-
-        else if (nameSpace.equals(CommcareNamespaceConstants.DONT_KNOW_CASE)) {
+        } else if (nameSpace.equals(CommcareNamespaceConstants.DONT_KNOW_CASE)) {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            
-            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
+
+            mctsPregnantMother
+                    .setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+                            .get("mctsMatch")));
 
             careDataService.saveOrUpdate(mctsPregnantMother);
 
@@ -117,14 +115,13 @@ public class FormsProcessor {
             dontKnowForm.setMctsPregnantMother(mctsPregnantMother);
 
             careDataService.saveOrUpdate(dontKnowForm);
-        }
-
-        else if (nameSpace.equals(CommcareNamespaceConstants.MAP_EXISTING_CASE)) {
+        } else if (nameSpace
+                .equals(CommcareNamespaceConstants.MAP_EXISTING_CASE)) {
             MotherCase motherCase = careDataService.findEntityByField(
                     MotherCase.class, "caseId", motherForm.get("pregnancyId"));
 
             if (motherCase == null) {
-                logger.error(String
+                LOGGER.error(String
                         .format("Received case doesn't have Mother case with with case Id = %s",
                                 motherForm.get("pregnancyId")));
                 return;
@@ -133,11 +130,13 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-          
 
-            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
             mctsPregnantMother
-            .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get("authorized")));
+                    .setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+                            .get("mctsMatch")));
+            mctsPregnantMother
+                    .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
+                            .get("authorized")));
             mctsPregnantMother.setMotherCase(motherCase);
 
             careDataService.saveOrUpdate(mctsPregnantMother);
@@ -163,9 +162,7 @@ public class FormsProcessor {
             mapExistingForm.setMctsPregnantMother(mctsPregnantMother);
 
             careDataService.saveOrUpdate(mapExistingForm);
-        }
-
-        else if (nameSpace
+        } else if (nameSpace
                 .equals(CommcareNamespaceConstants.UNAPPROVE_TO_DISCUSS)) {
             motherCase = careDataService.findEntityByField(MotherCase.class,
                     "caseId", motherForm.get("caseId"));
@@ -204,15 +201,15 @@ public class FormsProcessor {
             unapprovedToDiscussForm.setMotherCase(motherCase);
 
             careDataService.saveOrUpdate(unapprovedToDiscussForm);
-        }
-
-        else if (nameSpace
+        } else if (nameSpace
                 .equals(CommcareNamespaceConstants.UNMAPPED_TO_REVIEW)) {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
-            
-            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
+
+            mctsPregnantMother
+                    .setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+                            .get("mctsMatch")));
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             UnmappedToReviewForm unmappedToReviewForm = new UnmappedToReviewForm();
@@ -237,21 +234,21 @@ public class FormsProcessor {
             unmappedToReviewForm.setInstanceID(motherForm.get("instanceID"));
             unmappedToReviewForm.setUserID(motherForm.get("userID"));
             unmappedToReviewForm.setNamespace(motherForm.get("namespace"));
-            
+
             unmappedToReviewForm.setMctsPregnantMother(mctsPregnantMother);
             careDataService.saveOrUpdate(unmappedToReviewForm);
-        }
-
-        else if (nameSpace
+        } else if (nameSpace
                 .equals(CommcareNamespaceConstants.CASE_ALREADY_CLOSED)) {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
             mctsPregnantMother.setHhNumber(motherForm.get("hhNumber"));
             mctsPregnantMother.setFamilyNumber(motherForm.get("familyNumber"));
-            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
+            mctsPregnantMother
+                    .setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+                            .get("mctsMatch")));
             careDataService.saveOrUpdate(mctsPregnantMother);
-            
+
             mctsFormUpdateService
                     .updateMctsPregnantMotherForm(mctsPregnantMother.getId());
 
@@ -273,7 +270,7 @@ public class FormsProcessor {
             caseAlreadyClosedForm.setCloseReason(motherForm.get("closeReason"));
             caseAlreadyClosedForm.setDateModified(motherForm
                     .get("dateModified"));
-            
+
             caseAlreadyClosedForm.setMctsPregnantMother(mctsPregnantMother);
 
             if (motherForm.containsKey("close")) {
@@ -286,70 +283,65 @@ public class FormsProcessor {
             caseAlreadyClosedForm.setInstanceID(motherForm.get("instanceID"));
             caseAlreadyClosedForm.setDeviceID(motherForm.get("deviceID"));
             caseAlreadyClosedForm.setAppVersion(motherForm.get("appVersion"));
-            
+
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get("caseId"));
             motherCase = mctsPregnantMother.getMotherCase();
             caseAlreadyClosedForm.setMotherCase(motherCase);
             careDataService.saveOrUpdate(caseAlreadyClosedForm);
-        }
-        
-        else if(nameSpace.equals(CommcareNamespaceConstants.CREATE_NEW_CASE)) {
-            mctsPregnantMother = (MctsPregnantMother) careDataService.findEntityByField(MctsPregnantMother.class, "mctsPersonaCaseUId", motherForm.get("caseId"));
-            
-            MotherCase motherCase = careDataService.findEntityByField(MotherCase.class,"caseId", motherForm.get("pregnancyId"));
-            if(motherCase == null) {
-                logger.error(String.format("Received case doesn't have Mother case with with case Id = %s",motherForm.get("pregnancyId")));
+        } else if (nameSpace.equals(CommcareNamespaceConstants.CREATE_NEW_CASE)) {
+            mctsPregnantMother = (MctsPregnantMother) careDataService
+                    .findEntityByField(MctsPregnantMother.class,
+                            "mctsPersonaCaseUId", motherForm.get("caseId"));
+
+            MotherCase motherCase = careDataService.findEntityByField(
+                    MotherCase.class, "caseId", motherForm.get("pregnancyId"));
+            if (motherCase == null) {
+                LOGGER.error(String
+                        .format("Received case doesn't have Mother case with with case Id = %s",
+                                motherForm.get("pregnancyId")));
                 return;
             }
-            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get("mctsMatch")));
+            mctsPregnantMother
+                    .setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+                            .get("mctsMatch")));
             mctsPregnantMother.setMotherCase(motherCase);
-            
+
             careDataService.saveOrUpdate(mctsPregnantMother);
         }
-        
+
     }
-    
+
     private MCTSPregnantMotherMatchStatus getMatchStatus(String status) {
-        if("closed".equals(status)) {
+        if ("closed".equals(status)) {
             return MCTSPregnantMotherMatchStatus.CLOSED;
-        }
-        else if("yes".equals(status)) {
+        } else if ("yes".equals(status)) {
             return MCTSPregnantMotherMatchStatus.YES;
-        }
-        else if("no".equals(status)) {
+        } else if ("no".equals(status)) {
             return MCTSPregnantMotherMatchStatus.NO;
-        }
-        else if("unknown".equals(status)) {
+        } else if ("unknown".equals(status)) {
             return MCTSPregnantMotherMatchStatus.UNKNOWN;
-        }
-        else if("archive".equals(status)) {
+        } else if ("archive".equals(status)) {
             return MCTSPregnantMotherMatchStatus.ARCHIVE;
-        }
-        else if("blank".equals(status)) {
+        } else if ("blank".equals(status)) {
             return MCTSPregnantMotherMatchStatus.BLANK;
-        }
-        else {
+        } else {
             return null;
         }
     }
-    
-    
-    private MCTSPregnantMotherCaseAuthorisedStatus getAuthorizedStatus(String status) {
-        if("pending".equals(status)) {
+
+    private MCTSPregnantMotherCaseAuthorisedStatus getAuthorizedStatus(
+            String status) {
+        if ("pending".equals(status)) {
             return MCTSPregnantMotherCaseAuthorisedStatus.PENDING;
-        }
-        else if("approved".equals(status)) {
+        } else if ("approved".equals(status)) {
             return MCTSPregnantMotherCaseAuthorisedStatus.APPROVED;
-        }
-        else if("denied".equals(status)) {
+        } else if ("denied".equals(status)) {
             return MCTSPregnantMotherCaseAuthorisedStatus.DENIED;
-        }
-        else if("blank".equals(status)) {
+        } else if ("blank".equals(status)) {
             return MCTSPregnantMotherCaseAuthorisedStatus.BLANK;
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -23,9 +23,6 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "flw_group", uniqueConstraints = @UniqueConstraint(columnNames = "group_id"))
 public class FlwGroup extends SelfUpdatable<FlwGroup> implements java.io.Serializable {
 
-	/**
-     * 
-     */
     private static final long serialVersionUID = 5906766194110407924L;
     private int id;
     @ExternalPrimaryKey
