@@ -393,9 +393,9 @@ public class CareDataRepository {
 
     public MotherCase matchMctsPersonawithMotherCase(int hhNum, int familyNum,
             String ownerId) {
-        String queryString = "from MotherCase mcase where mcase.hhNumber='"
-                + hhNum + "' and mcase.familyNumber='" + familyNum
-                + "' and mcase.flwGroup.groupId=" + ownerId + "";
+        String queryString = "from MotherCase mcase where mcase.hhNumber="
+                + hhNum + " and mcase.familyNumber=" + familyNum
+                + " and mcase.flwGroup.id=" + ownerId + "";
         List<MotherCase> motherCase = getCurrentSession().createQuery(
                 queryString).list();
         if (motherCase.size() == 0) {

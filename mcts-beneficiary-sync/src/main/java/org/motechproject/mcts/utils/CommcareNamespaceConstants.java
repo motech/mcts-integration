@@ -11,6 +11,7 @@ public class CommcareNamespaceConstants {
     public final static String CASE_ALREADY_CLOSED = "http://bihar.commcarehq.org/mcts/already_closed";
     public final static String CASE_REGISTRATION = "http://bihar.commcarehq.org/pregnancy/registration";
     public final static String MAP_EXISTING_CASE = "http://bihar.commcarehq.org/mcts/map_existing";
+    public final static String REGISTRATION = "http://bihar.commcarehq.org/pregnancy/registration";
     
 }
 

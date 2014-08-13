@@ -27,6 +27,8 @@ public class UnapprovedToDiscussForm {
     private String anmClose;
     private String confirmAnmClose;
     private String dateModified;
+    private String dateAuthorized;
+    private String dateAuthorizedInt;
     private boolean close;
     private String namespace;
     private String deviceID;
@@ -156,6 +158,22 @@ public class UnapprovedToDiscussForm {
     }
     public void setClose(boolean close) {
         this.close = close;
+    }
+    
+    @Column(name = "date_authorized")
+    public String getDateAuthorized() {
+        return dateAuthorized;
+    }
+    public void setDateAuthorized(String dateAuthorized) {
+        this.dateAuthorized = dateAuthorized;
+    }
+    
+    @Column(name = "date_authorized_int")
+    public String getDateAuthorizedInt() {
+        return dateAuthorizedInt;
+    }
+    public void setDateAuthorizedInt(String dateAuthorizedInt) {
+        this.dateAuthorizedInt = dateAuthorizedInt;
     }
     
     @Column(name = "namespace")

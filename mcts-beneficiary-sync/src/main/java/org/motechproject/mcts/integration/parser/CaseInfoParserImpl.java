@@ -50,11 +50,13 @@ public class CaseInfoParserImpl implements CaseInfoParser {
                 .entrySet()) {
 
             String key = subElement.getKey();
+            if(!key.equals("anm")) {
             if (isRecursive) {
                 for (FormValueElement formValueElement : subElement.getValue()) {
                     mapper.putAll(parse(formValueElement, isRecursive));
                 }
             }
+           }
 
             key = applyConversions(key);
             mapper.put(key, getFormValueElementValue(subElement));
