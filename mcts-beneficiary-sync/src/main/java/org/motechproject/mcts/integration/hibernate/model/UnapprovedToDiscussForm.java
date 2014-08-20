@@ -14,6 +14,8 @@ import javax.persistence.Table;
 @Table(name = "unapproved_to_discuss_form")
 public class UnapprovedToDiscussForm {
     private int id;
+    private String mctsId;
+    private String fullMctsId;
     private String reasonDisapproved;
     private String showReasonDisapproved;
     private String badMapping;
@@ -46,6 +48,22 @@ public class UnapprovedToDiscussForm {
     }
     public void setId(int id) {
         this.id = id;
+    }
+    
+    @Column(name = "mcts_id")
+    public String getMctsId() {
+        return mctsId;
+    }
+    public void setMctsId(String mctsId) {
+        this.mctsId = mctsId;
+    }
+    
+    @Column(name = "full_mcts_id")
+    public String getFullMctsId() {
+        return fullMctsId;
+    }
+    public void setFullMctsId(String fullMctsId) {
+        this.fullMctsId = fullMctsId;
     }
     
     @Column(name = "reason_disapproved")

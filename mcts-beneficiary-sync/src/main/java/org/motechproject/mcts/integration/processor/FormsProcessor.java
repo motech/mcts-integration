@@ -59,9 +59,10 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
                             .toString(motherCase.getId()));
-            
+            if(motherForm.containsKey(CommcareFieldsConstants.AUTHORIZED)) {
             mctsPregnantMother
                     .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get(CommcareFieldsConstants.AUTHORIZED)));
+            }
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             MappingToApproveForm mappingToApproveForm = new MappingToApproveForm();
@@ -100,9 +101,9 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get(CommcareFieldsConstants.CASE_ID));
-            
+            if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
             mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
-
+            }
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             DontKnowForm dontKnowForm = new DontKnowForm();
@@ -138,10 +139,13 @@ public class FormsProcessor {
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get(CommcareFieldsConstants.CASE_ID));
           
-
+            if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
             mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
+            }
+            if(motherForm.containsKey(CommcareFieldsConstants.AUTHORIZED)) {
             mctsPregnantMother
             .setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get(CommcareFieldsConstants.AUTHORIZED)));
+            }
             mctsPregnantMother.setMotherCase(motherCase);
 
             careDataService.saveOrUpdate(mctsPregnantMother);
@@ -177,13 +181,19 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
                             .toString(motherCase.getId()));
+            if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
+            mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
+            }
+            if(motherForm.containsKey(CommcareFieldsConstants.AUTHORIZED)) {
             mctsPregnantMother.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get(CommcareFieldsConstants.AUTHORIZED)));
-
+            }
             careDataService.saveOrUpdate(mctsPregnantMother);
             
             UnapprovedToDiscussForm unapprovedToDiscussForm = new UnapprovedToDiscussForm();
             unapprovedToDiscussForm.setAnmClose(motherForm.get(CommcareFieldsConstants.ANM_CLOSE));
             unapprovedToDiscussForm.setAshaCanFix(motherForm.get(CommcareFieldsConstants.ASHA_CAN_FIX));
+            unapprovedToDiscussForm.setMctsId(motherForm.get(CommcareFieldsConstants.MCTS_ID));
+            unapprovedToDiscussForm.setFullMctsId(motherForm.get(CommcareFieldsConstants.FULL_MCTS_ID));
             unapprovedToDiscussForm.setReasonDisapproved(motherForm
                     .get(CommcareFieldsConstants.REASON_DISAPPROVED));
             unapprovedToDiscussForm.setShowReasonDisapproved(motherForm
@@ -227,7 +237,9 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.findEntityByField(
                     MctsPregnantMother.class, "mctsPersonaCaseUId",
                     motherForm.get(CommcareFieldsConstants.CASE_ID));
+            if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
             mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
+            }
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             UnmappedToReviewForm unmappedToReviewForm = new UnmappedToReviewForm();
@@ -271,7 +283,9 @@ public class FormsProcessor {
                     motherForm.get(CommcareFieldsConstants.CASE_ID));
             mctsPregnantMother.setHhNumber(motherForm.get(CommcareFieldsConstants.HH_NUMBER));
             mctsPregnantMother.setFamilyNumber(motherForm.get(CommcareFieldsConstants.FAMILY_NUMBER));
+            if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
             mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
+            }
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             mctsFormUpdateService
@@ -343,7 +357,9 @@ public class FormsProcessor {
                 return;
             }
             if(mctsPregnantMother != null) {
+                if(motherForm.containsKey(CommcareFieldsConstants.MCTS_MATCH)) {
             mctsPregnantMother.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm.get(CommcareFieldsConstants.MCTS_MATCH)));
+                }
             mctsPregnantMother.setMotherCase(motherCase);
             careDataService.saveOrUpdate(mctsPregnantMother);
             }
@@ -353,7 +369,9 @@ public class FormsProcessor {
             mctsPregnantMother = careDataService.getMctsPregnantMotherFromCaseId(Integer
                     .toString(motherCase.getId()));
             if(mctsPregnantMother != null) {
+                if(motherForm.containsKey(CommcareFieldsConstants.AUTHORIZED)) {
                 mctsPregnantMother.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm.get(CommcareFieldsConstants.AUTHORIZED)));
+                }
                 careDataService.saveOrUpdate(mctsPregnantMother);
             }
         }

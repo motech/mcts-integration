@@ -395,7 +395,7 @@ public class CareDataRepository {
             String ownerId) {
         String queryString = "from MotherCase mcase where mcase.hhNumber="
                 + hhNum + " and mcase.familyNumber=" + familyNum
-                + " and mcase.flwGroup.id=" + ownerId + "";
+                + " and mcase.flwGroup.groupId='" + ownerId + "'";
         List<MotherCase> motherCase = getCurrentSession().createQuery(
                 queryString).list();
         if (motherCase.size() == 0) {
