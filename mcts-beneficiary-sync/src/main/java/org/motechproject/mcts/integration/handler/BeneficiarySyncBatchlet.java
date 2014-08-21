@@ -22,8 +22,9 @@ public class BeneficiarySyncBatchlet implements Batchlet {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(BeneficiarySyncBatchlet.class);
     
-    private PropertyReader propertyReader;
     private HttpClient commonsHttpClient;
+    
+    private PropertyReader propertyReader;
 
     public HttpClient getCommonsHttpClient() {
         return commonsHttpClient;
@@ -33,18 +34,24 @@ public class BeneficiarySyncBatchlet implements Batchlet {
         this.commonsHttpClient = commonsHttpClient;
     }
 
+    public PropertyReader getPropertyReader() {
+        return propertyReader;
+    }
+
+    public void setPropertyReader(PropertyReader propertyReader) {
+        this.propertyReader = propertyReader;
+    }
+
     @Override
     public String process() {
      
         String response = getRequest(propertyReader.getMctsSyncFromLoginUrl());
-        //String response = getRequest("http://192.168.1.90:8080/motech-platform-server/module/mcts-integration/beneficiary/syncFrom?startDate=04-12-2012&endDate=30-12-2014");
         LOGGER.info("Returned response from mcts 0.21.1",response);
         return response;
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
 
     }
     
@@ -76,11 +83,8 @@ public class BeneficiarySyncBatchlet implements Batchlet {
     private void authenticateMctsLogin() {
         commonsHttpClient.getParams().setAuthenticationPreemptive(true);
         String userName = propertyReader.getMctsUserName();
-        //String userName ="admin";
-        
         String password = propertyReader.getMctsPassword();
-        //String password = "password";
-        LOGGER.debug("loginurl for mcts" + propertyReader.getMctsSyncFromLoginUrl());
+        LOGGER.debug("login url for mcts: " + propertyReader.getMctsSyncFromLoginUrl());
         commonsHttpClient.getState().setCredentials(
                 new AuthScope(null, -1, null, null),
                 new UsernamePasswordCredentials(userName, password));

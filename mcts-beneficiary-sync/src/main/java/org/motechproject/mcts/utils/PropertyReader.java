@@ -1,6 +1,3 @@
-/**
- * Reads properties from the properties file <code>beneficiary_sync.properties</code> and return them
- */
 package org.motechproject.mcts.utils;
 
 import java.util.Properties;
@@ -11,6 +8,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * Reads properties from the properties file
+ * <code>beneficiary_sync.properties</code> and return them
+ */
 @Component
 public class PropertyReader {
 
@@ -198,14 +199,21 @@ public class PropertyReader {
     }
 
     public String getMctsSyncFromLoginUrl() {
-        return String.format("%s%s", properties.getProperty("mcts_21.base.url")+properties.getProperty("mcts_21.syncfrom.url"));
+        return String.format("%s/%s",
+                properties.getProperty("mcts_21.base.url"),
+                properties.getProperty("mcts_21.syncfrom.url"));
     }
+
     public String getMctsSyncToLoginUrl() {
-        return String.format("%s%s", properties.getProperty("mcts_21.base.url")+properties.getProperty("mcts_21.syncto.url"));
+        return String.format("%s/%s",
+                properties.getProperty("mcts_21.base.url"),
+                properties.getProperty("mcts_21.syncto.url"));
     }
+
     public String getMctsUserName() {
         return properties.getProperty("mcts_21.username");
     }
+
     public String getMctsPassword() {
         return properties.getProperty("mcts_21.password");
     }

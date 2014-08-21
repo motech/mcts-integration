@@ -1,50 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.springframework.org/schema/beans
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
                               http://www.springframework.org/schema/beans/spring-beans.xsd
                               http://xmlns.jcp.org/xml/ns/javaee
-                              http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd">
-                              
+                              http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd
+                              http://www.springframework.org/schema/util
+                              http://www.springframework.org/schema/util/spring-util-3.1.xsd
+                              http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven />
+
+    <util:properties id="beneficiarySyncProperties"
+        location="classpath:/beneficiary_sync.properties" />
+
     <bean id="multiThreadedHttpConnectionManager"
-          class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager"/>
+        class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" />
+
+    <bean id="propertyReader" class="org.motechproject.mcts.utils.PropertyReader">
+        <constructor-arg ref="beneficiarySyncProperties" />
+    </bean>
 
     <bean id="commonsHttpClient" class="org.apache.commons.httpclient.HttpClient">
-        <constructor-arg ref="multiThreadedHttpConnectionManager"/>
+        <constructor-arg ref="multiThreadedHttpConnectionManager" />
     </bean>
-    <bean id="syncFromBatchlet" class="org.motechproject.mcts.integration.handler.BeneficiarySyncBatchlet">
-           <property name="commonsHttpClient" ref="commonsHttpClient" />
-	</bean>
-<job id="syncFrom" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
 
+    <bean id="syncFromBatchlet"
+        class="org.motechproject.mcts.integration.handler.BeneficiarySyncBatchlet">
+        <property name="propertyReader" ref="propertyReader" />
+        <property name="commonsHttpClient" ref="commonsHttpClient" />
+    </bean>
 
-	<!--<step id="split" next="import">
-		<batchlet ref="org.springframework.batch.jsr.batchlet.FileSplittingBatchlet">
-			<properties>
-				<property name="fileName" value="D:\\spring-batch-and-u\\jsr352-springbatch-and-you\\src\\main\\resources\\data\\swk_small.log"/>
-				<property name="lines" value="10000"/>
-			</properties>
-		</batchlet>
-	</step>
-	<step id="import" next="report">
-		<chunk item-count="10000" skip-limit="10000000">
-			<reader ref="org.springframework.batch.jsr.chunk.LogReadingItemReader">
-				<properties>
-					<property name="directoryName" value="C:\\Users\\Rakesh\\Downloads\\"/>
-				</properties>
-			</reader>
-			<processor ref="org.springframework.batch.jsr.chunk.GeocodingItemProcessor"/>
-			<writer ref="org.springframework.batch.jsr.chunk.LogEntryItemWriter"/>
-			<skippable-exception-classes>
-				<include class="java.lang.IllegalStateException"/>
-			</skippable-exception-classes>
-		</chunk>
-	</step>-->
-	<step id="report">
-		<batchlet ref="syncFromBatchlet">
-		</batchlet>
-	</step>
-	
-	
-</job>
+    <job id="syncFrom" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+        version="1.0">
+
+        <step id="report">
+            <batchlet ref="syncFromBatchlet">
+            </batchlet>
+        </step>
+
+    </job>
 </beans>

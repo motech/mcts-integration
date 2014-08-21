@@ -22,7 +22,7 @@ public class BatchEventHandler {
     public void handleEvent(MotechEvent event) {
         LOGGER.debug("Handling batch_Start event in mcts");
         String jobName = event.getParameters().get("Job_Name").toString();
-        LOGGER.debug("The job name us " + jobName);
+        LOGGER.debug("The job name is: " + jobName);
         try {
             triggerServ.triggerJob("syncFrom");
         } catch (BatchException e) {
