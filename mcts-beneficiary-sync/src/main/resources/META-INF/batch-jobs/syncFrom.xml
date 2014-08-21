@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans
+                              http://www.springframework.org/schema/beans/spring-beans.xsd
+                              http://xmlns.jcp.org/xml/ns/javaee
+                              http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd">
+                              
+    <bean id="multiThreadedHttpConnectionManager"
+          class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager"/>
+
+    <bean id="commonsHttpClient" class="org.apache.commons.httpclient.HttpClient">
+        <constructor-arg ref="multiThreadedHttpConnectionManager"/>
+    </bean>
+    <bean id="syncFromBatchlet" class="org.motechproject.mcts.integration.handler.BeneficiarySyncBatchlet">
+           <property name="commonsHttpClient" ref="commonsHttpClient" />
+	</bean>
 <job id="syncFrom" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+
+
 	<!--<step id="split" next="import">
 		<batchlet ref="org.springframework.batch.jsr.batchlet.FileSplittingBatchlet">
 			<properties>
@@ -23,6 +41,10 @@
 		</chunk>
 	</step>-->
 	<step id="report">
-		<batchlet ref="org.motechproject.mcts.integration.handler.BeneficiarySyncBatchlet"/>
+		<batchlet ref="syncFromBatchlet">
+		</batchlet>
 	</step>
+	
+	
 </job>
+</beans>

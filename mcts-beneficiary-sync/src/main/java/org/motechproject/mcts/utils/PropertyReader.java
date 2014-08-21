@@ -196,4 +196,17 @@ public class PropertyReader {
     public String getOwnerId() {
         return properties.getProperty("mcts.fixtureData.ownerId");
     }
+
+    public String getMctsSyncFromLoginUrl() {
+        return String.format("%s%s", properties.getProperty("mcts_21.base.url")+properties.getProperty("mcts_21.syncfrom.url"));
+    }
+    public String getMctsSyncToLoginUrl() {
+        return String.format("%s%s", properties.getProperty("mcts_21.base.url")+properties.getProperty("mcts_21.syncto.url"));
+    }
+    public String getMctsUserName() {
+        return properties.getProperty("mcts_21.username");
+    }
+    public String getMctsPassword() {
+        return properties.getProperty("mcts_21.password");
+    }
 }
