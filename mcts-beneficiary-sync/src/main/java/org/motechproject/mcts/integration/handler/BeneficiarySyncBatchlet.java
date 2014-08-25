@@ -1,37 +1,31 @@
 package org.motechproject.mcts.integration.handler;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.batch.api.Batchlet;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.IOUtils;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BeneficiarySyncBatchlet implements Batchlet {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(BeneficiarySyncBatchlet.class);
-    
-    private HttpClient commonsHttpClient;
-    
-    private PropertyReader propertyReader;
 
-    public HttpClient getCommonsHttpClient() {
-        return commonsHttpClient;
+    private PropertyReader propertyReader;
+    private RestTemplate restTemplate;
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
     }
 
-    public void setCommonsHttpClient(HttpClient commonsHttpClient) {
-        this.commonsHttpClient = commonsHttpClient;
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public PropertyReader getPropertyReader() {
@@ -44,51 +38,64 @@ public class BeneficiarySyncBatchlet implements Batchlet {
 
     @Override
     public String process() {
-     
-        String response = getRequest(propertyReader.getMctsSyncFromLoginUrl());
-        LOGGER.info("Returned response from mcts 0.21.1",response);
-        return response;
+
+        ResponseEntity<String> loginResponse = new ResponseEntity<>(
+                HttpStatus.BAD_REQUEST);
+        ResponseEntity<String> response = new ResponseEntity<>(
+                HttpStatus.BAD_REQUEST);
+        loginResponse = getLogin();
+
+        if (loginResponse.getStatusCode().value()
+                / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+            LOGGER.debug("Matching Urls: "
+                    + propertyReader.getMotechLoginRedirectUrl() + " & "
+                    + loginResponse.getHeaders().getLocation().toString());
+            if (propertyReader.getMotechLoginRedirectUrl().equals(
+                    loginResponse.getHeaders().getLocation().toString())) {
+                LOGGER.info("Succefully logged in to Motech-Platform");
+                try {
+
+                    response = restTemplate.getForObject(
+                            propertyReader.getMctsSyncFromLoginUrl(),
+                            ResponseEntity.class);
+
+                    return response.toString();
+
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public void stop() {
 
     }
-    
-    String getRequest(String requestUrl) {
 
-        HttpMethod getMethod = buildRequest(requestUrl);
-
+    ResponseEntity<String> getLogin() {
+        LOGGER.info("Trying to login to Motech Platform");
+        ResponseEntity<String> response = new ResponseEntity<String>(
+                HttpStatus.BAD_REQUEST);
+        LOGGER.debug("Login Url is: "
+                + propertyReader.getMotechPlatformLoginUrl());
+        LOGGER.debug("Login Params are: "
+                + propertyReader.getMotechPlatformLoginForm());
         try {
-            commonsHttpClient.executeMethod(getMethod);
-            InputStream responseBodyAsStream = getMethod
-                    .getResponseBodyAsStream();
-            return IOUtils.toString(responseBodyAsStream);
-        } catch (IOException e) {
-            LOGGER.warn("IOException while sending request to mcts 0.21.1: "
-                    + e.getMessage());
-        } finally {
-            getMethod.releaseConnection();
+
+            response = restTemplate.postForEntity(
+                    propertyReader.getMotechPlatformLoginUrl(),
+                    propertyReader.getMotechPlatformLoginForm(), String.class);
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
         }
-
-        return null;
+        LOGGER.debug("Login Response [StatusCode: " + response.getStatusCode()
+                + "]");
+        LOGGER.debug("Login Response [RedirectUrl: "
+                + response.getHeaders().getLocation() + "]");
+        return response;
     }
-    
-    private HttpMethod buildRequest(String url) {
-        HttpMethod requestMethod = new GetMethod(url);
-        authenticateMctsLogin();
-        return requestMethod;
-    }
-    
-    private void authenticateMctsLogin() {
-        commonsHttpClient.getParams().setAuthenticationPreemptive(true);
-        String userName = propertyReader.getMctsUserName();
-        String password = propertyReader.getMctsPassword();
-        LOGGER.debug("login url for mcts: " + propertyReader.getMctsSyncFromLoginUrl());
-        commonsHttpClient.getState().setCredentials(
-                new AuthScope(null, -1, null, null),
-                new UsernamePasswordCredentials(userName, password));
-    }
-
 
 }

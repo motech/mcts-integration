@@ -15,22 +15,22 @@
     <util:properties id="beneficiarySyncProperties"
         location="classpath:/beneficiary_sync.properties" />
 
-    <bean id="multiThreadedHttpConnectionManager"
-        class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" />
-
     <bean id="propertyReader" class="org.motechproject.mcts.utils.PropertyReader">
         <constructor-arg ref="beneficiarySyncProperties" />
-    </bean>
-
-    <bean id="commonsHttpClient" class="org.apache.commons.httpclient.HttpClient">
-        <constructor-arg ref="multiThreadedHttpConnectionManager" />
     </bean>
 
     <bean id="syncFromBatchlet"
         class="org.motechproject.mcts.integration.handler.BeneficiarySyncBatchlet">
         <property name="propertyReader" ref="propertyReader" />
-        <property name="commonsHttpClient" ref="commonsHttpClient" />
+        <property name="restTemplate" ref="restTemplate" />
     </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="httpComponentsClientHttpRequestFactory" />
+    </bean>
+
+    <bean id="httpComponentsClientHttpRequestFactory"
+        class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
 
     <job id="syncFrom" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
         version="1.0">
