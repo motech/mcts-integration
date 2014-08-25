@@ -19,16 +19,6 @@ import org.springframework.stereotype.Component;
 public class MctsJobService {
     
     private static final Logger logger = LoggerFactory.getLogger("mcts-job-service");
-   /* @Autowired
-    private MotechSchedulerService schedulerService;
-    public MotechSchedulerService getMotechSchedulerService() {
-        return schedulerService;
-    }
-
-    public void setMotechSchedulerService(
-            MotechSchedulerService motechSchedulerService) {
-        this.schedulerService = motechSchedulerService;
-    }*/
 
     @Autowired
     public MctsJobService(PropertyReader propertyReader, MotechSchedulerService schedulerServiceOsgi) {
