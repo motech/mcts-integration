@@ -9,7 +9,6 @@ import org.motechproject.mcts.integration.hibernate.model.MapExistingForm;
 import org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsUpdate;
 import org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm;
 import org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm;
 import org.motechproject.mcts.integration.service.CareDataService;
@@ -31,7 +30,6 @@ public class FormsProcessor {
     MCTSFormUpdateService mctsFormUpdateService;
     MctsPregnantMother mctsPregnantMother = null;
     MotherCase motherCase = null;
-    MotherCaseMctsUpdate motherCaseMctsUpdate = null;
 
     private static final Logger logger = LoggerFactory
             .getLogger("mcts-forms-processor");

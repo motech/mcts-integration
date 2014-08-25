@@ -21,6 +21,7 @@ import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
 import org.motechproject.mcts.integration.service.FLWDataPopulator;
+import org.motechproject.event.MotechEvent;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
@@ -273,7 +274,7 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getCloseCaseXml() {
-        closeCaseXmlService.createCloseCaseXml();
+        closeCaseXmlService.createCloseCaseXml(new MotechEvent());
         return "success";
     }
 

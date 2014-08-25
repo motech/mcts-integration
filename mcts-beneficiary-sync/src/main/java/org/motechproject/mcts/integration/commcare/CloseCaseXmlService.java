@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.utils.CommcareConstants;
+import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -37,7 +40,8 @@ public class CloseCaseXmlService {
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
     
-    public void createCloseCaseXml() {
+    @MotechListener(subjects = MCTSBatchConstants.ARCHIVE_EVENT_SUBJECT)
+    public void createCloseCaseXml(MotechEvent motechEvent) {
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository.getMctsPregnantMotherForClosedCases();
         LOGGER.debug("size : "+mctsPregnantMother.size());
         CloseData data = createCloseDataAndReturn(mctsPregnantMother);
@@ -72,6 +76,7 @@ public class CloseCaseXmlService {
         Meta meta = createMetaandReturn(userId);
         meta.setTimeEnd(new DateTime().toString());
         data.setMeta(meta);
+        
         for (int i = 0; i < mctsPregnantMother.size(); i++) {
             mctsPregnantMother.get(i).setmCTSPregnantMotherMatchStatus(MCTSPregnantMotherMatchStatus.ARCHIVE);
             Case caseTask = createCaseForBeneficiary(mctsPregnantMother.get(i),

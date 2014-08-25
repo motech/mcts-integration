@@ -25,9 +25,9 @@
 	<osgi:reference id="httpAgentServiceOsgi" 
                   interface="org.motechproject.http.agent.service.HttpAgent" />
 
-   <!-- <osgi:reference id="schedulerServiceOsgi" interface="org.motechproject.scheduler.MotechSchedulerService"
+   <osgi:reference id="schedulerServiceOsgi" interface="org.motechproject.scheduler.MotechSchedulerService"
                     cardinality="0..1"/> 
 
-    <osgi:reference id="schedulerDiagnosticsServiceOsgi"
-                    interface="org.motechproject.commcare.provider.sync.diagnostics.scheduler.SchedulerDiagnosticsService"/>-->
+  <!--   <osgi:reference id="schedulerDiagnosticsServiceOsgi"
+                    interface="org.motechproject.commcare.provider.sync.diagnostics.scheduler.SchedulerDiagnosticsService"/> -->
 </beans>

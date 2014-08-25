@@ -39,11 +39,8 @@
 				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsUpdate</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog</value>
-				<!-- <value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatusLookup</value> -->
 				<value>org.motechproject.mcts.integration.hibernate.model.DontKnowForm</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MapExistingForm</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm</value>

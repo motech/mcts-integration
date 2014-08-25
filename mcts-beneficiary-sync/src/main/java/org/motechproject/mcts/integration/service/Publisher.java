@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.http.agent.service.HttpAgent;
-import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.MctsConstants;
@@ -22,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class Publisher {
@@ -30,6 +30,9 @@ public class Publisher {
     private PropertyReader propertyReader;
     @Autowired
     private HttpAgent httpAgentServiceOsgi;
+    @Autowired
+    private RestTemplate restTemplate;
+    
     private static final String MODE = "publish";
     private static final Logger LOGGER = LoggerFactory
             .getLogger(Publisher.class);
@@ -128,9 +131,9 @@ public class Publisher {
                 LOGGER.info("Sending HUb the Notification");
                 try {
 
-                    response = (ResponseEntity<String>) httpAgentServiceOsgi
-                            .executeWithReturnTypeSync(getUrl(), httpEntity,
-                                    Method.POST);
+                    response = restTemplate.postForEntity(getUrl(), httpEntity,
+                            String.class);
+ 
                     return response;
 
                 } catch (Exception e) {
@@ -159,11 +162,9 @@ public class Publisher {
                 + propertyReader.getMotechPlatformLoginForm());
         try {
 
-            response = (ResponseEntity<String>) httpAgentServiceOsgi
-                    .executeWithReturnTypeSync(
-                            propertyReader.getMotechPlatformLoginUrl(),
-                            propertyReader.getMotechPlatformLoginForm(),
-                            Method.POST);
+            response = restTemplate.postForEntity(
+                    propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), String.class);
+        
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }

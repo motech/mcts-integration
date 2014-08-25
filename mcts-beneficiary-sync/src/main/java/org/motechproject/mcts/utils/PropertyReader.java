@@ -94,12 +94,12 @@ public class PropertyReader {
 
     public String getSyncCsvFileLocation() {
         return properties
-                .getProperty("beneficiary.sync.csv.input.file.absolute.location");
+                .getProperty("beneficiary.sync.location.input.file.absolute.location");
     }
 
     public String getFLWCsvFileLocation() {
         return properties
-                .getProperty("beneficiary.sync.csv2.input.file.absolute.location");
+                .getProperty("beneficiary.sync.flw.input.file.absolute.location");
     }
 
     public String getHubBaseUrl() {
@@ -196,4 +196,8 @@ public class PropertyReader {
     public String getOwnerId() {
         return properties.getProperty("mcts.fixtureData.ownerId");
     }
+
+    public String getArchiveCronExpression() {
+        return properties.getProperty("mcts.archive.cronEpression");
+        }
 }

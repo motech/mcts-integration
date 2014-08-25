@@ -69,7 +69,6 @@ public class CaseInfoParserImplTest {
         assertEquals(infoMap.get("instanceID"), "87bdd92f-ab18-4acb-806e-3904ea1257d7");
         assertEquals(infoMap.get("mctsMatch"), "yes");
         assertEquals(infoMap.get("mctsId"), "1000114");
-        assertEquals(infoMap.get("pregnancyId"), "db35d198-a391-427b-9efa-4c5da1023e43");
     }
 
     @Test

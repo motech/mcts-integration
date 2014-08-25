@@ -438,9 +438,7 @@ public class CareDataRepository {
                 + "') and mother.mCTSPregnantMotherCaseAuthorisedStatus=null and mother.mCTSPregnantMotherMatchStatus=null";
         List<MctsPregnantMother> mother = getCurrentSession().createQuery(
                 queryString).list();
-        if (mother.size() == 0) {
-            return null;
-        }
+        
         return mother;
     }
 }

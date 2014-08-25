@@ -49,45 +49,34 @@
 		class="org.springframework.beans.factory.config.ListFactoryBean">
 		<property name="sourceList">
 			<list>
-<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherMatchStatusLookup</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCaseMctsAuthorizedStatusLookup</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.Flw
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.FlwGroup
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCase
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.LocationDimension
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.BpForm
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsState
-				</value>
-				 <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsTaluk
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPhc
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsVillage
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock
-				</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsSubcenter
-				</value>
-
+<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherErrorLog</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.Flw</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.FlwGroup</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MotherCase</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.LocationDimension</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.BpForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsState</value>
+			    <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsTaluk</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsPhc</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsVillage</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsSubcenter</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
-
 				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
 				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.DontKnowForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MapExistingForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm</value>
+				<value>org.motechproject.mcts.integration.hibernate.model.CaseAlreadyClosedForm</value>
 			</list>
 		</property>
 	</bean>
