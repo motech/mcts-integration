@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service to update the table mcts_Healthworker in the database
- *
+ * 
  * @author aman
- *
+ * 
  */
 @Transactional
 @Service
@@ -46,7 +46,7 @@ public class FixtureDataService {
     /**
      * Method to update the mcts_Healthworker table in database. Create
      * case_groupId.
-     *
+     * 
      * @throws BeneficiaryException
      */
     @MotechListener(subjects = MCTSBatchConstants.EVENT_SUBJECT)
@@ -71,63 +71,69 @@ public class FixtureDataService {
     }
 
     public String getCaseGroupIdfromAshaId(Integer id, String mctsId) {
-        
+
         String caseGroupId = "";
         String defaultCaseGroupId = propertyReader.getOwnerId();
-        if(id != null ) {
-            caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id); 
-        }
-        if(caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
-            updateGroupId();
+        if (id != null) {
             caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
-            if(caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
-                return defaultCaseGroupId;
+            if (caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
+                updateGroupId();
+                caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+                if (caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
+                    return defaultCaseGroupId;
+                }
             }
+        } else {
+            return defaultCaseGroupId;
         }
         return caseGroupId;
-        
-//        if (id == null) {
-//            //TODO remove the comments when care-reporting location-code is deployed.
-//            /*
-//            String locationId = mctsId.substring(0, 10);
-//            caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
-//            if (caseGroupId == null) {
-//                return null;
-//            }
-//            else {
-//                return caseGroupId;
-//            }
-//        */
-//        return null;    
-//        }
-//        caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
-//        if (caseGroupId == null) {
-//            
-//            updateGroupId();
-//            caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
-//            if (caseGroupId == null) {
-//                //TODO remove the comments when care-reporting location-code is deployed.
-//                /*
-//            
-//                String locationId = mctsId.substring(0, 10);
-//                caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
-//                if (caseGroupId == null) {
-//                    return null;
-//                }
-//                else {
-//                    return caseGroupId;
-//                }
-//                
-//                
-//            */
-//              return null;  
-//            } else {
-//                return caseGroupId;
-//            }
-//
-//        } else {
-//            return caseGroupId;
-//        }
+
+        // if (id == null) {
+        // //TODO remove the comments when care-reporting location-code is
+        // deployed.
+        // /*
+        // String locationId = mctsId.substring(0, 10);
+        // caseGroupId =
+        // careDataRepository.getOwnerIdFromLocationId(locationId);
+        // if (caseGroupId == null) {
+        // return null;
+        // }
+        // else {
+        // return caseGroupId;
+        // }
+        // */
+        // return null;
+        // }
+        // caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+        // if (caseGroupId == null) {
+        //
+        // updateGroupId();
+        // caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+        // if (caseGroupId == null) {
+        // //TODO remove the comments when care-reporting location-code is
+        // deployed.
+        // /*
+        //
+        // String locationId = mctsId.substring(0, 10);
+        // caseGroupId =
+        // careDataRepository.getOwnerIdFromLocationId(locationId);
+        // if (caseGroupId == null) {
+        // return null;
+        // }
+        // else {
+        // return caseGroupId;
+        // }
+        //
+        //
+        // */
+        // return null;
+        // } else {
+        // return caseGroupId;
+        // }
+        //
+        // } else {
+        // return caseGroupId;
+        // }
 
     }
 
