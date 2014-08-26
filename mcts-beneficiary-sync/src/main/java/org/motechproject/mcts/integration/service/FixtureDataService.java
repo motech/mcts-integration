@@ -73,6 +73,8 @@ public class FixtureDataService {
         
         String caseGroupId;
         if (id == null) {
+            //TODO remove the comments when care-reporting location-code is deployed.
+            /*
             String locationId = mctsId.substring(0, 10);
             caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
             if (caseGroupId == null) {
@@ -81,6 +83,8 @@ public class FixtureDataService {
             else {
                 return caseGroupId;
             }
+        */
+        return null;    
         }
         caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
         if (caseGroupId == null) {
@@ -88,6 +92,9 @@ public class FixtureDataService {
             updateGroupId();
             caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
             if (caseGroupId == null) {
+                //TODO remove the comments when care-reporting location-code is deployed.
+                /*
+            
                 String locationId = mctsId.substring(0, 10);
                 caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
                 if (caseGroupId == null) {
@@ -98,6 +105,8 @@ public class FixtureDataService {
                 }
                 
                 
+            */
+              return null;  
             } else {
                 return caseGroupId;
             }

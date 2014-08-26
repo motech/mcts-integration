@@ -63,7 +63,7 @@ public class Flw extends SelfUpdatable<Flw> implements java.io.Serializable {
     private Date lastModifiedTime;
     private Set<FlwGroup> flwGroups;
     private LocationDimension locationDimension;
-    private String locationCode;
+    /*private String locationCode;
 
     @Column(name = "location_code")
 	public String getLocationCode() {
@@ -72,7 +72,7 @@ public class Flw extends SelfUpdatable<Flw> implements java.io.Serializable {
 
     public void setLocationCode(String locationCode) {
         this.locationCode = locationCode;
-    }
+    }*/
 
     public Flw() {
         Date date = new Date();
@@ -116,7 +116,7 @@ public class Flw extends SelfUpdatable<Flw> implements java.io.Serializable {
         this.creationTime = creationTime;
         this.lastModifiedTime = lastModifiedTime;
         this.locationDimension = locationDimension;
-        this.locationCode = locationCode;
+        //this.locationCode = locationCode;
     }
 
     @Id
