@@ -82,8 +82,9 @@ public class FixtureDataServiceTest {
 	
 	@Test
 	public void shouldGetCaseGroupIdfromAshaId() {
-	    when(careDataRepository.getCaseGroupIdfromAshaId(15)).thenReturn(null).thenReturn("123");
-	    String groupId = fixtureDataService.getCaseGroupIdfromAshaId(15,"123");
+	    when(careDataRepository.getCaseGroupIdfromAshaId(15)).thenReturn(null).thenReturn(null);
+	    when(careDataRepository.getOwnerIdFromLocationId("1234567890")).thenReturn("123");
+	    String groupId = fixtureDataService.getCaseGroupIdfromAshaId(15,"1234567890");
 	    
 	    assertEquals("123",groupId);
 	    

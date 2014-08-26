@@ -36,7 +36,7 @@ public class CareDataService {
         MotherCase motherCase = careDataRepository.findEntityByField(
                 MotherCase.class, "caseId", caseId);
         if (motherCase == null) {
-            LOGGER.info(String
+            LOGGER.debug(String
                     .format("MCTS Pregnant Mother not updated. Mother case not found for Case Id: %s",
                             caseId));
             return;
@@ -54,13 +54,13 @@ public class CareDataService {
                         motherCase);
 
         if (mctsPregnantMother != null) {
-            LOGGER.info(String
+            LOGGER.debug(String
                     .format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.",
                             mctsPregnantMother.getMctsId(),
                             motherCase.getCaseId(), mctsId));
             mctsPregnantMother.setMctsId(mctsId);
         } else {
-            LOGGER.info(String
+            LOGGER.debug(String
                     .format("Creating MCTS Pregnant Mother with MCTS Id: %s for Mother Case: %s.",
                             mctsId, motherCase.getCaseId()));
             mctsPregnantMother = new MctsPregnantMother();

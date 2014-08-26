@@ -73,12 +73,12 @@ public class LocationDataPopulator {
             newFile = new File(path + "/beneficiary.xml");
             FileOutputStream out = new FileOutputStream(newFile);
             out.write(bytes);
-            LOGGER.info("size" + newFile.getTotalSpace());
-            LOGGER.info("temp path" + newFile.getAbsolutePath());
+            LOGGER.debug("size" + newFile.getTotalSpace());
+            LOGGER.debug("temp path" + newFile.getAbsolutePath());
             beanReader = new CsvBeanReader(new FileReader(newFile),
                     CsvPreference.STANDARD_PREFERENCE);
             final String[] header = beanReader.getHeader(true);
-            LOGGER.info("Writing locations to database");
+            LOGGER.debug("Writing locations to database");
             while ((locationCSV = beanReader
                     .read(LocationDataCSV.class, header)) != null) {
                 if (LocationValidator.isValidateLocation(locationCSV)) {

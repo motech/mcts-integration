@@ -306,7 +306,6 @@ public class MCTSBeneficiarySyncService {
 
             Date dobDate = DateValidator.checkDateInFormat(dob, "dd-MM-yyyy");
             mctsPregnantMother.setBirthDate(dobDate);
-            LOGGER.debug("birth date : " + dob);
             if (dobDate == null) {
                 LOGGER.error(String
                         .format("Invalid Birth Date[%s] for Beneficiary Record: %s. Correct format is dd-mm-yyyy",
@@ -616,8 +615,6 @@ public class MCTSBeneficiarySyncService {
     public String transliterate(String word) {
         LOGGER.info("Creating new transliteration");
         String hindi = transliterationService.transliterate(word);
-        LOGGER.debug(String.format("Tranlation for [%s] received is [%s]",
-                word, hindi));
         return hindi;
     }
 
