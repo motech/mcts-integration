@@ -34,14 +34,13 @@ public class MCTSHttpClientService {
     @Autowired
     private HttpAgent httpAgentServiceOsgi;
 
-    private String postUrl;
-    
+     
     @Autowired
     public MCTSHttpClientService(PropertyReader propertyReader,
             HttpAgent httpAgentServiceOsgi) {
         this.propertyReader = propertyReader;
         this.httpAgentServiceOsgi = httpAgentServiceOsgi;
-        postUrl = propertyReader.getCommcareCasePostUrl();
+      
         
     }
 
@@ -77,7 +76,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(postUrl,
+                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
                         httpEntity, Method.POST);
 
         if (response != null) {
@@ -126,7 +125,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(postUrl,
+                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
                         httpEntity, Method.POST);
 
         if (response != null) {
@@ -142,7 +141,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(postUrl,
+                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
                         httpEntity, Method.POST);
 
         if (response != null) {
