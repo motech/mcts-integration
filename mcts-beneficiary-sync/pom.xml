@@ -236,13 +236,13 @@
 							</excludes>
 
 				</configuration>
-				<dependencies>
+			<!--	<dependencies>
 					<dependency>
 						<groupId>org.motechproject</groupId>
 						<artifactId>pmd-rules</artifactId>
 						<version>0.2</version>
 					</dependency>
-				</dependencies>
+				</dependencies>-->
 				<executions>
 					<execution>
 					<id>compile-check</id>

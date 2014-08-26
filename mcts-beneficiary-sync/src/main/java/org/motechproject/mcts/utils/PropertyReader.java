@@ -198,6 +198,6 @@ public class PropertyReader {
     }
 
     public String getArchiveCronExpression() {
-        return properties.getProperty("mcts.archive.cronEpression");
+        return properties.getProperty("mcts.archive.cronExpression");
         }
 }
