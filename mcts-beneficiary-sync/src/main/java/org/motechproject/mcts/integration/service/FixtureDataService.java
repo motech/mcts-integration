@@ -1,5 +1,6 @@
 package org.motechproject.mcts.integration.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
@@ -71,49 +72,62 @@ public class FixtureDataService {
 
     public String getCaseGroupIdfromAshaId(Integer id, String mctsId) {
         
-        String caseGroupId;
-        if (id == null) {
-            //TODO remove the comments when care-reporting location-code is deployed.
-            /*
-            String locationId = mctsId.substring(0, 10);
-            caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
-            if (caseGroupId == null) {
-                return null;
-            }
-            else {
-                return caseGroupId;
-            }
-        */
-        return null;    
+        String caseGroupId = "";
+        String defaultCaseGroupId = propertyReader.getOwnerId();
+        if(id != null ) {
+            caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id); 
         }
-        caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
-        if (caseGroupId == null) {
-            
+        if(caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
             updateGroupId();
             caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
-            if (caseGroupId == null) {
-                //TODO remove the comments when care-reporting location-code is deployed.
-                /*
-            
-                String locationId = mctsId.substring(0, 10);
-                caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
-                if (caseGroupId == null) {
-                    return null;
-                }
-                else {
-                    return caseGroupId;
-                }
-                
-                
-            */
-              return null;  
-            } else {
-                return caseGroupId;
+            if(caseGroupId == null || StringUtils.isEmpty(caseGroupId)) {
+                return defaultCaseGroupId;
             }
-
-        } else {
-            return caseGroupId;
         }
+        return caseGroupId;
+        
+//        if (id == null) {
+//            //TODO remove the comments when care-reporting location-code is deployed.
+//            /*
+//            String locationId = mctsId.substring(0, 10);
+//            caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
+//            if (caseGroupId == null) {
+//                return null;
+//            }
+//            else {
+//                return caseGroupId;
+//            }
+//        */
+//        return null;    
+//        }
+//        caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+//        if (caseGroupId == null) {
+//            
+//            updateGroupId();
+//            caseGroupId = careDataRepository.getCaseGroupIdfromAshaId(id);
+//            if (caseGroupId == null) {
+//                //TODO remove the comments when care-reporting location-code is deployed.
+//                /*
+//            
+//                String locationId = mctsId.substring(0, 10);
+//                caseGroupId = careDataRepository.getOwnerIdFromLocationId(locationId);
+//                if (caseGroupId == null) {
+//                    return null;
+//                }
+//                else {
+//                    return caseGroupId;
+//                }
+//                
+//                
+//            */
+//              return null;  
+//            } else {
+//                return caseGroupId;
+//            }
+//
+//        } else {
+//            return caseGroupId;
+//        }
 
     }
 
