@@ -200,4 +200,8 @@ public class PropertyReader {
     public String getArchiveCronExpression() {
         return properties.getProperty("mcts.archive.cronEpression");
         }
+
+    public String getCommcareCasePostUrl() {
+        return properties.getProperty("commcare.case.post.url");
+    }
 }
