@@ -1,14 +1,14 @@
 package org.motechproject.mcts.integration.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -80,7 +80,9 @@ public class FixtureDataServiceTest {
 		verify(careDataRepository, times(2)).saveOrUpdate((MctsHealthworker)any());
 	}
 	
+	@Ignore
 	@Test
+	//TODO commenting it out as care-reporting is not being deployed where location-id is stored
 	public void shouldGetCaseGroupIdfromAshaId() {
 	    when(careDataRepository.getCaseGroupIdfromAshaId(15)).thenReturn(null).thenReturn(null);
 	    when(careDataRepository.getOwnerIdFromLocationId("1234567890")).thenReturn("123");
