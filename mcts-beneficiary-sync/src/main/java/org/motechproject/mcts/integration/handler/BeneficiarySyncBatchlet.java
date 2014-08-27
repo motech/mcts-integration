@@ -52,7 +52,7 @@ public class BeneficiarySyncBatchlet implements Batchlet {
                     + loginResponse.getHeaders().getLocation().toString());
             if (propertyReader.getMotechLoginRedirectUrl().equals(
                     loginResponse.getHeaders().getLocation().toString())) {
-                LOGGER.info("Succefully logged in to Motech-Platform");
+                LOGGER.info("Successfully logged in to Motech-Platform");
                 try {
 
                     response = restTemplate.getForObject(
