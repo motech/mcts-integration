@@ -151,19 +151,20 @@ public class MCTSBeneficiarySyncService {
                 
                 String ashaId = record.getASHAID();
                 Integer workerId = IntegerValidator.validateAndReturnAsInt("workerId", ashaId);
-                String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId, beneficiaryId);
-                
-                    mctsPregnantMother = careDataService.findEntityByField(
+                                    mctsPregnantMother = careDataService.findEntityByField(
                             MctsPregnantMother.class, "mctsId", beneficiaryId);
                     // checks if beneficiary already present in db with same mctsId
                     if (mctsPregnantMother == null) {
                         mctsPregnantMother = new MctsPregnantMother();
                         mctsPregnantMother.setCreationTime(startDate);
-                        mctsPregnantMother.setOwnerId(ownerId);
                         mctsPregnantMother = mapRecordToMctsPregnantMother(record,
                                  mctsPregnantMother, beneficiaryId);
                         if (mctsPregnantMother != null) {
                             count++;
+                            String ownerId = fixtureDataService.getCaseGroupIdfromAshaId(workerId, beneficiaryId);
+                            mctsPregnantMother.setOwnerId(ownerId);
+                            
+
                             careDataService.saveOrUpdate(mctsPregnantMother);
                             LOGGER.info(String.format(
                                     "MctsPregnantMother [%s] added to db",
