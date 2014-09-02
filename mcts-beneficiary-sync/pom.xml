@@ -219,7 +219,7 @@
 			</plugin>
 
 			<!-- pmd -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>2.7.1</version>
@@ -236,13 +236,13 @@
 							</excludes>
 
 				</configuration>
-			<!--	<dependencies>
+				<dependencies>
 					<dependency>
 						<groupId>org.motechproject</groupId>
 						<artifactId>pmd-rules</artifactId>
 						<version>0.2</version>
 					</dependency>
-				</dependencies>-->
+				</dependencies>
 				<executions>
 					<execution>
 					<id>compile-check</id>
@@ -256,7 +256,7 @@
 				
 				</executions>
 				
-			</plugin>
+			</plugin>  -->
 
 			<!-- checkstyle -->
 			<plugin>

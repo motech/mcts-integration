@@ -64,15 +64,17 @@ public class CreateCaseXmlService {
 
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository
                 .getMctsPregnantMother();
-        LOGGER.debug("size :" + mctsPregnantMother.size());
+        Data data = null;
         int size = mctsPregnantMother.size();
         if (size > 0) {
             int sizeOfXml = propertyReader.sizeOfXml();
             int times = size / sizeOfXml;
             if (times > 0) {
                 for (int i = 0; i <= times; i++) {
-                    Data data = createXml(mctsPregnantMother.subList(i
-                            * sizeOfXml, (i + 1) * sizeOfXml - 1));
+                    data = createXml(mctsPregnantMother.subList(i
+                            * sizeOfXml, Math.min((i + 1) * sizeOfXml,mctsPregnantMother.size())));
+                    /*LOGGER.debug("i*sizeOfXml"+i*sizeOfXml);
+                    LOGGER.debug("(i+1)*sizeOfXml-1"+(((i + 1)*sizeOfXml)-1));*/
                     String returnvalue = ObjectToXMLConverter
                             .converObjectToXml(data, Data.class);
                     LOGGER.debug("returned : " + returnvalue);
@@ -83,8 +85,10 @@ public class CreateCaseXmlService {
 
                     }
                 }
+                   
+                    
             } else {
-                Data data = createXml(mctsPregnantMother);
+                data = createXml(mctsPregnantMother);
                 String returnvalue = ObjectToXMLConverter.converObjectToXml(
                         data, Data.class);
                 LOGGER.debug("returned : " + returnvalue);
@@ -127,6 +131,7 @@ public class CreateCaseXmlService {
      */
     public Data createXml(List<MctsPregnantMother> mctsPregnantMother) {
         Data data = new Data();
+        LOGGER.debug("size : "+mctsPregnantMother.size());
         List<Case> cases = new ArrayList<Case>();
         data.setXmlns(CommcareConstants.DATAXMLNS);
         String userId = propertyReader.getUserIdforCommcare();
