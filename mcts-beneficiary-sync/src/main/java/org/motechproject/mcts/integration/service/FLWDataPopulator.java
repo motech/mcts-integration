@@ -8,18 +8,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
-import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
-import org.motechproject.mcts.integration.hibernate.model.MctsState;
-import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
-import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
-import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworkerErrorLog;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
+import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
+import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.care.common.mds.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
@@ -104,10 +103,10 @@ public class FLWDataPopulator {
         } catch (IllegalArgumentException e) {
             throw new BeneficiaryException(
                     ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH, e);
-        } catch (HibernateException e) {
+        } /*catch (HibernateException e) {
             throw new BeneficiaryException(
                     ApplicationErrors.DATABASE_OPERATION_FAILED, e);
-        } finally {
+        }*/ finally {
             if (beanReader != null) {
                 try {
                     beanReader.close();
@@ -131,9 +130,9 @@ public class FLWDataPopulator {
             int healthworkerId = flwDataCSV.getIdasInteger();
             String name = flwDataCSV.getName();
             String contactNo = flwDataCSV.getContact_No();
-            char sex = ' ';
+            String sex = "";
             if (flwDataCSV.getSex() != null) {
-                sex = flwDataCSV.getSex().charAt(0);
+                sex = flwDataCSV.getSex();
             }
 
             String type = flwDataCSV.getType();
@@ -208,8 +207,11 @@ public class FLWDataPopulator {
         String contactNo = flwDataCSV.getContact_No();
         String phcId = flwDataCSV.getPHC_ID();
         if (flwDataCSV.getPHC_IDasInteger() != null) {
-            mctsPhc = careDataRepository.getMctsPhc(flwDataCSV
+        	mctsPhc = (MctsPhc) careDataRepository.findEntityByFieldWithSingleConstarint(MctsPhc.class, "phcId", flwDataCSV
                     .getPHC_IDasInteger());
+        	LOGGER.debug("phc received");
+            /*mctsPhc = careDataRepository.getMctsPhc(flwDataCSV
+                    .getPHC_IDasInteger());*/
         }
 
         String comments = "";

@@ -2,11 +2,11 @@ package org.motechproject.mcts.integration.service;
 
 import java.util.List;
 
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

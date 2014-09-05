@@ -15,8 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
 import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -48,7 +48,7 @@ public class FixtureDataServiceTest {
 		String resp = "{\"meta\": {\"limit\": 1000, \"next\": null, \"offset\": 0, \"previous\": null, \"total_count\": 2}, \"objects\": [{\"fields\": {\"group_id\": {\"field_list\": [{\"field_value\": \"636162a69e05723c145247411a309507\", \"properties\": {}}]}, \"id\": {\"field_list\": [{\"field_value\": \"2345\", \"properties\": {}}]}, \"name\": {\"field_list\": [{\"field_value\": \"1. mcts.test ASHA\", \"properties\": {\"lang\": \"en\"}}, {\"field_value\": \"1. परीक्षण आशा MCTS\", \"properties\": {\"lang\": \"hin\"}}]}}, \"fixture_type\": \"asha\", \"id\": \"dad9669188de51982fd6287a65f4c310\", \"resource_uri\": \"\"}, {\"fields\": {\"group_id\": {\"field_list\": [{\"field_value\": \"ea313b8eed45c14d4579e6c3cffd2ebd\", \"properties\": {}}]}, \"id\": {\"field_list\": [{\"field_value\": \"1234\", \"properties\": {}}]}, \"name\": {\"field_list\": [{\"field_value\": \"2. mcts.rishad ASHA\", \"properties\": {\"lang\": \"en\"}}, {\"field_value\": \"2. MCTS Rishad आशा\", \"properties\": {\"lang\": \"hin\"}}]}}, \"fixture_type\": \"asha\", \"id\": \"dad9669188de51982fd6287a65f4b09b\", \"resource_uri\": \"\"}]}";
 		res = (Data) XmlStringToObjectConverter.unmarshal(resp, Data.class);
 		MctsPhc mctsPhc = new MctsPhc();
-		mctsPhc.setId(10);
+		//mctsPhc.setId(10);
 		mctsPhc.setName("SaurBazar");
 		mctsPhc.setPhcId(175);
 		MctsHealthworker mctsHealthworker = new MctsHealthworker();
@@ -56,7 +56,7 @@ public class FixtureDataServiceTest {
 		mctsHealthworker.setMctsPhc(mctsPhc);
 		mctsHealthworker.setType("ASHA");
 		mctsHealthworker.setName("abc");
-		mctsHealthworker.setSex('F');
+		mctsHealthworker.setSex("");
 
 		when(stubDataService.getFixtureData()).thenReturn(res);
 		when(careDataRepository.getHealthWorkerfromId(anyString())).thenReturn(mctsHealthworker);

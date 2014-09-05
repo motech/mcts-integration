@@ -21,7 +21,7 @@ public class BeneficiaryUpdateDTO {
     private String name;
     private String type;
     private Date birthDate;
-    private Character gender;
+    private String gender;
     private String fatherHusbandName;
     private String email;
     private String mobileNo;
@@ -94,7 +94,7 @@ public class BeneficiaryUpdateDTO {
     }
 
     @XmlElement(name = "gender")
-    public void setGender(Character gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -202,7 +202,7 @@ public class BeneficiaryUpdateDTO {
         return birthDate;
     }
 
-    public Character getGender() {
+    public String getGender() {
         return gender;
     }
 

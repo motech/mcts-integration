@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
@@ -56,14 +56,14 @@ public class CreateXmlServiceTest {
 		mother1.setFatherHusbandName("Dharmandra Sada");
 		mother1.setHindiName("soniya devi");
 		mother1.setHindiFatherHusbandName("Dharmandra Sada");
-		mother1.setId(50);
+		//mother1.setId(50);
 
 		MctsPregnantMother mother2 = new MctsPregnantMother();
 		mother2.setName("Ranju Devi");
 		mother2.setFatherHusbandName("Dilkush Kamat");
 		mother2.setHindiName("Ranju Devi");
 		mother2.setHindiFatherHusbandName("Dilkush Kamat");
-		mother2.setId(2);
+		//mother2.setId(2);
 
 		motherList.add(mother1);
 		motherList.add(mother2);

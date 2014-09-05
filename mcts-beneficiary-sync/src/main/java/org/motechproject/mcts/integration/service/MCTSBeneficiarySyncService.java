@@ -12,19 +12,21 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.mcts.care.common.mds.model.HubTransaction;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherErrorLog;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
+import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
+import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.care.common.mds.model.MctsVillage;
+import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
+import org.motechproject.mcts.care.common.mds.service.MctsSubcenterMDSService;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
-import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherErrorLog;
-import org.motechproject.mcts.integration.hibernate.model.MctsState;
-import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
-import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
-import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
@@ -64,6 +66,12 @@ public class MCTSBeneficiarySyncService {
     private LocationDataPopulator locationDataPopulator;
     @Autowired
     private EventRelay eventRelay;
+    
+    @Autowired
+    private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
+    
+    @Autowired
+    private MctsSubcenterMDSService mctsSubcenterMDSService;
     
     @Autowired
     private FixtureDataService fixtureDataService;
@@ -217,7 +225,7 @@ public class MCTSBeneficiarySyncService {
             careDataService.saveOrUpdate(mctsPregnantMother1);
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-                    mctsPregnantMother1.getId());
+            		(int)(long)mctsPregnantMotherMDSService.getDetachedField(mctsPregnantMother1, "id"));
             MotechEvent motechEvent = new MotechEvent(
                     MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
             eventRelay.sendEventMessage(motechEvent); // Throws a
@@ -265,7 +273,7 @@ public class MCTSBeneficiarySyncService {
         mctsPregnantMother.setHindiFatherHusbandName(transliterate(record
                 .getFatherHusbandName()));
         if (gender != null && gender.length() > 0) {
-            mctsPregnantMother.setGender(gender.charAt(0));
+            mctsPregnantMother.setGender(gender);
         }
         mctsPregnantMother.setMctsId(beneficiaryId);
         mctsPregnantMother.setMobileNo(record.getMobileno());
@@ -383,8 +391,8 @@ public class MCTSBeneficiarySyncService {
         }
         if (subCentre != null) {
             MctsSubcenter recordSubcentre = location.getMctsSubcenter();
-            Integer recordSubcenterId = recordSubcentre.getId();
-            Integer subcentreId = subCentre.getId();
+            Integer recordSubcenterId = (int)(long)mctsSubcenterMDSService.getDetachedField(recordSubcentre, "id");
+            Integer subcentreId = (int)(long)mctsSubcenterMDSService.getDetachedField(subCentre, "id");
             
             if (subcentreId != recordSubcenterId) {
                 s = false;
@@ -512,7 +520,7 @@ public class MCTSBeneficiarySyncService {
             mctsHealthworker.setMctsSubcenter(location.getMctsSubcenter());
             mctsHealthworker.setMctsVillage(location.getMctsVillage());
             mctsHealthworker.setName("asd");
-            mctsHealthworker.setSex(' ');
+            mctsHealthworker.setSex("");
             mctsHealthworker.setType(type);
             mctsHealthworker.setStatus(false);
             careDataService.saveOrUpdate(mctsHealthworker);

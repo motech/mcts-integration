@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.slf4j.Logger;
@@ -85,8 +85,7 @@ public class CareDataService {
             mctsPregnantMotherServiceUpdate
                     .setServiceDeliveryDate(syncedBeneficiary
                             .getServiceDeliveryDate());
-            mctsPregnantMotherServiceUpdate.setServiceType(Short
-                    .valueOf(syncedBeneficiary.getServiceType().toString()));
+            mctsPregnantMotherServiceUpdate.setServiceType(syncedBeneficiary.getServiceType());
             mctsPregnantMotherServiceUpdate.setServiceUpdateTime(new Timestamp(
                     serviceUpdateTime.getMillis()));
 

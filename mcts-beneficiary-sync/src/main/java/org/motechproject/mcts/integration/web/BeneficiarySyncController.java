@@ -80,7 +80,8 @@ public class BeneficiarySyncController {
     
     @Autowired
     private CloseCaseXmlService closeCaseXmlService;
-
+    
+  
     /**
      * Method to validate connection
      *
@@ -276,7 +277,7 @@ public class BeneficiarySyncController {
         closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
-
+    
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody
     public BeneficiaryError restExceptionHandler(RestException ex,

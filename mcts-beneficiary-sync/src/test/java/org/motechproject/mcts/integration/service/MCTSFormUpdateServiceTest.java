@@ -19,9 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,7 +47,7 @@ public class MCTSFormUpdateServiceTest {
         mother1.setHhNumber("1234");
         mother1.setFamilyNumber("1234");
         mother1.setOwnerId("1234");
-        mother1.setId(50);
+        //mother1.setId(50);
 
         motherCase = new MotherCase();
 
