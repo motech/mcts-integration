@@ -94,7 +94,7 @@ public class CareDataService {
     }
 
     public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-        return careDataRepository.getMctsPregnantMotherFromCaseId(id);
+        return careDataRepository.findEntityByField(MctsPregnantMother.class, "motherCase.id", id);
     }
 
     /**

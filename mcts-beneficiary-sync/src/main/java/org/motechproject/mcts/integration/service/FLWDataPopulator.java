@@ -207,7 +207,7 @@ public class FLWDataPopulator {
         String contactNo = flwDataCSV.getContact_No();
         String phcId = flwDataCSV.getPHC_ID();
         if (flwDataCSV.getPHC_IDasInteger() != null) {
-        	mctsPhc = (MctsPhc) careDataRepository.findEntityByFieldWithSingleConstarint(MctsPhc.class, "phcId", flwDataCSV
+        	mctsPhc = (MctsPhc) careDataRepository.findEntityByField(MctsPhc.class, "phcId", flwDataCSV
                     .getPHC_IDasInteger());
         	LOGGER.debug("phc received");
             /*mctsPhc = careDataRepository.getMctsPhc(flwDataCSV

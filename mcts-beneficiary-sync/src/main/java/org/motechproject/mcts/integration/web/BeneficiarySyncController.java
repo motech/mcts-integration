@@ -208,18 +208,6 @@ public class BeneficiarySyncController {
 
     }
 
-    /**
-     * Method to update caseIds and match status if mctsId is matched
-     *
-     * @return
-     */
-    @RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public String updateStatus() {
-        mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
-        return "success";
-    }
 
     /**
      *

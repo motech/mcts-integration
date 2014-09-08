@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.joda.time.DateTime;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
@@ -39,7 +40,7 @@ public class CloseCaseXmlService {
     private MCTSHttpClientService mCTSHttpClientService;
     
     @Autowired
-    private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
+    private MdsRepository dbRepository;
     
     public void createCloseCaseXml() {
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository.getMctsPregnantMotherForClosedCases();
@@ -99,7 +100,7 @@ public class CloseCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId((int)(long)mctsPregnantMotherMDSService.getDetachedField(mctsPregnantMother, "id"));
+        caseTask.setMctsPregnantMotherId(dbRepository.getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
     }

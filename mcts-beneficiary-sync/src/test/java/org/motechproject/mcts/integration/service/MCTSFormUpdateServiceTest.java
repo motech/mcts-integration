@@ -53,38 +53,6 @@ public class MCTSFormUpdateServiceTest {
 
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void shouldupdateMCTSStatusesfromRegForm() {
-        // List<Object[]> casemctsId = {{17661,"109283019411234567"}};
-        List<Object[]> casemctsIds = new ArrayList<Object[]>();
-
-        Object i = (Object) new Integer(17661);
-        Object str = (Object) new String("109283019411234567");
-        Object[] ob = { i, str };
-        casemctsIds.add(ob);
-
-        when(careDataRepository.getmctsIdcaseId()).thenReturn(casemctsIds);
-        mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
-
-        verify(careDataRepository, times(1)).updateQuery((String) any());
-
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void shouldUpdateMCTSStatusfromEditform() {
-        List<Object[]> caseIds = new ArrayList<Object[]>();
-        Object i = (Object) new Integer(17661);
-        Object str = (Object) new String("109283019411234567");
-        Object[] ob = { i, str };
-        caseIds.add(ob);
-
-        when(careDataRepository.getmctsIdcaseIdfromEditForm()).thenReturn(
-                caseIds);
-        mCTSFormUpdateService.updateMCTSStatusfromEditForm();
-        verify(careDataRepository, times(1)).updateQuery((String) any());
-    }
 
     @Test
     public void shouldUpdateMctsPregnantMotherForm() {

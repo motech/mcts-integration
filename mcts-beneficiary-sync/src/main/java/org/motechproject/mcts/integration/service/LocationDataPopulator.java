@@ -14,14 +14,8 @@ import org.motechproject.mcts.care.common.mds.model.MctsState;
 import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
 import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
 import org.motechproject.mcts.care.common.mds.model.MctsVillage;
-import org.motechproject.mcts.care.common.mds.service.MctsDistrictMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsHealthblockMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsLocationErrorLogMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsPhcMDSService;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsStateMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsSubcenterMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsTalukMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsVillageMDSService;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
@@ -57,29 +51,8 @@ public class LocationDataPopulator {
 	private CareDataRepository careDataRepository;
 
 	@Autowired
-	private MctsStateMDSService mctsStateMDSService;
-
-	@Autowired
-	private MctsSubcenterMDSService mctsSubcenterMDSService;
-
-	@Autowired
-	private MctsTalukMDSService mctsTalukMDSService;
-
-	@Autowired
-	private MctsPhcMDSService mctsPhcMDSService;
-
-	@Autowired
-	private MctsHealthblockMDSService mctsHealthblockMDSService;
-
-	@Autowired
-	private MctsDistrictMDSService mctsDistrictMDSService;
+	private MdsRepository dbRepository;
 	
-	@Autowired
-	private MctsVillageMDSService mctsVillageMDSService;
-	
-	@Autowired
-	private MctsLocationErrorLogMDSService mctsLocationErrorLogMDSService;
-
 	public LocationDataPopulator() {
 
 	}
@@ -182,10 +155,10 @@ public class LocationDataPopulator {
 
 		if (villageId != null) {
 			MctsVillage mctsVillage = careDataRepository.findUniqueVillage(
-					villageId, (int) (long) mctsSubcenterMDSService
-							.getDetachedField(mctsSubcenter, "id"),
-					(int) (long) mctsTalukMDSService.getDetachedField(
-							mctsTaluk, "id"));
+					villageId, dbRepository
+							.getDetachedFieldId(mctsSubcenter),
+							dbRepository.getDetachedFieldId(
+							mctsTaluk));
 			if (mctsVillage == null) {
 				mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter,
 						villageId, villageName);
@@ -193,7 +166,7 @@ public class LocationDataPopulator {
 			}
 			if (!mctsVillage.getStatus()) {
 				mctsVillage.setStatus(status);
-				mctsVillageMDSService.create(mctsVillage);
+				dbRepository.save(mctsVillage);
 			//	careDataRepository.saveOrUpdate(mctsVillage);
 			}
 		}
@@ -236,32 +209,32 @@ public class LocationDataPopulator {
 				talukaName, healthblockId, healthblockName, phcId, phcName,
 				subcenterId, subcentreName, villageId, villageName, status,
 				comments);
-		//careDataRepository.saveOrUpdate(mctsLocationMaster);
-		mctsLocationErrorLogMDSService.create(mctsLocationMaster);
+		careDataRepository.saveOrUpdate(mctsLocationMaster);
 
 	}
 
 	MctsState addStateToDbandReturn(int stateId, String stateName,
 			boolean status) {
 
-		MctsState mctsState = mctsStateMDSService.retrieve("stateId", stateId);
+	//	MctsState mctsState = mctsStateMDSService.retrieve("stateId", stateId);
+		MctsState mctsState = dbRepository.get(MctsState.class, "stateId", stateId);
 		if (mctsState == null) {
 			mctsState = new MctsState(stateId, stateName);
 			mctsState.setStatus(false);
 		}
 		if (!mctsState.getStatus()) {
 			mctsState.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsState);
-			mctsStateMDSService.create(mctsState);
+			careDataRepository.saveOrUpdate(mctsState);
 		}
 		return mctsState;
 	}
 
 	private MctsDistrict findUniqueDistrictandReturn(MctsState mctsState,
 			int disctrictId, String disctrictName, boolean status) {
+		Integer stateId = dbRepository.getDetachedFieldId(
+				mctsState);
 		MctsDistrict mctsDistrict = careDataRepository.findUniqueDistrict(
-				disctrictId, (int) (long) mctsStateMDSService.getDetachedField(
-						mctsState, "id"));
+				disctrictId, stateId);
 		if (mctsDistrict == null) {
 			mctsDistrict = new MctsDistrict(mctsState, disctrictId,
 					disctrictName);
@@ -269,8 +242,7 @@ public class LocationDataPopulator {
 		}
 		if (!mctsDistrict.getStatus()) {
 			mctsDistrict.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsDistrict);
-			mctsDistrictMDSService.create(mctsDistrict);
+			careDataRepository.saveOrUpdate(mctsDistrict);
 		}
 		return mctsDistrict;
 	}
@@ -279,7 +251,7 @@ public class LocationDataPopulator {
 			int subcenterId, String subcentreName, boolean status) {
 		MctsSubcenter mctsSubcenter = careDataRepository.findUniqueSubcentre(
 				subcenterId,
-				(int) (long) mctsPhcMDSService.getDetachedField(mctsPhc, "id"));
+				dbRepository.getDetachedFieldId(mctsPhc));
 		if (mctsSubcenter == null) {
 			mctsSubcenter = new MctsSubcenter(mctsPhc, subcenterId,
 					subcentreName);
@@ -287,8 +259,7 @@ public class LocationDataPopulator {
 		}
 		if (!mctsSubcenter.getStatus()) {
 			mctsSubcenter.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsSubcenter);
-			mctsSubcenterMDSService.create(mctsSubcenter);
+			careDataRepository.saveOrUpdate(mctsSubcenter);
 		}
 		return mctsSubcenter;
 	}
@@ -296,16 +267,15 @@ public class LocationDataPopulator {
 	private MctsPhc findUniquePhcandReturn(MctsHealthblock mctsHealthblock,
 			int phcId, String phcName, boolean status) {
 		MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,
-				(int) (long) mctsHealthblockMDSService.getDetachedField(
-						mctsHealthblock, "id"));
+				dbRepository.getDetachedFieldId(
+						mctsHealthblock));
 		if (mctsPhc == null) {
 			mctsPhc = new MctsPhc(mctsHealthblock, phcId, phcName);
 			mctsPhc.setStatus(false);
 		}
 		if (!mctsPhc.getStatus()) {
 			mctsPhc.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsPhc);
-			mctsPhcMDSService.create(mctsPhc);
+			careDataRepository.saveOrUpdate(mctsPhc);
 		}
 		return mctsPhc;
 	}
@@ -314,8 +284,8 @@ public class LocationDataPopulator {
 			int healthblockId, String healthblockName, boolean status) {
 		MctsHealthblock mctsHealthblock = careDataRepository
 				.findUniqueHealthBlock(healthblockId,
-						(int) (long) mctsTalukMDSService.getDetachedField(
-								mctsTaluk, "id"));
+						dbRepository.getDetachedFieldId(
+								mctsTaluk));
 		if (mctsHealthblock == null) {
 			mctsHealthblock = new MctsHealthblock(mctsTaluk, healthblockId,
 					healthblockName);
@@ -323,8 +293,7 @@ public class LocationDataPopulator {
 		}
 		if (!mctsHealthblock.getStatus()) {
 			mctsHealthblock.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsHealthblock);
-			mctsHealthblockMDSService.create(mctsHealthblock);
+			careDataRepository.saveOrUpdate(mctsHealthblock);
 		}
 		return mctsHealthblock;
 	}
@@ -332,16 +301,15 @@ public class LocationDataPopulator {
 	private MctsTaluk findUniqueTalukandReturn(MctsDistrict mctsDistrict,
 			int talukId, String talukaName, boolean status) {
 		MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(talukId,
-				(int) (long) mctsDistrictMDSService.getDetachedField(
-						mctsDistrict, "id"));
+				dbRepository.getDetachedFieldId(
+						mctsDistrict));
 		if (mctsTaluk == null) {
 			mctsTaluk = new MctsTaluk(mctsDistrict, talukId, talukaName);
 			mctsTaluk.setStatus(false);
 		}
 		if (!mctsTaluk.getStatus()) {
 			mctsTaluk.setStatus(status);
-			//careDataRepository.saveOrUpdate(mctsTaluk);
-			mctsTalukMDSService.create(mctsTaluk);
+			careDataRepository.saveOrUpdate(mctsTaluk);
 		}
 		return mctsTaluk;
 	}

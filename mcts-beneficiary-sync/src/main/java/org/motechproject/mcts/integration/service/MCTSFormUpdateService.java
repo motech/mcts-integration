@@ -39,12 +39,12 @@ public class MCTSFormUpdateService {
     public void setCareDataRepository(CareDataRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
-
-    /**
+/*
+    *//**
      * Matches the mctsIDs of MCTS Pregnant Mother with mcts Ids of
      * AwwRegisterMotherForm and updates the caseIds, match status and
      * authorised status
-     */
+     *//*
     public void updateMCTSStatusesfromRegForm() {
 
         List<Object[]> caseIdmctsId = careDataRepository.getmctsIdcaseId();
@@ -68,12 +68,12 @@ public class MCTSFormUpdateService {
 
     }
 
-    /**
+    *//**
      * Matches the mctsIDs of MCTS Pregnant Mother with mcts Ids of
      * MotherEditForm and updates the caseIds, match status and authorised
      * status. In case mctsID is matched with both AwwRegisterMotherForm and
      * MotherEditForm data from MotherEditForm will take the preference
-     */
+     *//*
     public void updateMCTSStatusfromEditForm() {
         List<Object[]> caseIdmctsId = careDataRepository
                 .getmctsIdcaseIdfromEditForm();
@@ -93,7 +93,7 @@ public class MCTSFormUpdateService {
 
         }
 
-    }
+    }*/
 
     public void updateMctsPregnantMotherForm(int primaryId) {
         MctsPregnantMother mother = careDataRepository

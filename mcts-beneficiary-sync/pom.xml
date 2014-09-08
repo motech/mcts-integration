@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mcts</artifactId>
     <groupId>org.motechproject</groupId>
-    <version>0.2</version>
+    <version>0.24-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
@@ -214,6 +214,7 @@
                             org.motechproject.mcts.care.common.mds.dimension;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.service;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.measure;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.repository;version=${motech.version},
                             org.motechproject.mcts.care.common.domain;version=${motech.version},
                             org.motechproject.mcts.care.common.domain.annotations;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.model;version=${motech.version},

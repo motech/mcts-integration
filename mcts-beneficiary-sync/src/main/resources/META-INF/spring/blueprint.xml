@@ -27,8 +27,8 @@
 	<osgi:reference id="httpAgentServiceOsgi"
 		interface="org.motechproject.http.agent.service.HttpAgent" />
 		
-	<osgi:reference id="mdsServiceFactory"
-        interface="org.motechproject.mcts.care.common.mds.service.MdsServiceFactory" />
+	<osgi:reference id="dbRepository" 
+		interface="org.motechproject.mcts.care.common.mds.repository.MdsRepository" />
 		
 	<!-- <osgi:reference id="mctsPregnantMotherMDSService"
 		interface="org.motechproject.mcts.integration.mds.service.MctsPregnantMotherMDSService;" /> -->

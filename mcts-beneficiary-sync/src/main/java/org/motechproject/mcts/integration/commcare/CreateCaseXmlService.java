@@ -10,6 +10,7 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
@@ -52,8 +53,8 @@ public class CreateCaseXmlService {
     private FixtureDataService fixtureDataService;
     
     @Autowired
-    private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
-
+    private MdsRepository dbRepository;
+    
     public CareDataRepository getCareDataRepository() {
         return careDataRepository;
     }
@@ -187,7 +188,7 @@ public class CreateCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId((int)(long)mctsPregnantMotherMDSService.getDetachedField(mctsPregnantMother, "id"));
+        caseTask.setMctsPregnantMotherId(dbRepository.getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
 

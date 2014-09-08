@@ -23,6 +23,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsState;
 import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
 import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
 import org.motechproject.mcts.care.common.mds.model.MctsVillage;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.care.common.mds.service.MctsSubcenterMDSService;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
@@ -68,13 +69,10 @@ public class MCTSBeneficiarySyncService {
     private EventRelay eventRelay;
     
     @Autowired
-    private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
-    
-    @Autowired
-    private MctsSubcenterMDSService mctsSubcenterMDSService;
-    
-    @Autowired
     private FixtureDataService fixtureDataService;
+    
+    @Autowired
+	private MdsRepository dbRepository;
 
     /**
      * Main Method to send <code>Get</code> Updates request to MCTS,
@@ -225,7 +223,7 @@ public class MCTSBeneficiarySyncService {
             careDataService.saveOrUpdate(mctsPregnantMother1);
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-            		(int)(long)mctsPregnantMotherMDSService.getDetachedField(mctsPregnantMother1, "id"));
+            		dbRepository.getDetachedFieldId(mctsPregnantMother1));
             MotechEvent motechEvent = new MotechEvent(
                     MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
             eventRelay.sendEventMessage(motechEvent); // Throws a
@@ -391,8 +389,8 @@ public class MCTSBeneficiarySyncService {
         }
         if (subCentre != null) {
             MctsSubcenter recordSubcentre = location.getMctsSubcenter();
-            Integer recordSubcenterId = (int)(long)mctsSubcenterMDSService.getDetachedField(recordSubcentre, "id");
-            Integer subcentreId = (int)(long)mctsSubcenterMDSService.getDetachedField(subCentre, "id");
+            Integer recordSubcenterId = dbRepository.getDetachedFieldId(recordSubcentre);
+            Integer subcentreId = dbRepository.getDetachedFieldId(subCentre);
             
             if (subcentreId != recordSubcenterId) {
                 s = false;

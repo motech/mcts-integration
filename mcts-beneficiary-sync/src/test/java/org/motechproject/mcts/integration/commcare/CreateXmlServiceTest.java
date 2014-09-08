@@ -1,5 +1,7 @@
 package org.motechproject.mcts.integration.commcare;
 
+
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -19,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.integration.repository.CareDataRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
@@ -42,6 +45,9 @@ public class CreateXmlServiceTest {
 	
 	@Mock
 	FixtureDataService fixtureDataService;
+	
+	@Mock
+	MdsRepository dbRepository;
 
 	List<MctsPregnantMother> motherList;
 
@@ -79,6 +85,7 @@ public class CreateXmlServiceTest {
 		Mockito.when(fixtureDataService.getCaseGroupIdfromAshaId(anyInt(),anyString())).thenReturn("6efbnkfb");
 		Mockito.when(careDataRepository
 					.getMotherFromPrimaryId(anyInt())).thenReturn(mother1).thenReturn(mother2);
+		Mockito.when(dbRepository.getDetachedFieldId(anyObject())).thenReturn(1);
 		
 	}
 

@@ -13,6 +13,7 @@ import org.motechproject.mcts.care.common.mds.measure.UnapprovedToDiscussForm;
 import org.motechproject.mcts.care.common.mds.measure.UnmappedToReviewForm;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MotherCaseMctsUpdate;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.care.common.mds.service.MotherCaseMDSService;
 import org.motechproject.mcts.care.common.mds.service.MotherCaseMctsUpdateMDSService;
@@ -31,13 +32,16 @@ public class FormsProcessor {
 	CareDataService careDataService;
 	@Autowired
 	MCTSFormUpdateService mctsFormUpdateService;
-	@Autowired
+	/*@Autowired
 	private MotherCaseMctsUpdateMDSService motherCaseMctsUpdateMDSService;
 	@Autowired
 	private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
 
 	@Autowired
-	private MotherCaseMDSService motherCaseMDSService;
+	private MotherCaseMDSService motherCaseMDSService;*/
+	
+	@Autowired
+    private MdsRepository dbRepository;
 
 	MctsPregnantMother mctsPregnantMother = null;
 	MotherCase motherCase = null;
@@ -67,11 +71,8 @@ public class FormsProcessor {
 				return;
 			}
 			mctsPregnantMother = careDataService
-					.getMctsPregnantMotherFromCaseId(Integer
-							.toString((int) (long) motherCaseMctsUpdateMDSService
-									.getDetachedField(motherCaseMctsUpdate,
-											"id")));
-
+					.getMctsPregnantMotherFromCaseId(Integer.toString(dbRepository.getDetachedFieldId(motherCaseMctsUpdate)));
+			
 			// MotherCaseMctsAuthorizedStatus authorizeStatus =
 			// getAuthorizedStatus(moth)
 
@@ -191,8 +192,7 @@ public class FormsProcessor {
 					"caseId", motherForm.get("caseId"));
 			mctsPregnantMother = careDataService
 					.getMctsPregnantMotherFromCaseId(Integer
-							.toString((int) (long) motherCaseMDSService
-									.getDetachedField(motherCase, "id")));
+							.toString(dbRepository.getDetachedFieldId(motherCase)));
 
 			UnapprovedToDiscussForm unapprovedToDiscussForm = new UnapprovedToDiscussForm();
 			unapprovedToDiscussForm.setAnmClose(motherForm.get("anmClose"));
@@ -278,8 +278,7 @@ public class FormsProcessor {
 			careDataService.saveOrUpdate(mctsPregnantMother);
 
 			mctsFormUpdateService
-					.updateMctsPregnantMotherForm((int) (long) mctsPregnantMotherMDSService
-							.getDetachedField(mctsPregnantMother, "id"));
+					.updateMctsPregnantMotherForm(dbRepository.getDetachedFieldId(mctsPregnantMother));
 
 			CaseAlreadyClosedForm caseAlreadyClosedForm = new CaseAlreadyClosedForm();
 			caseAlreadyClosedForm.setPermanentMove(motherForm

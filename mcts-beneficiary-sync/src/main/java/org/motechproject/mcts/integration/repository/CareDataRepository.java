@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,6 +14,7 @@ import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
+import org.motechproject.mcts.care.common.mds.dimension.Flw;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
@@ -24,12 +24,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
 import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
 import org.motechproject.mcts.care.common.mds.model.MctsVillage;
-import org.motechproject.mcts.care.common.mds.service.MctsDistrictMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsTalukMDSService;
-import org.motechproject.mcts.care.common.mds.service.MctsVillageMDSService;
-import org.motechproject.mcts.integration.exception.ApplicationErrors;
-import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mds.query.EqualProperty;
 import org.motechproject.mds.query.Property;
@@ -60,16 +55,7 @@ public class CareDataRepository {
 	}
 
 	@Autowired
-	private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
-	
-	@Autowired
-	private MctsVillageMDSService mctsVillageMDSService;
-	
-	@Autowired
-	private MctsDistrictMDSService mctsDistrictMDSService; 
-	
-	@Autowired
-	private MctsTalukMDSService mctsTalukMDSService;
+	private MdsRepository dbRepository;
 
 	// TODO send only for authorized = approved
 	public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
@@ -140,25 +126,18 @@ public class CareDataRepository {
 	}
 
 	public <T> void saveOrUpdate(T entity) {
-		try {
-			getCurrentSession().saveOrUpdate(entity);
-		} catch (HibernateException e) {
-			throw new BeneficiaryException(
-					ApplicationErrors.DATABASE_OPERATION_FAILED, e);
-		}
+		dbRepository.save(entity);
+		/*
+		 * try { getCurrentSession().saveOrUpdate(entity); } catch
+		 * (HibernateException e) { throw new BeneficiaryException(
+		 * ApplicationErrors.DATABASE_OPERATION_FAILED, e); }
+		 */
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T findEntityByField(Class<T> entityClass, String fieldName,
 			Object fieldValue) {
-		try {
-			Criteria criteria = getCurrentSession().createCriteria(entityClass);
-			criteria.add(Restrictions.eq(fieldName, fieldValue));
-			return (T) criteria.uniqueResult();
-		} catch (HibernateException e) {
-			throw new BeneficiaryException(
-					ApplicationErrors.DATABASE_OPERATION_FAILED, e);
-		}
+		return dbRepository.get(entityClass, fieldName, fieldValue);
 
 	}
 
@@ -172,9 +151,14 @@ public class CareDataRepository {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findListOfEntitiesByField(Class<T> entityClass,
 			String fieldName, Object fieldValue) {
-		Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		criteria.add(Restrictions.eq(fieldName, fieldValue));
-		return (List<T>) criteria.list();
+		List<T> result = dbRepository.findListOfEntitiesByField(entityClass,
+				fieldName, fieldValue);
+		return result;
+		/*
+		 * Criteria criteria = getCurrentSession().createCriteria(entityClass);
+		 * criteria.add(Restrictions.eq(fieldName, fieldValue)); return
+		 * (List<T>) criteria.list();
+		 */
 	}
 
 	/**
@@ -187,11 +171,9 @@ public class CareDataRepository {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass,
 			Map<String, Object> fieldParams) {
-		Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		for (String key : fieldParams.keySet()) {
-			criteria.add(Restrictions.eq(key, fieldParams.get(key)));
-		}
-		return (List<T>) criteria.list();
+
+		return (List<T>) dbRepository.getListOfObject(entityClass, fieldParams);
+
 	}
 
 	public <T> T load(Class<T> entityClass, Integer id) {
@@ -204,27 +186,10 @@ public class CareDataRepository {
 				.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
 						entityClass.getSimpleName(), fieldName,
 						lowerFieldValue, higherFieldValue));
-		Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		criteria.add(Restrictions.between(fieldName, lowerFieldValue,
-				higherFieldValue));
-		List<T> listOfObjects = (List<T>) criteria.list();
-		LOGGER.debug(listOfObjects.toString());
-		return listOfObjects;
-	}
 
-	public <T> T findEntityByFieldWithSingleConstarint(Class<T> entityClass,
-			String fieldName, Object value) {
-		LOGGER.debug(String
-				.format("Params received are Class: [%s], fieladName: [%s], FieldValue: [%s]",
-						entityClass.getSimpleName(), fieldName, value));
-		Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		criteria.add(Restrictions.eq(fieldName, value));
-		List<T> listOfObjects = (List<T>) criteria.list();
-		if (listOfObjects.size() != 0) {
-			return listOfObjects.get(0);
-		} else {
-			return null;
-		}
+		List<T> listOfObjects = dbRepository.findEntityByFieldWithConstarint(
+				entityClass, fieldName, lowerFieldValue, higherFieldValue);
+		return listOfObjects;
 	}
 
 	private Session getCurrentSession() {
@@ -241,116 +206,61 @@ public class CareDataRepository {
 		getCurrentSession().flush();
 	}
 
-	/**
-	 * Method to get PHC object from phc_id
-	 * 
-	 * @param phcId
-	 * @return
-	 */
-	public MctsPhc getMctsPhc(int phcId) {
-		String queryString = "select phc from MctsPhc phc where phc.phcId='"
-				+ phcId + "'";
-		List<Object> phc = getCurrentSession().createQuery(queryString).list();
-		if (phc.size() != 0) {
-			return (MctsPhc) phc.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	public List<Object[]> getmctsIdcaseId() {
-		String queryString = "select m.motherCase.id, n.mctsId from AwwRegisterMotherForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
-		return (getCurrentSession().createQuery(queryString).list());
-	}
-
-	public void updateQuery(String queryString) {
-		getCurrentSession().createQuery(queryString).executeUpdate();
-	}
-
-	public List<Object[]> getmctsIdcaseIdfromEditForm() {
-		String queryString = "select m.motherCase.id, n.mctsId from MotherEditForm m, MctsPregnantMother n where substring(m.fullMctsId,12,18) = substring(n.mctsId,12,18)";
-		return (getCurrentSession().createQuery(queryString).list());
-	}
-
 	public MctsHealthworker getHealthWorkerfromId(String id) {
-		int healthWorkerId = Integer.parseInt(id);
-		String queryString = "from MctsHealthworker worker where worker.healthworkerId='"
-				+ healthWorkerId + "' and worker.type='ASHA'";
-		LOGGER.debug("queryString" + queryString);
-		List<Object> worker = getCurrentSession().createQuery(queryString)
-				.list();
-
-		if (worker.size() != 0) {
-			return (MctsHealthworker) worker.get(0);
-		} else {
-			return null;
-		}
-
+		MctsHealthworker worker = dbRepository.get(MctsHealthworker.class,
+				"healthworkerId", id);
+		return worker;
 	}
 
-	public MctsDistrict findUniqueDistrict(final int disctrictId, final Integer id) {
+	public MctsDistrict findUniqueDistrict(final int disctrictId,
+			final Integer id) {
 		@SuppressWarnings("unchecked")
-		List<MctsDistrict> list = mctsDistrictMDSService.executeQuery(new QueryExecution<List>() {
+		EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
+				.create("disctrictId", disctrictId);
+		@SuppressWarnings("unchecked")
+		EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
+				.create("mctsState.id", id);
 
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
-				EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder.create("disctrictId", disctrictId);
-				EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder.create("mctsState.id", id);
-				
-				List<Property> properties = new ArrayList<Property>();
-				properties.add(ep);
-				properties.add(ep1);
-				return (List) QueryExecutor.executeWithArray(query,
-						properties);
-			}
-			
-		});
+		List<Property> properties = new ArrayList<Property>();
+		properties.add(ep);
+		properties.add(ep1);
+		List<MctsDistrict> list = dbRepository.executeJDO(MctsDistrict.class,
+				properties);
 		if (list.size() != 0) {
-			return (MctsDistrict) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
 	}
 
 	public MctsTaluk findUniqueTaluk(final int talukId, final Integer id) {
-		@SuppressWarnings("unchecked")
-		List<MctsTaluk> list = mctsTalukMDSService.executeQuery(new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
-				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder.create("talukId", talukId);
-				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder.create("mctsDistrict.id", id);
+				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
+						.create("talukId", talukId);
+				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsDistrict.id", id);
 				List<Property> properties = new ArrayList<Property>();
 				properties.add(eq);
 				properties.add(eq1);
-				return (List) QueryExecutor.executeWithArray(query,
-						properties);
-			}
-		});
+		List<MctsTaluk> list = dbRepository.executeJDO(MctsTaluk.class, properties);
 		if (list.size() != 0) {
-			return (MctsTaluk) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
-		
+
 	}
 
-	public MctsHealthblock findUniqueHealthBlock(final int healthblockId, final Integer id) {
-		@SuppressWarnings("unchecked")
-		List<MctsHealthblock> list = mctsTalukMDSService.executeQuery(new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
-				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder.create("healthblockId", healthblockId);
-				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder.create("mctsTaluk.id", id);
+	public MctsHealthblock findUniqueHealthBlock(final int healthblockId,
+			final Integer id) {
+				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
+						.create("healthblockId", healthblockId);
+				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsTaluk.id", id);
 				List<Property> properties = new ArrayList<Property>();
 				properties.add(eq);
 				properties.add(eq1);
-				return (List) QueryExecutor.executeWithArray(query,
-						properties);
-			}
-		});
+		List<MctsHealthblock> list = dbRepository.executeJDO(
+				MctsHealthblock.class, properties);
 		if (list.size() != 0) {
 			return list.get(0);
 		} else {
@@ -358,44 +268,16 @@ public class CareDataRepository {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public MctsPhc findUniquePhc(final int phcId, final Integer id) {
-		@SuppressWarnings("unchecked")
-		List<MctsPhc> list = mctsTalukMDSService.executeQuery(new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
-				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder.create("phcId", phcId);
-				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder.create("mctsHealthblock.id", id);
+				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
+						.create("phcId", phcId);
+				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsHealthblock.id", id);
 				List<Property> properties = new ArrayList<Property>();
 				properties.add(eq);
 				properties.add(eq1);
-				return (List) QueryExecutor.executeWithArray(query,
-						properties);
-			}
-		});
-		if (list.size() != 0) {
-			return list.get(0);
-		} else {
-			return null;
-		}
-		
-	}
-
-	public MctsSubcenter findUniqueSubcentre(final int subcenterId, final Integer id) {
-		@SuppressWarnings("unchecked")
-		List<MctsSubcenter> list = mctsTalukMDSService.executeQuery(new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
-				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder.create("subcenterId", subcenterId);
-				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder.create("mctsPhc.id", id);
-				List<Property> properties = new ArrayList<Property>();
-				properties.add(eq);
-				properties.add(eq1);
-				return (List) QueryExecutor.executeWithArray(query,
-						properties);
-			}
-		});
+		List<MctsPhc> list = dbRepository.executeJDO(MctsPhc.class, properties);
 		if (list.size() != 0) {
 			return list.get(0);
 		} else {
@@ -403,123 +285,152 @@ public class CareDataRepository {
 		}
 	}
 
-	public MctsVillage findUniqueVillage(final int villageId, final Integer id, Integer id2) {
-		
-		@SuppressWarnings("unchecked")
-		final List<MctsVillage> list = mctsVillageMDSService
-				.executeQuery(new QueryExecution<List>() {
-					@Override
-					public List execute(javax.jdo.Query query,
-							InstanceSecurityRestriction restriction) {
-						EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
-								.create("villageId", villageId);
-						EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
-								.create("mctsSubcenter.id", id);
-						EqualProperty<Integer> ep2 = (EqualProperty<Integer>) PropertyBuilder
-								.create("mctsTaluk.id", id);
-						List<Property> properties = new ArrayList<Property>();
-						properties.add(ep);
-						properties.add(ep1);
-						properties.add(ep2);
-						return (List) QueryExecutor.executeWithArray(query,
-								properties);
-					}
-				});
-		
+	@SuppressWarnings("unchecked")
+	public MctsSubcenter findUniqueSubcentre(final int subcenterId,
+			final Integer id) {
+				EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
+						.create("subcenterId", subcenterId);
+				EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsPhc.id", id);
+				List<Property> properties = new ArrayList<Property>();
+				properties.add(eq);
+				properties.add(eq1);
+		List<MctsSubcenter> list = dbRepository.executeJDO(MctsSubcenter.class,
+				properties);
 		if (list.size() != 0) {
-			return (MctsVillage) list.get(0);
+			return list.get(0);
 		} else {
 			return null;
 		}
-		/*String queryString = "from MctsVillage village where village.villageId='"
-				+ villageId
-				+ "' and village.mctsSubcenter.id='"
-				+ id
-				+ "' and village.mctsTaluk.id='" + id2 + "'";
-		List<MctsVillage> village = getCurrentSession()
-				.createQuery(queryString).list();
-		if (village.size() != 0) {
-			return (MctsVillage) village.get(0);
+	}
+
+	@SuppressWarnings("unchecked")
+	public MctsVillage findUniqueVillage(final int villageId, final Integer id,
+			final Integer id2) {
+
+				EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
+						.create("villageId", villageId);
+				EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsSubcenter.id", id);
+				EqualProperty<Integer> ep2 = (EqualProperty<Integer>) PropertyBuilder
+						.create("mctsTaluk.id", id2);
+				List<Property> properties = new ArrayList<Property>();
+				properties.add(ep);
+				properties.add(ep1);
+				properties.add(ep2);
+		List<MctsVillage> list = dbRepository.executeJDO(MctsVillage.class,
+				properties);
+		LOGGER.debug("size of village : " + list.size());
+		if (list.size() != 0) {
+			return list.get(0);
 		} else {
 			return null;
 		}
-*/
+
 	}
 
 	public String getCaseGroupIdfromAshaId(int id) {
-		String queryString = "select worker.careGroupid from MctsHealthworker worker where worker.healthworkerId='"
-				+ id + "'";
-		LOGGER.debug("query : " + queryString);
-		List<String> caseGroupId = getCurrentSession().createQuery(queryString)
-				.list();
-		if (caseGroupId.size() == 0) {
-			return null;
+		MctsHealthworker worker = dbRepository.get(MctsHealthworker.class,
+				"healthworkerId", id);
+		if (worker != null) {
+			return worker.getCareGroupid();
 		}
-		return caseGroupId.get(0);
+		return null;
+
 	}
 
 	public List<MctsPregnantMother> getMctsPregnantMother() {
-		String caseId = null;
-		String ownerId = null;
-		String queryString = "from MctsPregnantMother mother where mother.mctsPersonaCaseUId="
-				+ caseId + " and mother.ownerId<>" + ownerId + "";
-		LOGGER.debug("query : " + queryString);
-		List<MctsPregnantMother> mother = getCurrentSession().createQuery(
-				queryString).list();
+		QueryExecution query = new QueryExecution<List>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public List execute(javax.jdo.Query query,
+					InstanceSecurityRestriction restriction) {
+				EqualProperty<String> ep = (EqualProperty<String>) PropertyBuilder
+						.create("mctsPersonaCaseUId", null);
+				EqualProperty<String> ep1 = (EqualProperty<String>) PropertyBuilder
+						.create("ownerId", null);
+				List<Property> properties = new ArrayList<Property>();
+				properties.add(ep);
+				properties.add(ep1);
+				return (List) QueryExecutor.executeWithArray(query, properties);
+			}
+		};
+		List<MctsPregnantMother> list = dbRepository.executeJDO(
+				MctsPregnantMother.class, query);
+		return list;
 
-		return mother;
 	}
 
 	public MctsPregnantMother getMotherFromPrimaryId(int primaryId) {
-		String queryString = "from MctsPregnantMother mother where mother.id='"
-				+ primaryId + "'";
-		LOGGER.debug("queryString : " + queryString);
-		List<MctsPregnantMother> mother = getCurrentSession().createQuery(
-				queryString).list();
-		if (mother.size() == 0) {
-			return null;
-		}
-		return mother.get(0);
+		MctsPregnantMother mother = dbRepository.getObjectByPrimaryKey(
+				MctsPregnantMother.class, primaryId);
+		return mother;
+
+		/*
+		 * String queryString =
+		 * "from MctsPregnantMother mother where mother.id='" + primaryId + "'";
+		 * LOGGER.debug("queryString : " + queryString);
+		 * List<MctsPregnantMother> mother = getCurrentSession().createQuery(
+		 * queryString).list(); if (mother.size() == 0) { return null; } return
+		 * mother.get(0);
+		 */
 
 	}
 
-	public MotherCase matchMctsPersonawithMotherCase(int hhNum, int familyNum,
-			String ownerId) {
-		String queryString = "from MotherCase mcase where mcase.hhNumber='"
-				+ hhNum + "' and mcase.familyNumber='" + familyNum
-				+ "' and mcase.flwGroup.groupId=" + ownerId + "";
-		List<MotherCase> motherCase = getCurrentSession().createQuery(
-				queryString).list();
-		if (motherCase.size() == 0) {
-			return null;
-		} else if (motherCase.size() > 1) {
-			LOGGER.info("error : multiple match found");
-			return null;
+	public MotherCase matchMctsPersonawithMotherCase(final Integer hhNum,
+			final Integer familyNum, final String ownerId) {
+		QueryExecution query = new QueryExecution<List>() {
+			@Override
+			public List execute(javax.jdo.Query query,
+					InstanceSecurityRestriction restriction) {
+				EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
+						.create("hhNumber", hhNum);
+				EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
+						.create("familyNum", familyNum);
+				EqualProperty<Integer> ep2 = (EqualProperty<Integer>) PropertyBuilder
+						.create("ownerId", ownerId);
+				List<Property> properties = new ArrayList<Property>();
+				properties.add(ep);
+				properties.add(ep1);
+				properties.add(ep2);
+				return (List) QueryExecutor.executeWithArray(query, properties);
+			}
+		};
+		List<MotherCase> list = dbRepository
+				.executeJDO(MotherCase.class, query);
+		if (list.size() != 0) {
+			return list.get(0);
 		} else {
-			return motherCase.get(0);
+			return null;
 		}
 
 	}
 
-	public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-
-		String queryString = "from MctsPregnantMother mPregMother where mPregMother.motherCase.id='"
-				+ id + "'";
-		List<MctsPregnantMother> motherList = getCurrentSession().createQuery(
-				queryString).list();
-		return motherList.get(0);
-	}
+	/*
+	 * public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
+	 * 
+	 * String queryString =
+	 * "from MctsPregnantMother mPregMother where mPregMother.motherCase.id='" +
+	 * id + "'"; List<MctsPregnantMother> motherList =
+	 * getCurrentSession().createQuery( queryString).list(); return
+	 * motherList.get(0); }
+	 */
 
 	public String getOwnerIdFromLocationId(String locationId) {
-		String queryString = "select flw.flwId from Flw flw where flw.locationCode='"
-				+ locationId + "'";
-		LOGGER.debug("query : " + queryString);
-		List<String> ownerId = getCurrentSession().createQuery(queryString)
-				.list();
-		if (ownerId.size() == 0) {
-			return null;
+
+		Flw flw = dbRepository.get(Flw.class, "locationCode", locationId);
+		if (flw != null) {
+			return flw.getFlwId();
 		}
-		return ownerId.get(0);
+		return null;
+		
+		/*
+		 * String queryString =
+		 * "select flw.flwId from Flw flw where flw.locationCode='" + locationId
+		 * + "'"; LOGGER.debug("query : " + queryString); List<String> ownerId =
+		 * getCurrentSession().createQuery(queryString) .list(); if
+		 * (ownerId.size() == 0) { return null; } return ownerId.get(0);
+		 */
 	}
 
 	public List<MctsPregnantMother> getMctsPregnantMotherForClosedCases() {
@@ -528,32 +439,26 @@ public class CareDataRepository {
 		final Date endDate = lastDate.toDate();
 
 		@SuppressWarnings("unchecked")
-		List<MctsPregnantMother> list = mctsPregnantMotherMDSService
-				.executeQuery(new QueryExecution<List>() {
-					@Override
-					public List execute(javax.jdo.Query query,
-							InstanceSecurityRestriction restriction) {
-						RangeProperty<Date> rp = (RangeProperty<Date>) PropertyBuilder
-								.create("creationTime", new Range<Date>(null,
-										endDate));
-						EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus> ep = (EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus>) PropertyBuilder
-								.create("mCTSPregnantMotherCaseAuthorisedStatus",
-										null);
-						EqualProperty<MCTSPregnantMotherMatchStatus> ep1 = (EqualProperty<MCTSPregnantMotherMatchStatus>) PropertyBuilder
-								.create("mCTSPregnantMotherMatchStatus", null);
-                        
-						List<Property> proeprties = new ArrayList<Property>();
-						proeprties.add(ep);
-						proeprties.add(ep);
-						proeprties.add(ep1);
-						// query.setFilter("creationTime <  param0");
-						// query.setFilter("mCTSPregnantMotherCaseAuthorisedStatus==null");
-						// query.setFilter("mCTSPregnantMotherMatchStatus==null");
-						// query.declareParameters("java.util.Date param0");
-						return (List) QueryExecutor.executeWithArray(query,
-								proeprties);
-					}
-				});
+		QueryExecution query = new QueryExecution<List>() {
+			@Override
+			public List execute(javax.jdo.Query query,
+					InstanceSecurityRestriction restriction) {
+				RangeProperty<Date> rp = (RangeProperty<Date>) PropertyBuilder
+						.create("creationTime", new Range<Date>(null, endDate));
+				EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus> ep = (EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus>) PropertyBuilder
+						.create("mCTSPregnantMotherCaseAuthorisedStatus", null);
+				EqualProperty<MCTSPregnantMotherMatchStatus> ep1 = (EqualProperty<MCTSPregnantMotherMatchStatus>) PropertyBuilder
+						.create("mCTSPregnantMotherMatchStatus", null);
+
+				List<Property> proeprties = new ArrayList<Property>();
+				proeprties.add(ep);
+				proeprties.add(ep);
+				proeprties.add(ep1);
+				return (List) QueryExecutor.executeWithArray(query, proeprties);
+			}
+		};
+		List<MctsPregnantMother> list = dbRepository.executeJDO(
+				MctsPregnantMother.class, query);
 		return list;
 		/**
 		 * DateTime date = new DateTime(); DateTime lastDate =
