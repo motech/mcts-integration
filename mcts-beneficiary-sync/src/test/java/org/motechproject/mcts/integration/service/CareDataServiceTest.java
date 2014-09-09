@@ -25,14 +25,14 @@ import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CareDataServiceTest {
 
 	@Mock
-	private CareDataRepository careDataRepository;
+	private MctsRepository careDataRepository;
 
 	@InjectMocks
 	private CareDataService careDataService = new CareDataService();
@@ -158,7 +158,7 @@ public class CareDataServiceTest {
 		assertEquals(MctsPregnantMother, updatedRecord.getMctsPregnantMother());
 		assertEquals(beneficiary.getServiceDeliveryDate(),
 				updatedRecord.getServiceDeliveryDate());
-		assertEquals(Short.valueOf(beneficiary.getServiceType().toString()),
+		assertEquals(Integer.valueOf(beneficiary.getServiceType().toString()),
 				updatedRecord.getServiceType());
 	}
 }

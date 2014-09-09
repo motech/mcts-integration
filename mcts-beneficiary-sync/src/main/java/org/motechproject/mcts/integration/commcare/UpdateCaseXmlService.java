@@ -10,7 +10,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MctsConstants;
@@ -40,16 +40,16 @@ public class UpdateCaseXmlService {
     private PropertyReader propertyReader;
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
 
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 

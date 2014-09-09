@@ -24,6 +24,7 @@ import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.BeneficiarySubscriberUpdateUrlDTO;
 import org.motechproject.mcts.integration.model.BeneficiaryUpdateDTO;
 import org.motechproject.mcts.integration.model.ListOfBeneficiariesUpdatesDTO;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -44,6 +45,9 @@ public class PublishCallBack {
 
 	@Autowired
 	private CareDataService careDataService;
+	
+	@Autowired
+	private MctsRepository careDataRepository;
 
 	static final long ONE_MINUTE_IN_MILLIS = 60000; // millisecs
 
@@ -55,8 +59,6 @@ public class PublishCallBack {
 	@Autowired
 	private PropertyReader propertyReader;
 
-	@Autowired
-	private MdsRepository dbRepository;
 
 	/**
 	 * Method to validate connection
@@ -179,14 +181,14 @@ public class PublishCallBack {
 			MctsHealthworker anmWorker = mctsPregnantMother
 					.getMctsHealthworkerByAnmId();
 			beneficiaryUpdateDTO
-					.setAnmWorkerId(dbRepository.getDetachedFieldId(anmWorker));
+					.setAnmWorkerId(careDataRepository.getDetachedFieldId(anmWorker));
 		}
 
 		if (mctsPregnantMother.getMctsHealthworkerByAshaId() != null) {
 			MctsHealthworker ashaworker = mctsPregnantMother
 					.getMctsHealthworkerByAshaId();
 			beneficiaryUpdateDTO
-					.setAshaWorkerId(dbRepository.getDetachedFieldId(ashaworker));
+					.setAshaWorkerId(careDataRepository.getDetachedFieldId(ashaworker));
 		}
 
 		beneficiaryUpdateDTO.setBeneficiaryAddress(mctsPregnantMother
@@ -205,12 +207,12 @@ public class PublishCallBack {
 		if (mctsPregnantMother.getMctsSubcenter() != null) {
 			MctsSubcenter subCentre = mctsPregnantMother.getMctsSubcenter();
 			beneficiaryUpdateDTO
-					.setMctsSubcenter(dbRepository.getDetachedFieldId(subCentre));
+					.setMctsSubcenter(careDataRepository.getDetachedFieldId(subCentre));
 		}
 		if (mctsPregnantMother.getMctsVillage() != null) {
 			MctsVillage village = mctsPregnantMother.getMctsVillage();
 			beneficiaryUpdateDTO
-					.setMctsVillage(dbRepository.getDetachedFieldId(village));
+					.setMctsVillage(careDataRepository.getDetachedFieldId(village));
 		}
 		beneficiaryUpdateDTO.setMobileNo(mctsPregnantMother.getMobileNo());
 		beneficiaryUpdateDTO.setName(mctsPregnantMother.getName());

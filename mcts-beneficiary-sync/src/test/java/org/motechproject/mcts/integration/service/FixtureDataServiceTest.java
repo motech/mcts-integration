@@ -18,7 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
 import org.motechproject.mcts.care.common.mds.model.MctsPhc;
 import org.motechproject.mcts.integration.model.Data;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +30,7 @@ public class FixtureDataServiceTest {
 	private FixtureDataService fixtureDataService = new FixtureDataService();
 
 	@Mock
-	CareDataRepository careDataRepository;
+	MctsRepository careDataRepository;
 
 	@Mock
 	PropertyReader propertyReader;

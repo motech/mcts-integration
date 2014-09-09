@@ -22,7 +22,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.FlwValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +48,16 @@ public class FLWDataPopulator {
     private static final  Logger LOGGER = LoggerFactory
             .getLogger(FLWDataPopulator.class);
 
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private LocationDataPopulator locationDataPopulator;

@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CareDataRepositoryIT extends BaseRepositoryIT {
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @After
     @Before

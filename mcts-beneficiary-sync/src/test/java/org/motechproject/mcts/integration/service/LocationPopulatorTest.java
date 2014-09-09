@@ -21,7 +21,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsState;
 import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
 import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
 import org.motechproject.mcts.care.common.mds.model.MctsVillage;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -32,7 +32,7 @@ public class LocationPopulatorTest {
 	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
 
 	@Mock
-	CareDataRepository careDataRepository;
+	MctsRepository careDataRepository;
 
 	@Mock
 	private PropertyReader propertyReader;

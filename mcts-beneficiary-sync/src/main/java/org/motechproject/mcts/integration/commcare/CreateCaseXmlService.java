@@ -13,7 +13,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
@@ -44,7 +44,7 @@ public class CreateCaseXmlService {
     private PropertyReader propertyReader;
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
@@ -52,14 +52,11 @@ public class CreateCaseXmlService {
     @Autowired
     private FixtureDataService fixtureDataService;
     
-    @Autowired
-    private MdsRepository dbRepository;
-    
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 
@@ -188,7 +185,7 @@ public class CreateCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId(dbRepository.getDetachedFieldId(mctsPregnantMother));
+        caseTask.setMctsPregnantMotherId(careDataRepository.getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
 

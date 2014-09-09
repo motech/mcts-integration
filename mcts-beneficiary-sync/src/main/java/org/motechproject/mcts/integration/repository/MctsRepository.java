@@ -39,10 +39,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CareDataRepository {
+public class MctsRepository {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(CareDataRepository.class);
+			.getLogger(MctsRepository.class);
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -50,7 +50,7 @@ public class CareDataRepository {
 	private static final String SEQUENCE = "report.locationdata_location_id_seq";
 
 	@Autowired
-	public CareDataRepository(SessionFactory sessionFactory) {
+	public MctsRepository(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
@@ -139,6 +139,10 @@ public class CareDataRepository {
 			Object fieldValue) {
 		return dbRepository.get(entityClass, fieldName, fieldValue);
 
+	}
+	
+	public <T> Integer getDetachedFieldId(T instance) {
+		return dbRepository.getDetachedFieldId(instance);
 	}
 
 	/**

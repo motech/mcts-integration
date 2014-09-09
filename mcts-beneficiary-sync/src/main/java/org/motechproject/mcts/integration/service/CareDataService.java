@@ -10,7 +10,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CareDataService {
             .getLogger(CareDataService.class);
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
             DateTime endDate) {

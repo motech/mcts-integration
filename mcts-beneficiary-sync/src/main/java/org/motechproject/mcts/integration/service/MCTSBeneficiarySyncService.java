@@ -32,6 +32,7 @@ import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.BeneficiaryValidator;
 import org.motechproject.mcts.utils.DateValidator;
 import org.motechproject.mcts.utils.MCTSEventConstants;
@@ -72,7 +73,7 @@ public class MCTSBeneficiarySyncService {
     private FixtureDataService fixtureDataService;
     
     @Autowired
-	private MdsRepository dbRepository;
+	private MctsRepository careDataRepository;
 
     /**
      * Main Method to send <code>Get</code> Updates request to MCTS,
@@ -223,7 +224,7 @@ public class MCTSBeneficiarySyncService {
             careDataService.saveOrUpdate(mctsPregnantMother1);
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-            		dbRepository.getDetachedFieldId(mctsPregnantMother1));
+            		careDataRepository.getDetachedFieldId(mctsPregnantMother1));
             MotechEvent motechEvent = new MotechEvent(
                     MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
             eventRelay.sendEventMessage(motechEvent); // Throws a
@@ -389,8 +390,8 @@ public class MCTSBeneficiarySyncService {
         }
         if (subCentre != null) {
             MctsSubcenter recordSubcentre = location.getMctsSubcenter();
-            Integer recordSubcenterId = dbRepository.getDetachedFieldId(recordSubcentre);
-            Integer subcentreId = dbRepository.getDetachedFieldId(subCentre);
+            Integer recordSubcenterId = careDataRepository.getDetachedFieldId(recordSubcentre);
+            Integer subcentreId = careDataRepository.getDetachedFieldId(subCentre);
             
             if (subcentreId != recordSubcenterId) {
                 s = false;

@@ -7,7 +7,7 @@ import javax.batch.api.Batchlet;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class BeneficiarySyncBatchlet implements Batchlet {
     private DateTime endDate = new DateTime();
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Override
     public String process() {

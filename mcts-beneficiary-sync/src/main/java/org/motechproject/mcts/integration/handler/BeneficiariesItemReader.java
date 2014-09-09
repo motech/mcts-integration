@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -20,7 +20,7 @@ public class BeneficiariesItemReader {
     private DateTime endDate;
 
 
-    public BeneficiariesItemReader(CareDataRepository careDataRepository) {
+    public BeneficiariesItemReader(MctsRepository careDataRepository) {
 
         startDate = parseDate("03-01-2014");
         endDate = parseDate("03-02-2014");

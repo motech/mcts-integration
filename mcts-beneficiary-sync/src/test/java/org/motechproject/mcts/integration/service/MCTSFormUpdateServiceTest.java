@@ -22,7 +22,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MCTSFormUpdateServiceTest {
@@ -30,7 +30,7 @@ public class MCTSFormUpdateServiceTest {
     private MCTSFormUpdateService mCTSFormUpdateService = new MCTSFormUpdateService();
 
     @Mock
-    CareDataRepository careDataRepository;
+    MctsRepository careDataRepository;
 
     MctsPregnantMother mother1;
 

@@ -18,6 +18,7 @@ import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSServi
 import org.motechproject.mcts.care.common.mds.service.MotherCaseMDSService;
 import org.motechproject.mcts.care.common.mds.service.MotherCaseMctsUpdateMDSService;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.utils.CommcareNamespaceConstants;
@@ -32,16 +33,9 @@ public class FormsProcessor {
 	CareDataService careDataService;
 	@Autowired
 	MCTSFormUpdateService mctsFormUpdateService;
-	/*@Autowired
-	private MotherCaseMctsUpdateMDSService motherCaseMctsUpdateMDSService;
-	@Autowired
-	private MctsPregnantMotherMDSService mctsPregnantMotherMDSService;
-
-	@Autowired
-	private MotherCaseMDSService motherCaseMDSService;*/
 	
 	@Autowired
-    private MdsRepository dbRepository;
+	private MctsRepository careDataRepository;
 
 	MctsPregnantMother mctsPregnantMother = null;
 	MotherCase motherCase = null;
@@ -71,7 +65,7 @@ public class FormsProcessor {
 				return;
 			}
 			mctsPregnantMother = careDataService
-					.getMctsPregnantMotherFromCaseId(Integer.toString(dbRepository.getDetachedFieldId(motherCaseMctsUpdate)));
+					.getMctsPregnantMotherFromCaseId(Integer.toString(careDataRepository.getDetachedFieldId(motherCaseMctsUpdate)));
 			
 			// MotherCaseMctsAuthorizedStatus authorizeStatus =
 			// getAuthorizedStatus(moth)
@@ -192,7 +186,7 @@ public class FormsProcessor {
 					"caseId", motherForm.get("caseId"));
 			mctsPregnantMother = careDataService
 					.getMctsPregnantMotherFromCaseId(Integer
-							.toString(dbRepository.getDetachedFieldId(motherCase)));
+							.toString(careDataRepository.getDetachedFieldId(motherCase)));
 
 			UnapprovedToDiscussForm unapprovedToDiscussForm = new UnapprovedToDiscussForm();
 			unapprovedToDiscussForm.setAnmClose(motherForm.get("anmClose"));
@@ -278,7 +272,7 @@ public class FormsProcessor {
 			careDataService.saveOrUpdate(mctsPregnantMother);
 
 			mctsFormUpdateService
-					.updateMctsPregnantMotherForm(dbRepository.getDetachedFieldId(mctsPregnantMother));
+					.updateMctsPregnantMotherForm(careDataRepository.getDetachedFieldId(mctsPregnantMother));
 
 			CaseAlreadyClosedForm caseAlreadyClosedForm = new CaseAlreadyClosedForm();
 			caseAlreadyClosedForm.setPermanentMove(motherForm
