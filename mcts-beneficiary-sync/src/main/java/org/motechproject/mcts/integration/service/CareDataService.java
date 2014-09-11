@@ -6,11 +6,11 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CareDataService {
             .getLogger(CareDataService.class);
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
             DateTime endDate) {
@@ -85,8 +85,7 @@ public class CareDataService {
             mctsPregnantMotherServiceUpdate
                     .setServiceDeliveryDate(syncedBeneficiary
                             .getServiceDeliveryDate());
-            mctsPregnantMotherServiceUpdate.setServiceType(Short
-                    .valueOf(syncedBeneficiary.getServiceType().toString()));
+            mctsPregnantMotherServiceUpdate.setServiceType(syncedBeneficiary.getServiceType());
             mctsPregnantMotherServiceUpdate.setServiceUpdateTime(new Timestamp(
                     serviceUpdateTime.getMillis()));
 
@@ -95,7 +94,7 @@ public class CareDataService {
     }
 
     public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-        return careDataRepository.getMctsPregnantMotherFromCaseId(id);
+        return careDataRepository.findEntityByField(MctsPregnantMother.class, "motherCase.id", id);
     }
 
     /**

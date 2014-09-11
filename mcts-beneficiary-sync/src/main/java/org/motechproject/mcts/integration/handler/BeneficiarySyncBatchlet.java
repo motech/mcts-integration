@@ -2,10 +2,12 @@ package org.motechproject.mcts.integration.handler;
 
 import javax.batch.api.Batchlet;
 
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,8 @@ public class BeneficiarySyncBatchlet implements Batchlet {
     public void setPropertyReader(PropertyReader propertyReader) {
         this.propertyReader = propertyReader;
     }
+    @Autowired
+    private MctsRepository careDataRepository;
 
     @Override
     public String process() {

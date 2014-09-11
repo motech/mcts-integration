@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.ObjectToXMLConverter;
@@ -27,9 +27,10 @@ public class CloseCaseXmlService {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CloseCaseXmlService.class);
 
+    
     @Autowired
-    private CareDataRepository careDataRepository;
-
+    private MctsRepository careDataRepository;
+    
     @Autowired
     private PropertyReader propertyReader;
 
@@ -86,7 +87,6 @@ public class CloseCaseXmlService {
 
     private Case createCaseForBeneficiary(
             MctsPregnantMother mctsPregnantMother, String userId) {
-        String ownerId = mctsPregnantMother.getOwnerId();
         String caseId = mctsPregnantMother.getMctsPersonaCaseUId();
 
         Case caseTask = new Case();
@@ -97,7 +97,7 @@ public class CloseCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
+        caseTask.setMctsPregnantMotherId(careDataRepository.getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
     }

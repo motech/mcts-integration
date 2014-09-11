@@ -13,23 +13,24 @@ import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.mcts.care.common.mds.model.HubTransaction;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherErrorLog;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
+import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
+import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.care.common.mds.model.MctsVillage;
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.HubTransaction;
-import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherErrorLog;
-import org.motechproject.mcts.integration.hibernate.model.MctsState;
-import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
-import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
-import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
 import org.motechproject.mcts.integration.model.Location;
 import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.BeneficiaryValidator;
 import org.motechproject.mcts.utils.DateValidator;
 import org.motechproject.mcts.utils.MCTSEventConstants;
@@ -68,12 +69,15 @@ public class MCTSBeneficiarySyncService {
 
     @Autowired
     private FixtureDataService fixtureDataService;
+    
+    @Autowired
+	private MctsRepository careDataRepository;
 
     /**
      * Main Method to send <code>Get</code> Updates request to MCTS,
      * <code>Add</code> the received updates to database and <code>Notify</code>
      * Hub
-     * 
+     *
      * @param startDate
      * @param endDate
      * @throws BeneficiaryException
@@ -110,7 +114,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * Send the sync request to <code>MCTS</code>
-     * 
+     *
      * @param startDate
      * @param endDate
      * @return String of XML of the updates received from MCTS
@@ -130,7 +134,7 @@ public class MCTSBeneficiarySyncService {
     /**
      * Add the updates received from MCTS to database table
      * <code>mctsPregnantMother</code>
-     * 
+     *
      * @param newDataSet
      * @return
      * @throws BeneficiaryException
@@ -197,7 +201,7 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
-     * 
+     *
      * @param record
      * @param startDate
      * @return
@@ -217,7 +221,7 @@ public class MCTSBeneficiarySyncService {
             careDataService.saveOrUpdate(mctsPregnantMother1);
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-                    mctsPregnantMother1.getId());
+            		careDataRepository.getDetachedFieldId(mctsPregnantMother1));
             MotechEvent motechEvent = new MotechEvent(
                     MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
             eventRelay.sendEventMessage(motechEvent); // Throws a
@@ -237,7 +241,7 @@ public class MCTSBeneficiarySyncService {
     /**
      * Map the <code>Record</code> object received from MCTS to
      * <code>MctsPregnatMother</code> object to be added to db
-     * 
+     *
      * @param record
      * @return MctsPregnantMother
      * @throws BeneficiaryException
@@ -264,7 +268,7 @@ public class MCTSBeneficiarySyncService {
         mctsPregnantMother.setHindiFatherHusbandName(transliterate(record
                 .getFatherHusbandName()));
         if (gender != null && gender.length() > 0) {
-            mctsPregnantMother.setGender(gender.charAt(0));
+            mctsPregnantMother.setGender(gender);
         }
         mctsPregnantMother.setMctsId(beneficiaryId);
         mctsPregnantMother.setMobileNo(record.getMobileno());
@@ -328,7 +332,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * Checks whetehr asha/anm/subcenter changed
-     * 
+     *
      * @param record
      * @param mctsPregnantMother
      * @return
@@ -378,9 +382,8 @@ public class MCTSBeneficiarySyncService {
         }
         if (subCentre != null) {
             MctsSubcenter recordSubcentre = location.getMctsSubcenter();
-            Integer recordSubcenterId = recordSubcentre.getId();
-            Integer subcentreId = subCentre.getId();
-
+            Integer recordSubcenterId = careDataRepository.getDetachedFieldId(recordSubcentre);
+            Integer subcentreId = careDataRepository.getDetachedFieldId(subCentre);
             if (subcentreId != recordSubcenterId) {
                 s = false;
             }
@@ -453,7 +456,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * map record to <code>LocationCSV</code> and adds to db if not present
-     * 
+     *
      * @param record
      * @throws BeneficiaryException
      */
@@ -480,7 +483,7 @@ public class MCTSBeneficiarySyncService {
     /**
      * Maps MctsHealthworkerId to MotechHealthworkerId Creates new HealthWorker
      * if the healthworker by Id passed doesnot exist and return its Id
-     * 
+     *
      * @param mctsHealthWorkerId
      * @return
      * @throws BeneficiaryException
@@ -507,7 +510,7 @@ public class MCTSBeneficiarySyncService {
             mctsHealthworker.setMctsSubcenter(location.getMctsSubcenter());
             mctsHealthworker.setMctsVillage(location.getMctsVillage());
             mctsHealthworker.setName("asd");
-            mctsHealthworker.setSex(' ');
+            mctsHealthworker.setSex("");
             mctsHealthworker.setType(type);
             mctsHealthworker.setStatus(false);
             careDataService.saveOrUpdate(mctsHealthworker);
@@ -521,7 +524,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * Maps record to a unique location and returns the <code>Location</code>
-     * 
+     *
      * @param record
      * @return
      * @throws BeneficiaryException
@@ -603,7 +606,7 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
-     * 
+     *
      * @param mctsPregnantMother
      * @return
      * @throws BeneficiaryException
@@ -618,7 +621,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * Write the Beneficiary Data to a new XML file with timeStamp
-     * 
+     *
      * @param beneficiaryData
      * @throws BeneficiaryException
      */
@@ -647,7 +650,7 @@ public class MCTSBeneficiarySyncService {
 
     /**
      * Sets startDate and endDate to be sent to hub
-     * 
+     *
      * @throws BeneficiaryException
      */
     protected void setHubTransactionDates(Date startDate, Date endDate) {
@@ -661,7 +664,7 @@ public class MCTSBeneficiarySyncService {
     /**
      * Notifies the Hub when the Updates received from Mcts with Url to call
      * Back
-     * 
+     *
      * @throws BeneficiaryException
      */
     protected void notifyHub() {

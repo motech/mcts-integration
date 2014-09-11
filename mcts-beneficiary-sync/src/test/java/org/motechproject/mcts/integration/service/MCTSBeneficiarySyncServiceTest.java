@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -42,7 +42,7 @@ public class MCTSBeneficiarySyncServiceTest {
     private PropertyReader propertyReader;
     
     @Mock
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
     
 	@InjectMocks
 	public MCTSBeneficiarySyncService mctsBeneficiarySyncService = new MCTSBeneficiarySyncService();

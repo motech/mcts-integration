@@ -26,7 +26,14 @@
 		interface="org.motechproject.batch.service.JobTriggerService" />
 	<osgi:reference id="httpAgentServiceOsgi"
 		interface="org.motechproject.http.agent.service.HttpAgent" />
+		
+	<osgi:reference id="dbRepository" 
+		interface="org.motechproject.mcts.care.common.mds.repository.MdsRepository" />
+		
+	<!-- <osgi:reference id="mctsPregnantMotherMDSService"
+		interface="org.motechproject.mcts.integration.mds.service.MctsPregnantMotherMDSService;" /> -->
 
+	
 	<!-- <osgi:reference id="schedulerServiceOsgi" interface="org.motechproject.scheduler.MotechSchedulerService" 
 		cardinality="0..1"/> <osgi:reference id="schedulerDiagnosticsServiceOsgi" 
 		interface="org.motechproject.commcare.provider.sync.diagnostics.scheduler.SchedulerDiagnosticsService"/> -->

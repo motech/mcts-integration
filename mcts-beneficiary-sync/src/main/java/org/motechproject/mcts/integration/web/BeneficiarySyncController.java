@@ -80,7 +80,8 @@ public class BeneficiarySyncController {
     
     @Autowired
     private CloseCaseXmlService closeCaseXmlService;
-
+    
+  
     /**
      * Method to validate connection
      *
@@ -207,18 +208,6 @@ public class BeneficiarySyncController {
 
     }
 
-    /**
-     * Method to update caseIds and match status if mctsId is matched
-     *
-     * @return
-     */
-    @RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public String updateStatus() {
-        mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
-        return "success";
-    }
 
     /**
      *
@@ -276,7 +265,7 @@ public class BeneficiarySyncController {
         closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
-
+    
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody
     public BeneficiaryError restExceptionHandler(RestException ex,

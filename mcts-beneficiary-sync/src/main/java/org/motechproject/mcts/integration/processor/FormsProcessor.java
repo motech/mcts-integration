@@ -2,19 +2,20 @@ package org.motechproject.mcts.integration.processor;
 
 import java.util.Map;
 
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
+import org.motechproject.mcts.care.common.mds.measure.CaseAlreadyClosedForm;
+import org.motechproject.mcts.care.common.mds.measure.DontKnowForm;
+import org.motechproject.mcts.care.common.mds.measure.MapExistingForm;
+import org.motechproject.mcts.care.common.mds.measure.MappingToApproveForm;
+import org.motechproject.mcts.care.common.mds.measure.UnapprovedToDiscussForm;
+import org.motechproject.mcts.care.common.mds.measure.UnmappedToReviewForm;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.CaseAlreadyClosedForm;
-import org.motechproject.mcts.integration.hibernate.model.DontKnowForm;
-import org.motechproject.mcts.integration.hibernate.model.MapExistingForm;
-import org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm;
-import org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.utils.CommcareNamespaceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ public class FormsProcessor {
     private CareDataService careDataService;
     @Autowired
     private MCTSFormUpdateService mctsFormUpdateService;
+    @Autowired
+    MctsRepository careDataRepository;
     private MctsPregnantMother mctsPregnantMother;
     private MotherCase motherCase;
 
@@ -55,7 +58,7 @@ public class FormsProcessor {
             }
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
-                            .toString(motherCase.getId()));
+                            .toString(careDataRepository.getDetachedFieldId(motherCase)));
 
             // MotherCaseMctsAuthorizedStatus authorizeStatus =
             // getAuthorizedStatus(moth)
@@ -168,7 +171,7 @@ public class FormsProcessor {
                     "caseId", motherForm.get("caseId"));
             mctsPregnantMother = careDataService
                     .getMctsPregnantMotherFromCaseId(Integer
-                            .toString(motherCase.getId()));
+                            .toString(careDataRepository.getDetachedFieldId(motherCase)));
 
             UnapprovedToDiscussForm unapprovedToDiscussForm = new UnapprovedToDiscussForm();
             unapprovedToDiscussForm.setAnmClose(motherForm.get("anmClose"));
@@ -250,7 +253,7 @@ public class FormsProcessor {
             careDataService.saveOrUpdate(mctsPregnantMother);
 
             mctsFormUpdateService
-                    .updateMctsPregnantMotherForm(mctsPregnantMother.getId());
+                    .updateMctsPregnantMotherForm(careDataRepository.getDetachedFieldId(mctsPregnantMother));
 
             CaseAlreadyClosedForm caseAlreadyClosedForm = new CaseAlreadyClosedForm();
             caseAlreadyClosedForm.setPermanentMove(motherForm

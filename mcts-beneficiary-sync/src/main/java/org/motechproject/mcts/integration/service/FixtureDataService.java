@@ -2,9 +2,9 @@ package org.motechproject.mcts.integration.service;
 
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
 import org.motechproject.mcts.integration.model.Data;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
@@ -29,16 +29,16 @@ public class FixtureDataService {
     @Autowired
     private StubDataService stubDataService;
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private PropertyReader propertyReader;
 
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 
@@ -55,8 +55,7 @@ public class FixtureDataService {
             String id = listData.getObjects().get(i).getFields().getId()
                     .getFieldList().get(0).getFieldValue();
 
-            MctsHealthworker mctsHealthworker = careDataRepository
-                    .getHealthWorkerfromId(id);
+            MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", id);
             if (mctsHealthworker != null) {
                 mctsHealthworker.setCareGroupid(listData.getObjects().get(i)
                         .getFields().getGroupId().getFieldList().get(0)

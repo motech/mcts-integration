@@ -33,6 +33,18 @@
             <artifactId>motech-platform-event</artifactId>
             <version>${motech.version}</version>
         </dependency>
+        <!-- MDS dependency -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>motech-platform-dataservices</artifactId>
+			<version>${motech.version}</version>
+		</dependency>
+		<!-- common mds entities -->
+		 <dependency>
+            <groupId>org.motechproject.ananya-care</groupId>
+            <artifactId>care-mcts-common-entities</artifactId>
+            <version>${motech.version}</version>
+        </dependency>
         <!-- to schedule jobs on motech -->
         <dependency>
             <groupId>org.motechproject</groupId>
@@ -190,6 +202,14 @@
                             org.motechproject.event.listener.annotations;version=${motech.version},
                             org.motechproject.osgi.web;version=${motech.version},
                             org.motechproject.commcare.builder;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.dimension;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.service;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.measure;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.repository;version=${motech.version},
+                            org.motechproject.mcts.care.common.domain;version=${motech.version},
+                            org.motechproject.mcts.care.common.domain.annotations;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.model;version=${motech.version},
+                            org.motechproject.mcts.care.common.lookup;version=${motech.version},
                             org.springframework.orm.hibernate3.annotation,
                             org.springframework.orm.hibernate3,
                             org.springframework.aop,
