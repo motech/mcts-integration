@@ -55,8 +55,7 @@ public class FixtureDataService {
             String id = listData.getObjects().get(i).getFields().getId()
                     .getFieldList().get(0).getFieldValue();
 
-            MctsHealthworker mctsHealthworker = careDataRepository
-                    .getHealthWorkerfromId(id);
+            MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", id);
             if (mctsHealthworker != null) {
                 mctsHealthworker.setCareGroupid(listData.getObjects().get(i)
                         .getFields().getGroupId().getFieldList().get(0)

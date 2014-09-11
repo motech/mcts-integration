@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.service;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,7 +60,7 @@ public class FixtureDataServiceTest {
 		mctsHealthworker.setSex("");
 
 		when(stubDataService.getFixtureData()).thenReturn(res);
-		when(careDataRepository.getHealthWorkerfromId(anyString())).thenReturn(mctsHealthworker);
+		when(careDataRepository.findEntityByField(any(Class.class), anyString(), anyInt())).thenReturn(mctsHealthworker);
 	}
 
 	@Test

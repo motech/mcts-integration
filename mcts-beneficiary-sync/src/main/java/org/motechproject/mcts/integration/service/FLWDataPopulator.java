@@ -103,10 +103,7 @@ public class FLWDataPopulator {
         } catch (IllegalArgumentException e) {
             throw new BeneficiaryException(
                     ApplicationErrors.NUMBER_OF_ARGUMENTS_DOES_NOT_MATCH, e);
-        } /*catch (HibernateException e) {
-            throw new BeneficiaryException(
-                    ApplicationErrors.DATABASE_OPERATION_FAILED, e);
-        }*/ finally {
+        }  finally {
             if (beanReader != null) {
                 try {
                     beanReader.close();
@@ -170,9 +167,7 @@ public class FLWDataPopulator {
                     mctsHealthworker.setMctsVillage(mctsVillage);
                 }
             }
-
             careDataRepository.saveOrUpdate(mctsHealthworker);
-
         }  else {
             LOGGER.error("invalid phc id in row");
         }
@@ -210,8 +205,6 @@ public class FLWDataPopulator {
         	mctsPhc = (MctsPhc) careDataRepository.findEntityByField(MctsPhc.class, "phcId", flwDataCSV
                     .getPHC_IDasInteger());
         	LOGGER.debug("phc received");
-            /*mctsPhc = careDataRepository.getMctsPhc(flwDataCSV
-                    .getPHC_IDasInteger());*/
         }
 
         String comments = "";

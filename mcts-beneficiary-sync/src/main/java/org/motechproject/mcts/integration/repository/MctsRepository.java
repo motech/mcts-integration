@@ -127,11 +127,6 @@ public class MctsRepository {
 
 	public <T> void saveOrUpdate(T entity) {
 		dbRepository.save(entity);
-		/*
-		 * try { getCurrentSession().saveOrUpdate(entity); } catch
-		 * (HibernateException e) { throw new BeneficiaryException(
-		 * ApplicationErrors.DATABASE_OPERATION_FAILED, e); }
-		 */
 	}
 
 	@SuppressWarnings("unchecked")
@@ -155,14 +150,8 @@ public class MctsRepository {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findListOfEntitiesByField(Class<T> entityClass,
 			String fieldName, Object fieldValue) {
-		List<T> result = dbRepository.findListOfEntitiesByField(entityClass,
+		return dbRepository.findEntitiesByField(entityClass,
 				fieldName, fieldValue);
-		return result;
-		/*
-		 * Criteria criteria = getCurrentSession().createCriteria(entityClass);
-		 * criteria.add(Restrictions.eq(fieldName, fieldValue)); return
-		 * (List<T>) criteria.list();
-		 */
 	}
 
 	/**
@@ -175,8 +164,7 @@ public class MctsRepository {
 	@SuppressWarnings("unchecked")
 	public <T> List<T> findListOfEntitiesByMultipleField(Class<T> entityClass,
 			Map<String, Object> fieldParams) {
-
-		return (List<T>) dbRepository.getListOfObject(entityClass, fieldParams);
+		return (List<T>) dbRepository.getListOfObjects(entityClass, fieldParams);
 
 	}
 
@@ -186,12 +174,8 @@ public class MctsRepository {
 
 	public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass,
 			String fieldName, Object lowerFieldValue, Object higherFieldValue) {
-		LOGGER.debug(String
-				.format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
-						entityClass.getSimpleName(), fieldName,
-						lowerFieldValue, higherFieldValue));
 
-		List<T> listOfObjects = dbRepository.findEntityByFieldWithConstarint(
+		List<T> listOfObjects = dbRepository.findEntitiesByFieldWithConstraint(
 				entityClass, fieldName, lowerFieldValue, higherFieldValue);
 		return listOfObjects;
 	}
@@ -210,11 +194,6 @@ public class MctsRepository {
 		getCurrentSession().flush();
 	}
 
-	public MctsHealthworker getHealthWorkerfromId(String id) {
-		MctsHealthworker worker = dbRepository.get(MctsHealthworker.class,
-				"healthworkerId", id);
-		return worker;
-	}
 
 	public MctsDistrict findUniqueDistrict(final int disctrictId,
 			final Integer id) {
@@ -230,7 +209,7 @@ public class MctsRepository {
 		properties.add(ep1);
 		List<MctsDistrict> list = dbRepository.executeJDO(MctsDistrict.class,
 				properties);
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -246,7 +225,7 @@ public class MctsRepository {
 				properties.add(eq);
 				properties.add(eq1);
 		List<MctsTaluk> list = dbRepository.executeJDO(MctsTaluk.class, properties);
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -265,7 +244,7 @@ public class MctsRepository {
 				properties.add(eq1);
 		List<MctsHealthblock> list = dbRepository.executeJDO(
 				MctsHealthblock.class, properties);
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -282,7 +261,7 @@ public class MctsRepository {
 				properties.add(eq);
 				properties.add(eq1);
 		List<MctsPhc> list = dbRepository.executeJDO(MctsPhc.class, properties);
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -301,7 +280,7 @@ public class MctsRepository {
 				properties.add(eq1);
 		List<MctsSubcenter> list = dbRepository.executeJDO(MctsSubcenter.class,
 				properties);
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -324,8 +303,7 @@ public class MctsRepository {
 				properties.add(ep2);
 		List<MctsVillage> list = dbRepository.executeJDO(MctsVillage.class,
 				properties);
-		LOGGER.debug("size of village : " + list.size());
-		if (list.size() != 0) {
+		if (list != null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -344,11 +322,6 @@ public class MctsRepository {
 	}
 
 	public List<MctsPregnantMother> getMctsPregnantMother() {
-		QueryExecution query = new QueryExecution<List>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
 				EqualProperty<String> ep = (EqualProperty<String>) PropertyBuilder
 						.create("mctsPersonaCaseUId", null);
 				EqualProperty<String> ep1 = (EqualProperty<String>) PropertyBuilder
@@ -356,11 +329,8 @@ public class MctsRepository {
 				List<Property> properties = new ArrayList<Property>();
 				properties.add(ep);
 				properties.add(ep1);
-				return (List) QueryExecutor.executeWithArray(query, properties);
-			}
-		};
 		List<MctsPregnantMother> list = dbRepository.executeJDO(
-				MctsPregnantMother.class, query);
+				MctsPregnantMother.class, properties);
 		return list;
 
 	}
@@ -370,23 +340,10 @@ public class MctsRepository {
 				MctsPregnantMother.class, primaryId);
 		return mother;
 
-		/*
-		 * String queryString =
-		 * "from MctsPregnantMother mother where mother.id='" + primaryId + "'";
-		 * LOGGER.debug("queryString : " + queryString);
-		 * List<MctsPregnantMother> mother = getCurrentSession().createQuery(
-		 * queryString).list(); if (mother.size() == 0) { return null; } return
-		 * mother.get(0);
-		 */
-
 	}
 
 	public MotherCase matchMctsPersonawithMotherCase(final Integer hhNum,
 			final Integer familyNum, final String ownerId) {
-		QueryExecution query = new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
 				EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
 						.create("hhNumber", hhNum);
 				EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
@@ -397,12 +354,9 @@ public class MctsRepository {
 				properties.add(ep);
 				properties.add(ep1);
 				properties.add(ep2);
-				return (List) QueryExecutor.executeWithArray(query, properties);
-			}
-		};
 		List<MotherCase> list = dbRepository
-				.executeJDO(MotherCase.class, query);
-		if (list.size() != 0) {
+				.executeJDO(MotherCase.class, properties);
+		if (list!=null && list.size() != 0) {
 			return list.get(0);
 		} else {
 			return null;
@@ -410,15 +364,6 @@ public class MctsRepository {
 
 	}
 
-	/*
-	 * public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-	 * 
-	 * String queryString =
-	 * "from MctsPregnantMother mPregMother where mPregMother.motherCase.id='" +
-	 * id + "'"; List<MctsPregnantMother> motherList =
-	 * getCurrentSession().createQuery( queryString).list(); return
-	 * motherList.get(0); }
-	 */
 
 	public String getOwnerIdFromLocationId(String locationId) {
 
@@ -428,13 +373,6 @@ public class MctsRepository {
 		}
 		return null;
 		
-		/*
-		 * String queryString =
-		 * "select flw.flwId from Flw flw where flw.locationCode='" + locationId
-		 * + "'"; LOGGER.debug("query : " + queryString); List<String> ownerId =
-		 * getCurrentSession().createQuery(queryString) .list(); if
-		 * (ownerId.size() == 0) { return null; } return ownerId.get(0);
-		 */
 	}
 
 	public List<MctsPregnantMother> getMctsPregnantMotherForClosedCases() {
@@ -442,11 +380,6 @@ public class MctsRepository {
 		DateTime lastDate = date.minusDays(180);
 		final Date endDate = lastDate.toDate();
 
-		@SuppressWarnings("unchecked")
-		QueryExecution query = new QueryExecution<List>() {
-			@Override
-			public List execute(javax.jdo.Query query,
-					InstanceSecurityRestriction restriction) {
 				RangeProperty<Date> rp = (RangeProperty<Date>) PropertyBuilder
 						.create("creationTime", new Range<Date>(null, endDate));
 				EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus> ep = (EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus>) PropertyBuilder
@@ -458,21 +391,8 @@ public class MctsRepository {
 				proeprties.add(ep);
 				proeprties.add(ep);
 				proeprties.add(ep1);
-				return (List) QueryExecutor.executeWithArray(query, proeprties);
-			}
-		};
 		List<MctsPregnantMother> list = dbRepository.executeJDO(
-				MctsPregnantMother.class, query);
+				MctsPregnantMother.class, proeprties);
 		return list;
-		/**
-		 * DateTime date = new DateTime(); DateTime lastDate =
-		 * date.minusDays(180); String queryString =
-		 * "from MctsPregnantMother mother where mother.creationTime<DATE('" +
-		 * lastDate.toString("yyyy-MM-dd") +
-		 * "') and mother.mCTSPregnantMotherCaseAuthorisedStatus=null and mother.mCTSPregnantMotherMatchStatus=null"
-		 * ; List<MctsPregnantMother> mother = getCurrentSession().createQuery(
-		 * queryString).list(); if (mother.size() == 0) { return null; } return
-		 * mother;
-		 */
 	}
 }
