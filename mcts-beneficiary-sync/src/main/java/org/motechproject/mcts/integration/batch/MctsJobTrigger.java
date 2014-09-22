@@ -26,7 +26,7 @@ public class MctsJobTrigger {
 
     @Autowired
     public MctsJobTrigger(
-            @Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+            /*@Qualifier("mctsRestTemplate")*/ RestTemplate restTemplate,
             BatchServiceUrlGenerator batchServiceUrlGenerator,
             HttpAgent httpAgentServiceOsgi) {
         this.restTemplate = restTemplate;

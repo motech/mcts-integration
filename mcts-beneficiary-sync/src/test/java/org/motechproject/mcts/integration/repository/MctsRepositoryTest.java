@@ -37,8 +37,7 @@ public class MctsRepositoryTest {
 	private MdsRepository dbRepository;
 
 	@InjectMocks
-	private MctsRepository careDataRepository = new MctsRepository(
-			sessionFactory);
+	private MctsRepository careDataRepository = new MctsRepository();
 
 	List<MctsPregnantMother> motherList;
 
@@ -51,6 +50,8 @@ public class MctsRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 		initMocks(this);
+		careDataRepository.setDbRepository(dbRepository);
+		careDataRepository.setSessionFactory(sessionFactory);
 		motherList = new ArrayList<MctsPregnantMother>();
 
 		MctsPregnantMother mother1 = new MctsPregnantMother();

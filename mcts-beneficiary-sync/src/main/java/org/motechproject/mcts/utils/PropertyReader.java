@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -12,7 +12,7 @@ import org.springframework.util.MultiValueMap;
  * Reads properties from the properties file
  * <code>beneficiary_sync.properties</code> and return them
  */
-@Component
+@Service
 public class PropertyReader {
 
     private Properties properties;

@@ -5,11 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
@@ -29,10 +27,7 @@ import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mds.query.EqualProperty;
 import org.motechproject.mds.query.Property;
 import org.motechproject.mds.query.PropertyBuilder;
-import org.motechproject.mds.query.QueryExecution;
-import org.motechproject.mds.query.QueryExecutor;
 import org.motechproject.mds.query.RangeProperty;
-import org.motechproject.mds.util.InstanceSecurityRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,15 +42,30 @@ public class MctsRepository {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	private static final String SEQUENCE = "report.locationdata_location_id_seq";
+    @Autowired
+    private MdsRepository dbRepository;
+    
+	public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 
-	@Autowired
-	public MctsRepository(SessionFactory sessionFactory) {
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    public MdsRepository getDbRepository() {
+        return dbRepository;
+    }
+
+    public void setDbRepository(MdsRepository dbRepository) {
+        this.dbRepository = dbRepository;
+    }
+
+    private static final String SEQUENCE = "report.locationdata_location_id_seq";
+
+	/*public MctsRepository(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}
-
-	@Autowired
-	private MdsRepository dbRepository;
+	}*/
 
 	// TODO send only for authorized = approved
 	public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,

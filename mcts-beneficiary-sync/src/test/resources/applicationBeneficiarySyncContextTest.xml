@@ -20,7 +20,7 @@
 			class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor" />
 	</mvc:interceptors>
 
-	<!-- <context:component-scan base-package="org.motechproject.mcts" /> -->
+	<context:component-scan base-package="org.motechproject.mcts" />
 
 	<util:properties id="beneficiarySyncProperties"
 		location="classpath:/beneficiary_sync.properties" />
@@ -34,7 +34,7 @@
 	<bean id="httpComponentsClientHttpRequestFactory"
 		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
 
-	<bean id="mctsRestTemplate" class="org.springframework.web.client.RestTemplate">
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
 		<constructor-arg ref="httpComponentsClientHttpRequestFactory" />
 	</bean>
 

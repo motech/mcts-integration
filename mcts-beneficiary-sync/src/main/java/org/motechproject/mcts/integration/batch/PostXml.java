@@ -9,7 +9,6 @@ import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -38,7 +37,7 @@ public class PostXml {
     private BatchServiceUrlGenerator batchServiceUrlGenerator;
 
     @Autowired
-    public PostXml(@Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+    public PostXml(/*@Qualifier("mctsRestTemplate")*/ RestTemplate restTemplate,
             BatchServiceUrlGenerator batchServiceUrlGenerator,
             HttpAgent httpAgentServiceOsgi) {
         this.restTemplate = restTemplate;

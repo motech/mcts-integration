@@ -15,11 +15,11 @@ import org.springframework.web.client.RestTemplate;
 public class MctsJobScheduleTest {
 
 	@Mock
-	private RestTemplate mctsRestTemplate;
+	private RestTemplate restTemplate;
 	@Mock
 	private BatchServiceUrlGenerator batchServiceUrlGenerator;
 	@Mock HttpAgent httpAgentServiceOsgi;
-	@InjectMocks MctsJobSchedule schedule = new MctsJobSchedule(mctsRestTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
+	@InjectMocks MctsJobSchedule schedule = new MctsJobSchedule(restTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
 	@Test
 	public void ScheduleJobtest() {
 		System.out.println("started test");
@@ -29,7 +29,7 @@ public class MctsJobScheduleTest {
 	
 	@Test
 	public void triggerJobTest() {
-		MctsJobTrigger schedule = new MctsJobTrigger(mctsRestTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
+		MctsJobTrigger schedule = new MctsJobTrigger(restTemplate,batchServiceUrlGenerator,httpAgentServiceOsgi);
 		schedule.triggerJob();
 	}
 	

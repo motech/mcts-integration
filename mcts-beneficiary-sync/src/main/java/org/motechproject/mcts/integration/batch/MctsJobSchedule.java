@@ -32,7 +32,7 @@ public class MctsJobSchedule {
 
     @Autowired
     public MctsJobSchedule(
-            @Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+            RestTemplate restTemplate,
             BatchServiceUrlGenerator batchServiceUrlGenerator,
             HttpAgent httpAgentServiceOsgi) {
         this.restTemplate = restTemplate;

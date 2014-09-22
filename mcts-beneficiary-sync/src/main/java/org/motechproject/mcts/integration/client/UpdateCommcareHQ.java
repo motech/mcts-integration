@@ -14,11 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Service
 public class UpdateCommcareHQ {
 
     private static final Logger LOGGER = LoggerFactory
@@ -30,7 +31,7 @@ public class UpdateCommcareHQ {
 
     @Autowired
     public UpdateCommcareHQ(
-            @Qualifier("mctsRestTemplate") RestTemplate restTemplate,
+            /*@Qualifier("mctsRestTemplate") */ RestTemplate restTemplate,
             BatchServiceUrlGenerator batchServiceUrlGenerator) {
         this.restTemplate = restTemplate;
         this.batchServiceUrlGenerator = batchServiceUrlGenerator;

@@ -11,9 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Service
 public class BeneficiarySyncBatchlet implements Batchlet {
 
     private static final Logger LOGGER = LoggerFactory
@@ -21,6 +22,7 @@ public class BeneficiarySyncBatchlet implements Batchlet {
 
     private PropertyReader propertyReader;
     private RestTemplate restTemplate;
+    private MctsRepository careDataRepository;
 
     public RestTemplate getRestTemplate() {
         return restTemplate;
@@ -37,8 +39,14 @@ public class BeneficiarySyncBatchlet implements Batchlet {
     public void setPropertyReader(PropertyReader propertyReader) {
         this.propertyReader = propertyReader;
     }
-    @Autowired
-    private MctsRepository careDataRepository;
+
+    public MctsRepository getCareDataRepository() {
+        return careDataRepository;
+    }
+
+    public void setCareDataRepository(MctsRepository careDataRepository) {
+        this.careDataRepository = careDataRepository;
+    }
 
     @Override
     public String process() {
