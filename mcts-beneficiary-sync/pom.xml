@@ -51,6 +51,7 @@
             <artifactId>motech-scheduler</artifactId>
             <version>${motech.version}</version>
         </dependency>
+        <!-- Commcare -->
         <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>commcare</artifactId>
@@ -199,13 +200,13 @@
                             org.motechproject.event.listener.annotations;version=${motech.version},
                             org.motechproject.osgi.web;version=${motech.version},
                             org.motechproject.commcare.builder;version=${motech.version},
+                           org.motechproject.mcts.care.common.domain;version=${motech.version},
+                            org.motechproject.mcts.care.common.domain.annotations;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.dimension;version=${motech.version},
-                            org.motechproject.mcts.care.common.mds.service;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.measure;version=${motech.version},
                             org.motechproject.mcts.care.common.mds.repository;version=${motech.version},
-                            org.motechproject.mcts.care.common.domain;version=${motech.version},
-                            org.motechproject.mcts.care.common.domain.annotations;version=${motech.version},
-                            org.motechproject.mcts.care.common.mds.model;version=${motech.version},
+                            org.motechproject.mcts.care.common.mds.service;version=${motech.version},
+                            org.motechproject.mcts.care.common.utils;version=${motech.version},
                             org.motechproject.mcts.care.common.lookup;version=${motech.version},
                             org.springframework.orm.hibernate3.annotation,
                             org.springframework.orm.hibernate3,
@@ -248,7 +249,7 @@
                             org.motechproject.scheduler.service.impl,
                             javax.batch.operations,
                             org.motechproject.transliteration.hindi.service,
-                            org.motechproject.batch.service;version=${motech.version},,
+                            org.motechproject.batch.service;version=${motech.version},
                             org.motechproject.batch.exception;version=${motech.version},
                             org.motechproject.batch.model;version=${motech.version},
                             *
