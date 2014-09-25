@@ -76,16 +76,17 @@ public class CareDataService {
                 syncedBeneficiaries.size()));
         DateTime serviceUpdateTime = DateTime.now();
         for (Beneficiary syncedBeneficiary : syncedBeneficiaries) {
-            MctsPregnantMother mctsPregnantMother = careDataRepository.load(
-                    MctsPregnantMother.class,
-                    syncedBeneficiary.getMctsPregnantMotherId());
+            MctsPregnantMother mctsPregnantMother = careDataRepository
+                    .getMotherFromPrimaryId(syncedBeneficiary
+                            .getMctsPregnantMotherId());
             MctsPregnantMotherServiceUpdate mctsPregnantMotherServiceUpdate = new MctsPregnantMotherServiceUpdate();
             mctsPregnantMotherServiceUpdate
                     .setMctsPregnantMother(mctsPregnantMother);
             mctsPregnantMotherServiceUpdate
                     .setServiceDeliveryDate(syncedBeneficiary
                             .getServiceDeliveryDate());
-            mctsPregnantMotherServiceUpdate.setServiceType(syncedBeneficiary.getServiceType());
+            mctsPregnantMotherServiceUpdate.setServiceType(syncedBeneficiary
+                    .getServiceType());
             mctsPregnantMotherServiceUpdate.setServiceUpdateTime(new Timestamp(
                     serviceUpdateTime.getMillis()));
 
@@ -94,13 +95,14 @@ public class CareDataService {
     }
 
     public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-        return careDataRepository.findEntityByField(MctsPregnantMother.class, "motherCase.id", id);
+        return careDataRepository.findEntityByField(MctsPregnantMother.class,
+                "motherCase.id", id);
     }
 
     /**
      * Method to get entities from db with constraints of upper and lower value
      * on a particular field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to be fetched
      * @param fieldName
@@ -124,7 +126,7 @@ public class CareDataService {
     /**
      * Method to get the unique element of the <code>entityClass</code> having a
      * specific value for a field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -146,7 +148,7 @@ public class CareDataService {
     /**
      * Method to get all the element of the <code>entityClass</code> having a
      * specific value for a field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -172,7 +174,7 @@ public class CareDataService {
 
     /**
      * Method to Save of Update the entity in Db
-     *
+     * 
      * @param entity
      * @throws BeneficiaryException
      */
