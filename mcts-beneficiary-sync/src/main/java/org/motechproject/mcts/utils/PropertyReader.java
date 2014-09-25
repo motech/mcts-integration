@@ -175,8 +175,8 @@ public class PropertyReader {
         return form;
     }
 
-    public String getFixtureLoginUrl() {
-        return String.format("%s", properties.getProperty("fixture.base.url"));
+    public String getFixtureLoginUrl(int offset, int limit) {
+        return String.format("%s&limit=%d&offset=%d", properties.getProperty("fixture.base.url"),limit,offset);
     }
 
     public MultiValueMap<String, String> getFixtureLoginForm() {

@@ -26,6 +26,7 @@ import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.StubDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,9 @@ public class BeneficiarySyncController {
     
     @Autowired
     private CloseCaseXmlService closeCaseXmlService;
+    
+    @Autowired
+    private StubDataService stubDataService;
     
   
     /**
@@ -246,7 +250,15 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getFixData(@PathVariable("type") String type) {
-        fixtureDataService.updateGroupId();
+    	stubDataService.getFixtureData();
+        return "successful";
+    }
+    
+    @RequestMapping(value = "/getCommcareFixture", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String commcareFixture() {
+    	fixtureDataService.updateGroupId();
         return "successful";
     }
 
