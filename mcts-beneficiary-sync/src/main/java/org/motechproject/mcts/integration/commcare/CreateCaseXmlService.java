@@ -78,7 +78,7 @@ public class CreateCaseXmlService {
                     LOGGER.debug("returned : " + returnvalue);
                     HttpStatus status = mCTSHttpClientService
                             .syncToCommcare(data);
-                    if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+                    if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                         updateCaseUId(data);
 
                     }
@@ -92,7 +92,7 @@ public class CreateCaseXmlService {
                 // post xml to the url if response is 200 then only add
                 // case UUID to the database
                 HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-                if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+                if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                     updateCaseUId(data);
                 }
             }

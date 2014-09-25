@@ -46,7 +46,7 @@ public class CloseCaseXmlService {
                 CloseData.class);
         LOGGER.debug("returned : " + returnvalue);
         HttpStatus status = mCTSHttpClientService.syncToCloseCommcare(data);
-        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             updateCaseStatus(data);
         }
 

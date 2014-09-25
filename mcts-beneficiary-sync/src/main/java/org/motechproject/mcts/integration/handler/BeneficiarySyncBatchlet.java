@@ -58,7 +58,7 @@ public class BeneficiarySyncBatchlet implements Batchlet {
         loginResponse = getLogin();
 
         if (loginResponse.getStatusCode().value()
-                / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+                / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_3XX) {
             LOGGER.debug("Matching Urls: "
                     + propertyReader.getMotechLoginRedirectUrl() + " & "
                     + loginResponse.getHeaders().getLocation().toString());

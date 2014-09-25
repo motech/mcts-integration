@@ -93,7 +93,7 @@ public class UpdateCaseXmlService {
         HttpStatus status = mCTSHttpClientService.syncToCommcareUpdate(data);
 
         // Accepted status code is 2xx
-        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.debug("valid response received");
         }
 

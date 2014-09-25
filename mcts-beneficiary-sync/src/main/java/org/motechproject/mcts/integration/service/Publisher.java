@@ -65,7 +65,7 @@ public class Publisher {
                     retryCount + 2, uRL));
             response = notifyHub();
             retryCount++;
-            if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+            if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                 LOGGER.info(String
                         .format("Hub Notified Successfully after %s retries. Response [StatusCode %s] : %s",
                                 retryCount, response.getStatusCode(),
@@ -74,9 +74,9 @@ public class Publisher {
             }
 
         } while (retryCount < maxRetryCount
-                && response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR != MctsConstants.STATUS_VALUE);
+                && response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR != MctsConstants.STATUS_VALUE_2XX);
 
-        if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.info(String
                     .format("Hub Notified Successfully with %s retries. Response [StatusCode %s] : %s",
                             retryCount, response.getStatusCode(),
@@ -117,7 +117,7 @@ public class Publisher {
         ResponseEntity<String> response = new ResponseEntity<String>(
                 HttpStatus.BAD_REQUEST);
         loginResponse = getLogin();
-        if (loginResponse.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (loginResponse.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.debug("Matching Urls: "
                     + propertyReader.getMotechLoginRedirectUrl() + " & "
                     + loginResponse.getHeaders().getLocation().toString());
