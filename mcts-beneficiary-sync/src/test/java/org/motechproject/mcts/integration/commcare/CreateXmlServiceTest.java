@@ -1,9 +1,9 @@
 package org.motechproject.mcts.integration.commcare;
 
 
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,9 +19,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
-import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
+import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
