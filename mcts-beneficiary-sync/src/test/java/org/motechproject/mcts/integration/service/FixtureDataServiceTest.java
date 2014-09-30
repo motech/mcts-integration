@@ -1,18 +1,17 @@
 package org.motechproject.mcts.integration.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,7 +26,6 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.springframework.web.client.RestTemplate;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class FixtureDataServiceTest {
 
@@ -65,7 +63,7 @@ public class FixtureDataServiceTest {
 		mctsHealthworker.setName("abc");
 		mctsHealthworker.setSex("");
 
-	//	when(stubDataService.getFixtureData()).thenReturn(list);
+		when(stubDataService.getFixtureData()).thenReturn(list);
 		when(careDataRepository.findEntityByField(any(Class.class), anyString(), anyInt())).thenReturn(mctsHealthworker);
 	}
 

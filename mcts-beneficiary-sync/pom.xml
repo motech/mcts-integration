@@ -252,7 +252,6 @@
                             org.motechproject.batch.service;version=${motech.version},
                             org.motechproject.batch.exception;version=${motech.version},
                             org.motechproject.batch.model;version=${motech.version},
-                            *
                         </Import-Package>
                     </instructions>
                 </configuration>

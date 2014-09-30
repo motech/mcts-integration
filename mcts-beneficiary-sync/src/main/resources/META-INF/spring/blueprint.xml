@@ -30,8 +30,6 @@
 	<osgi:reference id="dbRepository" 
 		interface="org.motechproject.mcts.care.common.mds.repository.MdsRepository" />
 		
-	<osgi:reference id="commcareFixtureServiceOsgi" 
-		interface="org.motechproject.commcare.service.CommcareFixtureService" />
 		
 	<!-- <osgi:reference id="mctsPregnantMotherMDSService"
 		interface="org.motechproject.mcts.integration.mds.service.MctsPregnantMotherMDSService;" /> -->

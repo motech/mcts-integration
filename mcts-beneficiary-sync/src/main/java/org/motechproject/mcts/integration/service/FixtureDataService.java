@@ -1,12 +1,11 @@
 package org.motechproject.mcts.integration.service;
 
 import java.util.List;
-import java.util.Map;
 
-import org.motechproject.commcare.domain.CommcareFixturesJson;
 import org.motechproject.event.listener.annotations.MotechListener;
-import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.MCTSBatchConstants;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -53,19 +52,18 @@ public class FixtureDataService {
      */
     @MotechListener(subjects = MCTSBatchConstants.EVENT_SUBJECT)
     public void updateGroupId() {
-    	List<CommcareFixturesJson> list = stubDataService.getFixtureData();
-    	if (list == null) {
-    		return;
-    	}
+        List<Data> list = stubDataService.getFixtureData();
         for (int j=0; j<list.size(); j++) {
-        	CommcareFixturesJson listData = list.get(j);
+        	Data listData = list.get(j);
         	for (int i = 0; i < listData.getObjects().size(); i++) {
-        		Map<String, String> mp = listData.getObjects().get(i).getFields();
-        		String id = mp.get("id");
-        		
+                String id = listData.getObjects().get(i).getFields().getId()
+                        .getFieldList().get(0).getFieldValue();
+
                 MctsHealthworker mctsHealthworker = careDataRepository.findEntityByField(MctsHealthworker.class, "healthworkerId", id);
                 if (mctsHealthworker != null) {
-                    mctsHealthworker.setCareGroupid(mp.get("group_id"));
+                    mctsHealthworker.setCareGroupid(listData.getObjects().get(i)
+                            .getFields().getGroupId().getFieldList().get(0)
+                            .getFieldValue());
                     careDataRepository.saveOrUpdate(mctsHealthworker);
                 } else {
                     LOGGER.error("No MCTS Healthworker found with id : " + id);

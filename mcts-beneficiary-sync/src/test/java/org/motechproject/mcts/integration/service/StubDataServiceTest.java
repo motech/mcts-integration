@@ -12,7 +12,6 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,7 +48,6 @@ public class StubDataServiceTest {
         
     }
     
-    @Ignore
     @Test
     public void shouldGetFixtureData() throws IOException {
         PowerMockito.mockStatic(IOUtils.class);

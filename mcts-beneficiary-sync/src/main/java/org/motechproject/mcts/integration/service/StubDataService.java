@@ -41,40 +41,45 @@ public class StubDataService {
 	@Autowired
 	private HttpClient commonsHttpClient;
 
-	@Autowired
-	private CommcareFixtureService commcareFixtureServiceOsgi;
 
 	/**
 	 * Method to call the stub controller and get the data
 	 * 
 	 * @return
 	 */
+
+	public List<Data> getFixtureData() {
+		int limit = 0;
+		int offset = MctsConstants.FIXTURE_OFFSET;
+		limit = MctsConstants.FIXTURE_LIMIT;
+		int count;
+		List<Data> list = new ArrayList<Data>();
+		do {
+			String url = propertyReader.getFixtureLoginUrl(offset, limit);
+			LOGGER.debug("fixture url : " + url);
+			String response = getRequest(url);
+
+			Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
+					Data.class);
+			count = data.getMeta().getTotalCount();
+			list.add(data);
+			offset = offset + limit;
+
+		} while (offset < count);
+
+		return list;
+
+	}
+
 	/*
-	 * public List<Data> getFixtureData() { int limit = 0; int offset =
-	 * MctsConstants.FIXTURE_OFFSET; limit = MctsConstants.FIXTURE_LIMIT; int
-	 * count; List<Data> list = new ArrayList<Data>(); do { String url =
-	 * propertyReader.getFixtureLoginUrl(offset, limit);
-	 * LOGGER.debug("fixture url : " + url); String response = getRequest(url);
+	 * public List<CommcareFixturesJson> getFixtureData() { int limit =
+	 * MctsConstants.FIXTURE_LIMIT; List<CommcareFixturesJson> list =
+	 * commcareFixtureServiceOsgi .getFixturesWithType("asha", limit); return
+	 * list;
 	 * 
-	 * Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
-	 * Data.class); count = data.getMeta().getTotalCount(); list.add(data);
-	 * offset = offset + limit;
-	 * 
-	 * } while (offset < count);
-	 * 
-	 * return list;
 	 * 
 	 * }
 	 */
-
-	public List<CommcareFixturesJson> getFixtureData() {
-		int limit = MctsConstants.FIXTURE_LIMIT;
-		List<CommcareFixturesJson> list = commcareFixtureServiceOsgi
-				.getFixturesWithType("asha", limit);
-		return list;
-
-
-	}
 
 	private HttpMethod buildRequest(String url) {
 		HttpMethod requestMethod = new GetMethod(url);
