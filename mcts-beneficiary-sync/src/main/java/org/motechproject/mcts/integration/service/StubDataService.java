@@ -11,9 +11,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
-import org.motechproject.commcare.domain.CommcareFixture;
-import org.motechproject.commcare.domain.CommcareFixturesJson;
-import org.motechproject.commcare.service.CommcareFixtureService;
 import org.motechproject.mcts.integration.model.Data;
 import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
@@ -25,96 +22,84 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service to call the fixture stub and get data
- * 
+ *
  * @author aman
- * 
  */
 @Service
 public class StubDataService {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(FixtureDataService.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(FixtureDataService.class);
 
-	@Autowired
-	private PropertyReader propertyReader;
+    @Autowired
+    private PropertyReader propertyReader;
 
-	@Autowired
-	private HttpClient commonsHttpClient;
+    @Autowired
+    private HttpClient commonsHttpClient;
 
+    /**
+     * Method to call the stub controller and get the data
+     *
+     * @return
+     */
 
-	/**
-	 * Method to call the stub controller and get the data
-	 * 
-	 * @return
-	 */
+    public List<Data> getFixtureData() {
+        int limit = 0;
+        int offset = MctsConstants.FIXTURE_OFFSET;
+        limit = MctsConstants.FIXTURE_LIMIT;
+        int count;
+        List<Data> list = new ArrayList<Data>();
+        do {
+            String url = propertyReader.getFixtureLoginUrl(offset, limit);
+            LOGGER.debug("fixture url : " + url);
+            String response = getRequest(url);
 
-	public List<Data> getFixtureData() {
-		int limit = 0;
-		int offset = MctsConstants.FIXTURE_OFFSET;
-		limit = MctsConstants.FIXTURE_LIMIT;
-		int count;
-		List<Data> list = new ArrayList<Data>();
-		do {
-			String url = propertyReader.getFixtureLoginUrl(offset, limit);
-			LOGGER.debug("fixture url : " + url);
-			String response = getRequest(url);
+            Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
+                    Data.class);
+            count = data.getMeta().getTotalCount();
+            list.add(data);
+            offset = offset + limit;
 
-			Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
-					Data.class);
-			count = data.getMeta().getTotalCount();
-			list.add(data);
-			offset = offset + limit;
+        } while (offset < count);
 
-		} while (offset < count);
+        return list;
 
-		return list;
+    }
 
-	}
+    private HttpMethod buildRequest(String url) {
+        HttpMethod requestMethod = new GetMethod(url);
+        authenticate();
+        return requestMethod;
+    }
 
-	/*
-	 * public List<CommcareFixturesJson> getFixtureData() { int limit =
-	 * MctsConstants.FIXTURE_LIMIT; List<CommcareFixturesJson> list =
-	 * commcareFixtureServiceOsgi .getFixturesWithType("asha", limit); return
-	 * list;
-	 * 
-	 * 
-	 * }
-	 */
+    private void authenticate() {
+        commonsHttpClient.getParams().setAuthenticationPreemptive(true);
+        LOGGER.debug("username" + propertyReader.getFixtureUserName());
+        LOGGER.debug("password" + propertyReader.getFixturePassword());
+        commonsHttpClient.getState().setCredentials(
+                new AuthScope(null, -1, null, null),
+                new UsernamePasswordCredentials(propertyReader
+                        .getFixtureUserName(), propertyReader
+                        .getFixturePassword()));
+    }
 
-	private HttpMethod buildRequest(String url) {
-		HttpMethod requestMethod = new GetMethod(url);
-		authenticate();
-		return requestMethod;
-	}
+    String getRequest(String requestUrl) {
 
-	private void authenticate() {
-		commonsHttpClient.getParams().setAuthenticationPreemptive(true);
-		LOGGER.debug("username" + propertyReader.getFixtureUserName());
-		LOGGER.debug("password" + propertyReader.getFixturePassword());
-		commonsHttpClient.getState().setCredentials(
-				new AuthScope(null, -1, null, null),
-				new UsernamePasswordCredentials(propertyReader
-						.getFixtureUserName(), propertyReader
-						.getFixturePassword()));
-	}
+        HttpMethod getMethod = buildRequest(requestUrl);
 
-	String getRequest(String requestUrl) {
+        try {
+            commonsHttpClient.executeMethod(getMethod);
+            InputStream responseBodyAsStream = getMethod
+                    .getResponseBodyAsStream();
+            return IOUtils.toString(responseBodyAsStream);
+        } catch (IOException e) {
+            LOGGER.warn("IOException while sending request to CommCare: "
+                    + e.getMessage());
+        } finally {
+            getMethod.releaseConnection();
+        }
 
-		HttpMethod getMethod = buildRequest(requestUrl);
-
-		try {
-			commonsHttpClient.executeMethod(getMethod);
-			InputStream responseBodyAsStream = getMethod
-					.getResponseBodyAsStream();
-			return IOUtils.toString(responseBodyAsStream);
-		} catch (IOException e) {
-			LOGGER.warn("IOException while sending request to CommCare: "
-					+ e.getMessage());
-		} finally {
-			getMethod.releaseConnection();
-		}
-
-		return null;
-	}
+        return null;
+    }
 
 }

@@ -2,16 +2,13 @@ package org.motechproject.mcts.integration.handler;
 
 import javax.batch.api.Batchlet;
 
-import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -21,8 +18,8 @@ public class BeneficiarySyncBatchlet implements Batchlet {
             .getLogger(BeneficiarySyncBatchlet.class);
 
     private PropertyReader propertyReader;
+
     private RestTemplate restTemplate;
-    private MctsRepository careDataRepository;
 
     public RestTemplate getRestTemplate() {
         return restTemplate;
@@ -40,22 +37,11 @@ public class BeneficiarySyncBatchlet implements Batchlet {
         this.propertyReader = propertyReader;
     }
 
-    public MctsRepository getCareDataRepository() {
-        return careDataRepository;
-    }
-
-    public void setCareDataRepository(MctsRepository careDataRepository) {
-        this.careDataRepository = careDataRepository;
-    }
-
     @Override
     public String process() {
 
-        ResponseEntity<String> loginResponse = new ResponseEntity<>(
-                HttpStatus.BAD_REQUEST);
-        ResponseEntity<String> response = new ResponseEntity<>(
-                HttpStatus.BAD_REQUEST);
-        loginResponse = getLogin();
+        ResponseEntity<String> response;
+        ResponseEntity<String> loginResponse = getLogin();
 
         if (loginResponse.getStatusCode().value()
                 / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_3XX) {
@@ -66,15 +52,20 @@ public class BeneficiarySyncBatchlet implements Batchlet {
                     loginResponse.getHeaders().getLocation().toString())) {
                 LOGGER.info("Successfully logged in to Motech-Platform");
                 try {
-
-                    response = restTemplate.getForObject(
-                            propertyReader.getMctsSyncFromLoginUrl(),
-                            ResponseEntity.class);
+                    response = restTemplate.getForEntity(propertyReader
+                            .getMctsSyncFromLoginUrl(), String.class);
 
                     return response.toString();
 
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
+                    if (e instanceof HttpServerErrorException) {
+                        throw new HttpServerErrorException(
+                                ((HttpServerErrorException) e).getStatusCode());
+                    } else {
+                        throw new RuntimeException();
+                    }
+
                 }
             }
         }
@@ -88,25 +79,26 @@ public class BeneficiarySyncBatchlet implements Batchlet {
 
     ResponseEntity<String> getLogin() {
         LOGGER.info("Trying to login to Motech Platform");
-        ResponseEntity<String> response = new ResponseEntity<String>(
-                HttpStatus.BAD_REQUEST);
+        ResponseEntity<String> response = null;
         LOGGER.debug("Login Url is: "
                 + propertyReader.getMotechPlatformLoginUrl());
         LOGGER.debug("Login Params are: "
                 + propertyReader.getMotechPlatformLoginForm());
         try {
 
-            response = restTemplate.postForEntity(
-                    propertyReader.getMotechPlatformLoginUrl(),
-                    propertyReader.getMotechPlatformLoginForm(), String.class);
+            response = restTemplate.postForEntity(propertyReader
+                    .getMotechPlatformLoginUrl(), propertyReader
+                    .getMotechPlatformLoginForm(), String.class);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
-        LOGGER.debug("Login Response [StatusCode: " + response.getStatusCode()
-                + "]");
-        LOGGER.debug("Login Response [RedirectUrl: "
-                + response.getHeaders().getLocation() + "]");
+        if (response != null) {
+            LOGGER.debug("Login Response [StatusCode: "
+                    + response.getStatusCode() + "]");
+            LOGGER.debug("Login Response [RedirectUrl: "
+                    + response.getHeaders().getLocation() + "]");
+        }
         return response;
     }
 

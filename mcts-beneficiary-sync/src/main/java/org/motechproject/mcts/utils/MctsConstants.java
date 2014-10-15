@@ -17,4 +17,9 @@ public final class MctsConstants {
     public static final int KEY_LENGTH = 128;
     public static final int FIXTURE_OFFSET = 0;
     public static final int FIXTURE_LIMIT = 50;
+    public static final int STATUS_VALUE = 2;
+    public static final Integer MCTS_REQUEST_MODE = 4;
+    public static final Integer MCTS_REQUEST_DAY_OFFSET = 0;
+    public static final String DEFAULT_DATE_FORMAT = "dd-MM-yyyy";
+    public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
 }

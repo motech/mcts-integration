@@ -34,6 +34,7 @@ import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.BeneficiaryValidator;
 import org.motechproject.mcts.utils.DateValidator;
 import org.motechproject.mcts.utils.MCTSEventConstants;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.transliteration.hindi.service.TransliterationService;
 import org.slf4j.Logger;
@@ -47,9 +48,9 @@ import org.springframework.util.MultiValueMap;
 @Transactional
 @Service
 public class MCTSBeneficiarySyncService {
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(MCTSBeneficiarySyncService.class);
-    private static final String DATE_FORMAT = "dd-MM-yyyy";
 
     @Autowired
     private MCTSHttpClientService mctsHttpClientService;
@@ -69,9 +70,9 @@ public class MCTSBeneficiarySyncService {
 
     @Autowired
     private FixtureDataService fixtureDataService;
-    
+
     @Autowired
-	private MctsRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     /**
      * Main Method to send <code>Get</code> Updates request to MCTS,
@@ -126,8 +127,10 @@ public class MCTSBeneficiarySyncService {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.putAll(propertyReader
                 .getDefaultBeneficiaryListQueryParams());
-        requestBody.add("FromDate", startDate.toString(DATE_FORMAT));
-        requestBody.add("ToDate", endDate.toString(DATE_FORMAT));
+        requestBody.add("FromDate", startDate
+                .toString(MctsConstants.DEFAULT_DATE_FORMAT));
+        requestBody.add("ToDate", endDate
+                .toString(MctsConstants.DEFAULT_DATE_FORMAT));
         return mctsHttpClientService.syncFrom(requestBody);
     }
 
@@ -201,13 +204,13 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
+     * Updates <code>mctsPregnantMother</code>
      *
      * @param record
      * @param startDate
      * @return
      * @throws BeneficiaryException
      */
-
     private MctsPregnantMother updateRecordToMctsPregnantMother(Record record,
             MctsPregnantMother mctsPregnantMother, String beneficiaryId) {
 
@@ -221,7 +224,7 @@ public class MCTSBeneficiarySyncService {
             careDataService.saveOrUpdate(mctsPregnantMother1);
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put(MCTSEventConstants.PARAM_BENEFICIARY_KEY,
-            		careDataRepository.getDetachedFieldId(mctsPregnantMother1));
+                    careDataRepository.getDetachedFieldId(mctsPregnantMother1));
             MotechEvent motechEvent = new MotechEvent(
                     MCTSEventConstants.EVENT_BENEFICIARY_UPDATED, parameters);
             eventRelay.sendEventMessage(motechEvent); // Throws a
@@ -254,10 +257,10 @@ public class MCTSBeneficiarySyncService {
         Location location = getUniqueLocationMap(record);
         mctsPregnantMother.setMctsVillage(location.getMctsVillage());
         mctsPregnantMother.setMctsSubcenter(location.getMctsSubcenter());
-        mctsPregnantMother.setMctsHealthworkerByAshaId(getHealthWorkerId(
-                record.getASHAID(), location, "ASHA"));
-        mctsPregnantMother.setMctsHealthworkerByAnmId(getHealthWorkerId(
-                record.getANMID(), location, "ANM"));
+        mctsPregnantMother.setMctsHealthworkerByAshaId(getHealthWorkerId(record
+                .getASHAID(), location, "ASHA"));
+        mctsPregnantMother.setMctsHealthworkerByAnmId(getHealthWorkerId(record
+                .getANMID(), location, "ANM"));
         mctsPregnantMother
                 .setBeneficiaryAddress(record.getBeneficiaryAddress());
         mctsPregnantMother.setCategory(record.getCategory());
@@ -331,7 +334,8 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
-     * Checks whetehr asha/anm/subcenter changed
+     * Method to check if ANMID or ASHAID or SUbCenterId is updated from
+     * existing record
      *
      * @param record
      * @param mctsPregnantMother
@@ -382,8 +386,10 @@ public class MCTSBeneficiarySyncService {
         }
         if (subCentre != null) {
             MctsSubcenter recordSubcentre = location.getMctsSubcenter();
-            Integer recordSubcenterId = careDataRepository.getDetachedFieldId(recordSubcentre);
-            Integer subcentreId = careDataRepository.getDetachedFieldId(subCentre);
+            Integer recordSubcenterId = careDataRepository
+                    .getDetachedFieldId(recordSubcentre);
+            Integer subcentreId = careDataRepository
+                    .getDetachedFieldId(subCentre);
             if (subcentreId != recordSubcenterId) {
                 s = false;
             }
@@ -394,19 +400,9 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
-     * Method to check if ANMID or ASHAID or SUbCenterId is updated from
-     * existing record
-     * 
-     * @param record
-     * @param mctsPregnantMother
-     * @return <code>true</code> if none of the above is changed else
-     *         <code>false</code>
-     */
-
-    /**
      * This is to save the data as it is received from mcts maps record to
      * MctsPregnatMotherMaster and add to db
-     * 
+     *
      * @param record
      * @param startDate
      * @throws BeneficiaryException
@@ -531,11 +527,9 @@ public class MCTSBeneficiarySyncService {
      */
     private Location getUniqueLocationMap(Record record) {
         Location location = new Location();
-        location.setMctsState(careDataService.findEntityByField(
-                MctsState.class,
-                "stateId",
-                IntegerValidator.validateAndReturnAsInt("stateId",
-                        record.getStateID())));
+        location.setMctsState(careDataService
+                .findEntityByField(MctsState.class, "stateId", IntegerValidator
+                        .validateAndReturnAsInt("stateId", record.getStateID())));
         try {
             // sets District
             HashMap<String, Object> params = new HashMap<String, Object>();
@@ -550,10 +544,8 @@ public class MCTSBeneficiarySyncService {
             // sets Taluka
             params = new HashMap<String, Object>();
             params.put("mctsDistrict", location.getMctsDistrict());
-            params.put(
-                    "talukId",
-                    IntegerValidator.validateAndReturnAsInt("talukId",
-                            record.getTehsilID()));
+            params.put("talukId", IntegerValidator.validateAndReturnAsInt(
+                    "talukId", record.getTehsilID()));
             location.setMctsTaluk(careDataService
                     .findListOfEntitiesByMultipleField(MctsTaluk.class, params)
                     .get(0));
@@ -563,8 +555,8 @@ public class MCTSBeneficiarySyncService {
             if (record.getVillageID() != null
                     && !record.getVillageID().isEmpty()) {
                 params.put("villageId", IntegerValidator
-                        .validateAndReturnAsInt("villageId",
-                                record.getVillageID()));
+                        .validateAndReturnAsInt("villageId", record
+                                .getVillageID()));
                 location.setMctsVillage(careDataService
                         .findListOfEntitiesByMultipleField(MctsVillage.class,
                                 params).get(0));
@@ -574,18 +566,16 @@ public class MCTSBeneficiarySyncService {
             params = new HashMap<String, Object>();
             params.put("mctsTaluk", location.getMctsTaluk());
             params.put("healthblockId", IntegerValidator
-                    .validateAndReturnAsInt("healthblockId",
-                            record.getBlockID()));
+                    .validateAndReturnAsInt("healthblockId", record
+                            .getBlockID()));
             location.setMctsHealthblock(careDataService
                     .findListOfEntitiesByMultipleField(MctsHealthblock.class,
                             params).get(0));
             // sets Phc
             params = new HashMap<String, Object>();
             params.put("mctsHealthblock", location.getMctsHealthblock());
-            params.put(
-                    "phcId",
-                    IntegerValidator.validateAndReturnAsInt("phcId",
-                            record.getFacilityID()));
+            params.put("phcId", IntegerValidator.validateAndReturnAsInt(
+                    "phcId", record.getFacilityID()));
             location.setMctsPhc(careDataService
                     .findListOfEntitiesByMultipleField(MctsPhc.class, params)
                     .get(0));
@@ -606,7 +596,7 @@ public class MCTSBeneficiarySyncService {
     }
 
     /**
-     *
+     * 
      * @param mctsPregnantMother
      * @return
      * @throws BeneficiaryException
@@ -628,9 +618,9 @@ public class MCTSBeneficiarySyncService {
     @Deprecated
     protected void writeToFile(String beneficiaryData) {
         String outputFileLocation = String.format("%s_%s.xml", propertyReader
-                .getSyncRequestOutputFileLocation(),
-                DateTime.now().toString("yyyy-MM-dd") + "T"
-                        + DateTime.now().toString("HH:mm"));
+                .getSyncRequestOutputFileLocation(), DateTime.now().toString(
+                "yyyy-MM-dd")
+                + "T" + DateTime.now().toString("HH:mm"));
         try {
             FileUtils.writeStringToFile(new File(outputFileLocation),
                     beneficiaryData);
@@ -643,8 +633,8 @@ public class MCTSBeneficiarySyncService {
                             outputFileLocation, e.getMessage());
             LOGGER.error(error);
             throw new BeneficiaryException(
-                    ApplicationErrors.FILE_READING_WRTING_FAILED, e,
-                    e.getMessage());
+                    ApplicationErrors.FILE_READING_WRTING_FAILED, e, e
+                            .getMessage());
         }
     }
 

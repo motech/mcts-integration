@@ -27,6 +27,5 @@ public class BeneficiaryAddedListener {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
     }
 }

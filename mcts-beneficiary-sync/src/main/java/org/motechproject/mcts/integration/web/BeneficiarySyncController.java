@@ -1,10 +1,3 @@
-/**
- * Controller class to call the services
- * 1. Sync from Mcts to Motech
- * 2. Sync To Mcts from Motech
- * @author mohit
- *
- */
 package org.motechproject.mcts.integration.web;
 
 import java.io.FileNotFoundException;
@@ -42,11 +35,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Controller class to call the services 1. Sync from Mcts to Motech 2. Sync To
- * Mcts from Motech
+ * Controller class to call the syncFrom and syncTo mcts services
  *
  * @author mohit
- *
  */
 
 @Controller
@@ -78,14 +69,13 @@ public class BeneficiarySyncController {
 
     @Autowired
     private FixtureDataService fixtureDataService;
-    
+
     @Autowired
     private CloseCaseXmlService closeCaseXmlService;
-    
+
     @Autowired
     private StubDataService stubDataService;
-    
-  
+
     /**
      * Method to validate connection
      *
@@ -212,9 +202,7 @@ public class BeneficiarySyncController {
 
     }
 
-
     /**
-     *
      * Method to validate the input date arguments
      *
      * @param date
@@ -250,15 +238,15 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getFixData(@PathVariable("type") String type) {
-    	stubDataService.getFixtureData();
+        stubDataService.getFixtureData();
         return "successful";
     }
-    
+
     @RequestMapping(value = "/getCommcareFixture", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String commcareFixture() {
-    	fixtureDataService.updateGroupId();
+        fixtureDataService.updateGroupId();
         return "successful";
     }
 
@@ -269,7 +257,7 @@ public class BeneficiarySyncController {
         createCaseXmlService.createCaseXml();
         return "success";
     }
-    
+
     @RequestMapping(value = "/getCloseCaseXml", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -277,7 +265,7 @@ public class BeneficiarySyncController {
         closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
-    
+
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody
     public BeneficiaryError restExceptionHandler(RestException ex,
@@ -297,5 +285,4 @@ public class BeneficiarySyncController {
         }
         return error;
     }
-
 }

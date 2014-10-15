@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class BatchEventHandler {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(BeneficiarySyncBatchlet.class);
+            .getLogger(BatchEventHandler.class);
 
     @Autowired
-    private JobTriggerService triggerServ;
+    private JobTriggerService jobTriggerService;
 
     @MotechListener(subjects = "BATCH_JOB_TRIGGERED")
     public void handleEvent(MotechEvent event) {
@@ -24,7 +24,7 @@ public class BatchEventHandler {
         String jobName = event.getParameters().get("Job_Name").toString();
         LOGGER.debug("The job name is: " + jobName);
         try {
-            triggerServ.triggerJob("syncFrom");
+            jobTriggerService.triggerJob(jobName);
         } catch (BatchException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (Exception e) {
