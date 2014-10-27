@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@Transactional
+
 @Service
 public class MCTSBeneficiarySyncService {
 
@@ -257,10 +257,11 @@ public class MCTSBeneficiarySyncService {
         Location location = getUniqueLocationMap(record);
         mctsPregnantMother.setMctsVillage(location.getMctsVillage());
         mctsPregnantMother.setMctsSubcenter(location.getMctsSubcenter());
-        mctsPregnantMother.setMctsHealthworkerByAshaId(getHealthWorkerId(record
-                .getASHAID(), location, "ASHA"));
-        mctsPregnantMother.setMctsHealthworkerByAnmId(getHealthWorkerId(record
-                .getANMID(), location, "ANM"));
+        mctsPregnantMother.setMctsPhc(location.getMctsPhc());
+        mctsPregnantMother.setMctsHealthworkerByAshaId(getHealthWorkerId(
+                record.getASHAID(), location, "ASHA"));
+        mctsPregnantMother.setMctsHealthworkerByAnmId(getHealthWorkerId(
+                record.getANMID(), location, "ANM"));
         mctsPregnantMother
                 .setBeneficiaryAddress(record.getBeneficiaryAddress());
         mctsPregnantMother.setCategory(record.getCategory());

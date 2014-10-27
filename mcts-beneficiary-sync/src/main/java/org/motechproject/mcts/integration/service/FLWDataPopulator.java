@@ -41,7 +41,6 @@ import org.supercsv.prefs.CsvPreference;
  * @author aman
  *
  */
-@Transactional
 @Service
 public class FLWDataPopulator {
 

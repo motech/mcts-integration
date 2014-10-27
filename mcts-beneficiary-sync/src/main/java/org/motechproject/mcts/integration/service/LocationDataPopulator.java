@@ -32,7 +32,6 @@ import org.supercsv.io.CsvBeanReader;
 import org.supercsv.io.ICsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
 
-@Transactional
 @Service
 public class LocationDataPopulator {
 

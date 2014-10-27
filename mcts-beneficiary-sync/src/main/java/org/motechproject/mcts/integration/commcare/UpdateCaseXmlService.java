@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author aman
  *
  */
-@Transactional
 @Service
 public class UpdateCaseXmlService {
 
