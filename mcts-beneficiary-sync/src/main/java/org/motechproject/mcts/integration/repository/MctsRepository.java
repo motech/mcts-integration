@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.jdo.Query;
+
 import org.joda.time.DateTime;
 import org.motechproject.commons.api.Range;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
@@ -24,7 +26,10 @@ import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mds.query.EqualProperty;
 import org.motechproject.mds.query.Property;
 import org.motechproject.mds.query.PropertyBuilder;
+import org.motechproject.mds.query.QueryExecution;
+import org.motechproject.mds.query.QueryExecutor;
 import org.motechproject.mds.query.RangeProperty;
+import org.motechproject.mds.util.InstanceSecurityRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -319,16 +324,20 @@ public class MctsRepository {
     }
 
     public List<MctsPregnantMother> getMctsPregnantMother() {
-        EqualProperty<String> ep = (EqualProperty<String>) PropertyBuilder
-                .create("mctsPersonaCaseUId", null);
-        EqualProperty<String> ep1 = (EqualProperty<String>) PropertyBuilder
-                .create("ownerId", null);
-        List<Property> properties = new ArrayList<Property>();
-        properties.add(ep);
-        properties.add(ep1);
-        List<MctsPregnantMother> list = dbRepository.executeJDO(
-                MctsPregnantMother.class, properties);
-        return list;
+    	@SuppressWarnings("rawtypes")
+		QueryExecution<List> query = new QueryExecution<List>() {
+            String value = null;
+			@Override
+			public List execute(Query query,
+					InstanceSecurityRestriction restriction) {
+				query.setFilter("mctsPersonaCaseUId == "+value+" && ownerId!="+value+"");
+				return (List) QueryExecutor.execute(query,
+		                restriction);
+			}
+			
+		};
+		return dbRepository.executeJDO(MctsPregnantMother.class, query);
+    	
 
     }
 

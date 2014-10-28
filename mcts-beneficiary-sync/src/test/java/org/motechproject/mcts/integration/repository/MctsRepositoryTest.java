@@ -24,6 +24,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsPhc;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
 import org.motechproject.mds.query.Property;
+import org.motechproject.mds.query.QueryExecution;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MctsRepositoryTest {
@@ -111,7 +112,7 @@ public class MctsRepositoryTest {
                         (List<Property>) anyObject())).thenReturn(motherList);
         careDataRepository.getMctsPregnantMother();
         verify(dbRepository).executeJDO(any(Class.class),
-                (List<Property>) anyObject());
+                (QueryExecution<?>)anyObject());
     }
 
     @Test
