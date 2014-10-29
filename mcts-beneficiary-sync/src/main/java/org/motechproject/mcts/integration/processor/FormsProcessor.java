@@ -57,8 +57,9 @@ public class FormsProcessor {
 				return;
 			}
 			motherCase.setDateModified(motherForm.get("dateModified"));
-            motherCase.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
-					.get("authorized")));
+			motherCase
+					.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
+							.get("authorized")));
 			mctsPregnantMother = careDataService
 					.getMctsPregnantMotherFromCaseId(Integer
 							.toString(careDataRepository
@@ -66,11 +67,14 @@ public class FormsProcessor {
 
 			// MotherCaseMctsAuthorizedStatus authorizeStatus =
 			// getAuthorizedStatus(moth)
-
-			mctsPregnantMother
-					.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
-							.get("authorized")));
-			careDataService.saveOrUpdate(mctsPregnantMother);
+			if (mctsPregnantMother != null) {
+				mctsPregnantMother
+						.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
+								.get("authorized")));
+				careDataService.saveOrUpdate(mctsPregnantMother);
+			} else {
+				LOGGER.error("Mother Case and MctsPregnantMother did not match");
+			}
 
 			MappingToApproveForm mappingToApproveForm = new MappingToApproveForm();
 			mappingToApproveForm.setApproved(motherForm.get("approved"));
@@ -100,12 +104,14 @@ public class FormsProcessor {
 			mctsPregnantMother = careDataService.findEntityByField(
 					MctsPregnantMother.class, "mctsPersonaCaseUId",
 					motherForm.get("caseId"));
-
-			mctsPregnantMother
-					.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
-							.get("mctsMatch")));
-
-			careDataService.saveOrUpdate(mctsPregnantMother);
+			if (mctsPregnantMother != null) {
+				mctsPregnantMother
+						.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+								.get("mctsMatch")));
+				careDataService.saveOrUpdate(mctsPregnantMother);
+			} else {
+				LOGGER.error("MctsPreganatMOther not found for DONT Know Form");
+			}
 
 			DontKnowForm dontKnowForm = new DontKnowForm();
 			dontKnowForm.setDontKnow(motherForm.get("dontKnow"));
@@ -140,16 +146,20 @@ public class FormsProcessor {
 			mctsPregnantMother = careDataService.findEntityByField(
 					MctsPregnantMother.class, "mctsPersonaCaseUId",
 					motherForm.get("caseId"));
+			if (mctsPregnantMother != null) {
+				mctsPregnantMother
+						.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+								.get("mctsMatch")));
+				mctsPregnantMother
+						.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
+								.get("authorized")));
+				mctsPregnantMother.setMotherCase(motherCase);
 
-			mctsPregnantMother
-					.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
-							.get("mctsMatch")));
-			mctsPregnantMother
-					.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
-							.get("authorized")));
-			mctsPregnantMother.setMotherCase(motherCase);
+				careDataService.saveOrUpdate(mctsPregnantMother);
 
-			careDataService.saveOrUpdate(mctsPregnantMother);
+			} else {
+				LOGGER.error("McsrPregnantMother not found for MapExistingForm");
+			}
 
 			MapExistingForm mapExistingForm = new MapExistingForm();
 			mapExistingForm.setConfirmMapping(motherForm.get("confirmMapping"));
@@ -220,11 +230,14 @@ public class FormsProcessor {
 			mctsPregnantMother = careDataService.findEntityByField(
 					MctsPregnantMother.class, "mctsPersonaCaseUId",
 					motherForm.get("caseId"));
-
-			mctsPregnantMother
-					.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
-							.get("mctsMatch")));
-			careDataService.saveOrUpdate(mctsPregnantMother);
+			if (mctsPregnantMother != null) {
+				mctsPregnantMother
+						.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+								.get("mctsMatch")));
+				careDataService.saveOrUpdate(mctsPregnantMother);
+			} else {
+				LOGGER.error("McstPregnantMother not found for Unmapped To Review Form");
+			}
 
 			UnmappedToReviewForm unmappedToReviewForm = new UnmappedToReviewForm();
 			unmappedToReviewForm.setKnown(motherForm.get("known"));
@@ -256,16 +269,20 @@ public class FormsProcessor {
 			mctsPregnantMother = careDataService.findEntityByField(
 					MctsPregnantMother.class, "mctsPersonaCaseUId",
 					motherForm.get("caseId"));
-			mctsPregnantMother.setHhNumber(motherForm.get("hhNumber"));
-			mctsPregnantMother.setFamilyNumber(motherForm.get("familyNumber"));
-			mctsPregnantMother
-					.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
-							.get("mctsMatch")));
-			careDataService.saveOrUpdate(mctsPregnantMother);
-
-			mctsFormUpdateService
-					.updateMctsPregnantMotherForm(careDataRepository
-							.getDetachedFieldId(mctsPregnantMother));
+			if (mctsPregnantMother != null) {
+				mctsPregnantMother.setHhNumber(motherForm.get("hhNumber"));
+				mctsPregnantMother.setFamilyNumber(motherForm.get("familyNumber"));
+				mctsPregnantMother
+						.setmCTSPregnantMotherMatchStatus(getMatchStatus(motherForm
+								.get("mctsMatch")));
+				careDataService.saveOrUpdate(mctsPregnantMother);
+				mctsFormUpdateService
+				.updateMctsPregnantMotherForm(careDataRepository
+						.getDetachedFieldId(mctsPregnantMother));
+				motherCase = mctsPregnantMother.getMotherCase();
+			} else {
+				LOGGER.error("MctsPregnantMother not found for Case_Already_Closed_Form");
+			}
 
 			CaseAlreadyClosedForm caseAlreadyClosedForm = new CaseAlreadyClosedForm();
 			caseAlreadyClosedForm.setPermanentMove(motherForm
@@ -299,10 +316,7 @@ public class FormsProcessor {
 			caseAlreadyClosedForm.setDeviceID(motherForm.get("deviceID"));
 			caseAlreadyClosedForm.setAppVersion(motherForm.get("appVersion"));
 
-			mctsPregnantMother = careDataService.findEntityByField(
-					MctsPregnantMother.class, "mctsPersonaCaseUId",
-					motherForm.get("caseId"));
-			motherCase = mctsPregnantMother.getMotherCase();
+			
 			caseAlreadyClosedForm.setMotherCase(motherCase);
 			if (motherCase != null) {
 				motherCase.setDateModified(motherForm.get("dateModified"));
@@ -319,6 +333,10 @@ public class FormsProcessor {
 				LOGGER.error(String
 						.format("Received case doesn't have Mother case with with case Id = %s",
 								motherForm.get("pregnancyId")));
+				return;
+			}
+			if (mctsPregnantMother == null) {
+				LOGGER.error("MctsPregnantMother not found for CREATE_NEW_CASE" );
 				return;
 			}
 			mctsPregnantMother
