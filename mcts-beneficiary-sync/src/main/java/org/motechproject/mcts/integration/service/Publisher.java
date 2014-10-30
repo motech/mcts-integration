@@ -43,7 +43,7 @@ public class Publisher {
         // make a http call to 0.24
         String url = (String) motechEvent.getParameters().get(
                 MCTSEventConstants.PARAM_PUBLISHER_URL);
-        publish(url);
+     //   publish(url);  TODO : remove
     }
 
     /**
