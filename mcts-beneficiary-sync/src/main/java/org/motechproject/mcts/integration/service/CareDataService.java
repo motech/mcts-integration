@@ -115,7 +115,7 @@ public class CareDataService {
     public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass,
             String fieldName, Object lowerFieldValue, Object higherFieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName,
                         lowerFieldValue, higherFieldValue));
         return (List<T>) careDataRepository.findEntityByFieldWithConstarint(
@@ -138,7 +138,7 @@ public class CareDataService {
     public <T> T findEntityByField(Class<T> entityClass, String fieldName,
             Object fieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], fieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName, fieldValue));
         return careDataRepository.findEntityByField(entityClass, fieldName,
                 fieldValue);
@@ -159,7 +159,7 @@ public class CareDataService {
     public <T> List<T> findListOfEntitiesByField(Class<T> entityClass,
             String fieldName, Object fieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], fieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName, fieldValue));
         return careDataRepository.findListOfEntitiesByField(entityClass,
                 fieldName, fieldValue);

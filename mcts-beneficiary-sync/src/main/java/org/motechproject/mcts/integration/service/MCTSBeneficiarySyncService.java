@@ -605,7 +605,7 @@ public class MCTSBeneficiarySyncService {
     public String transliterate(String word) {
         LOGGER.info("Creating new transliteration");
         String hindi = transliterationService.transliterate(word);
-        LOGGER.debug(String.format("Tranlation for [%s] received is [%s]",
+        LOGGER.debug(String.format("Transliteration for [%s] received is [%s]",
                 word, hindi));
         return hindi;
     }
