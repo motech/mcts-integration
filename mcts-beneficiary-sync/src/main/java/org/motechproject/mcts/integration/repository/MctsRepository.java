@@ -44,29 +44,6 @@ public class MctsRepository {
     @Autowired
     private MdsRepository dbRepository;
 
-    /*
-     * @Autowired private SessionFactory sessionFactory;
-     *
-     * public SessionFactory getSessionFactory() { return sessionFactory; }
-     *
-     * public void setSessionFactory(SessionFactory sessionFactory) {
-     * this.sessionFactory = sessionFactory; }
-     *
-     * private Session getCurrentSession() { return
-     * sessionFactory.getCurrentSession(); }
-     *
-     * public <T> T load(Class<T> entityClass, Integer id) { return (T)
-     * getCurrentSession().load(entityClass, id); }
-     *
-     * public void flush() { getCurrentSession().flush(); }
-     *
-     * private static final String SEQUENCE =
-     * "report.locationdata_location_id_seq";
-     *
-     * public MctsRepository(SessionFactory sessionFactory) {
-     * this.sessionFactory = sessionFactory; }
-     */
-
     public MdsRepository getDbRepository() {
         return dbRepository;
     }
@@ -160,7 +137,6 @@ public class MctsRepository {
     }
 
     /**
-     *
      * @param entityClass
      * @param fieldName
      * @param fieldValue
@@ -174,7 +150,6 @@ public class MctsRepository {
     }
 
     /**
-     *
      * @param entityClass
      * @param fieldName
      * @param fieldValue
@@ -200,10 +175,10 @@ public class MctsRepository {
             final Integer id) {
         @SuppressWarnings("unchecked")
         EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
-                .create("disctrictId", disctrictId);
+                .create("disctrictId", disctrictId, Integer.class.getName());
         @SuppressWarnings("unchecked")
         EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsState.id", id);
+                .create("mctsState.id", id, Integer.class.getName());
 
         List<Property> properties = new ArrayList<Property>();
         properties.add(ep);
@@ -219,9 +194,9 @@ public class MctsRepository {
 
     public MctsTaluk findUniqueTaluk(final int talukId, final Integer id) {
         EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
-                .create("talukId", talukId);
+                .create("talukId", talukId, Integer.class.getName());
         EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsDistrict.id", id);
+                .create("mctsDistrict.id", id, Integer.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(eq);
         properties.add(eq1);
@@ -238,9 +213,9 @@ public class MctsRepository {
     public MctsHealthblock findUniqueHealthBlock(final int healthblockId,
             final Integer id) {
         EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
-                .create("healthblockId", healthblockId);
+                .create("healthblockId", healthblockId, Integer.class.getName());
         EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsTaluk.id", id);
+                .create("mctsTaluk.id", id, Integer.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(eq);
         properties.add(eq1);
@@ -256,9 +231,9 @@ public class MctsRepository {
     @SuppressWarnings("unchecked")
     public MctsPhc findUniquePhc(final int phcId, final Integer id) {
         EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
-                .create("phcId", phcId);
+                .create("phcId", phcId, Integer.class.getName());
         EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsHealthblock.id", id);
+                .create("mctsHealthblock.id", id, Integer.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(eq);
         properties.add(eq1);
@@ -274,9 +249,9 @@ public class MctsRepository {
     public MctsSubcenter findUniqueSubcentre(final int subcenterId,
             final Integer id) {
         EqualProperty<Integer> eq = (EqualProperty<Integer>) PropertyBuilder
-                .create("subcenterId", subcenterId);
+                .create("subcenterId", subcenterId, Integer.class.getName());
         EqualProperty<Integer> eq1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsPhc.id", id);
+                .create("mctsPhc.id", id, Integer.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(eq);
         properties.add(eq1);
@@ -294,11 +269,11 @@ public class MctsRepository {
             final Integer id2) {
 
         EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
-                .create("villageId", villageId);
+                .create("villageId", villageId, Integer.class.getName());
         EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsSubcenter.id", id);
+                .create("mctsSubcenter.id", id, Integer.class.getName());
         EqualProperty<Integer> ep2 = (EqualProperty<Integer>) PropertyBuilder
-                .create("mctsTaluk.id", id2);
+                .create("mctsTaluk.id", id2, Integer.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(ep);
         properties.add(ep1);
@@ -324,20 +299,20 @@ public class MctsRepository {
     }
 
     public List<MctsPregnantMother> getMctsPregnantMother() {
-    	@SuppressWarnings("rawtypes")
-		QueryExecution<List> query = new QueryExecution<List>() {
+        @SuppressWarnings("rawtypes")
+        QueryExecution<List> query = new QueryExecution<List>() {
             String value = null;
-			@Override
-			public List execute(Query query,
-					InstanceSecurityRestriction restriction) {
-				query.setFilter("mctsPersonaCaseUId == "+value+" && ownerId!="+value+"");
-				return (List) QueryExecutor.execute(query,
-		                restriction);
-			}
-			
-		};
-		return dbRepository.executeJDO(MctsPregnantMother.class, query);
-    	
+
+            @Override
+            public List execute(Query query,
+                    InstanceSecurityRestriction restriction) {
+                query.setFilter("mctsPersonaCaseUId == " + value
+                        + " && ownerId != " + value);
+                return (List) QueryExecutor.execute(query, restriction);
+            }
+
+        };
+        return dbRepository.executeJDO(MctsPregnantMother.class, query);
 
     }
 
@@ -351,11 +326,11 @@ public class MctsRepository {
     public MotherCase matchMctsPersonawithMotherCase(final Integer hhNum,
             final Integer familyNum, final String ownerId) {
         EqualProperty<Integer> ep = (EqualProperty<Integer>) PropertyBuilder
-                .create("hhNumber", hhNum);
+                .create("hhNumber", hhNum, Integer.class.getName());
         EqualProperty<Integer> ep1 = (EqualProperty<Integer>) PropertyBuilder
-                .create("familyNum", familyNum);
+                .create("familyNum", familyNum, Integer.class.getName());
         EqualProperty<Integer> ep2 = (EqualProperty<Integer>) PropertyBuilder
-                .create("ownerId", ownerId);
+                .create("ownerId", ownerId, String.class.getName());
         List<Property> properties = new ArrayList<Property>();
         properties.add(ep);
         properties.add(ep1);
@@ -386,18 +361,21 @@ public class MctsRepository {
         final Date endDate = lastDate.toDate();
 
         RangeProperty<Date> rp = (RangeProperty<Date>) PropertyBuilder.create(
-                "creationTime", new Range<Date>(null, endDate));
+                "creationTime", new Range<Date>(null, endDate), Date.class
+                        .getName());
         EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus> ep = (EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus>) PropertyBuilder
-                .create("mCTSPregnantMotherCaseAuthorisedStatus", null);
+                .create("mCTSPregnantMotherCaseAuthorisedStatus", null,
+                        String.class.getName());
         EqualProperty<MCTSPregnantMotherMatchStatus> ep1 = (EqualProperty<MCTSPregnantMotherMatchStatus>) PropertyBuilder
-                .create("mCTSPregnantMotherMatchStatus", null);
+                .create("mCTSPregnantMotherMatchStatus", null, String.class
+                        .getName());
 
-        List<Property> proeprties = new ArrayList<Property>();
-        proeprties.add(ep);
-        proeprties.add(ep);
-        proeprties.add(ep1);
+        List<Property> properties = new ArrayList<Property>();
+        properties.add(ep);
+        properties.add(ep);
+        properties.add(ep1);
         List<MctsPregnantMother> list = dbRepository.executeJDO(
-                MctsPregnantMother.class, proeprties);
+                MctsPregnantMother.class, properties);
         return list;
     }
 }
