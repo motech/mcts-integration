@@ -56,7 +56,7 @@ public class FormsProcessor {
 								motherForm.get("pregnancyId")));
 				return;
 			}
-			motherCase.setDateModified(motherForm.get("dateModified"));
+			motherCase.setDateModifiedString(motherForm.get("dateModified"));
 			motherCase
 					.setmCTSPregnantMotherCaseAuthorisedStatus(getAuthorizedStatus(motherForm
 							.get("authorized")));
@@ -142,7 +142,7 @@ public class FormsProcessor {
 
 			motherCase.setMctsId(motherForm.get("mctsId"));
 			motherCase.setFullMctsId(motherForm.get("fullMctsId"));
-			motherCase.setDateModified(motherForm.get("dateModified"));
+			motherCase.setDateModifiedString(motherForm.get("dateModified"));
 			mctsPregnantMother = careDataService.findEntityByField(
 					MctsPregnantMother.class, "mctsPersonaCaseUId",
 					motherForm.get("caseId"));
@@ -191,7 +191,7 @@ public class FormsProcessor {
 							.toString(careDataRepository
 									.getDetachedFieldId(motherCase)));
 			if (motherCase != null) {
-				motherCase.setDateModified(motherForm.get("dateModified"));
+				motherCase.setDateModifiedString(motherForm.get("dateModified"));
 			}
 
 			UnapprovedToDiscussForm unapprovedToDiscussForm = new UnapprovedToDiscussForm();
@@ -319,7 +319,7 @@ public class FormsProcessor {
 			
 			caseAlreadyClosedForm.setMotherCase(motherCase);
 			if (motherCase != null) {
-				motherCase.setDateModified(motherForm.get("dateModified"));
+				motherCase.setDateModifiedString(motherForm.get("dateModified"));
 			}
 			careDataService.saveOrUpdate(caseAlreadyClosedForm);
 		} else if (nameSpace.equals(CommcareNamespaceConstants.CREATE_NEW_CASE)) {
