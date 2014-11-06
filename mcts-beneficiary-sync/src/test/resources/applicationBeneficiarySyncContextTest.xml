@@ -1,110 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-	    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.1.xsd
        http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util-3.1.xsd
-		  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-		  http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+          http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
- <mvc:annotation-driven/>
- 
+    <mvc:annotation-driven />
+
     <mvc:interceptors>
-        <bean class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor"/>
+        <bean
+            class="org.motechproject.mcts.integration.web.RequestLoggingInterceptor" />
     </mvc:interceptors>
-    
-	<!--  <context:component-scan base-package="org.motechproject.mcts" />-->
 
-	<util:properties id="beneficiarySyncProperties"
-		location="classpath:/beneficiary_sync.properties" />
-	<util:properties id="hibernateProperties" location="classpath:/hibernate.properties" />
-	<context:property-placeholder
-		properties-ref="hibernateProperties" ignore-unresolvable="true" />
-	<context:property-placeholder location="classpath:postgres.properties"
-		ignore-unresolvable="true" />
-	<bean id="transliterationService" class="org.motechproject.transliteration.service.TransliterationServiceImpl"></bean>
-	<bean id="httpComponentsClientHttpRequestFactory"
-		class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
-	
-	<bean id="mctsRestTemplate" class="org.springframework.web.client.RestTemplate">
-		<constructor-arg ref="httpComponentsClientHttpRequestFactory" />
-	</bean>
-	
-	
-<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="${jdbc.driverClassName}" />
-		<property name="url" value="${jdbc.url}" />
-		<property name="username" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-	</bean>
+    <context:component-scan base-package="org.motechproject.mcts" />
 
-	<bean id="allDomainEntities"
-		class="org.springframework.beans.factory.config.ListFactoryBean">
-		<property name="sourceList">
-			<list>
-<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherErrorLog</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.ChildCase</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.Flw</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.FlwGroup</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherCase</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.LocationDimension</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.BpForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsState</value>
-			    <value>org.motechproject.mcts.integration.hibernate.model.MctsDistrict</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsTaluk</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsPhc</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsVillage</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworker</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthblock</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsSubcenter</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.HubTransaction</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.AwwRegisterMotherForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MotherEditForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MctsLocationErrorLog</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.DontKnowForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MapExistingForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.MappingToApproveForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.UnapprovedToDiscussForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.UnmappedToReviewForm</value>
-				<value>org.motechproject.mcts.integration.hibernate.model.CaseAlreadyClosedForm</value>
-			</list>
-		</property>
-	</bean>
+    <util:properties id="beneficiarySyncProperties"
+        location="classpath:/beneficiary_sync.properties" />
+    <bean id="transliterationService"
+        class="org.motechproject.transliteration.service.TransliterationServiceImpl"></bean>
+    <bean id="httpComponentsClientHttpRequestFactory"
+        class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
 
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-
-		<property name="annotatedClasses" ref="allDomainEntities" />
-
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-				<prop key="hibernate.default_schema">${hibernate.default_schema}</prop>
-            	<prop key="hibernate.hbm2ddl.auto">update</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
-	<tx:annotation-driven transaction-manager="transactionManager" />
-
-
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="httpComponentsClientHttpRequestFactory" />
+    </bean>
 
 </beans>

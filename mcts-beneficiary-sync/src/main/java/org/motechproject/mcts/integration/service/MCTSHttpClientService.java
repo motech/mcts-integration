@@ -11,6 +11,7 @@ import org.motechproject.mcts.integration.commcare.UpdateData;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.BeneficiaryRequest;
 import org.motechproject.mcts.integration.model.NewDataSet;
+import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.slf4j.Logger;
@@ -34,14 +35,11 @@ public class MCTSHttpClientService {
     @Autowired
     private HttpAgent httpAgentServiceOsgi;
 
-     
     @Autowired
     public MCTSHttpClientService(PropertyReader propertyReader,
             HttpAgent httpAgentServiceOsgi) {
         this.propertyReader = propertyReader;
         this.httpAgentServiceOsgi = httpAgentServiceOsgi;
-      
-        
     }
 
     /**
@@ -76,7 +74,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
+                .executeWithReturnTypeSync(CommcareConstants.POSTURL,
                         httpEntity, Method.POST);
 
         if (response != null) {
@@ -125,7 +123,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
+                .executeWithReturnTypeSync(CommcareConstants.POSTURL,
                         httpEntity, Method.POST);
 
         if (response != null) {
@@ -141,7 +139,7 @@ public class MCTSHttpClientService {
         httpHeaders.setContentType(MediaType.TEXT_XML);
         HttpEntity httpEntity = new HttpEntity(data, httpHeaders);
         ResponseEntity<String> response = (ResponseEntity<String>) httpAgentServiceOsgi
-                .executeWithReturnTypeSync(propertyReader.getCommcareCasePostUrl(),
+                .executeWithReturnTypeSync(CommcareConstants.POSTURL,
                         httpEntity, Method.POST);
 
         if (response != null) {

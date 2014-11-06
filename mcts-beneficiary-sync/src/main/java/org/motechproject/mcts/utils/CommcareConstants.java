@@ -10,5 +10,5 @@ public final class CommcareConstants {
     public static final String METAXMLNS = "http://openrosa.org/jr/xforms";
     public static final String DATAXMLNS = "http://bihar.commcarehq.org/mcts/create_mcts_persona";
     public static final String UPDATEDATAXMLNS = "http://bihar.commcarehq.org/mcts/update_mcts_persona";
-    //public static final String POSTURL = "https://www.commcarehq.org/a/bihar/receiver";
+    public static final String POSTURL = "http://localhost:8080/mcts-beneficiary-stub-0.1-SNAPSHOT/postUrl";
 }

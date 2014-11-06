@@ -9,8 +9,8 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
 import org.motechproject.mcts.utils.MctsConstants;
@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author aman
  *
  */
-@Transactional
 @Service
 public class UpdateCaseXmlService {
 
@@ -40,16 +39,16 @@ public class UpdateCaseXmlService {
     private PropertyReader propertyReader;
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
 
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 
@@ -93,7 +92,7 @@ public class UpdateCaseXmlService {
         HttpStatus status = mCTSHttpClientService.syncToCommcareUpdate(data);
 
         // Accepted status code is 2xx
-        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.debug("valid response received");
         }
 

@@ -96,6 +96,13 @@ public class Beneficiary {
         }
     }
 
+    public Beneficiary(String mctsId, Integer serviceType,
+            Date serviceDeliveryDate) {
+        this.mctsId = mctsId;
+        this.serviceType = serviceType;
+        this.serviceDeliveryDate = serviceDeliveryDate;
+    }
+
     public Integer getMctsPregnantMotherId() {
         return mctsPregnantMotherId;
     }

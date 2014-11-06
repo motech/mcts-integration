@@ -8,11 +8,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.mcts.utils.StringUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Multimap;
 
-@Component
+@Service
 public class CaseInfoParserImpl implements CaseInfoParser {
 
     @JsonProperty("caseElementPath")
@@ -50,13 +50,11 @@ public class CaseInfoParserImpl implements CaseInfoParser {
                 .entrySet()) {
 
             String key = subElement.getKey();
-            if(!key.equals("anm")) {
             if (isRecursive) {
                 for (FormValueElement formValueElement : subElement.getValue()) {
                     mapper.putAll(parse(formValueElement, isRecursive));
                 }
             }
-           }
 
             key = applyConversions(key);
             mapper.put(key, getFormValueElementValue(subElement));

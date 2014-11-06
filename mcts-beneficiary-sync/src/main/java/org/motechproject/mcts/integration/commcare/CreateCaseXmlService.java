@@ -9,9 +9,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
+import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.CommcareConstants;
@@ -25,14 +27,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import antlr.StringUtils;
-
 /**
  * Class to convert Object to xml
  *
  * @author aman
  */
-@Transactional
 @Service
 public class CreateCaseXmlService {
 
@@ -44,19 +43,19 @@ public class CreateCaseXmlService {
     private PropertyReader propertyReader;
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
 
     @Autowired
     private FixtureDataService fixtureDataService;
-
-    public CareDataRepository getCareDataRepository() {
+    
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
 
@@ -64,31 +63,27 @@ public class CreateCaseXmlService {
 
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository
                 .getMctsPregnantMother();
-        Data data = null;
+        LOGGER.debug("size :" + mctsPregnantMother.size());
         int size = mctsPregnantMother.size();
         if (size > 0) {
             int sizeOfXml = propertyReader.sizeOfXml();
             int times = size / sizeOfXml;
             if (times > 0) {
                 for (int i = 0; i <= times; i++) {
-                    data = createXml(mctsPregnantMother.subList(i
-                            * sizeOfXml, Math.min((i + 1) * sizeOfXml,mctsPregnantMother.size())));
-                    /*LOGGER.debug("i*sizeOfXml"+i*sizeOfXml);
-                    LOGGER.debug("(i+1)*sizeOfXml-1"+(((i + 1)*sizeOfXml)-1));*/
+                    Data data = createXml(mctsPregnantMother.subList(i
+                            * sizeOfXml, (i + 1) * sizeOfXml - 1));
                     String returnvalue = ObjectToXMLConverter
                             .converObjectToXml(data, Data.class);
                     LOGGER.debug("returned : " + returnvalue);
                     HttpStatus status = mCTSHttpClientService
                             .syncToCommcare(data);
-                    if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+                    if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                         updateCaseUId(data);
 
                     }
                 }
-                   
-                    
             } else {
-                data = createXml(mctsPregnantMother);
+                Data data = createXml(mctsPregnantMother);
                 String returnvalue = ObjectToXMLConverter.converObjectToXml(
                         data, Data.class);
                 LOGGER.debug("returned : " + returnvalue);
@@ -96,7 +91,7 @@ public class CreateCaseXmlService {
                 // post xml to the url if response is 200 then only add
                 // case UUID to the database
                 HttpStatus status = mCTSHttpClientService.syncToCommcare(data);
-                if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+                if (status.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                     updateCaseUId(data);
                 }
             }
@@ -131,7 +126,6 @@ public class CreateCaseXmlService {
      */
     public Data createXml(List<MctsPregnantMother> mctsPregnantMother) {
         Data data = new Data();
-        LOGGER.debug("size : "+mctsPregnantMother.size());
         List<Case> cases = new ArrayList<Case>();
         data.setXmlns(CommcareConstants.DATAXMLNS);
         String userId = propertyReader.getUserIdforCommcare();
@@ -190,7 +184,7 @@ public class CreateCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId(mctsPregnantMother.getId());
+        caseTask.setMctsPregnantMotherId(careDataRepository.getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
 
@@ -243,11 +237,7 @@ public class CreateCaseXmlService {
         updateTask.setMctsDob(dob);
         updateTask.setMctsId(mctsId);
         updateTask.setMctsPhoneNumber(phone);
-        if(workerId != -1){
-            updateTask.setAshaId(Integer.toString(workerId));
-        } else {
-           updateTask.setAshaId(""); 
-        }
+        updateTask.setAshaId(Integer.toString(workerId));
 
         return updateTask;
     }

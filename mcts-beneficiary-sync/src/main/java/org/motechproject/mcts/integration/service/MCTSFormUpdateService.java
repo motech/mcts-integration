@@ -2,11 +2,11 @@ package org.motechproject.mcts.integration.service;
 
 import java.util.List;
 
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
-import org.motechproject.mcts.lookup.MCTSPregnantMotherMatchStatus;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
+import org.motechproject.mcts.integration.repository.MctsRepository;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
+import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author aman
  *
  */
-@Transactional
 @Service
 public class MCTSFormUpdateService {
 
@@ -30,21 +29,21 @@ public class MCTSFormUpdateService {
             .getLogger(MCTSFormUpdateService.class);
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
-    public CareDataRepository getCareDataRepository() {
+    public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
 
-    public void setCareDataRepository(CareDataRepository careDataRepository) {
+    public void setCareDataRepository(MctsRepository careDataRepository) {
         this.careDataRepository = careDataRepository;
     }
-
-    /**
+/*
+    *//**
      * Matches the mctsIDs of MCTS Pregnant Mother with mcts Ids of
      * AwwRegisterMotherForm and updates the caseIds, match status and
      * authorised status
-     */
+     *//*
     public void updateMCTSStatusesfromRegForm() {
 
         List<Object[]> caseIdmctsId = careDataRepository.getmctsIdcaseId();
@@ -68,12 +67,12 @@ public class MCTSFormUpdateService {
 
     }
 
-    /**
+    *//**
      * Matches the mctsIDs of MCTS Pregnant Mother with mcts Ids of
      * MotherEditForm and updates the caseIds, match status and authorised
      * status. In case mctsID is matched with both AwwRegisterMotherForm and
      * MotherEditForm data from MotherEditForm will take the preference
-     */
+     *//*
     public void updateMCTSStatusfromEditForm() {
         List<Object[]> caseIdmctsId = careDataRepository
                 .getmctsIdcaseIdfromEditForm();
@@ -93,7 +92,7 @@ public class MCTSFormUpdateService {
 
         }
 
-    }
+    }*/
 
     public void updateMctsPregnantMotherForm(int primaryId) {
         MctsPregnantMother mother = careDataRepository

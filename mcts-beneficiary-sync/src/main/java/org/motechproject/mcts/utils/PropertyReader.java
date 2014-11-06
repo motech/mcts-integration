@@ -1,17 +1,18 @@
-/**
- * Reads properties from the properties file <code>beneficiary_sync.properties</code> and return them
- */
 package org.motechproject.mcts.utils;
 
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-@Component
+/**
+ * Reads properties from the properties file
+ * <code>beneficiary_sync.properties</code> and return them
+ */
+@Service
 public class PropertyReader {
 
     private Properties properties;
@@ -94,12 +95,12 @@ public class PropertyReader {
 
     public String getSyncCsvFileLocation() {
         return properties
-                .getProperty("beneficiary.sync.location.input.file.absolute.location");
+                .getProperty("beneficiary.sync.csv.input.file.absolute.location");
     }
 
     public String getFLWCsvFileLocation() {
         return properties
-                .getProperty("beneficiary.sync.flw.input.file.absolute.location");
+                .getProperty("beneficiary.sync.csv2.input.file.absolute.location");
     }
 
     public String getHubBaseUrl() {
@@ -174,8 +175,8 @@ public class PropertyReader {
         return form;
     }
 
-    public String getFixtureLoginUrl() {
-        return String.format("%s", properties.getProperty("fixture.base.url"));
+    public String getFixtureLoginUrl(int offset, int limit) {
+        return String.format("%sfixture_type=asha&limit=%d&offset=%d", properties.getProperty("fixture.base.url"),limit,offset);
     }
 
     public MultiValueMap<String, String> getFixtureLoginForm() {
@@ -197,11 +198,23 @@ public class PropertyReader {
         return properties.getProperty("mcts.fixtureData.ownerId");
     }
 
-    public String getArchiveCronExpression() {
-        return properties.getProperty("mcts.archive.cronExpression");
-        }
+    public String getMctsSyncFromLoginUrl() {
+        return String.format("%s/%s",
+                properties.getProperty("mcts_21.base.url"),
+                properties.getProperty("mcts_21.syncfrom.url"));
+    }
 
-    public String getCommcareCasePostUrl() {
-        return properties.getProperty("commcare.case.post.url");
+    public String getMctsSyncToLoginUrl() {
+        return String.format("%s/%s",
+                properties.getProperty("mcts_21.base.url"),
+                properties.getProperty("mcts_21.syncto.url"));
+    }
+
+    public String getMctsUserName() {
+        return properties.getProperty("mcts_21.username");
+    }
+
+    public String getMctsPassword() {
+        return properties.getProperty("mcts_21.password");
     }
 }

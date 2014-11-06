@@ -6,9 +6,9 @@ import java.util.Properties;
 
 import org.motechproject.mcts.integration.exception.ApplicationErrors;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class BatchServiceUrlGenerator {
 
     private Properties properties = new Properties();

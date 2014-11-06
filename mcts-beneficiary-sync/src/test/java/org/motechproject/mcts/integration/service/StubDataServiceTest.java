@@ -1,6 +1,7 @@
 package org.motechproject.mcts.integration.service;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class StubDataServiceTest {
     
     @Before
     public void setUp() {
-        when(propertyReader.getFixtureLoginUrl()).thenReturn("https://www.commcarehq.org/a/bihar/api/v0.4/fixture/?fixture_type=asha");
+        when(propertyReader.getFixtureLoginUrl(anyInt(), anyInt())).thenReturn("https://www.commcarehq.org/a/bihar/api/v0.4/fixture/?fixture_type=asha");
         when(propertyReader.getFixtureUserName()).thenReturn("haritha@beehyv.com");
         when(propertyReader.getFixturePassword()).thenReturn("\\][poi00");
         HttpClientParams params = new HttpClientParams();

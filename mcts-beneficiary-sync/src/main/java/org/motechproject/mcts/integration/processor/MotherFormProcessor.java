@@ -12,9 +12,9 @@ import org.motechproject.mcts.integration.parser.CaseInfoParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class MotherFormProcessor {
 
 
@@ -26,11 +26,11 @@ public class MotherFormProcessor {
     @Autowired
     private CaseInfoParser infoParser;
     @Autowired
-    FormsProcessor formsProcessor;
+    private FormsProcessor formsProcessor;
+   
     public MotherFormProcessor() {
 
     }
-
 
     public void process(CommcareForm commcareForm) {
 
@@ -66,7 +66,7 @@ public class MotherFormProcessor {
     }
 
     private Map<String, String> parse(FormValueElement startElement,
-            CommcareForm commcareForm) throws BeneficiaryException {
+            CommcareForm commcareForm) {
         FormValueElement caseElement = startElement;
      
         if (!("case").equals(startElement.getElementName())) {

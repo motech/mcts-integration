@@ -6,11 +6,11 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMotherServiceUpdate;
-import org.motechproject.mcts.integration.hibernate.model.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
+import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class CareDataService {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CareDataService.class);
 
     @Autowired
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
 
     public List<Beneficiary> getBeneficiariesToSync(DateTime startDate,
             DateTime endDate) {
@@ -36,7 +35,7 @@ public class CareDataService {
         MotherCase motherCase = careDataRepository.findEntityByField(
                 MotherCase.class, "caseId", caseId);
         if (motherCase == null) {
-            LOGGER.debug(String
+            LOGGER.info(String
                     .format("MCTS Pregnant Mother not updated. Mother case not found for Case Id: %s",
                             caseId));
             return;
@@ -54,13 +53,13 @@ public class CareDataService {
                         motherCase);
 
         if (mctsPregnantMother != null) {
-            LOGGER.debug(String
+            LOGGER.info(String
                     .format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.",
                             mctsPregnantMother.getMctsId(),
                             motherCase.getCaseId(), mctsId));
             mctsPregnantMother.setMctsId(mctsId);
         } else {
-            LOGGER.debug(String
+            LOGGER.info(String
                     .format("Creating MCTS Pregnant Mother with MCTS Id: %s for Mother Case: %s.",
                             mctsId, motherCase.getCaseId()));
             mctsPregnantMother = new MctsPregnantMother();
@@ -76,17 +75,17 @@ public class CareDataService {
                 syncedBeneficiaries.size()));
         DateTime serviceUpdateTime = DateTime.now();
         for (Beneficiary syncedBeneficiary : syncedBeneficiaries) {
-            MctsPregnantMother mctsPregnantMother = careDataRepository.load(
-                    MctsPregnantMother.class,
-                    syncedBeneficiary.getMctsPregnantMotherId());
+            MctsPregnantMother mctsPregnantMother = careDataRepository
+                    .getMotherFromPrimaryId(syncedBeneficiary
+                            .getMctsPregnantMotherId());
             MctsPregnantMotherServiceUpdate mctsPregnantMotherServiceUpdate = new MctsPregnantMotherServiceUpdate();
             mctsPregnantMotherServiceUpdate
                     .setMctsPregnantMother(mctsPregnantMother);
             mctsPregnantMotherServiceUpdate
                     .setServiceDeliveryDate(syncedBeneficiary
                             .getServiceDeliveryDate());
-            mctsPregnantMotherServiceUpdate.setServiceType(Short
-                    .valueOf(syncedBeneficiary.getServiceType().toString()));
+            mctsPregnantMotherServiceUpdate.setServiceType(syncedBeneficiary
+                    .getServiceType());
             mctsPregnantMotherServiceUpdate.setServiceUpdateTime(new Timestamp(
                     serviceUpdateTime.getMillis()));
 
@@ -95,13 +94,14 @@ public class CareDataService {
     }
 
     public MctsPregnantMother getMctsPregnantMotherFromCaseId(String id) {
-        return careDataRepository.getMctsPregnantMotherFromCaseId(id);
+        return careDataRepository.findEntityByField(MctsPregnantMother.class,
+                "motherCase.id", id);
     }
 
     /**
      * Method to get entities from db with constraints of upper and lower value
      * on a particular field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to be fetched
      * @param fieldName
@@ -115,7 +115,7 @@ public class CareDataService {
     public <T> List<T> findEntityByFieldWithConstarint(Class<T> entityClass,
             String fieldName, Object lowerFieldValue, Object higherFieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], lowerFieldValue: [%s], higherFieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName,
                         lowerFieldValue, higherFieldValue));
         return (List<T>) careDataRepository.findEntityByFieldWithConstarint(
@@ -125,7 +125,7 @@ public class CareDataService {
     /**
      * Method to get the unique element of the <code>entityClass</code> having a
      * specific value for a field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -138,7 +138,7 @@ public class CareDataService {
     public <T> T findEntityByField(Class<T> entityClass, String fieldName,
             Object fieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], fieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName, fieldValue));
         return careDataRepository.findEntityByField(entityClass, fieldName,
                 fieldValue);
@@ -147,7 +147,7 @@ public class CareDataService {
     /**
      * Method to get all the element of the <code>entityClass</code> having a
      * specific value for a field
-     *
+     * 
      * @param entityClass
      *            : class whose data is to fetched from db
      * @param fieldName
@@ -159,7 +159,7 @@ public class CareDataService {
     public <T> List<T> findListOfEntitiesByField(Class<T> entityClass,
             String fieldName, Object fieldValue) {
         LOGGER.debug(String
-                .format("Params received are Class: [%s], fieladName: [%s], fieldValue: [%s]",
+                .format("Params received are Class: [%s], fieldName: [%s], fieldValue: [%s]",
                         entityClass.getSimpleName(), fieldName, fieldValue));
         return careDataRepository.findListOfEntitiesByField(entityClass,
                 fieldName, fieldValue);
@@ -173,7 +173,7 @@ public class CareDataService {
 
     /**
      * Method to Save of Update the entity in Db
-     *
+     * 
      * @param entity
      * @throws BeneficiaryException
      */

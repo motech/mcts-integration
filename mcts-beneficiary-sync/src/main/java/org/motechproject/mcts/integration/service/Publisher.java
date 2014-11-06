@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.http.agent.service.HttpAgent;
+import org.motechproject.http.agent.service.Method;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.utils.MCTSEventConstants;
 import org.motechproject.mcts.utils.MctsConstants;
@@ -21,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class Publisher {
@@ -30,9 +30,6 @@ public class Publisher {
     private PropertyReader propertyReader;
     @Autowired
     private HttpAgent httpAgentServiceOsgi;
-    @Autowired
-    private RestTemplate restTemplate;
-    
     private static final String MODE = "publish";
     private static final Logger LOGGER = LoggerFactory
             .getLogger(Publisher.class);
@@ -46,7 +43,7 @@ public class Publisher {
         // make a http call to 0.24
         String url = (String) motechEvent.getParameters().get(
                 MCTSEventConstants.PARAM_PUBLISHER_URL);
-        publish(url);
+     //   publish(url);  TODO : remove
     }
 
     /**
@@ -68,7 +65,7 @@ public class Publisher {
                     retryCount + 2, uRL));
             response = notifyHub();
             retryCount++;
-            if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+            if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
                 LOGGER.info(String
                         .format("Hub Notified Successfully after %s retries. Response [StatusCode %s] : %s",
                                 retryCount, response.getStatusCode(),
@@ -77,9 +74,9 @@ public class Publisher {
             }
 
         } while (retryCount < maxRetryCount
-                && response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR != MctsConstants.STATUS_VALUE);
+                && response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR != MctsConstants.STATUS_VALUE_2XX);
 
-        if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (response.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.info(String
                     .format("Hub Notified Successfully with %s retries. Response [StatusCode %s] : %s",
                             retryCount, response.getStatusCode(),
@@ -120,7 +117,7 @@ public class Publisher {
         ResponseEntity<String> response = new ResponseEntity<String>(
                 HttpStatus.BAD_REQUEST);
         loginResponse = getLogin();
-        if (loginResponse.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (loginResponse.getStatusCode().value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_2XX) {
             LOGGER.debug("Matching Urls: "
                     + propertyReader.getMotechLoginRedirectUrl() + " & "
                     + loginResponse.getHeaders().getLocation().toString());
@@ -131,9 +128,9 @@ public class Publisher {
                 LOGGER.info("Sending HUb the Notification");
                 try {
 
-                    response = restTemplate.postForEntity(getUrl(), httpEntity,
-                            String.class);
- 
+                    response = (ResponseEntity<String>) httpAgentServiceOsgi
+                            .executeWithReturnTypeSync(getUrl(), httpEntity,
+                                    Method.POST);
                     return response;
 
                 } catch (Exception e) {
@@ -162,9 +159,11 @@ public class Publisher {
                 + propertyReader.getMotechPlatformLoginForm());
         try {
 
-            response = restTemplate.postForEntity(
-                    propertyReader.getMotechPlatformLoginUrl(), propertyReader.getMotechPlatformLoginForm(), String.class);
-        
+            response = (ResponseEntity<String>) httpAgentServiceOsgi
+                    .executeWithReturnTypeSync(
+                            propertyReader.getMotechPlatformLoginUrl(),
+                            propertyReader.getMotechPlatformLoginForm(),
+                            Method.POST);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }

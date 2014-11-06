@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -42,7 +42,7 @@ public class MCTSBeneficiarySyncServiceTest {
     private PropertyReader propertyReader;
     
     @Mock
-    private CareDataRepository careDataRepository;
+    private MctsRepository careDataRepository;
     
 	@InjectMocks
 	public MCTSBeneficiarySyncService mctsBeneficiarySyncService = new MCTSBeneficiarySyncService();
@@ -117,6 +117,29 @@ public class MCTSBeneficiarySyncServiceTest {
     	records.add(record);
     	newDataSet.setRecords(records);
         return newDataSet;
-        
+        /*"<newdataset>\n" +
+                "    <records>\n" +
+                "            <stateid>31</stateid>\n" +
+                "            <state_name>Lakshadweep</state_name>\n" +
+                "            <district_id>1</district_id>\n" +
+                "            <district_name>Lakshadweep</district_name>\n" +
+                "            <block_id>1</block_id>\n" +
+                "            <block_name>N'Amini'</block_name>\n" +
+                "            <tehsil_id>0001</tehsil_id>\n" +
+                "            <tehsil_name>AMINI</tehsil_name>\n" +
+                "            <facility_id>2</facility_id>\n" +
+                "    </records>\n" +
+                "</newdataset>";*/
     }
+    
+   /* @Test
+    public void validateAndReturnAsIntTest(){
+    	try{System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test1", "67"));
+    	System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test2", ""));
+    	System.out.println(mctsBeneficiarySyncService.validateAndReturnAsInt("Test3", ""));}
+    	catch(BeneficiaryException e){
+    		System.out.println(e.getMessage());
+    	}
+    }*/
+
 }

@@ -76,9 +76,9 @@ public class MotechBeneficiarySyncService {
         beneficiaryRequest = mapToBeneficiaryRequest(beneficiariesToSync);
         HttpStatus httpStatus = syncTo(beneficiaryRequest); // sends Updates to
                                                             // Mcts
-        // if httpStatus returned from Mcts is 2** then update the
+        // if httpStatus returned from Mcts is 3** then update the
         // mcts_pregnant_mother_service_updates table
-        if (httpStatus.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE) {
+        if (httpStatus.value() / MctsConstants.STATUS_DIVISOR == MctsConstants.STATUS_VALUE_3XX) {
             writeSyncDataToFile(beneficiaryRequest); // Writes the updates sent
                                                      // to Mcts to a file
             updateSyncedBeneficiaries(beneficiariesToSync);

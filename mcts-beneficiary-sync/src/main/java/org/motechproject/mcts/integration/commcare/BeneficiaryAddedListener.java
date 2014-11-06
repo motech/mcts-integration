@@ -16,17 +16,17 @@ public class BeneficiaryAddedListener {
     private CreateCaseXmlService createCaseXmlService;
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(CreateCaseXmlService.class);
+            .getLogger(BeneficiaryAddedListener.class);
 
     @MotechListener(subjects = MCTSEventConstants.EVENT_BENEFICIARIES_ADDED)
     public void handleEvent(MotechEvent motechEvent) {
         try {
+        	LOGGER.debug("beneficiary added event listener");
             createCaseXmlService.createCaseXml();
         } catch (BeneficiaryException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
     }
 }

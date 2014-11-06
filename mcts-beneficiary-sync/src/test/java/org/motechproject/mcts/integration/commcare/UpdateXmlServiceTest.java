@@ -13,8 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPregnantMother;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.service.MCTSHttpClientService;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class UpdateXmlServiceTest {
 		mother1.setFatherHusbandName("Dharmandra Sada");
 		mother1.setHindiName("soniya devi");
 		mother1.setHindiFatherHusbandName("Dharmandra Sada");
-		mother1.setId(50);
+		//mother1.setId(50);
 
 		HttpStatus status = HttpStatus.ACCEPTED;
 

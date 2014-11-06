@@ -1,10 +1,3 @@
-/**
- * Controller class to call the services
- * 1. Sync from Mcts to Motech
- * 2. Sync To Mcts from Motech
- * @author mohit
- *
- */
 package org.motechproject.mcts.integration.web;
 
 import java.io.FileNotFoundException;
@@ -21,12 +14,12 @@ import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
 import org.motechproject.mcts.integration.service.FLWDataPopulator;
-import org.motechproject.event.MotechEvent;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.LocationDataPopulator;
 import org.motechproject.mcts.integration.service.MCTSBeneficiarySyncService;
 import org.motechproject.mcts.integration.service.MCTSFormUpdateService;
 import org.motechproject.mcts.integration.service.MotechBeneficiarySyncService;
+import org.motechproject.mcts.integration.service.StubDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +35,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Controller class to call the services 1. Sync from Mcts to Motech 2. Sync To
- * Mcts from Motech
+ * Controller class to call the syncFrom and syncTo mcts services
  *
  * @author mohit
- *
  */
 
 @Controller
@@ -78,9 +69,12 @@ public class BeneficiarySyncController {
 
     @Autowired
     private FixtureDataService fixtureDataService;
-    
+
     @Autowired
     private CloseCaseXmlService closeCaseXmlService;
+
+    @Autowired
+    private StubDataService stubDataService;
 
     /**
      * Method to validate connection
@@ -209,20 +203,6 @@ public class BeneficiarySyncController {
     }
 
     /**
-     * Method to update caseIds and match status if mctsId is matched
-     *
-     * @return
-     */
-    @RequestMapping(value = "/updateMCTSStatus", method = RequestMethod.GET)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public String updateStatus() {
-        mCTSFormUpdateService.updateMCTSStatusesfromRegForm();
-        return "success";
-    }
-
-    /**
-     *
      * Method to validate the input date arguments
      *
      * @param date
@@ -258,6 +238,14 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getFixData(@PathVariable("type") String type) {
+        stubDataService.getFixtureData();
+        return "successful";
+    }
+
+    @RequestMapping(value = "/getCommcareFixture", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String commcareFixture() {
         fixtureDataService.updateGroupId();
         return "successful";
     }
@@ -269,12 +257,12 @@ public class BeneficiarySyncController {
         createCaseXmlService.createCaseXml();
         return "success";
     }
-    
+
     @RequestMapping(value = "/getCloseCaseXml", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getCloseCaseXml() {
-        closeCaseXmlService.createCloseCaseXml(new MotechEvent());
+        closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
 
@@ -297,5 +285,4 @@ public class BeneficiarySyncController {
         }
         return error;
     }
-
 }

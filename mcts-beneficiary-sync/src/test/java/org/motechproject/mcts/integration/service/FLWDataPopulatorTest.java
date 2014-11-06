@@ -20,18 +20,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.mcts.integration.hibernate.model.MctsDistrict;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthblock;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworkerErrorLog;
-import org.motechproject.mcts.integration.hibernate.model.MctsHealthworker;
-import org.motechproject.mcts.integration.hibernate.model.MctsPhc;
-import org.motechproject.mcts.integration.hibernate.model.MctsState;
-import org.motechproject.mcts.integration.hibernate.model.MctsSubcenter;
-import org.motechproject.mcts.integration.hibernate.model.MctsTaluk;
-import org.motechproject.mcts.integration.hibernate.model.MctsVillage;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworkerErrorLog;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
+import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
+import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.care.common.mds.model.MctsVillage;
 import org.motechproject.mcts.integration.model.FLWDataCSV;
 import org.motechproject.mcts.integration.model.Location;
-import org.motechproject.mcts.integration.repository.CareDataRepository;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -42,7 +42,7 @@ public class FLWDataPopulatorTest {
     private FLWDataPopulator fLWDataPopulator = new FLWDataPopulator();
 
     @Mock
-    CareDataRepository careDataRepository;
+    MctsRepository careDataRepository;
     @Mock
     private PropertyReader propertyReader;
     @Mock

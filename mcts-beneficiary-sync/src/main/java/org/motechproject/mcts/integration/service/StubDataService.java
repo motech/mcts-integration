@@ -2,6 +2,8 @@ package org.motechproject.mcts.integration.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -10,6 +12,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
 import org.motechproject.mcts.integration.model.Data;
+import org.motechproject.mcts.utils.MctsConstants;
 import org.motechproject.mcts.utils.PropertyReader;
 import org.motechproject.mcts.utils.XmlStringToObjectConverter;
 import org.slf4j.Logger;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
  * Service to call the fixture stub and get data
  *
  * @author aman
- *
  */
 @Service
 public class StubDataService {
@@ -40,17 +42,28 @@ public class StubDataService {
      *
      * @return
      */
-    public Data getFixtureData() {
-        String response = getRequest(propertyReader.getFixtureLoginUrl());
-        LOGGER.debug("response" + response);
-        Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
-                Data.class);
-        LOGGER.info("returnvalue : "
-                + data.getObjects().get(0).getFixtureType() + " returnVal");
-        LOGGER.info("returnvalue : "
-                + data.getObjects().get(0).getFields().getGroupId()
-                        .getFieldList().get(0).getFieldValue() + " returnVal");
-        return data;
+
+    public List<Data> getFixtureData() {
+        int limit = 0;
+        int offset = MctsConstants.FIXTURE_OFFSET;
+        limit = MctsConstants.FIXTURE_LIMIT;
+        int count;
+        List<Data> list = new ArrayList<Data>();
+        do {
+            String url = propertyReader.getFixtureLoginUrl(offset, limit);
+            LOGGER.debug("fixture url : " + url);
+            String response = getRequest(url);
+
+            Data data = (Data) XmlStringToObjectConverter.unmarshal(response,
+                    Data.class);
+            count = data.getMeta().getTotalCount();
+            list.add(data);
+            offset = offset + limit;
+
+        } while (offset < count);
+
+        return list;
+
     }
 
     private HttpMethod buildRequest(String url) {
@@ -63,7 +76,6 @@ public class StubDataService {
         commonsHttpClient.getParams().setAuthenticationPreemptive(true);
         LOGGER.debug("username" + propertyReader.getFixtureUserName());
         LOGGER.debug("password" + propertyReader.getFixturePassword());
-        LOGGER.debug("loginurl" + propertyReader.getFixtureLoginUrl());
         commonsHttpClient.getState().setCredentials(
                 new AuthScope(null, -1, null, null),
                 new UsernamePasswordCredentials(propertyReader
@@ -71,7 +83,7 @@ public class StubDataService {
                         .getFixturePassword()));
     }
 
-     String getRequest(String requestUrl) {
+    String getRequest(String requestUrl) {
 
         HttpMethod getMethod = buildRequest(requestUrl);
 
