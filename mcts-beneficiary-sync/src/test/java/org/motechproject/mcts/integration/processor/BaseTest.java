@@ -20,8 +20,6 @@ import org.motechproject.commcare.domain.FormValueElement;
 import org.motechproject.commcare.exception.FullFormParserException;
 import org.motechproject.commcare.parser.FullFormParser;
 import org.motechproject.event.MotechEvent;
-import org.motechproject.mcts.integration.parser.CaseInfoParser;
-import org.motechproject.mcts.integration.parser.CaseInfoParserImpl;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -55,7 +53,7 @@ public class BaseTest {
     
     protected Multimap<String, Map<String, Object>> convertToMap(
             Multimap<String, FormValueElement> subElements) {
-        Multimap<String, Map<String, Object>> elements = new LinkedHashMultimap<>();
+        Multimap<String, Map<String, Object>> elements = LinkedHashMultimap.create();
 
         for (Map.Entry<String, FormValueElement> entry : subElements.entries()) {
             Map<String, Object> elementAsMap = new HashMap<>(4);
