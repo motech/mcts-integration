@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.MctsRepository;
@@ -55,8 +57,8 @@ public class CareDataService {
         if (mctsPregnantMother != null) {
             LOGGER.info(String
                     .format("MCTS Pregnant Mother already exists with MCTS Id: %s for Mother Case: %s. Updating it with new MCTS Id: %s.",
-                            mctsPregnantMother.getMctsId(),
-                            motherCase.getCaseId(), mctsId));
+                            mctsPregnantMother.getMctsId(), motherCase
+                                    .getCaseId(), mctsId));
             mctsPregnantMother.setMctsId(mctsId);
         } else {
             LOGGER.info(String
@@ -179,5 +181,35 @@ public class CareDataService {
      */
     public <T> void saveOrUpdate(T entity) {
         careDataRepository.saveOrUpdate(entity);
+    }
+
+    public void create(Integer id) {
+        String stateName = "Bihar" + id;
+        String districtName = "Saharsa" + id;
+        MctsState mctsState = new MctsState(id, stateName);
+        mctsState.setStatus(false);
+
+        // This should create MctsState record with stateId: id , stateName:
+        // Bihar+id
+        careDataRepository.saveOrUpdate(mctsState);
+
+        // fetching the primary key "id" for the state just created
+        Integer stateId = careDataRepository.getDetachedFieldId(mctsState);
+
+        // find the district with districtId = id and district.state.id =
+        // stateId
+        MctsDistrict mctsDistrict = careDataRepository.findUniqueDistrict(id,
+                stateId);
+
+        // none found, will create a new record
+        if (mctsDistrict == null) {
+            //creating a district object which belongs to the above state
+            mctsDistrict = new MctsDistrict(mctsState, id, districtName);
+            mctsDistrict.setStatus(false);
+        }
+        if (!mctsDistrict.getStatus()) {
+            mctsDistrict.setStatus(false);
+            careDataRepository.saveOrUpdate(mctsDistrict);
+        }
     }
 }
