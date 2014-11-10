@@ -6,8 +6,15 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
+import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
+import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
+import org.motechproject.mcts.care.common.mds.model.MctsPhc;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMotherServiceUpdate;
+import org.motechproject.mcts.care.common.mds.model.MctsState;
+import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
+import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.care.common.mds.model.MctsVillage;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.model.Beneficiary;
 import org.motechproject.mcts.integration.repository.MctsRepository;
@@ -178,5 +185,87 @@ public class CareDataService {
      */
     public <T> void saveOrUpdate(T entity) {
         careDataRepository.saveOrUpdate(entity);
+    }
+
+    public void create(Integer id) {
+        int state_id = id;
+        String stateName = "state_" + id;
+        int disctrictId = id;
+        String disctrictName = "district_" + id;
+        int taluk_id = id;
+        String talukaName = "taluk_" + id;
+        int healthblockId = id;
+        String healthblockName = "healthBlock_" + id;
+        int phcId = id;
+        String phcName = "phc_" + id;
+        int subcenterId = id;
+        String subcentreName = "subCenter_" + id;
+        Integer villageId = id;
+        String villageName = "village_" + id;
+
+        MctsState mctsState = careDataRepository.findEntityByField(
+                MctsState.class, "stateId", state_id);
+        if (mctsState == null) {
+            mctsState = new MctsState(state_id, stateName);
+            mctsState.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsState);
+
+        Integer stateId = careDataRepository.getDetachedFieldId(mctsState);
+        MctsDistrict mctsDistrict = careDataRepository.findUniqueDistrict(
+                disctrictId, stateId);
+        if (mctsDistrict == null) {
+            mctsDistrict = new MctsDistrict(mctsState, disctrictId,
+                    disctrictName);
+            mctsDistrict.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsDistrict);
+
+        MctsTaluk mctsTaluk = careDataRepository.findUniqueTaluk(taluk_id,
+                careDataRepository.getDetachedFieldId(mctsDistrict));
+        if (mctsTaluk == null) {
+            mctsTaluk = new MctsTaluk(mctsDistrict, taluk_id, talukaName);
+            mctsTaluk.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsTaluk);
+        MctsHealthblock mctsHealthblock = careDataRepository
+                .findUniqueHealthBlock(healthblockId, careDataRepository
+                        .getDetachedFieldId(mctsTaluk));
+        if (mctsHealthblock == null) {
+            mctsHealthblock = new MctsHealthblock(mctsTaluk, healthblockId,
+                    healthblockName);
+            mctsHealthblock.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsHealthblock);
+
+        MctsPhc mctsPhc = careDataRepository.findUniquePhc(phcId,
+                careDataRepository.getDetachedFieldId(mctsHealthblock));
+        if (mctsPhc == null) {
+            mctsPhc = new MctsPhc(mctsHealthblock, phcId, phcName);
+            mctsPhc.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsPhc);
+
+        MctsSubcenter mctsSubcenter = careDataRepository.findUniqueSubcentre(
+                subcenterId, careDataRepository.getDetachedFieldId(mctsPhc));
+        if (mctsSubcenter == null) {
+            mctsSubcenter = new MctsSubcenter(mctsPhc, subcenterId,
+                    subcentreName);
+            mctsSubcenter.setStatus(false);
+        }
+        careDataRepository.saveOrUpdate(mctsSubcenter);
+
+        if (villageId != null) {
+            Integer subCenter_id = careDataRepository.getDetachedFieldId(mctsSubcenter);
+            Integer talukId = careDataRepository.getDetachedFieldId(mctsTaluk);
+            MctsVillage mctsVillage = careDataRepository.findUniqueVillage(
+                    villageId, subCenter_id, talukId);
+            if (mctsVillage == null) {
+                mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter,
+                        villageId, villageName);
+                mctsVillage.setStatus(false);
+            }
+            careDataRepository.saveOrUpdate(mctsVillage);
+        }
     }
 }

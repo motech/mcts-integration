@@ -195,4 +195,8 @@ public class MotechBeneficiarySyncService {
                 + beneficiariesToSync.size());
         careDataService.updateSyncedBeneficiaries(beneficiariesToSync);
     }
+
+    public void create(Integer id) {
+        careDataService.create(id);
+    }
 }

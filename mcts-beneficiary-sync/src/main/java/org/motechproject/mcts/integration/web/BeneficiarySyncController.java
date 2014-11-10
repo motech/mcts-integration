@@ -250,6 +250,17 @@ public class BeneficiarySyncController {
         return "successful";
     }
 
+    /**
+     * To test biderectional relationship
+     */
+    @RequestMapping(value = "/test/{id}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String testBiDirectional(@PathVariable("id") Integer id) {
+        motechBeneficiarySyncService.create(id);
+        return "id";
+    }
+
     @RequestMapping(value = "/getCaseXml", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
