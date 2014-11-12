@@ -8,11 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mcts.care.common.mds.dimension.Flw;
+import org.motechproject.mcts.care.common.mds.dimension.FlwGroup;
 import org.motechproject.mcts.integration.commcare.CloseCaseXmlService;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
+import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.FLWDataPopulator;
 import org.motechproject.mcts.integration.service.FixtureDataService;
 import org.motechproject.mcts.integration.service.LocationDataPopulator;
@@ -75,6 +78,10 @@ public class BeneficiarySyncController {
 
     @Autowired
     private StubDataService stubDataService;
+    
+    @Autowired
+    private CareDataService careDateservice;
+    
 
     /**
      * Method to validate connection
@@ -276,6 +283,28 @@ public class BeneficiarySyncController {
         closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
+    
+    @RequestMapping(value = "/createFLW", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String createFlw() {
+        Flw flw = new Flw();
+        flw.setFlwId("1234");
+        careDateservice.saveOrUpdate(flw);
+        return "success";
+    }
+    
+    @RequestMapping(value = "/createFLWGroup", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String createFlwGroup() {
+        FlwGroup flw = new FlwGroup();
+        flw.setGroupId("1234");
+        careDateservice.saveOrUpdate(flw);
+        return "success";
+    }
+    
+    
 
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody

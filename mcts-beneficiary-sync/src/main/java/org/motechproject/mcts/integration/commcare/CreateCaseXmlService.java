@@ -71,7 +71,7 @@ public class CreateCaseXmlService {
             if (times > 0) {
                 for (int i = 0; i <= times; i++) {
                     Data data = createXml(mctsPregnantMother.subList(i
-                            * sizeOfXml, (i + 1) * sizeOfXml - 1));
+                            * sizeOfXml, Math.min((i + 1) * sizeOfXml,mctsPregnantMother.size())));
                     String returnvalue = ObjectToXMLConverter
                             .converObjectToXml(data, Data.class);
                     LOGGER.debug("returned : " + returnvalue);
