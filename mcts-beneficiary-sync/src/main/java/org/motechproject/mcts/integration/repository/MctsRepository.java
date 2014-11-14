@@ -12,6 +12,7 @@ import org.motechproject.commons.api.Range;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherCaseAuthorisedStatus;
 import org.motechproject.mcts.care.common.lookup.MCTSPregnantMotherMatchStatus;
 import org.motechproject.mcts.care.common.mds.dimension.Flw;
+import org.motechproject.mcts.care.common.mds.dimension.FlwGroup;
 import org.motechproject.mcts.care.common.mds.dimension.MotherCase;
 import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
@@ -349,7 +350,9 @@ public class MctsRepository {
 
         Flw flw = dbRepository.get(Flw.class, "locationCode", locationId);
         if (flw != null) {
-            return flw.getFlwId();
+            List<FlwGroup> groupList = new ArrayList<FlwGroup>();
+            groupList.addAll(flw.getFlwGroups());
+            return groupList.get(0).getGroupId();
         }
         return null;
 
@@ -361,14 +364,14 @@ public class MctsRepository {
         final Date endDate = lastDate.toDate();
 
         RangeProperty<Date> rp = (RangeProperty<Date>) PropertyBuilder.create(
-                "creationTime", new Range<Date>(null, endDate), Date.class
-                        .getName());
+                "creationTime", new Range<Date>(null, endDate),
+                Date.class.getName());
         EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus> ep = (EqualProperty<MCTSPregnantMotherCaseAuthorisedStatus>) PropertyBuilder
                 .create("mCTSPregnantMotherCaseAuthorisedStatus", null,
                         String.class.getName());
         EqualProperty<MCTSPregnantMotherMatchStatus> ep1 = (EqualProperty<MCTSPregnantMotherMatchStatus>) PropertyBuilder
-                .create("mCTSPregnantMotherMatchStatus", null, String.class
-                        .getName());
+                .create("mCTSPregnantMotherMatchStatus", null,
+                        String.class.getName());
 
         List<Property> properties = new ArrayList<Property>();
         properties.add(ep);
@@ -378,4 +381,5 @@ public class MctsRepository {
                 MctsPregnantMother.class, properties);
         return list;
     }
+
 }

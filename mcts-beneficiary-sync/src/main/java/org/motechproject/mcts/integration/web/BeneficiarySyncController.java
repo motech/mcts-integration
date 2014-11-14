@@ -1,6 +1,8 @@
 package org.motechproject.mcts.integration.web;
 
 import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller class to call the syncFrom and syncTo mcts services
- *
+ * 
  * @author mohit
  */
 
@@ -78,14 +80,10 @@ public class BeneficiarySyncController {
 
     @Autowired
     private StubDataService stubDataService;
-    
-    @Autowired
-    private CareDataService careDateservice;
-    
 
     /**
      * Method to validate connection
-     *
+     * 
      * @param query
      * @return string
      */
@@ -99,7 +97,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to send request to MCTS to send updates
-     *
+     * 
      * @param startDate
      * @param endDate
      * @return
@@ -127,7 +125,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to post updates to MCTS
-     *
+     * 
      * @param startDate
      * @param endDate
      * @return
@@ -158,7 +156,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to add locations to database
-     *
+     * 
      * @param file
      * @return
      * @throws
@@ -185,7 +183,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to add FLWs to database
-     *
+     * 
      * @param file
      * @return
      * @throws Exception
@@ -211,7 +209,7 @@ public class BeneficiarySyncController {
 
     /**
      * Method to validate the input date arguments
-     *
+     * 
      * @param date
      */
     private static void validateDateFormat(String date) {
@@ -224,7 +222,7 @@ public class BeneficiarySyncController {
 
     /**
      * method to convert from String to dateTime format
-     *
+     * 
      * @param dateString
      * @return
      */
@@ -236,7 +234,7 @@ public class BeneficiarySyncController {
 
     /**
      * Controller to update the case_groupId in the database
-     *
+     * 
      * @param type
      * @return
      * @throws BeneficiaryException
@@ -272,28 +270,7 @@ public class BeneficiarySyncController {
         closeCaseXmlService.createCloseCaseXml();
         return "success";
     }
-    
-    @RequestMapping(value = "/createFLW", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String createFlw() {
-        Flw flw = new Flw();
-        flw.setFlwId("1234");
-        careDateservice.saveOrUpdate(flw);
-        return "success";
-    }
-    
-    @RequestMapping(value = "/createFLWGroup", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String createFlwGroup() {
-        FlwGroup flw = new FlwGroup();
-        flw.setGroupId("1234");
-        careDateservice.saveOrUpdate(flw);
-        return "success";
-    }
-    
-    
+
 
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody
