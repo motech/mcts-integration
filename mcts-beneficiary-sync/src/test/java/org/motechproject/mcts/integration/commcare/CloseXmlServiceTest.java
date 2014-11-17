@@ -1,9 +1,11 @@
 package org.motechproject.mcts.integration.commcare;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -17,7 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthworker;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
@@ -29,10 +33,10 @@ import org.motechproject.mcts.utils.PropertyReader;
 import org.springframework.http.HttpStatus;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CreateXmlServiceTest {
+public class CloseXmlServiceTest {
 
     @InjectMocks
-    private CreateCaseXmlService createCaseXmlService = new CreateCaseXmlService();
+    private CloseCaseXmlService closeCaseXmlService = new CloseCaseXmlService();
 
     @Mock
     MctsRepository careDataRepository;
@@ -78,43 +82,38 @@ public class CreateXmlServiceTest {
 
         HttpStatus status = HttpStatus.ACCEPTED;
 
-        Mockito.when(careDataRepository.getMctsPregnantMother()).thenReturn(
-                motherList);
-        Mockito.when(propertyReader.sizeOfXml()).thenReturn(50);
-        Mockito.when(mCTSHttpClientService.syncToCommcare((Data) any()))
-                .thenReturn(status);
-        Mockito.when(propertyReader.getUserIdforCommcare()).thenReturn("1234");
-        Mockito.when(
-                fixtureDataService.getCaseGroupIdfromAshaId(anyInt(),
-                        anyString())).thenReturn("6efbnkfb");
+        Mockito.when(careDataRepository.getMctsPregnantMotherForClosedCases())
+                .thenReturn(motherList);
         Mockito.when(careDataRepository.getMotherFromPrimaryId(anyInt()))
-                .thenReturn(mother1).thenReturn(mother2);
+        .thenReturn(mother1);
         Mockito.when(careDataRepository.getDetachedFieldId(anyObject()))
                 .thenReturn(1);
-
+        Mockito.when(propertyReader.sizeOfXml()).thenReturn(50);
+        Mockito.when(
+                mCTSHttpClientService.syncToCloseCommcare((CloseData) any()))
+                .thenReturn(status);
+        doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                assertNotNull(args);
+                assertEquals(1, args.length);
+                MctsPregnantMother mother = (MctsPregnantMother) args[0];
+                assertNotNull(mother);
+                // verify
+                return null;
+            }
+        }).when(careDataRepository).saveOrUpdate(
+                (MctsPregnantMother) anyObject());
     }
 
     @Test
-    public void shouldCreateCaseXml() throws BeneficiaryException {
-        createCaseXmlService.createCaseXml();
-        verify(careDataRepository).getMctsPregnantMother();
-        verify(propertyReader).sizeOfXml();
-        verify(propertyReader).getUserIdforCommcare();
+    public void shouldCloseCaseXml() throws BeneficiaryException {
+        closeCaseXmlService.closeCaseXml();
+        verify(careDataRepository).getMctsPregnantMotherForClosedCases();
+        verify(careDataRepository, times(2)).getMotherFromPrimaryId(anyInt());
         verify(careDataRepository, times(2)).getDetachedFieldId(anyObject());
-        verify(mCTSHttpClientService).syncToCommcare((Data) any());
-        verify(careDataRepository, times(2)).saveOrUpdate(
-                (MctsPregnantMother) any());
-    }
-
-    @Test
-    public void shouldCreateCaseXml_multiple_times()
-            throws BeneficiaryException {
-        Mockito.when(propertyReader.sizeOfXml()).thenReturn(2);
-        createCaseXmlService.createCaseXml();
-        verify(careDataRepository).getMctsPregnantMother();
-        verify(propertyReader).sizeOfXml();
-        verify(careDataRepository, times(2)).getDetachedFieldId(anyObject());
-        verify(careDataRepository, times(2)).saveOrUpdate(
-                (MctsPregnantMother) any());
+        verify(mCTSHttpClientService).syncToCloseCommcare((CloseData) any());
+        verify(careDataRepository, times(2)).saveOrUpdate((MctsPregnantMother) any());
     }
 }

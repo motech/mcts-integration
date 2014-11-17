@@ -10,8 +10,6 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
-import org.motechproject.mcts.care.common.mds.repository.MdsRepository;
-import org.motechproject.mcts.care.common.mds.service.MctsPregnantMotherMDSService;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.FixtureDataService;
@@ -25,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class to convert Object to xml
@@ -38,7 +35,6 @@ public class CreateCaseXmlService {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CreateCaseXmlService.class);
 
-
     @Autowired
     private PropertyReader propertyReader;
 
@@ -50,7 +46,7 @@ public class CreateCaseXmlService {
 
     @Autowired
     private FixtureDataService fixtureDataService;
-    
+
     public MctsRepository getCareDataRepository() {
         return careDataRepository;
     }
@@ -71,7 +67,8 @@ public class CreateCaseXmlService {
             if (times > 0) {
                 for (int i = 0; i <= times; i++) {
                     Data data = createXml(mctsPregnantMother.subList(i
-                            * sizeOfXml, Math.min((i + 1) * sizeOfXml,mctsPregnantMother.size())));
+                            * sizeOfXml, Math.min((i + 1) * sizeOfXml,
+                            mctsPregnantMother.size())));
                     String returnvalue = ObjectToXMLConverter
                             .converObjectToXml(data, Data.class);
                     LOGGER.debug("returned : " + returnvalue);
@@ -101,6 +98,7 @@ public class CreateCaseXmlService {
 
     /**
      * This method is called after commcareHQ returns success after saving cases
+     *
      * @param data
      * @throws BeneficiaryException
      */
@@ -124,7 +122,7 @@ public class CreateCaseXmlService {
      * @throws BeneficiaryException
      * @throws Exception
      */
-    public Data createXml(List<MctsPregnantMother> mctsPregnantMother) {
+    private Data createXml(List<MctsPregnantMother> mctsPregnantMother) {
         Data data = new Data();
         List<Case> cases = new ArrayList<Case>();
         data.setXmlns(CommcareConstants.DATAXMLNS);
@@ -184,7 +182,8 @@ public class CreateCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId(careDataRepository.getDetachedFieldId(mctsPregnantMother));
+        caseTask.setMctsPregnantMotherId(careDataRepository
+                .getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
 
@@ -219,7 +218,8 @@ public class CreateCaseXmlService {
             dob = fmt.print(birthDate);
             age = Integer.toString(Days.daysBetween(
                     birthDate.withTimeAtStartOfDay(),
-                    date.withTimeAtStartOfDay()).getDays() / MctsConstants.NUMBER_OF_DAYS_IN_YEAR);
+                    date.withTimeAtStartOfDay()).getDays()
+                    / MctsConstants.NUMBER_OF_DAYS_IN_YEAR);
         }
 
         if (mctsPregnantMother.getLmpDate() != null) {

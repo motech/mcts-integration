@@ -267,7 +267,7 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getCloseCaseXml() {
-        closeCaseXmlService.createCloseCaseXml();
+        closeCaseXmlService.closeCaseXml();
         return "success";
     }
 

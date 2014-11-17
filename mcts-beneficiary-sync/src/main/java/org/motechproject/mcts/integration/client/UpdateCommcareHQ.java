@@ -6,14 +6,12 @@ import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,8 +28,7 @@ public class UpdateCommcareHQ {
     private BatchServiceUrlGenerator batchServiceUrlGenerator = new BatchServiceUrlGenerator();
 
     @Autowired
-    public UpdateCommcareHQ(
-            /*@Qualifier("mctsRestTemplate") */ RestTemplate restTemplate,
+    public UpdateCommcareHQ(RestTemplate restTemplate,
             BatchServiceUrlGenerator batchServiceUrlGenerator) {
         this.restTemplate = restTemplate;
         this.batchServiceUrlGenerator = batchServiceUrlGenerator;

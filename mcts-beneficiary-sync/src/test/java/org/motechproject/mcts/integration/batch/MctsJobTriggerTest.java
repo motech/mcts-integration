@@ -18,7 +18,7 @@ import org.motechproject.mcts.utils.BatchServiceUrlGenerator;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JobTriggerTest {
+public class MctsJobTriggerTest {
 
     @Mock
     RestTemplate restTemplate;

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CloseCaseXmlService {
@@ -26,17 +25,16 @@ public class CloseCaseXmlService {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CloseCaseXmlService.class);
 
-    
     @Autowired
     private MctsRepository careDataRepository;
-    
+
     @Autowired
     private PropertyReader propertyReader;
 
     @Autowired
     private MCTSHttpClientService mCTSHttpClientService;
 
-    public void createCloseCaseXml() {
+    public void closeCaseXml() {
         List<MctsPregnantMother> mctsPregnantMother = careDataRepository
                 .getMctsPregnantMotherForClosedCases();
         LOGGER.debug("size : " + mctsPregnantMother.size());
@@ -96,7 +94,8 @@ public class CloseCaseXmlService {
         caseTask.setDateModified(dateModified);
         caseTask.setCaseId(caseId);
         caseTask.setUserId(userId);
-        caseTask.setMctsPregnantMotherId(careDataRepository.getDetachedFieldId(mctsPregnantMother));
+        caseTask.setMctsPregnantMotherId(careDataRepository
+                .getDetachedFieldId(mctsPregnantMother));
 
         return caseTask;
     }
