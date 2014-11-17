@@ -21,27 +21,33 @@ import org.springframework.util.MultiValueMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PublisherTest {
-    
-   @InjectMocks Publisher publisher = new Publisher();
-    
+
+    @InjectMocks
+    Publisher publisher = new Publisher();
+
     @Mock
     private PropertyReader propertyReader;
-    
-    @Mock 
+
+    @Mock
     private HttpAgent httpAgentServiceOsgi;
-    
+
     @Before
     public void setUp() {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
         headers.add("location", "asd");
-        ResponseEntity<String> response = new ResponseEntity<String>("response body",headers, HttpStatus.OK);
+        ResponseEntity<String> response = new ResponseEntity<String>(
+                "response body", headers, HttpStatus.OK);
         System.out.println(response.getHeaders().getLocation());
-        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
+        when(
+                httpAgentServiceOsgi.executeWithReturnTypeSync(
+                        (String) anyObject(), (HttpEntity) anyObject(),
+                        (Method) anyObject())).thenReturn(
+                (ResponseEntity) response);
         when(propertyReader.getHubBaseUrl()).thenReturn("asd");
         when(propertyReader.getMaxNumberOfPublishRetryCount()).thenReturn(2);
         when(propertyReader.getMotechLoginRedirectUrl()).thenReturn("asd");
     }
-    
+
     @Test
     public void shouldPublish() {
         publisher.publish("abc");

@@ -157,8 +157,8 @@ public class CareDataServiceTest {
             MctsPregnantMotherServiceUpdate updatedRecord,
             Beneficiary beneficiary, MctsPregnantMother MctsPregnantMother) {
         assertEquals(MctsPregnantMother, updatedRecord.getMctsPregnantMother());
-        assertEquals(beneficiary.getServiceDeliveryDate(),
-                updatedRecord.getServiceDeliveryDate());
+        assertEquals(beneficiary.getServiceDeliveryDate(), updatedRecord
+                .getServiceDeliveryDate());
         assertEquals(Integer.valueOf(beneficiary.getServiceType().toString()),
                 updatedRecord.getServiceType());
     }

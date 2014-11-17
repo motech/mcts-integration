@@ -50,7 +50,6 @@ public class FLWDataPopulatorTest {
 
     @Mock
     private CareDataService careDataService;
-    
 
     private MctsState mctsState;
     private MctsDistrict mctsDistrict;
@@ -81,7 +80,7 @@ public class FLWDataPopulatorTest {
         listBlock.add(mctsHealthblock);
         listPhc.add(mctsPhc);
         listSubcentre.add(mctsSubcenter);
-        
+
         when(
                 careDataRepository.findEntityByField(MctsHealthworker.class,
                         "healthworkerId", 69735)).thenReturn(null);
@@ -95,10 +94,10 @@ public class FLWDataPopulatorTest {
                 .thenReturn(mctsState);
         when(
                 careDataService.findListOfEntitiesByMultipleField(
-                        any(Class.class), anyMap()))
-                .thenReturn(listDistrict).thenReturn(listTaluk)
-                .thenReturn(listVillage).thenReturn(listBlock)
-                .thenReturn(listPhc).thenReturn(listSubcentre);
+                        any(Class.class), anyMap())).thenReturn(listDistrict)
+                .thenReturn(listTaluk).thenReturn(listVillage).thenReturn(
+                        listBlock).thenReturn(listPhc)
+                .thenReturn(listSubcentre);
         @SuppressWarnings("resource")
         String content = new String(Files.readAllBytes(Paths
                 .get("src/test/resources/FLW2.csv")));

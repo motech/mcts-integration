@@ -24,7 +24,6 @@ import org.motechproject.event.MotechEvent;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
-
 public class BaseTest {
 
     private FullFormParser parser = null;
@@ -32,15 +31,16 @@ public class BaseTest {
     private Map<String, Object> parameters = new HashMap<>();
     private MotechEvent motechEvent = null;
     private CommcareForm commcareForm = null;
-    
-    protected CommcareForm getFormElement(String xmlPath) throws FullFormParserException {
+
+    protected CommcareForm getFormElement(String xmlPath)
+            throws FullFormParserException {
         parser = new FullFormParser(readFile(new File(xmlPath)));
         formValueElement = parser.parse();
         parameters.put(VALUE, formValueElement.getValue());
         parameters.put(ELEMENT_NAME, formValueElement.getElementName());
         parameters.put(ATTRIBUTES, formValueElement.getAttributes());
-        parameters.put(SUB_ELEMENTS,
-                convertToMap(formValueElement.getSubElements()));
+        parameters.put(SUB_ELEMENTS, convertToMap(formValueElement
+                .getSubElements()));
 
         if (FORM.equals(formValueElement.getElementName())) {
             motechEvent = new MotechEvent(FORMS_EVENT, parameters);
@@ -50,18 +50,19 @@ public class BaseTest {
         return commcareForm;
 
     }
-    
+
     protected Multimap<String, Map<String, Object>> convertToMap(
             Multimap<String, FormValueElement> subElements) {
-        Multimap<String, Map<String, Object>> elements = LinkedHashMultimap.create();
+        Multimap<String, Map<String, Object>> elements = LinkedHashMultimap
+                .create();
 
         for (Map.Entry<String, FormValueElement> entry : subElements.entries()) {
             Map<String, Object> elementAsMap = new HashMap<>(4);
             FormValueElement formValueElement = entry.getValue();
 
             elementAsMap.put(ELEMENT_NAME, formValueElement.getElementName());
-            elementAsMap.put(SUB_ELEMENTS,
-                    convertToMap(formValueElement.getSubElements()));
+            elementAsMap.put(SUB_ELEMENTS, convertToMap(formValueElement
+                    .getSubElements()));
             elementAsMap.put(ATTRIBUTES, formValueElement.getAttributes());
             elementAsMap.put(VALUE, formValueElement.getValue());
 
@@ -70,7 +71,7 @@ public class BaseTest {
 
         return elements;
     }
-    
+
     protected String readFile(File xmlfile) {
         FileReader file = null;
         String returnValue = "";

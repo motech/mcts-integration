@@ -36,80 +36,100 @@ import org.springframework.util.MultiValueMap;
 @RunWith(MockitoJUnitRunner.class)
 public class MCTSHttpClientServiceTest {
 
-	@Mock
-	private PropertyReader propertyReader;
-	
-	@Mock
-	private HttpAgent httpAgentServiceOsgi;
+    @Mock
+    private PropertyReader propertyReader;
 
-	@InjectMocks
-	private MCTSHttpClientService mctsHttpClientService = new MCTSHttpClientService(propertyReader,httpAgentServiceOsgi);
+    @Mock
+    private HttpAgent httpAgentServiceOsgi;
 
-	@Before
-	public void setUp() throws Exception {
-		 MockitoAnnotations.initMocks(this);
-	}
-	
-	@Test
-	public void shouldSyncBeneficiariesToMCTS() throws BeneficiaryException {
-		String requestUrl = "requestUrl";
-		BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
-		when(propertyReader.getUpdateRequestUrl()).thenReturn(
-				requestUrl);
-		ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
-		when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
-		mctsHttpClientService.syncTo(beneficiaryRequest);
-		verify(httpAgentServiceOsgi).executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method)anyObject());
-	}
+    @InjectMocks
+    private MCTSHttpClientService mctsHttpClientService = new MCTSHttpClientService(
+            propertyReader, httpAgentServiceOsgi);
 
-	@Test
-	public void shouldSyncBeneficiariesFromMCTS() throws BeneficiaryException {
-		String requestUrl = "requestUrl";
-		MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		HttpEntity expectedRequestEntity = new HttpEntity(requestBody,
-				httpHeaders);
-		when(propertyReader.getBeneficiaryListRequestUrl())
-				.thenReturn(requestUrl);
-		
-		NewDataSet expectedResponse = response();
-		String returned =ObjectToXMLConverter.converObjectToXml(expectedResponse, NewDataSet.class);
-		when(
-		        httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn(
-				(ResponseEntity) new ResponseEntity<>(returned, HttpStatus.OK));
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
-		NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
+    @Test
+    public void shouldSyncBeneficiariesToMCTS() throws BeneficiaryException {
+        String requestUrl = "requestUrl";
+        BeneficiaryRequest beneficiaryRequest = new BeneficiaryRequest();
+        when(propertyReader.getUpdateRequestUrl()).thenReturn(requestUrl);
+        ResponseEntity<String> response = new ResponseEntity<String>(
+                "response body", HttpStatus.OK);
+        when(
+                httpAgentServiceOsgi.executeWithReturnTypeSync(
+                        (String) anyObject(), (HttpEntity) anyObject(),
+                        (Method) anyObject())).thenReturn(
+                (ResponseEntity) response);
+        mctsHttpClientService.syncTo(beneficiaryRequest);
+        verify(httpAgentServiceOsgi).executeWithReturnTypeSync(
+                (String) anyObject(), (HttpEntity) anyObject(),
+                (Method) anyObject());
+    }
 
-		assertEquals(response(), actualResponse);
-	}
-	
-	@Test
-	public void shouldSyncToCommcare() {
-	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
-        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
-        Data data =  new Data();
+    @Test
+    public void shouldSyncBeneficiariesFromMCTS() throws BeneficiaryException {
+        String requestUrl = "requestUrl";
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity expectedRequestEntity = new HttpEntity(requestBody,
+                httpHeaders);
+        when(propertyReader.getBeneficiaryListRequestUrl()).thenReturn(
+                requestUrl);
+
+        NewDataSet expectedResponse = response();
+        String returned = ObjectToXMLConverter.converObjectToXml(
+                expectedResponse, NewDataSet.class);
+        when(
+                httpAgentServiceOsgi.executeWithReturnTypeSync(
+                        (String) anyObject(), (HttpEntity) anyObject(),
+                        (Method) anyObject())).thenReturn(
+                (ResponseEntity) new ResponseEntity<>(returned, HttpStatus.OK));
+
+        NewDataSet actualResponse = mctsHttpClientService.syncFrom(requestBody);
+
+        assertEquals(response(), actualResponse);
+    }
+
+    @Test
+    public void shouldSyncToCommcare() {
+        ResponseEntity<String> response = new ResponseEntity<String>(
+                "response body", HttpStatus.OK);
+        when(
+                httpAgentServiceOsgi.executeWithReturnTypeSync(
+                        (String) anyObject(), (HttpEntity) anyObject(),
+                        (Method) anyObject())).thenReturn(
+                (ResponseEntity) response);
+        Data data = new Data();
         mctsHttpClientService.syncToCommcare(data);
-	}
-	
-	@Test
-	public void shouldSyncToCommcareUpdate() {
-	    ResponseEntity<String> response = new ResponseEntity<String>("response body", HttpStatus.OK);
-        when(httpAgentServiceOsgi.executeWithReturnTypeSync((String)anyObject(), (HttpEntity)anyObject(), (Method) anyObject())).thenReturn((ResponseEntity) response);
-        UpdateData data =  new UpdateData();
+    }
+
+    @Test
+    public void shouldSyncToCommcareUpdate() {
+        ResponseEntity<String> response = new ResponseEntity<String>(
+                "response body", HttpStatus.OK);
+        when(
+                httpAgentServiceOsgi.executeWithReturnTypeSync(
+                        (String) anyObject(), (HttpEntity) anyObject(),
+                        (Method) anyObject())).thenReturn(
+                (ResponseEntity) response);
+        UpdateData data = new UpdateData();
         mctsHttpClientService.syncToCommcareUpdate(data);
-	}
-	
-	private NewDataSet response() {
-    	NewDataSet newDataSet = new NewDataSet();
-    	List<Record> records = new ArrayList<Record>();
-    	Record record = new Record();
-    	record.setStateID("31");
-    	record.setStateName("Lakshadweep");
-    	record.setDistrictID("1");
-    	record.setDistrictName("Lakshadweep");
-    	records.add(record);
-    	newDataSet.setRecords(records);
+    }
+
+    private NewDataSet response() {
+        NewDataSet newDataSet = new NewDataSet();
+        List<Record> records = new ArrayList<Record>();
+        Record record = new Record();
+        record.setStateID("31");
+        record.setStateName("Lakshadweep");
+        record.setDistrictID("1");
+        record.setDistrictName("Lakshadweep");
+        records.add(record);
+        newDataSet.setRecords(records);
         return newDataSet;
-	}
+    }
 }

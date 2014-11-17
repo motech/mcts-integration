@@ -27,57 +27,51 @@ import org.springframework.mock.web.MockMultipartFile;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationPopulatorTest {
-    
+
     @InjectMocks
-	private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
+    private LocationDataPopulator locationDataPopulator = new LocationDataPopulator();
 
-	@Mock
-	MctsRepository careDataRepository;
+    @Mock
+    MctsRepository careDataRepository;
 
-	@Mock
-	private PropertyReader propertyReader;
-	
-	private MctsState mctsState;
-	private MctsDistrict mctsDistrict;
-	private MctsTaluk mctsTaluk;
-	private MctsHealthblock mctsHealthblock;
-	private MctsPhc mctsPhc;
-	private MctsSubcenter mctsSubcenter;
-	private MctsVillage mctsVillage;
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		  
-		  
-		  mctsState = new MctsState(10, "Bihar");
-		  mctsDistrict = new MctsDistrict(mctsState, 11, "Saharsa");
-		  mctsTaluk = new MctsTaluk(mctsDistrict, 12, "Saur Bazar");
-		  mctsHealthblock = new MctsHealthblock(mctsTaluk, 13, "Saor Bazar");
-		  mctsPhc = new MctsPhc(mctsHealthblock, 14, "saur bazar");
-		  mctsSubcenter = new MctsSubcenter(mctsPhc, 15, "saor bazar");
-		  mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter, 16, "random");
-		  
-		  
-	}
+    @Mock
+    private PropertyReader propertyReader;
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void shouldSyncCsvDataToLocationMaster() throws Exception {
-	  
-		
-		String content = new String(Files.readAllBytes(Paths.get("src/test/resources/location2.csv")));
+    private MctsState mctsState;
+    private MctsDistrict mctsDistrict;
+    private MctsTaluk mctsTaluk;
+    private MctsHealthblock mctsHealthblock;
+    private MctsPhc mctsPhc;
+    private MctsSubcenter mctsSubcenter;
+    private MctsVillage mctsVillage;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+
+        mctsState = new MctsState(10, "Bihar");
+        mctsDistrict = new MctsDistrict(mctsState, 11, "Saharsa");
+        mctsTaluk = new MctsTaluk(mctsDistrict, 12, "Saur Bazar");
+        mctsHealthblock = new MctsHealthblock(mctsTaluk, 13, "Saor Bazar");
+        mctsPhc = new MctsPhc(mctsHealthblock, 14, "saur bazar");
+        mctsSubcenter = new MctsSubcenter(mctsPhc, 15, "saor bazar");
+        mctsVillage = new MctsVillage(mctsTaluk, mctsSubcenter, 16, "random");
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void shouldSyncCsvDataToLocationMaster() throws Exception {
+
+        String content = new String(Files.readAllBytes(Paths
+                .get("src/test/resources/location2.csv")));
         MockMultipartFile multipartFile = new MockMultipartFile(
-                "location2.csv",                //filename
+                "location2.csv", // filename
                 content.getBytes());
-	
-        locationDataPopulator.populateLocations(multipartFile);
-        verify(careDataRepository,times(8)).saveOrUpdate(anyObject());
-		
-	}
-	
-	
-	
-	
 
-	
+        locationDataPopulator.populateLocations(multipartFile);
+        verify(careDataRepository, times(8)).saveOrUpdate(anyObject());
+
+    }
+
 }

@@ -1,6 +1,5 @@
 package org.motechproject.mcts.integration.commcare;
 
-
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
@@ -30,69 +29,71 @@ import org.springframework.http.HttpStatus;
 @RunWith(MockitoJUnitRunner.class)
 public class CreateXmlServiceTest {
 
-	@InjectMocks
-	private CreateCaseXmlService createCaseXmlService = new CreateCaseXmlService();
+    @InjectMocks
+    private CreateCaseXmlService createCaseXmlService = new CreateCaseXmlService();
 
-	@Mock
-	MctsRepository careDataRepository;
+    @Mock
+    MctsRepository careDataRepository;
 
-	@Mock
-	PropertyReader propertyReader;
+    @Mock
+    PropertyReader propertyReader;
 
-	@Mock
-	MCTSHttpClientService mCTSHttpClientService;
-	
-	@Mock
-	FixtureDataService fixtureDataService;
-	
-	List<MctsPregnantMother> motherList;
+    @Mock
+    MCTSHttpClientService mCTSHttpClientService;
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
+    @Mock
+    FixtureDataService fixtureDataService;
 
-		motherList = new ArrayList<MctsPregnantMother>();
+    List<MctsPregnantMother> motherList;
 
-		MctsPregnantMother mother1 = new MctsPregnantMother();
-		mother1.setName("soniya devi");
-		mother1.setFatherHusbandName("Dharmandra Sada");
-		mother1.setHindiName("soniya devi");
-		mother1.setHindiFatherHusbandName("Dharmandra Sada");
-		//mother1.setId(50);
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
 
-		MctsPregnantMother mother2 = new MctsPregnantMother();
-		mother2.setName("Ranju Devi");
-		mother2.setFatherHusbandName("Dilkush Kamat");
-		mother2.setHindiName("Ranju Devi");
-		mother2.setHindiFatherHusbandName("Dilkush Kamat");
-		//mother2.setId(2);
+        motherList = new ArrayList<MctsPregnantMother>();
 
-		motherList.add(mother1);
-		motherList.add(mother2);
+        MctsPregnantMother mother1 = new MctsPregnantMother();
+        mother1.setName("soniya devi");
+        mother1.setFatherHusbandName("Dharmandra Sada");
+        mother1.setHindiName("soniya devi");
+        mother1.setHindiFatherHusbandName("Dharmandra Sada");
 
-		HttpStatus status = HttpStatus.ACCEPTED;
+        MctsPregnantMother mother2 = new MctsPregnantMother();
+        mother2.setName("Ranju Devi");
+        mother2.setFatherHusbandName("Dilkush Kamat");
+        mother2.setHindiName("Ranju Devi");
+        mother2.setHindiFatherHusbandName("Dilkush Kamat");
 
-		Mockito.when(careDataRepository.getMctsPregnantMother()).thenReturn(
-				motherList);
-		Mockito.when(propertyReader.sizeOfXml()).thenReturn(50);
-		Mockito.when(mCTSHttpClientService.syncToCommcare((Data) any()))
-				.thenReturn(status);
-		Mockito.when(propertyReader.getUserIdforCommcare()).thenReturn("1234");
-		Mockito.when(fixtureDataService.getCaseGroupIdfromAshaId(anyInt(),anyString())).thenReturn("6efbnkfb");
-		Mockito.when(careDataRepository
-					.getMotherFromPrimaryId(anyInt())).thenReturn(mother1).thenReturn(mother2);
-		Mockito.when(careDataRepository.getDetachedFieldId(anyObject())).thenReturn(1);
-		
-	}
+        motherList.add(mother1);
+        motherList.add(mother2);
 
-	@Test
-	public void shouldCreateCaseXml() throws BeneficiaryException {
-		createCaseXmlService.createCaseXml();
-		verify(careDataRepository, times(2)).saveOrUpdate((MctsPregnantMother)any());
-	}
+        HttpStatus status = HttpStatus.ACCEPTED;
 
-	@Test
-	public void shouldCreateXml() throws BeneficiaryException {
-		createCaseXmlService.createXml(motherList);
-	}
+        Mockito.when(careDataRepository.getMctsPregnantMother()).thenReturn(
+                motherList);
+        Mockito.when(propertyReader.sizeOfXml()).thenReturn(50);
+        Mockito.when(mCTSHttpClientService.syncToCommcare((Data) any()))
+                .thenReturn(status);
+        Mockito.when(propertyReader.getUserIdforCommcare()).thenReturn("1234");
+        Mockito.when(
+                fixtureDataService.getCaseGroupIdfromAshaId(anyInt(),
+                        anyString())).thenReturn("6efbnkfb");
+        Mockito.when(careDataRepository.getMotherFromPrimaryId(anyInt()))
+                .thenReturn(mother1).thenReturn(mother2);
+        Mockito.when(careDataRepository.getDetachedFieldId(anyObject()))
+                .thenReturn(1);
+
+    }
+
+    @Test
+    public void shouldCreateCaseXml() throws BeneficiaryException {
+        createCaseXmlService.createCaseXml();
+        verify(careDataRepository, times(2)).saveOrUpdate(
+                (MctsPregnantMother) any());
+    }
+
+    @Test
+    public void shouldCreateXml() throws BeneficiaryException {
+        createCaseXmlService.createXml(motherList);
+    }
 }

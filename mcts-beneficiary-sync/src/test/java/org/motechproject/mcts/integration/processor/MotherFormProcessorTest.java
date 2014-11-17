@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.commcare.domain.CommcareForm;
 import org.motechproject.commcare.domain.FormValueElement;
@@ -35,7 +36,8 @@ public class MotherFormProcessorTest extends BaseTest {
     private Map<String, String> caseInfo = null;
 
     @Test
-    public void processTest_map_existing() throws BeneficiaryException, FullFormParserException {
+    public void processTest_map_existing() throws BeneficiaryException,
+            FullFormParserException {
         commcareForm = getFormElement("src/test/resources/caseXml/after_asha_approval");
         caseElement = caseInfoParser.getCaseElement(commcareForm.getForm());
         caseInfo = caseInfoParser.parse(commcareForm.getForm(), true);
@@ -45,11 +47,14 @@ public class MotherFormProcessorTest extends BaseTest {
                 .thenReturn(caseInfo);
 
         motherFormProcessor.process(commcareForm);
-        //verify(unapprovedFormProcessor).process((Map) any());
+        verify(formsProcessor).processForm((Map<String, String>) any());
+        verify(infoParser).getCaseElement((FormValueElement) any());
+        verify(infoParser, Mockito.times(2)).parse((FormValueElement) any(), anyBoolean());
     }
-    
+
     @Test
-    public void processTest_mapping_to_approve() throws BeneficiaryException, FullFormParserException {
+    public void processTest_mapping_to_approve() throws BeneficiaryException,
+            FullFormParserException {
         commcareForm = getFormElement("src/test/resources/caseXml/approved_case");
         caseElement = caseInfoParser.getCaseElement(commcareForm.getForm());
         caseInfo = caseInfoParser.parse(commcareForm.getForm(), true);
@@ -60,10 +65,13 @@ public class MotherFormProcessorTest extends BaseTest {
 
         motherFormProcessor.process(commcareForm);
         verify(formsProcessor).processForm((Map<String, String>) any());
+        verify(infoParser).getCaseElement((FormValueElement) any());
+        verify(infoParser, Mockito.times(2)).parse((FormValueElement) any(), anyBoolean());
     }
-    
+
     @Test
-    public void processTest_already_closed() throws BeneficiaryException, FullFormParserException {
+    public void processTest_already_closed() throws BeneficiaryException,
+            FullFormParserException {
         commcareForm = getFormElement("src/test/resources/caseXml/closed_one");
         caseElement = caseInfoParser.getCaseElement(commcareForm.getForm());
         caseInfo = caseInfoParser.parse(commcareForm.getForm(), true);
@@ -74,6 +82,8 @@ public class MotherFormProcessorTest extends BaseTest {
 
         motherFormProcessor.process(commcareForm);
         verify(formsProcessor).processForm((Map<String, String>) any());
+        verify(infoParser).getCaseElement((FormValueElement) any());
+        verify(infoParser, Mockito.times(2)).parse((FormValueElement) any(), anyBoolean());
     }
 
 }

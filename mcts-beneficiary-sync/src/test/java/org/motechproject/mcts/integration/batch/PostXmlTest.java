@@ -33,9 +33,9 @@ public class PostXmlTest {
         when(batchServiceUrlGenerator.getUploadXmlUrl())
                 .thenReturn("localhost");
         when(
-                restTemplate.postForObject(
-                        batchServiceUrlGenerator.getUploadXmlUrl(),
-                        HttpEntity.class, Map.class)).thenReturn(null);
+                restTemplate.postForObject(batchServiceUrlGenerator
+                        .getUploadXmlUrl(), HttpEntity.class, Map.class))
+                .thenReturn(null);
         postXml.sendXml(new File("randomPath"));
         verify(restTemplate).postForEntity((String) any(), (HttpEntity) any(),
                 eq(Map.class));
