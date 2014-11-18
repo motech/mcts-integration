@@ -6,7 +6,7 @@
 	<groupId>mcts.integration</groupId>
 	<artifactId>mcts-integration</artifactId>
 	<packaging>pom</packaging>
-	<version>0.24.2-SNAPSHOT</version>
+	<version>0.24.2</version>
 	<name>MCTS Integration</name>
 
 	<modules>
