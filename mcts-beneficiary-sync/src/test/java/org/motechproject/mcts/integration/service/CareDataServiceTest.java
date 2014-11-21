@@ -151,6 +151,17 @@ public class CareDataServiceTest {
         assertMctsPregnantMotherServiceUpdate(updatedRecords.get(1),
                 beneficiary2, MctsPregnantMother2);
     }
+    
+    @Test
+    public void shouldGetMctsPregnantMotherFromCaseId(){
+    	MctsPregnantMother MctsPregnantMother1 = new MctsPregnantMother();
+    	when(
+    			careDataRepository.findEntityByField(MctsPregnantMother.class,
+                "motherCase.id", MctsPregnantMother1.getMctsId())).thenReturn(
+                		MctsPregnantMother1);
+    	MctsPregnantMother MctsPregnantMother2 = careDataService.getMctsPregnantMotherFromCaseId(MctsPregnantMother1.getMctsId());
+    	assertEquals(MctsPregnantMother1, MctsPregnantMother2);
+    }
 
     @SuppressWarnings("deprecation")
     private void assertMctsPregnantMotherServiceUpdate(

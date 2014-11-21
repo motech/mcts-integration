@@ -182,8 +182,9 @@ public class MCTSBeneficiarySyncServiceTest {
                 getDefaultQueryParams());
         when(mctsHttpClientService.syncFrom(requestBody))
                 .thenReturn(response());
-        mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
-
+        String actual = mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        assertEquals("All " + response().getRecords().size() +" received updates are already present in database or have some error. None added to database.", actual);
+        verify(mctsHttpClientService).syncFrom(requestBody);
     }
 
     @Test
@@ -205,9 +206,12 @@ public class MCTSBeneficiarySyncServiceTest {
         when(propertyReader.getDefaultBeneficiaryListQueryParams()).thenReturn(
                 getDefaultQueryParams());
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(resp());
-        mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
-
-    }
+        String actual = mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
+        assertEquals("All " + response().getRecords().size() +" received updates are already present in database or have some error. None added to database.", actual);
+        verify(mctsHttpClientService).syncFrom(requestBody);
+        verify(careDataService).findEntityByField(MctsPregnantMother.class,
+                        "mctsId", "101216300411300080");
+	}
 
     public MultiValueMap<String, String> getRequestBody() {
         DateTime startDate = DateTime.now().minusDays(1);
