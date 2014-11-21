@@ -16,9 +16,11 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.event.listener.EventRelay;
+import org.motechproject.mcts.care.common.mds.measure.DontKnowForm;
 import org.motechproject.mcts.care.common.mds.model.MctsDistrict;
 import org.motechproject.mcts.care.common.mds.model.MctsHealthblock;
 import org.motechproject.mcts.care.common.mds.model.MctsPhc;
@@ -26,6 +28,7 @@ import org.motechproject.mcts.care.common.mds.model.MctsPregnantMother;
 import org.motechproject.mcts.care.common.mds.model.MctsState;
 import org.motechproject.mcts.care.common.mds.model.MctsSubcenter;
 import org.motechproject.mcts.care.common.mds.model.MctsTaluk;
+import org.motechproject.mcts.integration.model.LocationDataCSV;
 import org.motechproject.mcts.integration.model.NewDataSet;
 import org.motechproject.mcts.integration.model.Record;
 import org.motechproject.mcts.integration.repository.MctsRepository;
@@ -160,7 +163,13 @@ public class MCTSBeneficiarySyncServiceTest {
                 getDefaultQueryParams());
         when(mctsHttpClientService.syncFrom(requestBody)).thenReturn(resp());
         mctsBeneficiarySyncService.syncBeneficiaryData(startDate, endDate);
-        verify(careDataService, times(2)).saveOrUpdate(anyObject());
+        ArgumentCaptor<MctsPregnantMother> captor = ArgumentCaptor
+                .forClass(MctsPregnantMother.class);
+        verify(careDataService).saveOrUpdate(captor.capture());
+        MctsPregnantMother mother1 = captor.getValue();
+        assertEquals("Ranju Devi", mother1.getName());
+        assertEquals("101216300411300080", mother1.getMctsId());
+        verify(locationDataPopulator).addLocationToDb((LocationDataCSV) anyObject(), anyBoolean());
 
     }
 

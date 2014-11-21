@@ -653,7 +653,7 @@ public class MCTSBeneficiarySyncService {
         hubTransaction.setStartDate(startDate);
         hubTransaction.setEndDate(endDate);
         hubTransaction.setIsNotified(false);
-        careDataService.saveOrUpdate(hubTransaction);
+        careDataRepository.saveOrUpdate(hubTransaction);
     }
 
     /**
