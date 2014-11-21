@@ -11,24 +11,6 @@ public final class ReflectionUtils {
 
     }
 
-    public static void updateValue(String fieldName, Object source,
-            Object target) {
-        try {
-            Field field = getField(source, fieldName);
-            if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
-                return;
-
-            }
-            field.setAccessible(true);
-            Object updatedValue = field.get(source);
-            field.set(target, updatedValue);
-        } catch (Exception e) {
-            throw new BeneficiaryException(
-                    ApplicationErrors.RUN_TIME_EXCEPTION, e,
-                    e.getLocalizedMessage());
-        }
-    }
-
     public static Object getValue(Object object, String fieldName) {
         try {
             Field field = getField(object, fieldName);
