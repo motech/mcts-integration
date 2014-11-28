@@ -206,7 +206,7 @@ public class FormsProcessor {
             unapprovedToDiscussForm.setShowReasonDisapproved(motherForm
                     .get("showReasonDisapproved"));
             unapprovedToDiscussForm.setBadMapping(motherForm.get("badMapping"));
-            unapprovedToDiscussForm.setAshaNeedsToClose(motherForm
+            unapprovedToDiscussForm.setAshaNeedsClose(motherForm
                     .get("ashaNeedsToClose"));
             unapprovedToDiscussForm.setConfirmAnmClose(motherForm
                     .get("confirmAnmClose"));
