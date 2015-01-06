@@ -12,11 +12,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mcts.care.common.mds.dimension.Flw;
 import org.motechproject.mcts.care.common.mds.dimension.FlwGroup;
+import org.motechproject.mcts.care.common.mds.measure.Form;
+import org.motechproject.mcts.care.common.mds.measure.MotherEditForm;
 import org.motechproject.mcts.integration.commcare.CloseCaseXmlService;
 import org.motechproject.mcts.integration.commcare.CreateCaseXmlService;
 import org.motechproject.mcts.integration.exception.BeneficiaryError;
 import org.motechproject.mcts.integration.exception.BeneficiaryException;
 import org.motechproject.mcts.integration.exception.RestException;
+import org.motechproject.mcts.integration.repository.MctsRepository;
 import org.motechproject.mcts.integration.service.CareDataService;
 import org.motechproject.mcts.integration.service.FLWDataPopulator;
 import org.motechproject.mcts.integration.service.FixtureDataService;
@@ -80,6 +83,12 @@ public class BeneficiarySyncController {
 
     @Autowired
     private StubDataService stubDataService;
+
+    @Autowired
+    private CareDataService service;
+
+    // @Autowired
+    // private MctsRepository repository;
 
     /**
      * Method to validate connection
@@ -271,6 +280,76 @@ public class BeneficiarySyncController {
         return "success";
     }
 
+    @RequestMapping(value = "/saveForm", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void saveForm() {
+        MotherEditForm form = service.findEntityByField(MotherEditForm.class,
+                "id", 3);
+        if (form != null) {
+            service.saveOrUpdate(form);
+        }
+    }
+
+    @RequestMapping(value = "/createFlw", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void createFlw() {
+        Flw flw = service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79");
+        if (flw == null) {
+            flw = new Flw();
+            flw.setFlwId("8f5a275380f60fa6e54fd8b17ec2ae79");
+        }
+        Set<Flw> flws = new HashSet<Flw>();
+        flws.add(flw);
+        FlwGroup group1 = service.findEntityByField(FlwGroup.class, "groupId",
+                "1");
+        if (group1 == null) {
+            group1 = new FlwGroup();
+            group1.setGroupId("1");
+        }
+        FlwGroup group2 = service.findEntityByField(FlwGroup.class, "groupId",
+                "2")
+
+        ;
+        if (group2 == null) {
+            group2 = new FlwGroup();
+            group2.setGroupId("2");
+        }
+        FlwGroup group3 = service.findEntityByField(FlwGroup.class, "groupId",
+                "3");
+        if (group3 == null) {
+            group3 = new FlwGroup();
+            group3.setGroupId("3");
+        }
+        Set<FlwGroup> groupset = new HashSet<FlwGroup>();
+
+        groupset.add(group2);
+        groupset.add(group1);
+        groupset.add(group3);
+        flw.setFlwGroups(groupset);
+        service.saveOrUpdate(flw);
+
+        groupset.remove(group2);
+        flw.setFlwGroups(groupset);
+        service.saveOrUpdate(flw);
+
+        FlwGroup group4 = service.findEntityByField(FlwGroup.class, "groupId",
+                "4");
+        if (group4 == null) {
+            group4 = new FlwGroup();
+            group4.setGroupId("4");
+        }
+        groupset.add(group4);
+        flw.setFlwGroups(groupset);
+        service.saveOrUpdate(flw);
+
+        groupset.add(group2);
+        flw.setFlwGroups(groupset);
+        service.saveOrUpdate(flw);
+
+    }
 
     @ExceptionHandler(value = { RestException.class })
     @ResponseBody
