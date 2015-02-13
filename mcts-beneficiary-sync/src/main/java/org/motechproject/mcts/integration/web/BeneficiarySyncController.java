@@ -284,11 +284,26 @@ public class BeneficiarySyncController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void saveForm() {
-        MotherEditForm form = service.findEntityByField(MotherEditForm.class,
-                "id", 3);
-        if (form != null) {
-            service.saveOrUpdate(form);
+        MotherEditForm form = new MotherEditForm();
+        form.setInstanceId("123");
+        Flw flw = service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79");
+
+        if (flw != null) {
+            form.setFlw(flw);
+
         }
+        service.saveOrUpdate(form);
+    }
+
+    @RequestMapping(value = "/getForm", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void getForm() {
+        MotherEditForm form = service.findEntityByField(MotherEditForm.class,
+                "instanceId", "123");
+        form.setDeliveryOffsetDays(12);
+        service.saveOrUpdate(form);
     }
 
     @RequestMapping(value = "/createFlw", method = RequestMethod.GET)
@@ -301,8 +316,15 @@ public class BeneficiarySyncController {
             flw = new Flw();
             flw.setFlwId("8f5a275380f60fa6e54fd8b17ec2ae79");
         }
+
+        Flw flw2 = service.findEntityByField(Flw.class, "flwId", "123");
+        if (flw2 == null) {
+            flw2 = new Flw();
+            flw2.setFlwId("123");
+        }
+
         Set<Flw> flws = new HashSet<Flw>();
-        flws.add(flw);
+        flws.add(flw2);
         FlwGroup group1 = service.findEntityByField(FlwGroup.class, "groupId",
                 "1");
         if (group1 == null) {
@@ -310,12 +332,11 @@ public class BeneficiarySyncController {
             group1.setGroupId("1");
         }
         FlwGroup group2 = service.findEntityByField(FlwGroup.class, "groupId",
-                "2")
-
-        ;
+                "2");
         if (group2 == null) {
             group2 = new FlwGroup();
             group2.setGroupId("2");
+            group2.setFlws(flws);
         }
         FlwGroup group3 = service.findEntityByField(FlwGroup.class, "groupId",
                 "3");
@@ -328,10 +349,17 @@ public class BeneficiarySyncController {
         groupset.add(group2);
         groupset.add(group1);
         groupset.add(group3);
+        if (service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79")!=null) {
+            flw = service.findEntityByField(Flw.class, "flwId",
+                    "8f5a275380f60fa6e54fd8b17ec2ae79");
+        }
         flw.setFlwGroups(groupset);
         service.saveOrUpdate(flw);
 
         groupset.remove(group2);
+        flw = service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79");
         flw.setFlwGroups(groupset);
         service.saveOrUpdate(flw);
 
@@ -342,10 +370,14 @@ public class BeneficiarySyncController {
             group4.setGroupId("4");
         }
         groupset.add(group4);
+        flw = service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79");
         flw.setFlwGroups(groupset);
         service.saveOrUpdate(flw);
 
         groupset.add(group2);
+        flw = service.findEntityByField(Flw.class, "flwId",
+                "8f5a275380f60fa6e54fd8b17ec2ae79");
         flw.setFlwGroups(groupset);
         service.saveOrUpdate(flw);
 
