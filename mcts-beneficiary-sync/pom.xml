@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mcts</artifactId>
     <groupId>org.motechproject</groupId>
-    <version>0.24.3</version>
+    <version>0.24.4</version>
     <packaging>bundle</packaging>
 
     <properties>
-        <motech.version>0.24.3</motech.version>
+        <motech.version>0.24.4</motech.version>
     </properties>
 
     <dependencies>
